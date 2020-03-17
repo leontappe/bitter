@@ -10,7 +10,7 @@ import '../models/customer.dart';
 import '../models/item.dart';
 
 void main() {
-  PdfGenerator pdf = PdfGenerator();
+  final pdf = PdfGenerator();
   Document doc;
 
   doc = pdf.createDocumentFromBill(
@@ -45,8 +45,8 @@ class PdfGenerator {
   Font ttfSans;
 
   PdfGenerator() {
-    final ByteData sansData = ByteData(liberationSans.length);
-    for (int i = 0; i < liberationSans.length; i++) {
+    final sansData = ByteData(liberationSans.length);
+    for (var i = 0; i < liberationSans.length; i++) {
       sansData.setUint8(i, liberationSans[i]);
     }
     ttfSans = Font.ttf(sansData);
@@ -54,7 +54,7 @@ class PdfGenerator {
 
   Document createDocumentFromBill(Bill bill) {
     final fontsize = 10.0;
-    final Document doc = Document();
+    final doc = Document();
     final items = bill.items;
 
     doc.addPage(

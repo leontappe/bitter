@@ -40,7 +40,7 @@ class _CustomersListPageState extends State<CustomersListPage> {
           if (!searchEnabled) ...[
             IconButton(
                 icon: Icon(Icons.add),
-                onPressed: () => Navigator.push(context,
+                onPressed: () => Navigator.push<MaterialPageRoute>(context,
                     MaterialPageRoute(builder: (BuildContext context) => CustomerAddingPage()))),
             IconButton(icon: Icon(Icons.search), onPressed: onToggleSearch),
           ],
@@ -51,12 +51,12 @@ class _CustomersListPageState extends State<CustomersListPage> {
           semanticChildCount: customers.length,
           children: <Widget>[
             ...List.from(
-              customers.map((Customer c) => ListTile(
+              customers.map<ListTile>((Customer c) => ListTile(
                     title: Text((c.company == null)
                         ? '${c.name} ${c.surname}'
                         : '${c.company} ${c.organizationUnit}'),
                     subtitle: Text('${c.address}, ${c.zipCode} ${c.city}'),
-                    onTap: () => Navigator.push(context,
+                    onTap: () => Navigator.push<MaterialPageRoute>(context,
                         MaterialPageRoute(builder: (BuildContext context) => CustomerPage(c.id))),
                   )),
             )
@@ -77,7 +77,7 @@ class _CustomersListPageState extends State<CustomersListPage> {
   }
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     initDb();
   }
@@ -92,7 +92,7 @@ class _CustomersListPageState extends State<CustomersListPage> {
     });
 
     if (!searchEnabled) {
-      onGetCustomers();
+      await onGetCustomers();
     }
   }
 

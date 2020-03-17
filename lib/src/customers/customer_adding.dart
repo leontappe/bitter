@@ -51,7 +51,7 @@ class _CustomerAddingPageState extends State<CustomerAddingPage> {
               TextFormField(
                   maxLines: 1,
                   decoration: InputDecoration(labelText: 'Vorname'),
-                  validator: (input) => input.length < 1 ? 'Pflichtfeld' : null,
+                  validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                   onChanged: (String input) {
                     newCustomer.name = input;
                     _formKey.currentState.validate();
@@ -59,7 +59,7 @@ class _CustomerAddingPageState extends State<CustomerAddingPage> {
               TextFormField(
                   maxLines: 1,
                   decoration: InputDecoration(labelText: 'Nachname'),
-                  validator: (input) => input.length < 1 ? 'Pflichtfeld' : null,
+                  validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                   onChanged: (String input) {
                     newCustomer.surname = input;
                     _formKey.currentState.validate();
@@ -72,7 +72,7 @@ class _CustomerAddingPageState extends State<CustomerAddingPage> {
                     DropdownMenuItem(value: 1, child: Text('weiblich')),
                     DropdownMenuItem(value: 2, child: Text('divers')),
                   ],
-                  onChanged: (v) {
+                  onChanged: (int v) {
                     newCustomer.gender =
                         v == 0 ? Gender.male : v == 1 ? Gender.female : Gender.diverse;
                     setState(() => dropdownValue = v);
@@ -80,7 +80,7 @@ class _CustomerAddingPageState extends State<CustomerAddingPage> {
               TextFormField(
                   maxLines: 1,
                   decoration: InputDecoration(labelText: 'Adresse'),
-                  validator: (input) => input.length < 1 ? 'Pflichtfeld' : null,
+                  validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                   onChanged: (String input) {
                     newCustomer.address = input;
                     _formKey.currentState.validate();
@@ -89,7 +89,7 @@ class _CustomerAddingPageState extends State<CustomerAddingPage> {
                   maxLines: 1,
                   decoration: InputDecoration(labelText: 'Postleitzahl'),
                   keyboardType: TextInputType.numberWithOptions(),
-                  validator: (input) => input.length < 1 ? 'Pflichtfeld' : null,
+                  validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                   onChanged: (String input) {
                     newCustomer.zipCode = int.parse(input);
                     _formKey.currentState.validate();
@@ -97,7 +97,7 @@ class _CustomerAddingPageState extends State<CustomerAddingPage> {
               TextFormField(
                   maxLines: 1,
                   decoration: InputDecoration(labelText: 'Stadt'),
-                  validator: (input) => input.length < 1 ? 'Pflichtfeld' : null,
+                  validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                   onChanged: (String input) {
                     newCustomer.city = input;
                     _formKey.currentState.validate();
@@ -133,7 +133,7 @@ class _CustomerAddingPageState extends State<CustomerAddingPage> {
               TextFormField(
                   maxLines: 1,
                   decoration: InputDecoration(labelText: 'E-Mail'),
-                  validator: (input) => input.length < 1 ? 'Pflichtfeld' : null,
+                  validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                   onChanged: (String input) {
                     newCustomer.email = input;
                     _formKey.currentState.validate();
@@ -147,7 +147,7 @@ class _CustomerAddingPageState extends State<CustomerAddingPage> {
 
   Future<void> dbInit() async {
     db = CustomerProvider();
-    db.open('bitter5.db');
+    await db.open('bitter5.db');
   }
 
   @override

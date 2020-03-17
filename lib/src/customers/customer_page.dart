@@ -102,7 +102,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           initialValue: newCustomer.name,
                           maxLines: 1,
                           decoration: InputDecoration(labelText: 'Vorname'),
-                          validator: (input) => input.length < 1 ? 'Pflichtfeld' : null,
+                          validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                           onChanged: (String input) {
                             newCustomer.name = input;
                             _formKey.currentState.validate();
@@ -111,7 +111,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           initialValue: newCustomer.surname,
                           maxLines: 1,
                           decoration: InputDecoration(labelText: 'Nachname'),
-                          validator: (input) => input.length < 1 ? 'Pflichtfeld' : null,
+                          validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                           onChanged: (String input) {
                             newCustomer.surname = input;
                             _formKey.currentState.validate();
@@ -124,7 +124,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             DropdownMenuItem(value: 1, child: Text('weiblich')),
                             DropdownMenuItem(value: 2, child: Text('divers')),
                           ],
-                          onChanged: (v) {
+                          onChanged: (int v) {
                             newCustomer.gender =
                                 v == 0 ? Gender.male : v == 1 ? Gender.female : Gender.diverse;
                             setState(() => dropdownValue = v);
@@ -133,7 +133,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           initialValue: newCustomer.address,
                           maxLines: 1,
                           decoration: InputDecoration(labelText: 'Adresse'),
-                          validator: (input) => input.length < 1 ? 'Pflichtfeld' : null,
+                          validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                           onChanged: (String input) {
                             newCustomer.address = input;
                             _formKey.currentState.validate();
@@ -143,7 +143,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           maxLines: 1,
                           decoration: InputDecoration(labelText: 'Postleitzahl'),
                           keyboardType: TextInputType.numberWithOptions(),
-                          validator: (input) => input.length < 1 ? 'Pflichtfeld' : null,
+                          validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                           onChanged: (String input) {
                             newCustomer.zipCode = int.parse(input);
                             _formKey.currentState.validate();
@@ -152,7 +152,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           initialValue: newCustomer.city,
                           maxLines: 1,
                           decoration: InputDecoration(labelText: 'Stadt'),
-                          validator: (input) => input.length < 1 ? 'Pflichtfeld' : null,
+                          validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                           onChanged: (String input) {
                             newCustomer.city = input;
                             _formKey.currentState.validate();
@@ -193,7 +193,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           initialValue: newCustomer.email,
                           maxLines: 1,
                           decoration: InputDecoration(labelText: 'E-Mail'),
-                          validator: (input) => input.length < 1 ? 'Pflichtfeld' : null,
+                          validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                           onChanged: (String input) {
                             newCustomer.email = input;
                             _formKey.currentState.validate();
@@ -232,7 +232,7 @@ class _CustomerPageState extends State<CustomerPage> {
 
   void onSaveCustomer() async {
     if (_formKey.currentState.validate()) {
-      db.update(newCustomer);
+      await db.update(newCustomer);
       customer = await db.getCustomer(widget.id);
       setState(() {
         return customer;
@@ -241,7 +241,7 @@ class _CustomerPageState extends State<CustomerPage> {
   }
 
   void onDeleteCustomer() async {
-    var result = await showDialog(
+    var result = await showDialog<int>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
               title: Text('Soll dieser Kunde wirlich gelöscht werden?'),
@@ -251,7 +251,7 @@ class _CustomerPageState extends State<CustomerPage> {
               ],
             ));
     if (result == 1) {
-      db.delete(widget.id);
+      await db.delete(widget.id);
       Navigator.pop(context);
     }
   }

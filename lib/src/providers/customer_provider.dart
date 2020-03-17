@@ -17,12 +17,12 @@ class CustomerProvider {
   }
 
   Future<int> delete(int id) async {
-    return await db.delete(customerTable, where: '$customerId = ?', whereArgs: [id]);
+    return await db.delete(customerTable, where: '$customerId = ?', whereArgs: <int>[id]);
   }
 
   Future<Customer> getCustomer(int id) async {
-    List<Map> maps = await db.query(customerTable, where: '$customerId = ?', whereArgs: [id]);
-    if (maps.length > 0) {
+    List<Map> maps = await db.query(customerTable, where: '$customerId = ?', whereArgs: <int>[id]);
+    if (maps.isNotEmpty) {
       return Customer.fromMap(maps.first);
     }
     return null;
@@ -40,7 +40,7 @@ class CustomerProvider {
           c.email.toLowerCase().contains(searchQuery.toLowerCase())));
     } else {
       maps = await db.query(customerTable);
-      return List.from(maps.map((item) => Customer.fromMap(item)));
+      return List.from(maps.map<Customer>((item) => Customer.fromMap(item)));
     }
   }
 
@@ -74,6 +74,6 @@ create table $customerTable (
 
   Future<int> update(Customer customer) async {
     return await db
-        .update(customerTable, customer.toMap, where: '$customerId = ?', whereArgs: [customer.id]);
+        .update(customerTable, customer.toMap, where: '$customerId = ?', whereArgs: <int>[customer.id]);
   }
 }

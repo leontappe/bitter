@@ -23,11 +23,11 @@ class Item {
   factory Item.empty() => Item(title: null, price: null);
 
   factory Item.fromMap(Map map) => Item(
-        title: map['title'],
-        price: map['price'],
-        tax: map['tax'],
-        quantity: map['quantity'],
-        description: map['description'],
+        title: map['title'] as String,
+        price: map['price'] as int,
+        tax: map['tax'] as int,
+        quantity: map['quantity'] as int,
+        description: map['description'] as String,
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{

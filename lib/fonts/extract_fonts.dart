@@ -1,13 +1,13 @@
 import 'dart:io';
 
 void main() async {
-  final File liberationSans = File('LiberationSans-Regular.ttf');
-  final File liberationMono = File('LiberationMono-Regular.ttf');
+  final liberationSans = File('LiberationSans-Regular.ttf');
+  final liberationMono = File('LiberationMono-Regular.ttf');
 
-  final File sansOut = File('LiberationSans.dart')..createSync();
-  final File monoOut = File('LiberationMono.dart')..createSync();
+  final sansOut = File('LiberationSans.dart')..createSync();
+  final monoOut = File('LiberationMono.dart')..createSync();
 
-  IOSink sink = monoOut.openWrite();
+  var sink = monoOut.openWrite();
 
   sink.write('const List<int> liberationMono = ');
   final List<int> monoBytes = await liberationMono.readAsBytes();
@@ -15,7 +15,7 @@ void main() async {
   sink.write(';');
 
   await sink.flush();
-  sink.close();
+  await sink.close();
 
   sink = sansOut.openWrite();
 

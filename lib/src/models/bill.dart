@@ -12,7 +12,7 @@ class Bill {
   int tax;
 
   int get sum {
-    int sum = 0;
+    var sum = 0;
     for (var item in items) {
       sum += item.sum;
     }

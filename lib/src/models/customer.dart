@@ -45,25 +45,25 @@ class Customer {
       );
 
   factory Customer.fromMap(Map map) => Customer(
-        id: map['id'],
-        company: map['company'],
-        organizationUnit: map['organization_unit'],
-        name: map['name'],
-        surname: map['surname'],
+        id: map['id'] as int,
+        company: map['company'] as String,
+        organizationUnit: map['organization_unit'] as String,
+        name: map['name'] as String,
+        surname: map['surname'] as String,
         gender: (map['gender'] == 0)
             ? Gender.male
             : (map['gender'] == 1) ? Gender.diverse : Gender.diverse,
-        address: map['address'],
-        zipCode: map['zip_code'],
-        city: map['city'],
-        country: map['country'],
-        telephone: map['telephone'],
-        fax: map['fax'],
-        mobile: map['mobile'],
-        email: map['email'],
+        address: map['address'] as String,
+        zipCode: map['zip_code'] as int,
+        city: map['city'] as String,
+        country: map['country'] as String,
+        telephone: map['telephone'] as String,
+        fax: map['fax'] as String,
+        mobile: map['mobile'] as String,
+        email: map['email'] as String,
       );
 
-  Map<String, dynamic> get toMap => {
+  Map<String, dynamic> get toMap => <String, dynamic>{
         'company': company,
         'organization_unit': organizationUnit,
         'name': name,

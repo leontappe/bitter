@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 
@@ -14,7 +15,7 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     super.initState();
-    if (Platform.isAndroid || Platform.isIOS) initPackageInfo();
+    if (!kIsWeb) if ( Platform.isAndroid || Platform.isIOS) initPackageInfo();
   }
 
   @override
