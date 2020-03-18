@@ -1,45 +1,12 @@
-import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:image/image.dart' as im;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
 import '../../fonts/LiberationSans.dart';
 import '../models/bill.dart';
-import '../models/customer.dart';
-import '../models/item.dart';
-
-void main() {
-  final pdf = PdfGenerator();
-  Document doc;
-
-  doc = pdf.createDocumentFromBill(
-    Bill(
-      id: 1,
-      tax: 19,
-      customer: Customer(
-        id: 1,
-        name: 'Leon',
-        surname: 'Tappe',
-        gender: Gender.diverse,
-        email: 'ltappe@mail.upb.de',
-        zipCode: 33098,
-        city: 'Paderborn',
-        address: 'Warburger Str. 100',
-      ),
-      items: [
-        Item(id: 1, title: 'Papier A4', description: '100 Blatt', price: 100, quantity: 2, tax: 19),
-        Item(id: 2, title: 'Bachelorarbeit', description: '', price: 2000, quantity: 1, tax: 19),
-      ],
-    ),
-  );
-
-  var file = File('./test.pdf');
-
-  file.writeAsBytesSync(doc.save());
-
-  print(doc);
-}
+import '../models/vendor.dart';
 
 class PdfGenerator {
   Font ttfSans;
@@ -52,7 +19,8 @@ class PdfGenerator {
     ttfSans = Font.ttf(sansData);
   }
 
-  Document createDocumentFromBill(Bill bill) {
+  Document createDocumentFromBill(Bill bill, Vendor vendor,
+      {Uint8List leftHeader, Uint8List centerHeader, Uint8List rightHeader}) {
     final fontsize = 10.0;
     final doc = Document();
     final items = bill.items;
@@ -62,45 +30,50 @@ class PdfGenerator {
         pageFormat: PdfPageFormat.a4,
         orientation: PageOrientation.portrait,
         //crossAxisAlignment: CrossAxisAlignment.start,
-        footer: _pageCountFooter,
+        header: (Context context) => _createHeaderFromImages(doc.document,
+            left: leftHeader, center: centerHeader, right: rightHeader),
+        footer: (Context context) => _pageCountFooter(context, vendor),
         build: (Context context) => [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Paragraph(
-                text: 'AStA Copyservice Warburger Str. 100 33098 Paderborn',
-                style: TextStyle(
-                    decoration: TextDecoration.underline, fontSize: fontsize, font: ttfSans),
-                margin: EdgeInsets.only(bottom: 8.0),
-              ),
-              if (bill.customer.company != null)
+          Padding(
+            padding: EdgeInsets.only(top: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
                 Paragraph(
-                  text: bill.customer.company + ' ' + bill.customer.organizationUnit,
+                  text: vendor.fullAdress,
+                  style: TextStyle(
+                      decoration: TextDecoration.underline, fontSize: fontsize, font: ttfSans),
+                  margin: EdgeInsets.only(bottom: 8.0),
+                ),
+                if (bill.customer.company != null)
+                  Paragraph(
+                    text: bill.customer.company + ' ' + bill.customer.organizationUnit,
+                    style: TextStyle(fontSize: fontsize),
+                    margin: EdgeInsets.all(0.0),
+                  ),
+                Paragraph(
+                  text: bill.customer.name + ' ' + bill.customer.surname,
                   style: TextStyle(fontSize: fontsize),
                   margin: EdgeInsets.all(0.0),
                 ),
-              Paragraph(
-                text: bill.customer.name + ' ' + bill.customer.surname,
-                style: TextStyle(fontSize: fontsize),
-                margin: EdgeInsets.all(0.0),
-              ),
-              Paragraph(
-                text: bill.customer.address,
-                style: TextStyle(fontSize: fontsize),
-                margin: EdgeInsets.all(0.0),
-              ),
-              Paragraph(
-                text: bill.customer.zipCode.toString() + ' ' + bill.customer.city,
-                style: TextStyle(fontSize: fontsize),
-                margin: EdgeInsets.all(0.0),
-              ),
-              if (bill.customer.country != null)
                 Paragraph(
-                  text: bill.customer.country,
+                  text: bill.customer.address,
                   style: TextStyle(fontSize: fontsize),
-                  margin: EdgeInsets.only(bottom: 8.0),
+                  margin: EdgeInsets.all(0.0),
                 ),
-            ],
+                Paragraph(
+                  text: bill.customer.zipCode.toString() + ' ' + bill.customer.city,
+                  style: TextStyle(fontSize: fontsize),
+                  margin: EdgeInsets.all(0.0),
+                ),
+                if (bill.customer.country != null)
+                  Paragraph(
+                    text: bill.customer.country,
+                    style: TextStyle(fontSize: fontsize),
+                    margin: EdgeInsets.only(bottom: 8.0),
+                  ),
+              ],
+            ),
           ),
           Padding(
             padding: EdgeInsets.only(left: 375.0, top: 16.0, bottom: 64.0),
@@ -157,10 +130,136 @@ class PdfGenerator {
     return doc;
   }
 
-  List<int> getBytesFromBill(Bill bill) => createDocumentFromBill(bill).save();
+  List<int> getBytesFromBill(Bill bill, Vendor vendor) =>
+      createDocumentFromBill(bill, vendor).save();
 
-  Widget _pageCountFooter(Context context) => Container(
-      alignment: Alignment.centerRight,
-      child: Text(context.pageNumber.toString(),
-          style: Theme.of(context).defaultTextStyle.copyWith(color: PdfColors.grey)));
+  Widget _createHeaderFromImages(PdfDocument doc,
+      {Uint8List left, Uint8List center, Uint8List right}) {
+    im.Image leftImg;
+    im.Image rightImg;
+    im.Image centerImg;
+
+    if (left != null) {
+      leftImg = im.decodeImage(left);
+    }
+    if (right != null) {
+      rightImg = im.decodeImage(right);
+    }
+    if (center != null) {
+      centerImg = im.decodeImage(center);
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        if (left != null)
+          Container(
+            height: 48.0,
+            child: Image(
+              PdfImage(doc,
+                  image: leftImg.data.buffer.asUint8List(),
+                  height: leftImg.height,
+                  width: leftImg.width),
+            ),
+          )
+        else
+          Container(width: 0.0, height: 0.0),
+        if (center != null)
+          Container(
+            height: 48.0,
+            child: Image(
+              PdfImage(doc,
+                  image: centerImg.data.buffer.asUint8List(),
+                  height: centerImg.height,
+                  width: centerImg.width),
+            ),
+          )
+        else
+          Container(width: 0.0, height: 0.0),
+        if (right != null)
+          Container(
+            height: 48.0,
+            child: Image(
+              PdfImage(doc,
+                  image: rightImg.data.buffer.asUint8List(),
+                  height: rightImg.height,
+                  width: rightImg.width),
+            ),
+          )
+        else
+          Container(width: 0.0, height: 0.0),
+      ],
+    );
+  }
+
+  Widget _pageCountFooter(Context context, Vendor vendor) {
+    final fontSize = 9.0;
+    final color = PdfColors.grey800;
+    return Column(children: <Widget>[
+      Container(
+          margin: EdgeInsets.only(bottom: 8.0),
+          decoration: BoxDecoration(
+              border: BoxBorder(
+                  top: true,
+                  bottom: false,
+                  right: false,
+                  left: false,
+                  color: PdfColors.grey400,
+                  width: 1.0),
+              borderRadius: 0.0,
+              shape: BoxShape.rectangle),
+          child: Container(width: 500.0, height: 0.0)),
+      Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Paragraph(
+                  text: 'Geschäftsinhaber:',
+                  style: TextStyle(fontSize: fontSize, font: ttfSans, color: color),
+                  margin: EdgeInsets.only(bottom: 8.0)),
+              Text(vendor.name, style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
+              Text(vendor.address,
+                  style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
+              Text(vendor.city, style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
+            ],
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Paragraph(
+                  text: 'Bankverbindung:',
+                  style: TextStyle(fontSize: fontSize, font: ttfSans, color: color),
+                  margin: EdgeInsets.only(bottom: 8.0)),
+              Text('IBAN: ${vendor.iban}',
+                  style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
+              Text('BIC: ${vendor.bic}',
+                  style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
+              Text(vendor.bank, style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
+            ],
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Paragraph(
+                  text: 'Steuer-Nr.: ${vendor.taxNr}',
+                  style: TextStyle(fontSize: fontSize, font: ttfSans, color: color),
+                  margin: EdgeInsets.only(top: 17.0)),
+              Text('USt.-Ident.-Nr.: ${vendor.vatNr}',
+                  style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
+              Text(vendor.website,
+                  style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
+            ],
+          ),
+        ],
+      ),
+    ]);
+  }
 }
