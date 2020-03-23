@@ -39,6 +39,8 @@ class CustomerProvider implements BaseProvider<Customer> {
       db = adapter.database();
     }
     client = db.sqlClient;
+    await client.rawQuery(SqlStatement(
+        'CREATE TABLE IF NOT EXISTS $tableName(id integer primary key autoincrement, company text, organization_unit text, name text not null, surname text not null, gender integer not null, address text not null, zip_code integer not null, city text not null, country text, telephone text, fax text, mobile text, email text not null);'));
   }
 
   @override
@@ -47,11 +49,13 @@ class CustomerProvider implements BaseProvider<Customer> {
     if (searchQuery != null && searchQuery.isNotEmpty) {
       maps = await client.table(tableName).select().toMaps();
       var list = maps.map((Map item) => Customer.fromMap(item));
-      return List.from(list.where((Customer c) =>
-          (c.name + ' ' + c.surname).toLowerCase().contains(searchQuery.toLowerCase()) ||
-          (c.company ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
-          (c.organizationUnit ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
-          c.email.toLowerCase().contains(searchQuery.toLowerCase())));
+      return List.from(list.where(
+        (Customer c) =>
+            (c.name + ' ' + c.surname).toLowerCase().contains(searchQuery.toLowerCase()) ||
+            (c.company ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
+            (c.organizationUnit ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
+            c.email.toLowerCase().contains(searchQuery.toLowerCase()),
+      ));
     } else {
       maps = await client.table(tableName).select().toMaps();
       return List.from(maps.map<Customer>((item) => Customer.fromMap(item)));
@@ -67,9 +71,8 @@ class CustomerProvider implements BaseProvider<Customer> {
   @override
   Future<int> update(Customer customer) async {
     final result = await client.execute(
-      'UPDATE ? SET  company = ?, organization_unit = ?, name = ?, surname = ?, gender = ?, address = ?, zip_code = ?, city = ?, country = ?, telephone = ?, fax = ?, mobile = ?, email = ? WHERE id = ?',
+      'UPDATE $tableName SET company = ?, organization_unit = ?, name = ?, surname = ?, gender = ?, address = ?, zip_code = ?, city = ?, country = ?, telephone = ?, fax = ?, mobile = ?, email = ? WHERE id = ?',
       <dynamic>[
-        tableName,
         customer.company,
         customer.organizationUnit,
         customer.name,
