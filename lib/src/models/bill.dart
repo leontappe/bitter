@@ -20,4 +20,15 @@ class Bill {
   }
 
   Bill({this.id, @required this.customer, @required this.items, @required this.tax});
+
+  factory Bill.fromMap(Map map) => Bill(
+      customer: Customer.fromMap(map['customer'] as Map),
+      items: map['items'] as List<Item>,
+      tax: map['tax'] as int);
+
+  Map<String, dynamic> get toMap =>
+      <String, dynamic>{'customer': customer.toMap, 'items': items, 'tax': tax};
+
+  @override
+  String toString() => '[Bill $id $toMap]';
 }
