@@ -10,7 +10,7 @@ const String customerName = 'name';
 const String customerSurname = 'surname';
 const String customerTable = 'customers';
 
-class CustomerProvider implements BaseProvider {
+class CustomerProvider implements BaseProvider<Customer> {
   Database db;
 
   void close() async {

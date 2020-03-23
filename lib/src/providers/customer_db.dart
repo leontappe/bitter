@@ -1,4 +1,5 @@
 import 'package:database/database.dart';
+import 'package:database/database_adapter.dart';
 import 'package:database/sql.dart';
 import 'package:database_adapter_sqlite/database_adapter_sqlite.dart';
 
@@ -9,7 +10,7 @@ export '../models/customer.dart';
 
 const String tableName = 'customers';
 
-class CustomerProvider implements BaseProvider {
+class CustomerProvider implements BaseProvider<Customer> {
   Database db;
   SqlClient client;
 
@@ -24,14 +25,19 @@ class CustomerProvider implements BaseProvider {
     final result = await client.table(tableName).insert(customer.toMap);
     if (result.affectedRows == 1) {
       return Customer.fromMap(
-          (await client.table(tableName).descending('id').limit(1).select().toMaps()).single);
+        (await client.table(tableName).descending('id').limit(1).select().toMaps()).single,
+      );
     }
     return null;
   }
 
   @override
-  Future<void> open(String path) async {
-    db = SQLite(path: path).database();
+  Future<void> open(String path, {DatabaseAdapter adapter}) async {
+    if (adapter == null) {
+      db = SQLite(path: path).database();
+    } else {
+      db = adapter.database();
+    }
     client = db.sqlClient;
   }
 
@@ -40,7 +46,7 @@ class CustomerProvider implements BaseProvider {
     List<Map> maps;
     if (searchQuery != null && searchQuery.isNotEmpty) {
       maps = await client.table(tableName).select().toMaps();
-      var list = maps.map((item) => Customer.fromMap(item));
+      var list = maps.map((Map item) => Customer.fromMap(item));
       return List.from(list.where((Customer c) =>
           (c.name + ' ' + c.surname).toLowerCase().contains(searchQuery.toLowerCase()) ||
           (c.company ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
@@ -61,8 +67,9 @@ class CustomerProvider implements BaseProvider {
   @override
   Future<int> update(Customer customer) async {
     final result = await client.execute(
-      'UPDATE customers SET  company = ?, organization_unit = ?, name = ?, surname = ?, gender = ?, address = ?, zip_code = ?, city = ?, country = ?, telephone = ?, fax = ?, mobile = ?, email = ? WHERE id = ?',
+      'UPDATE ? SET  company = ?, organization_unit = ?, name = ?, surname = ?, gender = ?, address = ?, zip_code = ?, city = ?, country = ?, telephone = ?, fax = ?, mobile = ?, email = ? WHERE id = ?',
       <dynamic>[
+        tableName,
         customer.company,
         customer.organizationUnit,
         customer.name,

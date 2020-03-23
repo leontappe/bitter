@@ -1,15 +1,13 @@
-import '../models/customer.dart';
-
-abstract class BaseProvider {
+abstract class BaseProvider<T> {
   Future<int> delete(int id);
 
-  Future<Customer> selectSingle(int id);
+  Future<T> selectSingle(int id);
 
-  Future<List<Customer>> select({String searchQuery});
+  Future<List<T>> select({String searchQuery});
 
-  Future<Customer> insert(Customer customer);
+  Future<T> insert(T item);
 
   Future<void> open(String path);
 
-  Future<int> update(Customer customer);
+  Future<int> update(T item);
 }
