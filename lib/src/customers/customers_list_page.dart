@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../providers/customer_db.dart';
 import 'customer_adding.dart';
 import 'customer_page.dart';
-import '../providers/customer_provider.dart';
 
 class CustomersListPage extends StatefulWidget {
   CustomersListPage({Key key}) : super(key: key);
@@ -11,7 +11,7 @@ class CustomersListPage extends StatefulWidget {
   _CustomersListPageState createState() => _CustomersListPageState();
 }
 
-class _CustomersListPageState extends State<CustomersListPage> {
+class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindingObserver {
   CustomerProvider db;
   List<Customer> customers = [];
 
@@ -21,6 +21,7 @@ class _CustomersListPageState extends State<CustomersListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: !searchEnabled,
         title: searchEnabled
             ? TextField(
                 autofocus: true,
@@ -38,10 +39,7 @@ class _CustomersListPageState extends State<CustomersListPage> {
             : Text('Kundenliste'),
         actions: <Widget>[
           if (!searchEnabled) ...[
-            IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () => Navigator.push<MaterialPageRoute>(context,
-                    MaterialPageRoute(builder: (BuildContext context) => CustomerAddingPage()))),
+            IconButton(icon: Icon(Icons.add), onPressed: onPushUserAddpage),
             IconButton(icon: Icon(Icons.search), onPressed: onToggleSearch),
           ],
         ],
@@ -52,12 +50,11 @@ class _CustomersListPageState extends State<CustomersListPage> {
           children: <Widget>[
             ...List.from(
               customers.map<ListTile>((Customer c) => ListTile(
-                    title: Text((c.company == null)
+                    title: Text((c.company == null || c.company.isEmpty)
                         ? '${c.name} ${c.surname}'
-                        : '${c.company} ${c.organizationUnit}'),
+                        : '${c.company} ${c.organizationUnit ?? ''}'),
                     subtitle: Text('${c.address}, ${c.zipCode} ${c.city}'),
-                    onTap: () => Navigator.push<MaterialPageRoute>(context,
-                        MaterialPageRoute(builder: (BuildContext context) => CustomerPage(c.id))),
+                    onTap: () => onPushCustomerPage(context, c.id),
                   )),
             )
           ],
@@ -82,6 +79,38 @@ class _CustomersListPageState extends State<CustomersListPage> {
     initDb();
   }
 
+  Future<void> onGetCustomers() async {
+    customers = await db.select();
+    setState(() {
+      return customers;
+    });
+  }
+
+  Future<void> onPushCustomerPage(BuildContext context, int id) async {
+    final updated = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute<bool>(builder: (BuildContext context) => CustomerPage(id)),
+    );
+    if (updated) {
+      await onGetCustomers();
+    }
+  }
+
+  Future<void> onPushUserAddpage() async {
+    final updated = await Navigator.push<bool>(
+        context, MaterialPageRoute<bool>(builder: (BuildContext context) => CustomerAddingPage()));
+    if (updated) {
+      await onGetCustomers();
+    }
+  }
+
+  Future<void> onSearchChanged(String value) async {
+    customers = await db.select(searchQuery: value);
+    setState(() {
+      return customers;
+    });
+  }
+
   void onToggleSearch() async {
     setState(() {
       if (searchEnabled) {
@@ -94,20 +123,6 @@ class _CustomersListPageState extends State<CustomersListPage> {
     if (!searchEnabled) {
       await onGetCustomers();
     }
-  }
-
-  Future<void> onGetCustomers() async {
-    customers = await db.getCustomers();
-    setState(() {
-      return customers;
-    });
-  }
-
-  Future<void> onSearchChanged(String value) async {
-    customers = await db.getCustomers(searchQuery: value);
-    setState(() {
-      return customers;
-    });
   }
 
   Future<void> _insertTestData() async {

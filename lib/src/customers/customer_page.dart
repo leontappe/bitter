@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../providers/customer_provider.dart';
+import '../providers/customer_db.dart';
 
 class CustomerPage extends StatefulWidget {
   final int id;
@@ -21,11 +21,15 @@ class _CustomerPageState extends State<CustomerPage> {
 
   Customer newCustomer = Customer.empty();
 
+  bool dirty = false;
+  bool changed = false;
+
   @override
   Widget build(BuildContext context) {
     if (customer != null) {
       return Scaffold(
         appBar: AppBar(
+          leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: onPopRoute),
           title: Text('Kundenansicht'),
           actions: <Widget>[
             IconButton(
@@ -38,7 +42,7 @@ class _CustomerPageState extends State<CustomerPage> {
         body: ListView(
           semanticChildCount: 4,
           children: <Widget>[
-            Text('Aktuelle Informationen', style: Theme.of(context).textTheme.headline4),
+            Text(' Aktuelle Informationen', style: Theme.of(context).textTheme.headline4),
             Card(
               margin: EdgeInsets.all(16.0),
               elevation: 8.0,
@@ -48,7 +52,7 @@ class _CustomerPageState extends State<CustomerPage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    if (customer.company != null)
+                    if (customer.company != null && customer.company.isNotEmpty)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -59,7 +63,7 @@ class _CustomerPageState extends State<CustomerPage> {
                     else
                       Text(customer.name + ' ' + customer.surname,
                           style: Theme.of(context).textTheme.headline5),
-                    if (customer.organizationUnit != null)
+                    if (customer.organizationUnit != null && customer.organizationUnit.isNotEmpty)
                       Text('Abteilung: ${customer.organizationUnit}'),
                     Text('Adresse: ${customer.address}'),
                     Text('Stadt: ${customer.zipCode} ${customer.city}'),
@@ -72,7 +76,7 @@ class _CustomerPageState extends State<CustomerPage> {
                 ),
               ),
             ),
-            Text('Kunde bearbeiten', style: Theme.of(context).textTheme.headline4),
+            Text(' Kunde bearbeiten', style: Theme.of(context).textTheme.headline4),
             if (newCustomer.name != null)
               Padding(
                 padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
@@ -88,6 +92,8 @@ class _CustomerPageState extends State<CustomerPage> {
                         decoration: InputDecoration(labelText: 'Organisation'),
                         onChanged: (String input) {
                           newCustomer.company = input;
+                          dirty = true;
+                          changed = true;
                         },
                       ),
                       TextFormField(
@@ -96,6 +102,8 @@ class _CustomerPageState extends State<CustomerPage> {
                         decoration: InputDecoration(labelText: 'Abteilung'),
                         onChanged: (String input) {
                           newCustomer.organizationUnit = input;
+                          dirty = true;
+                          changed = true;
                         },
                       ),
                       TextFormField(
@@ -106,6 +114,8 @@ class _CustomerPageState extends State<CustomerPage> {
                           onChanged: (String input) {
                             newCustomer.name = input;
                             _formKey.currentState.validate();
+                            dirty = true;
+                            changed = true;
                           }),
                       TextFormField(
                           initialValue: newCustomer.surname,
@@ -115,6 +125,8 @@ class _CustomerPageState extends State<CustomerPage> {
                           onChanged: (String input) {
                             newCustomer.surname = input;
                             _formKey.currentState.validate();
+                            dirty = true;
+                            changed = true;
                           }),
                       DropdownButton(
                           hint: Text('Geschlecht'),
@@ -128,6 +140,8 @@ class _CustomerPageState extends State<CustomerPage> {
                             newCustomer.gender =
                                 v == 0 ? Gender.male : v == 1 ? Gender.female : Gender.diverse;
                             setState(() => dropdownValue = v);
+                            dirty = true;
+                            changed = true;
                           }),
                       TextFormField(
                           initialValue: newCustomer.address,
@@ -137,6 +151,8 @@ class _CustomerPageState extends State<CustomerPage> {
                           onChanged: (String input) {
                             newCustomer.address = input;
                             _formKey.currentState.validate();
+                            dirty = true;
+                            changed = true;
                           }),
                       TextFormField(
                           initialValue: newCustomer.zipCode.toString(),
@@ -147,6 +163,8 @@ class _CustomerPageState extends State<CustomerPage> {
                           onChanged: (String input) {
                             newCustomer.zipCode = int.parse(input);
                             _formKey.currentState.validate();
+                            dirty = true;
+                            changed = true;
                           }),
                       TextFormField(
                           initialValue: newCustomer.city,
@@ -156,6 +174,8 @@ class _CustomerPageState extends State<CustomerPage> {
                           onChanged: (String input) {
                             newCustomer.city = input;
                             _formKey.currentState.validate();
+                            dirty = true;
+                            changed = true;
                           }),
                       TextFormField(
                         initialValue: newCustomer.country,
@@ -163,6 +183,8 @@ class _CustomerPageState extends State<CustomerPage> {
                         decoration: InputDecoration(labelText: 'Land'),
                         onChanged: (String input) {
                           newCustomer.country = input;
+                          dirty = true;
+                          changed = true;
                         },
                       ),
                       TextFormField(
@@ -171,6 +193,8 @@ class _CustomerPageState extends State<CustomerPage> {
                         decoration: InputDecoration(labelText: 'Telefon'),
                         onChanged: (String input) {
                           newCustomer.telephone = input;
+                          dirty = true;
+                          changed = true;
                         },
                       ),
                       TextFormField(
@@ -179,6 +203,8 @@ class _CustomerPageState extends State<CustomerPage> {
                         decoration: InputDecoration(labelText: 'Fax'),
                         onChanged: (String input) {
                           newCustomer.fax = input;
+                          dirty = true;
+                          changed = true;
                         },
                       ),
                       TextFormField(
@@ -187,6 +213,8 @@ class _CustomerPageState extends State<CustomerPage> {
                         decoration: InputDecoration(labelText: 'Mobil'),
                         onChanged: (String input) {
                           newCustomer.mobile = input;
+                          dirty = true;
+                          changed = true;
                         },
                       ),
                       TextFormField(
@@ -197,6 +225,8 @@ class _CustomerPageState extends State<CustomerPage> {
                           onChanged: (String input) {
                             newCustomer.email = input;
                             _formKey.currentState.validate();
+                            dirty = true;
+                            changed = true;
                           }),
                     ],
                   ),
@@ -212,7 +242,7 @@ class _CustomerPageState extends State<CustomerPage> {
   void initDb() async {
     db = CustomerProvider();
     await db.open('bitter5.db');
-    customer = await db.getCustomer(widget.id);
+    customer = await db.selectSingle(widget.id);
     if (customer == null) {
       Navigator.pop(context);
       return null;
@@ -233,7 +263,8 @@ class _CustomerPageState extends State<CustomerPage> {
   void onSaveCustomer() async {
     if (_formKey.currentState.validate()) {
       await db.update(newCustomer);
-      customer = await db.getCustomer(widget.id);
+      dirty = false;
+      customer = await db.selectSingle(widget.id);
       setState(() {
         return customer;
       });
@@ -252,7 +283,35 @@ class _CustomerPageState extends State<CustomerPage> {
             ));
     if (result == 1) {
       await db.delete(widget.id);
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     }
+  }
+
+  void onPopRoute() async {
+    if (dirty) {
+      var result = await showDialog<int>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: Text(
+                    'Es gibt möglicherweise ungespeicherte Änderungen an diesem Kunden. Vor dem Verlassen abspeichern?'),
+                actions: <Widget>[
+                  MaterialButton(
+                      onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),
+                  MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Nein')),
+                  MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Ja')),
+                ],
+              ));
+      switch (result) {
+        case 0:
+          break;
+        case 1:
+          await onSaveCustomer();
+          break;
+        default:
+          return;
+      }
+    }
+
+    await Navigator.pop(context, changed);
   }
 }
