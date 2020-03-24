@@ -1,7 +1,8 @@
+import 'package:bitter/src/providers/mysql_provider.dart';
 import 'package:flutter/material.dart';
 
-import '../providers/inherited_provider.dart';
-import '../providers/mysql_customer_provider.dart';
+import '../providers/inherited_database.dart';
+import '../repositories/customer_repository.dart';
 
 class CustomerPage extends StatefulWidget {
   final int id;
@@ -15,7 +16,7 @@ class CustomerPage extends StatefulWidget {
 class _CustomerPageState extends State<CustomerPage> {
   final _formKey = GlobalKey<FormState>();
 
-  MySQLCustomerProvider db;
+  CustomerRepository repo;
   Customer customer;
 
   int dropdownValue = 2;
@@ -240,12 +241,18 @@ class _CustomerPageState extends State<CustomerPage> {
     return Container(width: 0.0, height: 0.0);
   }
 
+  @override
+  void didChangeDependencies() {
+    initDb();
+    super.didChangeDependencies();
+  }
+
   void initDb() async {
     //await Future<dynamic>.delayed(Duration(milliseconds: 100));
-    db = InheritedProvider.of<Customer>(context).provider as MySQLCustomerProvider;
+    repo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
     //db = MySQLCustomerProvider();
     //await db.open('bitter', host: '127.0.0.1', port: 5432, user: 'ltappe', password: 'stehlen1');
-    customer = await db.selectSingle(widget.id);
+    customer = await repo.selectSingle(widget.id);
     if (customer == null) {
       Navigator.pop(context);
       return null;
@@ -255,23 +262,6 @@ class _CustomerPageState extends State<CustomerPage> {
       dropdownValue = customer.gender.index;
       return customer;
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    initDb();
-    super.didChangeDependencies();
-  }
-
-  void onSaveCustomer() async {
-    if (_formKey.currentState.validate()) {
-      await db.update(newCustomer);
-      dirty = false;
-      customer = await db.selectSingle(widget.id);
-      setState(() {
-        return customer;
-      });
-    }
   }
 
   void onDeleteCustomer() async {
@@ -285,7 +275,7 @@ class _CustomerPageState extends State<CustomerPage> {
               ],
             ));
     if (result == 1) {
-      await db.delete(widget.id);
+      await repo.delete(widget.id);
       Navigator.pop(context, true);
     }
   }
@@ -316,5 +306,16 @@ class _CustomerPageState extends State<CustomerPage> {
     }
 
     await Navigator.pop(context, changed);
+  }
+
+  void onSaveCustomer() async {
+    if (_formKey.currentState.validate()) {
+      await repo.update(newCustomer);
+      dirty = false;
+      customer = await repo.selectSingle(widget.id);
+      setState(() {
+        return customer;
+      });
+    }
   }
 }

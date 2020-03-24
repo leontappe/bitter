@@ -1,20 +1,18 @@
-import 'package:bitter/src/customers/customers_list_page.dart';
-import 'package:bitter/src/providers/inherited_provider.dart';
-import 'package:bitter/src/providers/mysql_customer_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'src/bills/bills_list_page.dart';
-import 'src/homepage.dart';
 import 'src/customers/customers_list_page.dart';
-import 'src/models/customer.dart';
+import 'src/homepage.dart';
+import 'src/providers/inherited_database.dart';
+import 'src/providers/mysql_provider.dart';
 
 void main() => runApp(Bitter());
 
 class Bitter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return InheritedProvider<Customer>(
-      provider: MySQLCustomerProvider(),
+    return InheritedDatabase<MySqlProvider>(
+      provider: MySqlProvider(),
       child: MaterialApp(
         title: 'bitter',
         theme: ThemeData(

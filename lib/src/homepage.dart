@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:bitter/src/providers/mysql_customer_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 
-import 'models/customer.dart';
-import 'providers/inherited_provider.dart';
+import 'providers/inherited_database.dart';
+import 'providers/mysql_provider.dart';
+import 'repositories/customer_repository.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -15,21 +15,6 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   PackageInfo packageInfo;
-
-  @override
-  void initState() {
-    super.initState();
-    if (!kIsWeb) if (Platform.isAndroid || Platform.isIOS) initPackageInfo();
-    initDb();
-  }
-
-  Future<void> initDb() async {
-    await Future<dynamic>.delayed(Duration(seconds: 1));
-    final provider =
-        InheritedProvider.of<Customer>(context).provider as MySQLCustomerProvider;
-    await provider.open('bitter',
-        host: '127.0.0.1', port: 3306, user: 'ltappe', password: 'stehlen1');
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +75,20 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
+  Future<void> initDb() async {
+    await Future<dynamic>.delayed(Duration(seconds: 1));
+    final repo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    await repo.setUp();
+  }
+
   void initPackageInfo() async {
     packageInfo = await PackageInfo.fromPlatform();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (!kIsWeb) if (Platform.isAndroid || Platform.isIOS) initPackageInfo();
+    initDb();
   }
 }

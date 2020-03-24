@@ -1,7 +1,8 @@
+import 'package:bitter/src/providers/mysql_provider.dart';
 import 'package:flutter/material.dart';
 
-import '../providers/mysql_customer_provider.dart';
-import '../providers/inherited_provider.dart';
+import '../repositories/customer_repository.dart';
+import '../providers/inherited_database.dart';
 
 class CustomerAddingPage extends StatefulWidget {
   @override
@@ -11,7 +12,7 @@ class CustomerAddingPage extends StatefulWidget {
 class _CustomerAddingPageState extends State<CustomerAddingPage> {
   final _formKey = GlobalKey<FormState>();
 
-  MySQLCustomerProvider db;
+  CustomerRepository repo;
   int dropdownValue = 2;
 
   Customer newCustomer = Customer.empty();
@@ -165,7 +166,7 @@ class _CustomerAddingPageState extends State<CustomerAddingPage> {
   }
 
   Future<void> initDb() async {
-    db = InheritedProvider.of<Customer>(context).provider as MySQLCustomerProvider;
+    repo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
     //db = MySQLCustomerProvider();
     //await db.open('bitter', host: '127.0.0.1', port: 5432, user: 'ltappe', password: 'stehlen1');
   }
@@ -219,7 +220,7 @@ class _CustomerAddingPageState extends State<CustomerAddingPage> {
 
   Future<bool> onSaveCustomer() async {
     if (_formKey.currentState.validate()) {
-      await db.insert(newCustomer);
+      await repo.insert(newCustomer);
       Navigator.pop<bool>(context, true);
       return true;
     }

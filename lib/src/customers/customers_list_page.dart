@@ -1,8 +1,9 @@
-import 'package:bitter/src/providers/inherited_provider.dart';
+import 'package:bitter/src/providers/mysql_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../providers/mysql_customer_provider.dart';
+import '../providers/inherited_database.dart';
+import '../repositories/customer_repository.dart';
 import 'customer_adding.dart';
 import 'customer_page.dart';
 
@@ -14,7 +15,7 @@ class CustomersListPage extends StatefulWidget {
 }
 
 class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindingObserver {
-  MySQLCustomerProvider db;
+  CustomerRepository repo;
   List<Customer> customers = [];
 
   bool searchEnabled = false;
@@ -68,22 +69,19 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
     );
   }
 
-  Future<void> initDb() async {
-    db = InheritedProvider.of<Customer>(context).provider as MySQLCustomerProvider;
-    //await db.open('bitter', host: '127.0.0.1', port: 5432, user: 'ltappe');
-    //await db.open('bitter', host: '127.0.0.1', port: 3306, user: 'ltappe', password: 'stehlen1');
-    //_insertTestData();
-    await onGetCustomers();
-  }
-
   @override
   void didChangeDependencies() {
     initDb();
     super.didChangeDependencies();
   }
 
+  Future<void> initDb() async {
+    repo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    await onGetCustomers();
+  }
+
   Future<void> onGetCustomers() async {
-    customers = await db.select();
+    customers = await repo.select();
     setState(() {
       return customers;
     });
@@ -108,7 +106,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
   }
 
   Future<void> onSearchChanged(String value) async {
-    customers = await db.select(searchQuery: value);
+    customers = await repo.select(searchQuery: value);
     setState(() {
       return customers;
     });
@@ -126,31 +124,5 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
     if (!searchEnabled) {
       await onGetCustomers();
     }
-  }
-
-  Future<void> _insertTestData() async {
-    await db.insert(
-      Customer(
-          name: 'Leon',
-          surname: 'Tappe',
-          gender: Gender.male,
-          address: 'Warburger Straße 100',
-          zipCode: 33098,
-          city: 'Paderborn',
-          email: 'ltappe@mail.upb.de'),
-    );
-
-    await db.insert(
-      Customer(
-          company: 'AStA Paderborn',
-          organizationUnit: 'IT',
-          name: 'Leon',
-          surname: 'Tappe',
-          gender: Gender.male,
-          address: 'Warburger Straße 100',
-          zipCode: 33098,
-          city: 'Paderborn',
-          email: 'ltappe@asta.upb.de'),
-    );
   }
 }
