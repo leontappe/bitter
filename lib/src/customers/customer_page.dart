@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../providers/pgsql_customer_provider.dart';
+import '../providers/inherited_provider.dart';
+import '../providers/mysql_customer_provider.dart';
 
 class CustomerPage extends StatefulWidget {
   final int id;
@@ -14,7 +15,7 @@ class CustomerPage extends StatefulWidget {
 class _CustomerPageState extends State<CustomerPage> {
   final _formKey = GlobalKey<FormState>();
 
-  PgSQLCustomerProvider db;
+  MySQLCustomerProvider db;
   Customer customer;
 
   int dropdownValue = 2;
@@ -240,8 +241,10 @@ class _CustomerPageState extends State<CustomerPage> {
   }
 
   void initDb() async {
-    db = PgSQLCustomerProvider();
-    await db.open('bitter', host: '127.0.0.1', port: 5432, user: 'ltappe');
+    //await Future<dynamic>.delayed(Duration(milliseconds: 100));
+    db = InheritedProvider.of<Customer>(context).provider as MySQLCustomerProvider;
+    //db = MySQLCustomerProvider();
+    //await db.open('bitter', host: '127.0.0.1', port: 5432, user: 'ltappe', password: 'stehlen1');
     customer = await db.selectSingle(widget.id);
     if (customer == null) {
       Navigator.pop(context);
@@ -255,9 +258,9 @@ class _CustomerPageState extends State<CustomerPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
     initDb();
+    super.didChangeDependencies();
   }
 
   void onSaveCustomer() async {

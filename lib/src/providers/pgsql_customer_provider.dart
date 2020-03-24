@@ -19,7 +19,6 @@ class PgSQLCustomerProvider implements BaseProvider<Customer> {
 
   @override
   Future<Customer> insert(Customer customer) async {
-    print(customer.toMap);
     final result = await conn.execute(
       'INSERT INTO $tableName (${customer.company != null ? 'company,' : ''}${customer.organizationUnit != null ? 'organization_unit,' : ''}name, surname, gender, address, zip_code, city, ${customer.country != null ? 'country,' : ''}${customer.telephone != null ? 'telephone,' : ''}${customer.fax != null ? 'fax,' : ''}${customer.mobile != null ? 'mobile,' : ''}email) VALUES (${customer.company != null ? '@company,' : ''}${customer.organizationUnit != null ? '@organization_unit,' : ''}@name, @surname, @gender, @address, @zip_code, @city, ${customer.country != null ? '@country,' : ''}${customer.telephone != null ? '@telephone,' : ''}${customer.fax != null ? '@fax,' : ''}${customer.mobile != null ? '@mobile,' : ''}@email)',
       substitutionValues: customer.toShortMap,
@@ -63,7 +62,6 @@ class PgSQLCustomerProvider implements BaseProvider<Customer> {
       ));
     } else {
       maps = await conn.mappedResultsQuery('SELECT * FROM $tableName');
-      print(maps);
       return List.from(
           maps.map<Customer>((Map item) => Customer.fromMap(item['customers'] as Map)));
     }

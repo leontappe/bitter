@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../providers/pgsql_customer_provider.dart';
+import '../providers/mysql_customer_provider.dart';
+import '../providers/inherited_provider.dart';
 
 class CustomerAddingPage extends StatefulWidget {
   @override
@@ -10,7 +11,7 @@ class CustomerAddingPage extends StatefulWidget {
 class _CustomerAddingPageState extends State<CustomerAddingPage> {
   final _formKey = GlobalKey<FormState>();
 
-  PgSQLCustomerProvider db;
+  MySQLCustomerProvider db;
   int dropdownValue = 2;
 
   Customer newCustomer = Customer.empty();
@@ -163,16 +164,22 @@ class _CustomerAddingPageState extends State<CustomerAddingPage> {
     );
   }
 
-  Future<void> dbInit() async {
-    db = PgSQLCustomerProvider();
-    await db.open('bitter', host: '127.0.0.1', port: 5432, user: 'ltappe');
+  Future<void> initDb() async {
+    db = InheritedProvider.of<Customer>(context).provider as MySQLCustomerProvider;
+    //db = MySQLCustomerProvider();
+    //await db.open('bitter', host: '127.0.0.1', port: 5432, user: 'ltappe', password: 'stehlen1');
+  }
+
+  @override
+  void didChangeDependencies() {
+    initDb();
+    super.didChangeDependencies();
   }
 
   @override
   void initState() {
     super.initState();
     newCustomer.gender = Gender.diverse;
-    dbInit();
   }
 
   void onPopRoute(BuildContext context) async {
@@ -194,9 +201,7 @@ class _CustomerAddingPageState extends State<CustomerAddingPage> {
           Navigator.pop<bool>(context, false);
           break;
         case 1:
-          if (await onSaveCustomer()) {
-            Navigator.pop<bool>(context, true);
-          } else {
+          if (!await onSaveCustomer()) {
             Scaffold.of(context).showSnackBar(const SnackBar(
               content: Text(
                   'Es gibt noch Fehler und/oder fehlende Felder in dem Formular, sodass gerade nicht gespeichert werden kann.'),

@@ -46,21 +46,22 @@ class Customer {
 
   factory Customer.fromMap(Map map) => Customer(
         id: map['id'] as int,
-        company: map['company'] as String,
-        organizationUnit: map['organization_unit'] as String,
-        name: map['name'] as String,
-        surname: map['surname'] as String,
+        company: (map['company'] != null) ? map['company'].toString() : null,
+        organizationUnit:
+            (map['organization_unit'] != null) ? map['organization_unit'].toString() : null,
+        name: map['name'].toString(),
+        surname: map['surname'].toString(),
         gender: (map['gender'] == 0)
             ? Gender.male
             : (map['gender'] == 1) ? Gender.diverse : Gender.diverse,
-        address: map['address'] as String,
+        address: map['address'].toString(),
         zipCode: map['zip_code'] as int,
-        city: map['city'] as String,
-        country: map['country'] as String,
-        telephone: map['telephone'] as String,
-        fax: map['fax'] as String,
-        mobile: map['mobile'] as String,
-        email: map['email'] as String,
+        city: map['city'].toString(),
+        country: (map['country'] != null) ? map['country'].toString() : null,
+        telephone: (map['telephone'] != null) ? map['telephone'].toString() : null,
+        fax: (map['fax'] != null) ? map['fax'].toString() : null,
+        mobile: (map['mobile'] != null) ? map['mobile'].toString() : null,
+        email: map['email'].toString(),
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{

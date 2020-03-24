@@ -1,7 +1,8 @@
+import 'package:bitter/src/providers/inherited_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../providers/pgsql_customer_provider.dart';
+import '../providers/mysql_customer_provider.dart';
 import 'customer_adding.dart';
 import 'customer_page.dart';
 
@@ -13,7 +14,7 @@ class CustomersListPage extends StatefulWidget {
 }
 
 class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindingObserver {
-  PgSQLCustomerProvider db;
+  MySQLCustomerProvider db;
   List<Customer> customers = [];
 
   bool searchEnabled = false;
@@ -68,16 +69,17 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
   }
 
   Future<void> initDb() async {
-    db = PgSQLCustomerProvider();
-    await db.open('bitter', host: '127.0.0.1', port: 5432, user: 'ltappe');
+    db = InheritedProvider.of<Customer>(context).provider as MySQLCustomerProvider;
+    //await db.open('bitter', host: '127.0.0.1', port: 5432, user: 'ltappe');
+    //await db.open('bitter', host: '127.0.0.1', port: 3306, user: 'ltappe', password: 'stehlen1');
     //_insertTestData();
     await onGetCustomers();
   }
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
     initDb();
+    super.didChangeDependencies();
   }
 
   Future<void> onGetCustomers() async {

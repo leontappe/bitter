@@ -30,7 +30,6 @@ class CustomerProvider implements BaseProvider<Customer> {
 
   @override
   Future open(String path) async {
-    print(await getDatabasesPath() + '/customers_$path');
     db = await openDatabase(path, version: 1, onCreate: (Database db, int version) async {
       await db.execute('''
 create table $customerTable (
