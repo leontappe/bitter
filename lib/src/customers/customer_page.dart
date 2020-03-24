@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../providers/customer_db.dart';
+import '../providers/pgsql_customer_provider.dart';
 
 class CustomerPage extends StatefulWidget {
   final int id;
@@ -14,7 +14,7 @@ class CustomerPage extends StatefulWidget {
 class _CustomerPageState extends State<CustomerPage> {
   final _formKey = GlobalKey<FormState>();
 
-  CustomerProvider db;
+  PgSQLCustomerProvider db;
   Customer customer;
 
   int dropdownValue = 2;
@@ -240,8 +240,8 @@ class _CustomerPageState extends State<CustomerPage> {
   }
 
   void initDb() async {
-    db = CustomerProvider();
-    await db.open('bitter5.db');
+    db = PgSQLCustomerProvider();
+    await db.open('bitter', host: '127.0.0.1', port: 5432, user: 'ltappe');
     customer = await db.selectSingle(widget.id);
     if (customer == null) {
       Navigator.pop(context);

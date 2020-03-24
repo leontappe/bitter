@@ -79,6 +79,22 @@ class Customer {
         'email': email,
       };
 
+  Map<String, dynamic> get toShortMap => <String, dynamic>{
+        if (company != null) 'company': company,
+        if (organizationUnit != null) 'organization_unit': organizationUnit,
+        'name': name,
+        'surname': surname,
+        'gender': gender.index,
+        'address': address,
+        'zip_code': zipCode,
+        'city': city,
+        if (country != null) 'country': country,
+        if (telephone != null) 'telephone': telephone,
+        if (fax != null) 'fax': fax,
+        if (mobile != null) 'mobile': mobile,
+        'email': email,
+      };
+
   @override
   String toString() => '[Customer $id $toMap]';
 }

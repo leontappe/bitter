@@ -12,8 +12,8 @@ dependencies:
   package_info: ^0.4.0+16
   pdf: ^1.5.0
   image: ^2.1.4
-  database: ^0.3.2
-  database_adapter_sqlite: ^0.1.0
+  postgres: ^2.1.0
+  meta: ^1.1.8
 
 dev_dependencies:
   flutter_test:

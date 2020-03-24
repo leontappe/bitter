@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../providers/customer_provider.dart';
+import '../providers/pgsql_customer_provider.dart';
 
 class CustomerAddingPage extends StatefulWidget {
   @override
@@ -10,7 +10,7 @@ class CustomerAddingPage extends StatefulWidget {
 class _CustomerAddingPageState extends State<CustomerAddingPage> {
   final _formKey = GlobalKey<FormState>();
 
-  CustomerProvider db;
+  PgSQLCustomerProvider db;
   int dropdownValue = 2;
 
   Customer newCustomer = Customer.empty();
@@ -164,8 +164,8 @@ class _CustomerAddingPageState extends State<CustomerAddingPage> {
   }
 
   Future<void> dbInit() async {
-    db = CustomerProvider();
-    await db.open('bitter5.db');
+    db = PgSQLCustomerProvider();
+    await db.open('bitter', host: '127.0.0.1', port: 5432, user: 'ltappe');
   }
 
   @override
@@ -215,6 +215,7 @@ class _CustomerAddingPageState extends State<CustomerAddingPage> {
   Future<bool> onSaveCustomer() async {
     if (_formKey.currentState.validate()) {
       await db.insert(newCustomer);
+      Navigator.pop<bool>(context, true);
       return true;
     }
     return false;

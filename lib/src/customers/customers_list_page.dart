@@ -1,6 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../providers/customer_db.dart';
+import '../providers/pgsql_customer_provider.dart';
 import 'customer_adding.dart';
 import 'customer_page.dart';
 
@@ -12,7 +13,7 @@ class CustomersListPage extends StatefulWidget {
 }
 
 class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindingObserver {
-  CustomerProvider db;
+  PgSQLCustomerProvider db;
   List<Customer> customers = [];
 
   bool searchEnabled = false;
@@ -67,8 +68,8 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
   }
 
   Future<void> initDb() async {
-    db = CustomerProvider();
-    await db.open('bitter5.db');
+    db = PgSQLCustomerProvider();
+    await db.open('bitter', host: '127.0.0.1', port: 5432, user: 'ltappe');
     //_insertTestData();
     await onGetCustomers();
   }
