@@ -1,7 +1,5 @@
 import 'package:flutter/widgets.dart';
 
-import 'database_provider.dart';
-
 class InheritedDatabase<T> extends InheritedWidget {
   final T provider;
 

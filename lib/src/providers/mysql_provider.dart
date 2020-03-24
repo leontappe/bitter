@@ -7,8 +7,34 @@ class MySqlProvider extends DatabaseProvider {
   MySqlConnection conn;
 
   @override
+  Future<void> createTable(
+      String table, List<String> columns, List<String> types, String primaryKey,
+      {List<bool> nullable}) async {
+    var cols = '';
+    var i = 0;
+    for (var item in columns) {
+      cols = '$cols$item ${types[i]}';
+      if (item == primaryKey) {
+        cols = '$cols PRIMARY KEY AUTO_INCREMENT';
+      }
+      if (nullable != null && !nullable[i]) {
+        cols = '$cols NOT NULL';
+      }
+      cols = '$cols, ';
+      i++;
+    }
+    cols = cols.substring(0, cols.length - 2);
+    await conn.query('CREATE TABLE IF NOT EXISTS $table($cols);');
+  }
+
+  @override
   Future<int> delete(String table, int id) async {
     return (await conn.query('DELETE FROM $table WHERE id = ?', [id])).affectedRows;
+  }
+
+  @override
+  Future<void> dropTable(String table) async {
+    await conn.query('DROP TABLE $table;');
   }
 
   @override
@@ -61,26 +87,5 @@ class MySqlProvider extends DatabaseProvider {
 
     return (await conn.query('UPDATE $table SET $cols WHERE id=?;', <dynamic>[...values, id]))
         .affectedRows;
-  }
-
-  @override
-  Future<void> createTable(
-      String table, List<String> columns, List<String> types, String primaryKey,
-      {List<bool> nullable}) async {
-    var cols = '';
-    var i = 0;
-    for (var item in columns) {
-      cols = '$cols$item ${types[i]}';
-      if (item == primaryKey) {
-        cols = '$cols PRIMARY KEY AUTO_INCREMENT';
-      }
-      if (nullable != null && !nullable[i]) {
-        cols = '$cols NOT NULL';
-      }
-      cols = '$cols, ';
-      i++;
-    }
-    cols = cols.substring(0, cols.length - 2);
-    await conn.query('CREATE TABLE IF NOT EXISTS $table($cols);');
   }
 }

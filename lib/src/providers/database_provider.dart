@@ -14,4 +14,6 @@ abstract class DatabaseProvider {
   Future<void> createTable(
       String table, List<String> columns, List<String> types, String primaryKey,
       {List<bool> nullable});
+
+  Future<void> dropTable(String table);
 }
