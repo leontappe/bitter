@@ -6,7 +6,7 @@ class InheritedDatabase<T> extends InheritedWidget {
   InheritedDatabase({this.provider, Widget child}) : super(child: child);
 
   @override
-  bool updateShouldNotify(InheritedWidget oldWidget) => true;
+  bool updateShouldNotify(InheritedWidget oldWidget) => false;
 
   static InheritedDatabase<T> of<T>(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<InheritedDatabase<T>>();

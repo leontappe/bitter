@@ -81,7 +81,7 @@ class _CustomerPageState extends State<CustomerPage> {
             Text(' Kunde bearbeiten', style: Theme.of(context).textTheme.headline4),
             if (newCustomer.name != null)
               Padding(
-                padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+                padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -220,16 +220,17 @@ class _CustomerPageState extends State<CustomerPage> {
                         },
                       ),
                       TextFormField(
-                          initialValue: newCustomer.email,
-                          maxLines: 1,
-                          decoration: InputDecoration(labelText: 'E-Mail'),
-                          validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                          onChanged: (String input) {
-                            newCustomer.email = input;
-                            _formKey.currentState.validate();
-                            dirty = true;
-                            changed = true;
-                          }),
+                        initialValue: newCustomer.email,
+                        maxLines: 1,
+                        decoration: InputDecoration(labelText: 'E-Mail'),
+                        validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                        onChanged: (String input) {
+                          newCustomer.email = input;
+                          _formKey.currentState.validate();
+                          dirty = true;
+                          changed = true;
+                        },
+                      ),
                     ],
                   ),
                 ),

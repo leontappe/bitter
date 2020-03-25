@@ -76,7 +76,6 @@ class _HomepageState extends State<Homepage> {
   }
 
   Future<void> initDb() async {
-    await Future<dynamic>.delayed(Duration(seconds: 1));
     final repo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
     await repo.setUp();
   }
@@ -86,9 +85,14 @@ class _HomepageState extends State<Homepage> {
   }
 
   @override
+  void didChangeDependencies() {
+    initDb();
+    super.didChangeDependencies();
+  }
+
+  @override
   void initState() {
     super.initState();
     if (!kIsWeb) if (Platform.isAndroid || Platform.isIOS) initPackageInfo();
-    initDb();
   }
 }
