@@ -1,6 +1,7 @@
 import 'package:meta/meta.dart';
 
 class Vendor {
+  int id;
   String name;
   String address;
   String city;
@@ -14,6 +15,7 @@ class Vendor {
   String fullAdress;
 
   Vendor({
+    this.id,
     @required this.name,
     @required this.address,
     @required this.city,
@@ -30,16 +32,17 @@ class Vendor {
       name: null, address: null, city: null, iban: null, bic: null, bank: null, fullAdress: null);
 
   factory Vendor.fromMap(Map map) => Vendor(
-        name: map['name'] as String,
-        address: map['address'] as String,
-        city: map['city'] as String,
-        iban: map['iban'] as String,
-        bic: map['bic'] as String,
-        bank: map['bank'] as String,
-        taxNr: map['tax_nr'] as String,
-        vatNr: map['vat_nr'] as String,
-        website: map['website'] as String,
-        fullAdress: map['full_address'] as String,
+        id: map['id'] as int,
+        name: map['name'].toString(),
+        address: map['address'].toString(),
+        city: map['city'].toString(),
+        iban: map['iban'].toString(),
+        bic: map['bic'].toString(),
+        bank: map['bank'].toString(),
+        taxNr: map['tax_nr'].toString(),
+        vatNr: map['vat_nr'].toString(),
+        website: (map['website'] != null) ? map['website'].toString() : null,
+        fullAdress: map['full_address'].toString(),
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
@@ -56,5 +59,5 @@ class Vendor {
       };
 
   @override
-  String toString() => '[Vendor $toMap]';
+  String toString() => '[Vendor $id $toMap]';
 }

@@ -49,7 +49,7 @@ class CustomerRepository<T extends DatabaseProvider> {
     );
 
     await db.createTable(
-      'customers',
+      tableName,
       [
         'id',
         'company',
