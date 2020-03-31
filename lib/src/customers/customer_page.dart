@@ -1,4 +1,4 @@
-import 'package:bitter/src/providers/mysql_provider.dart';
+import '../providers/mysql_provider.dart';
 import 'package:flutter/material.dart';
 
 import '../providers/inherited_database.dart';

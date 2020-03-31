@@ -1,4 +1,5 @@
 import '../models/vendor.dart';
+import '../mysql_credentials.dart';
 import '../providers/database_provider.dart';
 
 const String tableName = 'vendors';
@@ -35,11 +36,11 @@ class VendorRepository<T extends DatabaseProvider> {
 
   Future<void> setUp() async {
     await db.open(
-      'bitter',
-      host: '127.0.0.1',
-      port: 3306,
-      user: 'ltappe',
-      password: 'stehlen1',
+      mySqlSettings.database,
+      host: mySqlSettings.host,
+      port: mySqlSettings.port,
+      user: mySqlSettings.user,
+      password: mySqlSettings.password,
     );
 
     await db.createTable(

@@ -24,7 +24,9 @@ class MySqlProvider extends DatabaseProvider {
       i++;
     }
     cols = cols.substring(0, cols.length - 2);
-    await conn.query('CREATE TABLE IF NOT EXISTS $table($cols);');
+    final query = 'CREATE TABLE IF NOT EXISTS $table($cols);';
+    //print(query);
+    await conn.query(query);
   }
 
   @override
