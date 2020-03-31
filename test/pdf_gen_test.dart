@@ -9,9 +9,14 @@ void main() {
   final pdf = PdfGenerator();
   Document doc;
 
-  final logo = File('logo.png');
+  final logo = File('test/logo.png');
 
-  doc = pdf.createDocumentFromBill(exampleBill, exampleVendor, rightHeader: logo.readAsBytesSync());
+  doc = pdf.createDocumentFromBill(
+    exampleBill,
+    exampleCustomer,
+    exampleVendor,
+    rightHeader: logo.readAsBytesSync(),
+  );
 
   var file = File('./test.pdf');
 

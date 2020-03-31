@@ -5,7 +5,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
 import '../../fonts/LiberationSans.dart';
-import '../models/bill.dart';
+import '../models/customer.dart';
+import '../models/draft.dart';
 import '../models/vendor.dart';
 
 class PdfGenerator {
@@ -19,7 +20,7 @@ class PdfGenerator {
     ttfSans = Font.ttf(sansData);
   }
 
-  Document createDocumentFromBill(Bill bill, Vendor vendor,
+  Document createDocumentFromBill(Draft bill, Customer customer, Vendor vendor,
       {Uint8List leftHeader, Uint8List centerHeader, Uint8List rightHeader}) {
     final fontsize = 10.0;
     final doc = Document();
@@ -45,30 +46,30 @@ class PdfGenerator {
                       decoration: TextDecoration.underline, fontSize: fontsize, font: ttfSans),
                   margin: EdgeInsets.only(bottom: 8.0),
                 ),
-                if (bill.customer.company != null)
+                if (customer.company != null)
                   Paragraph(
-                    text: bill.customer.company + ' ' + bill.customer.organizationUnit,
+                    text: customer.company + ' ' + customer.organizationUnit,
                     style: TextStyle(fontSize: fontsize),
                     margin: EdgeInsets.all(0.0),
                   ),
                 Paragraph(
-                  text: bill.customer.name + ' ' + bill.customer.surname,
+                  text: customer.name + ' ' + customer.surname,
                   style: TextStyle(fontSize: fontsize),
                   margin: EdgeInsets.all(0.0),
                 ),
                 Paragraph(
-                  text: bill.customer.address,
+                  text: customer.address,
                   style: TextStyle(fontSize: fontsize),
                   margin: EdgeInsets.all(0.0),
                 ),
                 Paragraph(
-                  text: bill.customer.zipCode.toString() + ' ' + bill.customer.city,
+                  text: customer.zipCode.toString() + ' ' + customer.city,
                   style: TextStyle(fontSize: fontsize),
                   margin: EdgeInsets.all(0.0),
                 ),
-                if (bill.customer.country != null)
+                if (customer.country != null)
                   Paragraph(
-                    text: bill.customer.country,
+                    text: customer.country,
                     style: TextStyle(fontSize: fontsize),
                     margin: EdgeInsets.only(bottom: 8.0),
                   ),
@@ -81,12 +82,12 @@ class PdfGenerator {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Paragraph(
-                  text: 'Kundennummer: ${bill.customer.id}',
+                  text: 'Kundennummer: ${bill.customer}',
                   style: TextStyle(fontSize: fontsize),
                   margin: EdgeInsets.all(0.0),
                 ),
                 Paragraph(
-                  text: 'Bearbeiter*in:', //TODO
+                  text: 'Bearbeiter*in: ${bill.editor}',
                   style: TextStyle(fontSize: fontsize),
                   margin: EdgeInsets.all(0.0),
                 ),
@@ -99,7 +100,7 @@ class PdfGenerator {
               ],
             ),
           ),
-          Header(level: 1, text: 'Rechnung Nr. ${bill.id}', textStyle: TextStyle(font: ttfSans)),
+          Header(level: 1, text: 'Rechnung ${bill.billNr}', textStyle: TextStyle(font: ttfSans)),
           Paragraph(text: 'Sehr geehrte Damen und Herren,', style: TextStyle(font: ttfSans)),
           Paragraph(
               text: 'hiermit berechnen wir Ihnen die folgenden Positionen:',
@@ -130,8 +131,8 @@ class PdfGenerator {
     return doc;
   }
 
-  List<int> getBytesFromBill(Bill bill, Vendor vendor) =>
-      createDocumentFromBill(bill, vendor).save();
+  List<int> getBytesFromBill(Draft bill, Customer customer, Vendor vendor) =>
+      createDocumentFromBill(bill, customer, vendor).save();
 
   Widget _createHeaderFromImages(PdfDocument doc,
       {Uint8List left, Uint8List center, Uint8List right}) {
