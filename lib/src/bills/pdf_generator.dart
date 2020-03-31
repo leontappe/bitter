@@ -40,7 +40,7 @@ class PdfGenerator {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Paragraph(
-                  text: vendor.fullAdress,
+                  text: vendor.fullAddress,
                   style: TextStyle(
                       decoration: TextDecoration.underline, fontSize: fontsize, font: ttfSans),
                   margin: EdgeInsets.only(bottom: 8.0),

@@ -7,7 +7,7 @@ import 'src/providers/inherited_database.dart';
 import 'src/providers/mysql_provider.dart';
 import 'src/settings/database_page.dart';
 import 'src/settings/settings_page.dart';
-import 'src/settings/vendors_page.dart';
+import 'src/settings/vendors/vendors_list_page.dart';
 
 void main() => runApp(Bitter());
 
