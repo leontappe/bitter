@@ -10,16 +10,16 @@ class SettingsPage extends StatelessWidget {
       body: ListView(children: <Widget>[
         ListTile(
           title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
-          subtitle: Text(
-              'Editieren und Erstellen verschiendener Identitäten zur Rechnungsstellung'),
+          subtitle:
+              Text('Editieren und Erstellen verschiendener Identitäten zur Rechnungsstellung'),
           onTap: () => Navigator.pushNamed(context, '/settings/vendors'),
         ),
-        ListTile(
+        /*ListTile(
           title: Text('Datenbankeinstellungen', style: Theme.of(context).textTheme.headline6),
           subtitle: Text(
               'Einstellen der Datenbankverbindung'),
           onTap: () => Navigator.pushNamed(context, '/settings/database'),
-        ),
+        ),*/
       ]),
     );
   }

@@ -7,6 +7,7 @@ import 'package:package_info/package_info.dart';
 import 'providers/inherited_database.dart';
 import 'providers/mysql_provider.dart';
 import 'repositories/customer_repository.dart';
+import 'repositories/settings_repository.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -97,6 +98,8 @@ class _HomepageState extends State<Homepage> {
   Future<void> initDb() async {
     final repo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
     await repo.setUp();
+    final settings = SettingsRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    await settings.setUp();
   }
 
   void initPackageInfo() async {
