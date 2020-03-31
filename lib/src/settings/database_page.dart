@@ -1,4 +1,7 @@
-import 'package:bitter/src/models/mysql_settings.dart';
+import '../models/mysql_settings.dart';
+import '../providers/inherited_database.dart';
+import '../providers/mysql_provider.dart';
+import '../repositories/settings_repository.dart';
 import 'package:flutter/material.dart';
 
 class DatabasePage extends StatefulWidget {
@@ -8,6 +11,8 @@ class DatabasePage extends StatefulWidget {
 
 class _DatabasePageState extends State<DatabasePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  SettingsRepository repo;
 
   MySqlSettings settings;
   MySqlSettings newSettings;
@@ -26,7 +31,7 @@ class _DatabasePageState extends State<DatabasePage> {
           IconButton(
               icon: Icon(Icons.save, color: Colors.white),
               onPressed: onSaveConfig,
-              tooltip: 'Neuen Kunden abspeichern'),
+              tooltip: 'Einstellungen abspeichern'),
         ],
       ),
       body: Padding(
@@ -37,6 +42,7 @@ class _DatabasePageState extends State<DatabasePage> {
             itemExtent: 64.0,
             children: <Widget>[
               TextFormField(
+                initialValue: newSettings.host,
                 maxLines: 1,
                 decoration: InputDecoration(labelText: 'Host/IP'),
                 validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
@@ -46,6 +52,7 @@ class _DatabasePageState extends State<DatabasePage> {
                 },
               ),
               TextFormField(
+                initialValue: newSettings.port.toString(),
                 maxLines: 1,
                 decoration: InputDecoration(labelText: 'Port'),
                 validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
@@ -78,6 +85,7 @@ class _DatabasePageState extends State<DatabasePage> {
                 },
               ),
               TextFormField(
+                initialValue: newSettings.database,
                 maxLines: 1,
                 decoration: InputDecoration(labelText: 'Datenbankname'),
                 validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
@@ -95,15 +103,29 @@ class _DatabasePageState extends State<DatabasePage> {
   }
 
   @override
+  void didChangeDependencies() {
+    repo = SettingsRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    super.didChangeDependencies();
+  }
+
+  @override
   void initState() {
     super.initState();
     dirty = false;
-    newSettings = MySqlSettings.empty();
+    newSettings = MySqlSettings(
+      host: '127.0.0.1',
+      port: 3306,
+      database: 'bitter',
+      password: null,
+      user: null,
+    );
   }
 
   Future<bool> onSaveConfig() async {
     if (_formKey.currentState.validate()) {
       settings = newSettings;
+      await repo.setMySqlSettings(settings);
+      dirty = false;
       return true;
     }
     return false;
