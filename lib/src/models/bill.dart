@@ -1,33 +1,30 @@
-import 'package:meta/meta.dart';
+import 'dart:convert';
 
-import 'customer.dart';
-import 'item.dart';
+import 'package:meta/meta.dart';
 
 class Bill {
   int id;
 
-  Customer customer;
-  List<Item> items;
+  String billNr;
+  List<int> file;
+  final DateTime created;
 
-  int tax;
+  Bill({this.id, @required this.billNr, @required this.file, @required this.created});
 
-  int get sum {
-    var sum = 0;
-    for (var item in items) {
-      sum += item.sum;
-    }
-    return sum;
-  }
-
-  Bill({this.id, @required this.customer, @required this.items, @required this.tax});
+  factory Bill.empty() => Bill(billNr: null, created: null, file: null);
 
   factory Bill.fromMap(Map map) => Bill(
-      customer: Customer.fromMap(map['customer'] as Map),
-      items: map['items'] as List<Item>,
-      tax: map['tax'] as int);
+        id: map['id'] as int,
+        billNr: map['bill_nr'].toString(),
+        file: base64.decode(map['file'].toString()),
+        created: DateTime.parse(map['created'].toString()),
+      );
 
-  Map<String, dynamic> get toMap =>
-      <String, dynamic>{'customer': customer.toMap, 'items': items, 'tax': tax};
+  Map<String, dynamic> get toMap => <String, dynamic>{
+        'bill_nr': billNr,
+        'file': base64.encode(file),
+        'created': created,
+      };
 
   @override
   String toString() => '[Bill $id $toMap]';
