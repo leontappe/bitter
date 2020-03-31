@@ -82,7 +82,7 @@ class _VendorAddingPageState extends State<VendorAddingPage> {
                   }),
               TextFormField(
                   maxLines: 1,
-                  decoration: InputDecoration(labelText: 'BIX'),
+                  decoration: InputDecoration(labelText: 'BIC'),
                   validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                   onChanged: (String input) {
                     newVendor.bic = input;

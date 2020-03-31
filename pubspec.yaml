@@ -1,5 +1,7 @@
 name: bitter
-description: A billing app with local database, customer management and PDF output
+authors:
+  - Leon Tappe <ltappe@mail.upb.de>
+description: A billing app with interchangeable database, customer management and PDF output
 version: 0.0.1+1
 
 environment:
