@@ -8,6 +8,8 @@ class BillRepository<T extends DatabaseProvider> {
 
   BillRepository(this.db);
 
+  //TODO: the rest
+
   Future<void> setUp() async {
     await db.open(
       mySqlSettings.database,
