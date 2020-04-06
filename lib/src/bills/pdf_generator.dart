@@ -48,7 +48,7 @@ class PdfGenerator {
                 ),
                 if (customer.company != null)
                   Paragraph(
-                    text: customer.company + ' ' + customer.organizationUnit,
+                    text: '${customer.company} ${customer.organizationUnit ?? ''}',
                     style: TextStyle(fontSize: fontsize),
                     margin: EdgeInsets.all(0.0),
                   ),

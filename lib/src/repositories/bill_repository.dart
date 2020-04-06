@@ -1,5 +1,8 @@
+import '../models/bill.dart';
 import '../mysql_credentials.dart';
 import '../providers/database_provider.dart';
+
+export '../models/bill.dart';
 
 const String tableName = 'bills';
 
@@ -8,7 +11,25 @@ class BillRepository<T extends DatabaseProvider> {
 
   BillRepository(this.db);
 
-  //TODO: the rest
+  Future<Bill> insert(Bill bill) async {
+    bill.id = await db.insert(tableName, bill.toMap);
+    return bill;
+  }
+
+  Future<List<Bill>> select({String searchQuery}) async {
+    final results =
+        List<Bill>.from((await db.select(tableName)).map<Bill>((Map e) => Bill.fromMap(e)));
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      return List.from(
+          results.where((Bill d) => d.billNr.toLowerCase().contains(searchQuery.toLowerCase())));
+    } else {
+      return results;
+    }
+  }
+
+  Future<Bill> selectSingle(int id) async {
+    return Bill.fromMap(await db.selectSingle(tableName, id));
+  }
 
   Future<void> setUp() async {
     await db.open(
