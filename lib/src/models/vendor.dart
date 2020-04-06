@@ -13,6 +13,7 @@ class Vendor {
   String website;
 
   String fullAddress;
+  String billPrefix;
 
   Vendor({
     this.id,
@@ -26,6 +27,7 @@ class Vendor {
     this.vatNr,
     this.website,
     @required this.fullAddress,
+    @required this.billPrefix,
   });
 
   factory Vendor.empty() => Vendor(
@@ -36,6 +38,7 @@ class Vendor {
         bic: null,
         bank: null,
         fullAddress: null,
+        billPrefix: null,
       );
 
   factory Vendor.fromMap(Map map) => Vendor(
@@ -50,6 +53,7 @@ class Vendor {
         vatNr: map['vat_nr'].toString(),
         website: (map['website'] != null) ? map['website'].toString() : null,
         fullAddress: map['full_address'].toString(),
+        billPrefix: map['bill_prefix'].toString(),
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
@@ -63,6 +67,7 @@ class Vendor {
         'vat_nr': vatNr,
         'website': website,
         'full_address': fullAddress,
+        'bill_prefix': billPrefix,
       };
 
   @override

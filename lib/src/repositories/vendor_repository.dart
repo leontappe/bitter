@@ -57,9 +57,11 @@ class VendorRepository<T extends DatabaseProvider> {
         'vat_nr',
         'website',
         'full_address',
+        'bill_prefix',
       ],
       [
         'INTEGER',
+        'TEXT',
         'TEXT',
         'TEXT',
         'TEXT',
@@ -83,6 +85,7 @@ class VendorRepository<T extends DatabaseProvider> {
         false,
         false,
         true,
+        false,
         false,
       ],
     );

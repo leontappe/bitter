@@ -133,6 +133,15 @@ class _VendorAddingPageState extends State<VendorAddingPage> {
                     _formKey.currentState.validate();
                     dirty = true;
                   }),
+              TextFormField(
+                  maxLines: 1,
+                  decoration: InputDecoration(labelText: 'Prefix für Rechnungsnummern'),
+                  validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                  onChanged: (String input) {
+                    newVendor.billPrefix = input;
+                    _formKey.currentState.validate();
+                    dirty = true;
+                  }),
             ],
           ),
         ),
