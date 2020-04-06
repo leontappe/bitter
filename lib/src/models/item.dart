@@ -1,7 +1,7 @@
 import 'package:meta/meta.dart';
 
 class Item {
-  int id;
+  String id;
 
   String title;
   int price;
@@ -39,5 +39,5 @@ class Item {
       };
 
   @override
-  String toString() => '[Item $toMap]';
+  String toString() => '[Item $id $toMap]';
 }

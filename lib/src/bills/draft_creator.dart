@@ -1,14 +1,19 @@
-import 'package:bitter/src/models/item.dart';
-import 'package:bitter/src/models/vendor.dart';
-import 'package:bitter/src/repositories/vendor_repository.dart';
+import 'dart:async';
 
-import '../repositories/customer_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bills/item_editor_tile.dart';
+import '../bills/items_bloc.dart';
 import '../models/draft.dart';
+import '../models/item.dart';
+import '../models/vendor.dart';
 import '../providers/inherited_database.dart';
 import '../providers/mysql_provider.dart';
+import '../repositories/customer_repository.dart';
 import '../repositories/draft_repository.dart';
+import '../repositories/vendor_repository.dart';
+import 'item_creator_tile.dart';
 
 class DraftCreatorPage extends StatefulWidget {
   @override
@@ -22,15 +27,15 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   CustomerRepository customerRepo;
   VendorRepository vendorRepo;
 
-  Draft draft = Draft.empty();
+  ItemsBloc itemsBloc;
 
-  bool dirty = false;
+  Draft draft;
+  bool dirty;
 
-  List<Customer> _customers = [];
-  List<Vendor> _vendors = [];
-
-  Item newItem;
-  List<Item> _items = [];
+  bool customerIsset;
+  bool vendorIsset;
+  List<Customer> _customers;
+  List<Vendor> _vendors;
 
   @override
   Widget build(BuildContext context) {
@@ -52,31 +57,23 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
         child: Form(
           key: _formKey,
           child: ListView(
-            itemExtent: 64.0,
             children: <Widget>[
-              TextFormField(
-                maxLines: 1,
-                decoration: InputDecoration(labelText: 'Rechnungsnummer'),
-                validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                onChanged: (String input) {
-                  draft.billNr = input;
-                  _formKey.currentState.validate();
-                  dirty = true;
-                },
-              ),
-              TextFormField(
-                maxLines: 1,
-                decoration: InputDecoration(labelText: 'Bearbeiter*in'),
-                validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                onChanged: (String input) {
-                  draft.editor = input;
-                  _formKey.currentState.validate();
-                  dirty = true;
-                },
+              ListTile(
+                title: Text('Bearbeiter*in', style: Theme.of(context).textTheme.headline6),
+                subtitle: TextFormField(
+                  maxLines: 1,
+                  decoration: InputDecoration(hintText: 'Erika Musterfrau'),
+                  validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                  onChanged: (String input) {
+                    draft.editor = input;
+                    _formKey.currentState.validate();
+                    dirty = true;
+                  },
+                ),
               ),
               ListTile(
-                contentPadding: EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 16.0),
-                title: Text('Kunde'),
+                title: Text('Kunde', style: Theme.of(context).textTheme.headline6),
+                trailing: (customerIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
                 subtitle: DropdownButton<int>(
                   hint: Text('Kunden auswählen'),
                   isExpanded: true,
@@ -85,6 +82,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                     setState(() {
                       draft.customer = value;
                     });
+                    dirty = true;
+                    validateDropdowns();
                   },
                   items: <DropdownMenuItem<int>>[
                     ..._customers
@@ -98,8 +97,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                 ),
               ),
               ListTile(
-                contentPadding: EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 16.0),
-                title: Text('Verkäufer'),
+                title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
+                trailing: (vendorIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
                 subtitle: DropdownButton<int>(
                   hint: Text('Verkäufer auswählen'),
                   isExpanded: true,
@@ -108,6 +107,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                     setState(() {
                       draft.vendor = value;
                     });
+                    dirty = true;
+                    validateDropdowns();
                   },
                   items: <DropdownMenuItem<int>>[
                     ..._vendors
@@ -117,36 +118,43 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   ],
                 ),
               ),
-              Divider(),
+              ListTile(
+                title: Text('Standard-Steuersatz', style: Theme.of(context).textTheme.headline6),
+                trailing: Container(
+                  width: 80.0,
+                  height: 64.0,
+                  child: TextFormField(
+                    initialValue: '19',
+                    maxLines: 1,
+                    keyboardType: TextInputType.numberWithOptions(),
+                    decoration: InputDecoration(hintText: '19', suffixText: '%'),
+                    validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                    onChanged: (String input) {
+                      draft.tax = int.parse(input);
+                      _formKey.currentState.validate();
+                      dirty = true;
+                    },
+                  ),
+                ),
+              ),
               Text('Artikel', style: Theme.of(context).textTheme.headline6),
-              if (_items.isEmpty) ListTile(title: Text('Keine Artikel vorhanden')),
-              ..._items
-                  .map((Item i) => ListTile(
-                      title: Text(i.title), subtitle: Text('Steuer: ${i.tax.toString()}%')))
-                  .toList(),
-              TextFormField(
-                initialValue: newItem?.title ?? '',
-                maxLines: 1,
-                decoration: InputDecoration(
-                    labelText: 'Artikelname',
-                    suffix: IconButton(icon: Icon(Icons.add), onPressed: onAddItem)),
-                onChanged: (String input) {
-                  newItem.title = input;
-                },
+              BlocBuilder<ItemsBloc, ItemsState>(
+                bloc: itemsBloc,
+                builder: (BuildContext context, ItemsState state) => Column(
+                  children: <Widget>[
+                    if (state.items.isEmpty)
+                      ListTile(title: Text('Es wurden noch keine Artikel hinzugefügt')),
+                    ...state.items.map<ItemEditorTile>((Item e) => ItemEditorTile(
+                          item: e,
+                          defaultTax: draft.tax,
+                          itemChanged: (Item e) => itemsBloc.onUpdateItem(e),
+                          itemDeleted: (Item e) => itemsBloc.onRemoveItem(e.id),
+                        )),
+                  ],
+                ),
               ),
               Divider(),
-              TextFormField(
-                initialValue: '19',
-                maxLines: 1,
-                keyboardType: TextInputType.numberWithOptions(),
-                decoration: InputDecoration(labelText: 'Standard-Steuersatz', suffix: Text('%')),
-                validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                onChanged: (String input) {
-                  draft.tax = int.parse(input);
-                  _formKey.currentState.validate();
-                  dirty = true;
-                },
-              ),
+              ItemCreatorTile(defaultTax: draft.tax, itemAdded: onAddItem),
             ],
           ),
         ),
@@ -167,10 +175,35 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
 
     _customers = await customerRepo.select();
     _vendors = await vendorRepo.select();
-    newItem = Item.empty();
-    draft.tax = 19;
 
     setState(() => _customers);
+  }
+
+  @override
+  void initState() {
+    draft = Draft.empty();
+    draft.tax = 19;
+    _customers = [];
+    _vendors = [];
+    dirty = false;
+
+    itemsBloc = ItemsBloc();
+
+    super.initState();
+  }
+
+  void onAddItem(Item item) {
+    itemsBloc.onAddItem(item);
+    dirty = true;
+  }
+
+  bool validateDropdowns() {
+    setState(() {
+      vendorIsset = draft.vendor != null;
+      customerIsset = draft.customer != null;
+    });
+
+    return vendorIsset && customerIsset;
   }
 
   Future<void> onPopRoute(BuildContext context) async {
@@ -209,22 +242,13 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   }
 
   Future<bool> onSaveDraft() async {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState.validate() && validateDropdowns()) {
+      draft.items = itemsBloc.items;
       await repo.insert(draft);
+      dirty = false;
       Navigator.pop<bool>(context, true);
       return true;
     }
     return false;
-  }
-
-  void onAddItem() {
-    if (newItem.tax == 0) {
-      newItem.tax = draft.tax;
-    }
-    setState(() {
-      _items.add(newItem);
-      newItem = Item.empty();
-    });
-    draft.items = _items;
   }
 }

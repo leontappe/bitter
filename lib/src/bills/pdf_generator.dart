@@ -20,7 +20,7 @@ class PdfGenerator {
     ttfSans = Font.ttf(sansData);
   }
 
-  Document createDocumentFromBill(Draft bill, Customer customer, Vendor vendor,
+  Document createDocumentFromBill(String billNr, Draft bill, Customer customer, Vendor vendor,
       {Uint8List leftHeader, Uint8List centerHeader, Uint8List rightHeader}) {
     final fontsize = 10.0;
     final doc = Document();
@@ -100,7 +100,7 @@ class PdfGenerator {
               ],
             ),
           ),
-          Header(level: 1, text: 'Rechnung ${bill.billNr}', textStyle: TextStyle(font: ttfSans)),
+          Header(level: 1, text: 'Rechnung ${billNr}', textStyle: TextStyle(font: ttfSans)),
           Paragraph(text: 'Sehr geehrte Damen und Herren,', style: TextStyle(font: ttfSans)),
           Paragraph(
               text: 'hiermit berechnen wir Ihnen die folgenden Positionen:',
@@ -131,8 +131,8 @@ class PdfGenerator {
     return doc;
   }
 
-  List<int> getBytesFromBill(Draft bill, Customer customer, Vendor vendor) =>
-      createDocumentFromBill(bill, customer, vendor).save();
+  List<int> getBytesFromBill(String billNr, Draft bill, Customer customer, Vendor vendor) =>
+      createDocumentFromBill(billNr, bill, customer, vendor).save();
 
   Widget _createHeaderFromImages(PdfDocument doc,
       {Uint8List left, Uint8List center, Uint8List right}) {

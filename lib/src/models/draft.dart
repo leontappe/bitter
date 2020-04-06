@@ -7,7 +7,6 @@ import 'item.dart';
 class Draft {
   int id;
 
-  String billNr;
   String editor;
   int customer;
   int vendor;
@@ -24,7 +23,6 @@ class Draft {
 
   Draft({
     this.id,
-    @required this.billNr,
     @required this.editor,
     @required this.customer,
     @required this.vendor,
@@ -33,7 +31,6 @@ class Draft {
   });
 
   factory Draft.empty() => Draft(
-        billNr: null,
         customer: null,
         editor: null,
         items: <Item>[],
@@ -42,7 +39,7 @@ class Draft {
       );
 
   factory Draft.fromMap(Map map) => Draft(
-        billNr: map['bill_nr'].toString(),
+        id: map['id'] as int,
         editor: map['editor'].toString(),
         customer: map['customer'] as int,
         vendor: map['vendor'] as int,
@@ -52,7 +49,6 @@ class Draft {
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
-        'bill_nr': billNr,
         'editor': editor,
         'customer': customer,
         'vendor': vendor,

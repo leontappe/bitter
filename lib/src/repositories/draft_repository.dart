@@ -1,5 +1,4 @@
-import 'package:bitter/src/models/draft.dart';
-
+import '../models/draft.dart';
 import '../mysql_credentials.dart';
 import '../providers/database_provider.dart';
 
@@ -24,7 +23,7 @@ class DraftRepository<T extends DatabaseProvider> {
         List<Draft>.from((await db.select(tableName)).map<Draft>((Map e) => Draft.fromMap(e)));
     if (searchQuery != null && searchQuery.isNotEmpty) {
       return List.from(
-          results.where((Draft d) => (d.billNr).toLowerCase().contains(searchQuery.toLowerCase())));
+          results.where((Draft d) => d.editor.toLowerCase().contains(searchQuery.toLowerCase())));
     } else {
       return results;
     }
@@ -45,10 +44,10 @@ class DraftRepository<T extends DatabaseProvider> {
 
     await db.createTable(
       tableName,
-      ['id', 'bill_nr', 'editor', 'customer', 'vendor', 'items', 'tax'],
-      ['INTEGER', 'TEXT', 'TEXT', 'INTEGER', 'INTEGER', 'TEXT', 'INTEGER'],
+      ['id', 'editor', 'customer', 'vendor', 'items', 'tax'],
+      ['INTEGER', 'TEXT', 'INTEGER', 'INTEGER', 'TEXT', 'INTEGER'],
       'id',
-      nullable: <bool>[true, false, false, false, false, false, false],
+      nullable: <bool>[true, false, false, false, false, false],
     );
   }
 

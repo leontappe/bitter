@@ -12,6 +12,7 @@ void main() {
   final logo = File('test/logo.png');
 
   doc = pdf.createDocumentFromBill(
+    'RE1',
     exampleBill,
     exampleCustomer,
     exampleVendor,

@@ -1,7 +1,7 @@
-import 'package:bitter/src/models/draft.dart';
-import 'package:bitter/src/providers/inherited_database.dart';
-import 'package:bitter/src/providers/mysql_provider.dart';
-import 'package:bitter/src/repositories/draft_repository.dart';
+import '../models/draft.dart';
+import '../providers/inherited_database.dart';
+import '../providers/mysql_provider.dart';
+import '../repositories/draft_repository.dart';
 import 'package:flutter/material.dart';
 
 import 'draft_creator.dart';
@@ -30,9 +30,27 @@ class _BillsListPageState extends State<BillsListPage> {
         ],
       ),
       body: ListView(
-        semanticChildCount: drafts.length,
+        semanticChildCount: 4,
         children: <Widget>[
-          ...drafts.map((Draft d) => ListTile(title: Text(d.billNr))),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              ListTile(title: Text('Entwürfe', style: Theme.of(context).textTheme.headline6)),
+              Divider(height: 0.0),
+              ...drafts.map((Draft d) => ListTile(title: Text('Entwurf ${d.id}'))),
+            ],
+          ),
+          Divider(height: 4.0),
+          Divider(height: 4.0),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              ListTile(title: Text('Rechnungen', style: Theme.of(context).textTheme.headline6)),
+              Divider(height: 0.0),
+            ],
+          )
         ],
       ),
     );
