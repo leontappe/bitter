@@ -1,0 +1,24 @@
+image: ubuntu:latest
+
+stages:
+  - build
+
+build:
+  stage: build
+  only:
+    - tags
+    - triggers
+    - schedules
+    - web
+  script:
+    - apt update
+    - apt install curl git unzip xz-utils zip libglu1-mesa
+    - git clone -b master https://github.com/flutter/flutter.git
+    - export PATH="$PATH:`pwd`/flutter/bin"
+    - flutter config --enable-linux-desktop
+    - flutter upgrade
+    - flutter pub get
+    - flutter build linux
+  artifacts:
+    paths:
+    - build/
