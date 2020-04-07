@@ -12,16 +12,14 @@ import '../models/vendor.dart';
 class PdfGenerator {
   Font ttfSans;
 
-  PdfGenerator() {
+  Document createDocumentFromBill(String billNr, Draft bill, Customer customer, Vendor vendor,
+      {Uint8List leftHeader, Uint8List centerHeader, Uint8List rightHeader}) {
     final sansData = ByteData(liberationSans.length);
     for (var i = 0; i < liberationSans.length; i++) {
       sansData.setUint8(i, liberationSans[i]);
     }
     ttfSans = Font.ttf(sansData);
-  }
-
-  Document createDocumentFromBill(String billNr, Draft bill, Customer customer, Vendor vendor,
-      {Uint8List leftHeader, Uint8List centerHeader, Uint8List rightHeader}) {
+    
     final fontsize = 10.0;
     final doc = Document();
     final items = bill.items;
