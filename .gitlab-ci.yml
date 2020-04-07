@@ -12,7 +12,7 @@ build:
     - web
   script:
     - apt update
-    - apt install -y build-essential curl git unzip xz-utils zip libglu1-mesa
+    - apt install -y clang-6.0 build-essential curl git unzip xz-utils zip libglu1-mesa
     - git clone -b master https://github.com/flutter/flutter.git
     - export PATH="$PATH:`pwd`/flutter/bin"
     - flutter config --enable-linux-desktop
