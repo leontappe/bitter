@@ -19,7 +19,7 @@ class PdfGenerator {
       sansData.setUint8(i, liberationSans[i]);
     }
     ttfSans = Font.ttf(sansData);
-    
+
     final fontsize = 10.0;
     final doc = Document();
     final items = bill.items;

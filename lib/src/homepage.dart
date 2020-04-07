@@ -4,9 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 
-import 'providers/inherited_database.dart';
-import 'providers/mysql_provider.dart';
-import 'repositories/customer_repository.dart';
 import 'repositories/settings_repository.dart';
 
 class Homepage extends StatefulWidget {
@@ -96,10 +93,24 @@ class _HomepageState extends State<Homepage> {
   }
 
   Future<void> initDb() async {
-    final repo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
-    await repo.setUp();
-    final settings = SettingsRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    final settings = SettingsRepository();
     await settings.setUp();
+    if (!await settings.hasMySqlSettings()) {
+      await showDialog<dynamic>(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text('Datenbank einstellen'),
+          content: Text(
+              'Es ist noch keine Datenbankverbindung eingestellt. Gebe hier die Verbindungsinformationen für den MySQL Server ein um fortzufahren.'),
+          actions: <Widget>[
+            MaterialButton(
+                onPressed: () => Navigator.of(context).popAndPushNamed('/settings/database'),
+                child: Text('Fortfahren')),
+          ],
+        ),
+      );
+    }
   }
 
   void initPackageInfo() async {

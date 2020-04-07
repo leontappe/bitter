@@ -1,8 +1,7 @@
-import '../models/mysql_settings.dart';
-import '../providers/inherited_database.dart';
-import '../providers/mysql_provider.dart';
-import '../repositories/settings_repository.dart';
 import 'package:flutter/material.dart';
+
+import '../models/mysql_settings.dart';
+import '../repositories/settings_repository.dart';
 
 class DatabasePage extends StatefulWidget {
   @override
@@ -42,7 +41,7 @@ class _DatabasePageState extends State<DatabasePage> {
             itemExtent: 64.0,
             children: <Widget>[
               TextFormField(
-                initialValue: newSettings.host,
+                controller: TextEditingController(text: newSettings.host ?? ''),
                 maxLines: 1,
                 decoration: InputDecoration(labelText: 'Host/IP'),
                 validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
@@ -52,7 +51,7 @@ class _DatabasePageState extends State<DatabasePage> {
                 },
               ),
               TextFormField(
-                initialValue: newSettings.port.toString(),
+                controller: TextEditingController(text: newSettings.port?.toString() ?? ''),
                 maxLines: 1,
                 decoration: InputDecoration(labelText: 'Port'),
                 validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
@@ -64,6 +63,7 @@ class _DatabasePageState extends State<DatabasePage> {
                 },
               ),
               TextFormField(
+                controller: TextEditingController(text: newSettings.user ?? ''),
                 maxLines: 1,
                 decoration: InputDecoration(labelText: 'Nutzer'),
                 validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
@@ -74,6 +74,7 @@ class _DatabasePageState extends State<DatabasePage> {
                 },
               ),
               TextFormField(
+                controller: TextEditingController(text: newSettings.password ?? ''),
                 maxLines: 1,
                 decoration: InputDecoration(labelText: 'Passwort'),
                 validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
@@ -85,7 +86,7 @@ class _DatabasePageState extends State<DatabasePage> {
                 },
               ),
               TextFormField(
-                initialValue: newSettings.database,
+                controller: TextEditingController(text: newSettings.database ?? ''),
                 maxLines: 1,
                 decoration: InputDecoration(labelText: 'Datenbankname'),
                 validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
@@ -104,21 +105,47 @@ class _DatabasePageState extends State<DatabasePage> {
 
   @override
   void didChangeDependencies() {
-    repo = SettingsRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    initDb();
     super.didChangeDependencies();
+  }
+
+  Future<void> initDb() async {
+    repo = SettingsRepository();
+    await repo.setUp();
+    if (await repo.hasMySqlSettings()) {
+      newSettings = await repo.getMySqlSettings();
+      setState(() => newSettings);
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    dirty = false;
     newSettings = MySqlSettings(
       host: '127.0.0.1',
       port: 3306,
       database: 'bitter',
-      password: null,
-      user: null,
+      password: '',
+      user: '',
     );
+    dirty = false;
+  }
+
+  void onPopRoute(BuildContext context) async {
+    if (!_formKey.currentState.validate() || dirty) {
+      var result = await showDialog<int>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: Text(
+                    'Wenn du ohne Speichern oder mit unvollständigen Informationen zurück gehst funktioniert das Programm nicht. Bitte vervollständige die Informationen und speichere dann oben rechts.'),
+                actions: <Widget>[
+                  MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Ok')),
+                ],
+              ));
+      return;
+    } else {
+      Navigator.pop<bool>(context, false);
+    }
   }
 
   Future<bool> onSaveConfig() async {
@@ -129,40 +156,5 @@ class _DatabasePageState extends State<DatabasePage> {
       return true;
     }
     return false;
-  }
-
-  void onPopRoute(BuildContext context) async {
-    if (dirty) {
-      var result = await showDialog<int>(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-                title: Text(
-                    'Wenn du ohne Speichern fortfährst gehen alle hier eingebenen Daten verloren. Vor dem Verlassen abspeichern?'),
-                actions: <Widget>[
-                  MaterialButton(
-                      onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),
-                  MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Nein')),
-                  MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Ja')),
-                ],
-              ));
-      switch (result) {
-        case 0:
-          Navigator.pop<bool>(context, false);
-          break;
-        case 1:
-          if (!await onSaveConfig()) {
-            Scaffold.of(context).showSnackBar(const SnackBar(
-              content: Text(
-                  'Es gibt noch Fehler und/oder fehlende Felder in dem Formular, sodass gerade nicht gespeichert werden kann.'),
-              duration: Duration(seconds: 3),
-            ));
-          }
-          break;
-        default:
-          return;
-      }
-    } else {
-      Navigator.pop<bool>(context, false);
-    }
   }
 }

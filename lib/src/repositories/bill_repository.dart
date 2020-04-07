@@ -1,6 +1,6 @@
 import '../models/bill.dart';
-import '../mysql_credentials.dart';
 import '../providers/database_provider.dart';
+import 'settings_repository.dart';
 
 export '../models/bill.dart';
 
@@ -32,12 +32,15 @@ class BillRepository<T extends DatabaseProvider> {
   }
 
   Future<void> setUp() async {
+    final settingsRepo = SettingsRepository();
+    await settingsRepo.setUp();
+    final settings = await settingsRepo.getMySqlSettings();
     await db.open(
-      mySqlSettings.database,
-      host: mySqlSettings.host,
-      port: mySqlSettings.port,
-      user: mySqlSettings.user,
-      password: mySqlSettings.password,
+      settings.database,
+      host: settings.host,
+      port: settings.port,
+      user: settings.user,
+      password: settings.password,
     );
 
     await db.createTable(

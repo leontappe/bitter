@@ -1,47 +1,52 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:path_provider/path_provider.dart';
+
 import '../models/mysql_settings.dart';
-import '../mysql_credentials.dart';
-import '../providers/database_provider.dart';
 
-const String tableName = 'settings';
+class SettingsRepository {
+  String basePath;
+  String dataPath;
 
-class SettingsRepository<T extends DatabaseProvider> {
-  final T db;
+  File data;
 
-  SettingsRepository(this.db);
+  SettingsRepository();
 
-  Future<bool> hasMySqlSettings() async => (await db.select(tableName))
-      .where((element) => element['setting'] == 'mysql_settings')
-      .isNotEmpty;
+  Future<Map> get _getCurrentSettings async => (json.decode(data.readAsStringSync())) as Map;
 
-  Future<int> insertSetting(String key, dynamic value) async {
-    return await db.insert(tableName, <String, dynamic>{'setting': key, 'value': value});
+  Future<bool> hasMySqlSettings() async =>
+      (await _getCurrentSettings).containsKey('mysql_settings');
+
+  Future<void> insert(String key, dynamic value) async {
+    final settings = await _getCurrentSettings;
+    settings.addEntries(<MapEntry<String, dynamic>>[MapEntry<String, dynamic>(key, value)]);
+    await _writeSettings(settings);
   }
 
-  Future<int> setMySqlSettings(MySqlSettings settings) async {
-    final _settings =
-        (await db.select(tableName)).where((element) => element['setting'] == 'mysql_settings');
-    if (_settings.isNotEmpty) {
-      return await db.update(tableName, _settings.single['id'] as int, settings.toMap);
-    } else {
-      return await insertSetting('mysql_settings', settings.toMap.toString());
-    }
+  Future<dynamic> select(dynamic key) async {
+    return (await _getCurrentSettings)[key];
+  }
+
+  Future<void> setMySqlSettings(MySqlSettings settings) async {
+    await insert('mysql_settings', settings.toMap);
+  }
+
+  Future<MySqlSettings> getMySqlSettings() async {
+    return MySqlSettings.fromMap(await select('mysql_settings') as Map);
   }
 
   Future<void> setUp() async {
-    await db.open(
-      mySqlSettings.database,
-      host: mySqlSettings.host,
-      port: mySqlSettings.port,
-      user: mySqlSettings.user,
-      password: mySqlSettings.password,
-    );
+    basePath = (await getApplicationDocumentsDirectory()).path;
+    dataPath = basePath + '/settings.json';
+    data = File(dataPath);
+    await data.create(recursive: true);
 
-    await db.createTable(
-      tableName,
-      ['id', 'setting', 'value'],
-      ['INTEGER', 'TEXT', 'TEXT'],
-      'id',
-      nullable: <bool>[true, false, false],
-    );
+    if ((await data.readAsString()).isEmpty) {
+      await _writeSettings(<String, String>{});
+    }
   }
+
+  Future<void> _writeSettings(Map map) async =>
+      await data.writeAsBytes(utf8.encode(json.encode(map)));
 }

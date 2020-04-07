@@ -14,12 +14,11 @@ class SettingsPage extends StatelessWidget {
               Text('Editieren und Erstellen verschiendener Identitäten zur Rechnungsstellung'),
           onTap: () => Navigator.pushNamed(context, '/settings/vendors'),
         ),
-        /*ListTile(
+        ListTile(
           title: Text('Datenbankeinstellungen', style: Theme.of(context).textTheme.headline6),
-          subtitle: Text(
-              'Einstellen der Datenbankverbindung'),
+          subtitle: Text('Einstellen der Datenbankverbindung'),
           onTap: () => Navigator.pushNamed(context, '/settings/database'),
-        ),*/
+        ),
       ]),
     );
   }
