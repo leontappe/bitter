@@ -38,7 +38,11 @@ class SettingsRepository {
 
   Future<void> setUp() async {
     basePath = (await getApplicationDocumentsDirectory()).path;
-    dataPath = basePath + '/settings.json';
+    if (Platform.isWindows) {
+      dataPath = basePath + '/bitter/config/settings.json';
+    } else {
+      dataPath = basePath + '/settings.json';
+    }
     data = File(dataPath);
     await data.create(recursive: true);
 
