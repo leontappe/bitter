@@ -21,12 +21,6 @@ class _ItemCreatorTileState extends State<ItemCreatorTile> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
-  void initState() {
-    _item = Item.empty();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
@@ -85,6 +79,12 @@ class _ItemCreatorTileState extends State<ItemCreatorTile> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    _item = Item.empty();
+    super.initState();
   }
 
   void _onItemAdded() {

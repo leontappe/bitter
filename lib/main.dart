@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'src/bills/bills_list_page.dart';
 import 'src/customers/customers_list_page.dart';
+import 'src/drafts/drafts_list_page.dart';
 import 'src/homepage.dart';
 import 'src/providers/inherited_database.dart';
 import 'src/providers/mysql_provider.dart';
@@ -26,6 +27,7 @@ class Bitter extends StatelessWidget {
           '/home': (BuildContext context) => Homepage(),
           '/customers': (BuildContext context) => CustomersListPage(),
           '/bills': (BuildContext context) => BillsListPage(),
+          '/drafts': (BuildContext context) => DraftsListPage(),
           '/settings': (BuildContext context) => SettingsPage(),
           '/settings/vendors': (BuildContext context) => VendorsPage(),
           '/settings/database': (BuildContext context) => DatabasePage(),

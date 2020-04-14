@@ -5,6 +5,8 @@ import 'package:crypto/crypto.dart';
 
 import '../models/item.dart';
 
+export '../models/item.dart';
+
 class AddItem extends ItemsEvent {
   final Item item;
 
@@ -12,6 +14,15 @@ class AddItem extends ItemsEvent {
 
   @override
   String toString() => '[AddItem $item]';
+}
+
+class BulkAdd extends ItemsEvent {
+  final List<Item> items;
+
+  BulkAdd(this.items);
+
+  @override
+  String toString() => '[BulkAdd $items]';
 }
 
 class ItemsBloc extends Bloc<ItemsEvent, ItemsState> {
@@ -28,8 +39,6 @@ class ItemsBloc extends Bloc<ItemsEvent, ItemsState> {
 
   @override
   Stream<ItemsState> mapEventToState(ItemsEvent event) async* {
-    print(event);
-
     if (event is AddItem) {
       event.item.id ??= sha256
           .convert(utf8.encode('${event.item.title} + ${DateTime.now().toString()}'))
@@ -39,12 +48,16 @@ class ItemsBloc extends Bloc<ItemsEvent, ItemsState> {
       _items.removeWhere((Item item) => item.id == event.id);
     } else if (event is UpdateItem) {
       _items[_items.indexWhere((Item item) => item.id == event.item.id)] = event.item;
+    } else if (event is BulkAdd) {
+      _items.addAll(event.items);
     }
 
     yield ItemsState(_items);
   }
 
   void onAddItem(Item item) => add(AddItem(item));
+
+  void onBulkAdd(List<Item> items) => add(BulkAdd(items));
 
   void onRemoveItem(String id) => add(RemoveItem(id));
 

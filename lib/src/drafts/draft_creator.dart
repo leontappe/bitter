@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bills/item_editor_tile.dart';
-import '../bills/items_bloc.dart';
 import '../models/draft.dart';
 import '../models/item.dart';
 import '../models/vendor.dart';
@@ -14,8 +12,14 @@ import '../repositories/customer_repository.dart';
 import '../repositories/draft_repository.dart';
 import '../repositories/vendor_repository.dart';
 import 'item_creator_tile.dart';
+import 'item_editor_tile.dart';
+import 'items_bloc.dart';
 
 class DraftCreatorPage extends StatefulWidget {
+  final Draft draft;
+
+  const DraftCreatorPage({Key key, this.draft}) : super(key: key);
+
   @override
   _DraftCreatorPageState createState() => _DraftCreatorPageState();
 }
@@ -42,9 +46,11 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
-            builder: (BuildContext context) =>
-                IconButton(icon: Icon(Icons.cancel), onPressed: () => onPopRoute(context))),
-        title: Text('Rechnungsentwurf hinzufügen'),
+            builder: (BuildContext context) => IconButton(
+                icon: Icon((widget.draft != null) ? Icons.arrow_back_ios : Icons.cancel),
+                onPressed: () => onPopRoute(context))),
+        title: Text(
+            (widget.draft != null) ? 'Entwurf ${widget.draft.id}' : 'Rechnungsentwurf hinzufügen'),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.save, color: Colors.white),
@@ -61,6 +67,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
               ListTile(
                 title: Text('Bearbeiter*in', style: Theme.of(context).textTheme.headline6),
                 subtitle: TextFormField(
+                  controller: TextEditingController(text: draft.editor ?? ''),
                   maxLines: 1,
                   decoration: InputDecoration(hintText: 'Erika Musterfrau'),
                   validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
@@ -181,13 +188,19 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
 
   @override
   void initState() {
-    draft = Draft.empty();
-    draft.tax = 19;
+    itemsBloc = ItemsBloc();
+
+    if (widget.draft != null) {
+      draft = widget.draft;
+      itemsBloc.onBulkAdd(draft.items);
+    } else {
+      draft = Draft.empty();
+      draft.tax = 19;
+    }
+
     _customers = [];
     _vendors = [];
     dirty = false;
-
-    itemsBloc = ItemsBloc();
 
     super.initState();
   }
@@ -195,15 +208,6 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   void onAddItem(Item item) {
     itemsBloc.onAddItem(item);
     dirty = true;
-  }
-
-  bool validateDropdowns() {
-    setState(() {
-      vendorIsset = draft.vendor != null;
-      customerIsset = draft.customer != null;
-    });
-
-    return vendorIsset && customerIsset;
   }
 
   Future<void> onPopRoute(BuildContext context) async {
@@ -244,11 +248,26 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   Future<bool> onSaveDraft() async {
     if (_formKey.currentState.validate() && validateDropdowns()) {
       draft.items = itemsBloc.items;
-      await repo.insert(draft);
+
+      if (widget.draft != null) {
+        await repo.update(draft);
+      } else {
+        await repo.insert(draft);
+      }
+
       dirty = false;
       Navigator.pop<bool>(context, true);
       return true;
     }
     return false;
+  }
+
+  bool validateDropdowns() {
+    setState(() {
+      vendorIsset = draft.vendor != null;
+      customerIsset = draft.customer != null;
+    });
+
+    return vendorIsset && customerIsset;
   }
 }
