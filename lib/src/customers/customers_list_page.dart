@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../providers/inherited_database.dart';
 import '../repositories/customer_repository.dart';
-import 'customer_adding.dart';
 import 'customer_page.dart';
 
 class CustomersListPage extends StatefulWidget {
@@ -91,7 +90,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
   Future<void> onPushCustomerPage(BuildContext context, int id) async {
     final updated = await Navigator.push<bool>(
       context,
-      MaterialPageRoute<bool>(builder: (BuildContext context) => CustomerPage(id)),
+      MaterialPageRoute<bool>(builder: (BuildContext context) => CustomerPage(id: id)),
     );
     if (updated) {
       await onGetCustomers();
@@ -100,7 +99,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
 
   Future<void> onPushUserAddpage() async {
     final updated = await Navigator.push<bool>(
-        context, MaterialPageRoute<bool>(builder: (BuildContext context) => CustomerAddingPage()));
+        context, MaterialPageRoute<bool>(builder: (BuildContext context) => CustomerPage()));
     if (updated) {
       await onGetCustomers();
     }
