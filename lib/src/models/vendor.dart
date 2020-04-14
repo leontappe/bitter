@@ -59,7 +59,8 @@ class Vendor {
         website: (map['website'] != null) ? map['website'].toString() : null,
         fullAddress: map['full_address'].toString(),
         billPrefix: map['bill_prefix'].toString(),
-        headerImage: base64.decode(map['header_image'].toString()),
+        headerImage:
+            (map['header_image'] != null) ? base64.decode(map['header_image'].toString()) : null,
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
@@ -74,7 +75,7 @@ class Vendor {
         'website': website,
         'full_address': fullAddress,
         'bill_prefix': billPrefix,
-        'header_image': base64.encode(headerImage),
+        'header_image': (headerImage != null) ? base64.encode(headerImage) : null,
       };
 
   @override

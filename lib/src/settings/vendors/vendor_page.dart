@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:file_chooser/file_chooser.dart';
 import 'package:flutter/material.dart';
@@ -201,12 +202,15 @@ class _VendorPageState extends State<VendorPage> {
                         }),
                     ListTile(
                       title: Text('Kopfzeilenbild'),
-                      subtitle:
-                          Text(newVendor.headerImage == null ? 'Nicht vorhanden' : 'Vorhanden'),
-                      trailing: MaterialButton(
-                        child: Text('Bild auswählen'),
-                        onPressed: onOpenImage,
-                      ),
+                      subtitle: (newVendor.headerImage != null)
+                          ? Image.memory(Uint8List.fromList(vendor.headerImage))
+                          : Text('Nicht vorhanden'),
+                      trailing: (newVendor.headerImage != null)
+                          ? MaterialButton(onPressed: onClearImage, child: Text('Bild entfernen'))
+                          : MaterialButton(
+                              child: Text('Bild auswählen'),
+                              onPressed: onOpenImage,
+                            ),
                     ),
                   ],
                 ),
@@ -274,7 +278,7 @@ class _VendorPageState extends State<VendorPage> {
     }
 
     newVendor.headerImage = await File(result.paths.first).readAsBytes();
-    setState(() => vendor);
+    setState(() => newVendor);
     await repo.update(vendor);
   }
 
@@ -306,7 +310,7 @@ class _VendorPageState extends State<VendorPage> {
     await Navigator.pop(context, changed);
   }
 
-  void onSaveVendor() async {
+  Future<void> onSaveVendor() async {
     if (_formKey.currentState.validate()) {
       if (widget.id != null) {
         await repo.update(newVendor);
@@ -318,5 +322,10 @@ class _VendorPageState extends State<VendorPage> {
         Navigator.pop<bool>(context, true);
       }
     }
+  }
+
+  void onClearImage() {
+    setState(() => newVendor.headerImage = null);
+    dirty = true;
   }
 }
