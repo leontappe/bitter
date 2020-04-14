@@ -22,6 +22,9 @@ dependencies:
   crypto: ^2.1.4
   path_provider: ^1.6.5
   path_provider_macos: ^0.0.4
+  path_provider_fde:
+    git: https://git.uni-paderborn.de/asta/path_provider_fde.git
+    #path: ../path_provider_fde
 
 dev_dependencies:
   flutter_test:

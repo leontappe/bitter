@@ -151,6 +151,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.6.5"
+  path_provider_fde:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "7d30fddbd6b2511fc0131627d9c296bc1a5c3613"
+      url: "https://git.uni-paderborn.de/asta/path_provider_fde.git"
+    source: git
+    version: "0.0.1"
   path_provider_macos:
     dependency: "direct main"
     description:

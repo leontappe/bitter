@@ -61,8 +61,14 @@ class _BillsListPageState extends State<BillsListPage> {
   }
 
   Future<void> onSaveBill(Bill bill) async {
-    final downloadsPath = await getDownloadsDirectory();
-    final file = File('${downloadsPath.path}/${bill.billNr}.pdf');
+    String downloadsPath;
+    if (Platform.isWindows) {
+      downloadsPath = (await getApplicationDocumentsDirectory()).path;
+    } else {
+      downloadsPath = (await getDownloadsDirectory()).path;
+    }
+    final file = File('${downloadsPath}/bitter/${bill.billNr}.pdf');
+    await file.create(recursive: true);
     await file.writeAsBytes(bill.file);
   }
 }
