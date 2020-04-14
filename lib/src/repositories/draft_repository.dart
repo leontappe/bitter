@@ -1,4 +1,7 @@
+import '../models/customer.dart';
 import '../models/draft.dart';
+import '../models/item.dart';
+import '../models/vendor.dart';
 import '../providers/database_provider.dart';
 import 'settings_repository.dart';
 
@@ -20,12 +23,31 @@ class DraftRepository<T extends DatabaseProvider> {
     return draft;
   }
 
-  Future<List<Draft>> select({String searchQuery}) async {
+  Future<List<Draft>> select({
+    String searchQuery,
+    List<Customer> customers = const [],
+    List<Vendor> vendors = const [],
+  }) async {
     final results =
         List<Draft>.from((await db.select(tableName)).map<Draft>((Map e) => Draft.fromMap(e)));
     if (searchQuery != null && searchQuery.isNotEmpty) {
-      return List.from(
-          results.where((Draft d) => d.editor.toLowerCase().contains(searchQuery.toLowerCase())));
+      return List.from(results.where((Draft d) {
+        final customer = customers.singleWhere((Customer c) => c.id == d.id);
+        final vendor = vendors.singleWhere((Vendor v) => v.id == d.vendor);
+
+        return d.editor.toLowerCase().contains(searchQuery.toLowerCase()) ||
+            d.items
+                .where((Item i) => i.title.toLowerCase().contains(searchQuery.toLowerCase()))
+                .isNotEmpty ||
+            d.items
+                .where((Item i) =>
+                    (i.description ?? '').toLowerCase().contains(searchQuery.toLowerCase()))
+                .isNotEmpty ||
+            '${customer.company ?? ''} ${customer.name} ${customer.surname}'
+                .toLowerCase()
+                .contains(searchQuery.toLowerCase()) ||
+            '${vendor.name}'.toLowerCase().contains(searchQuery.toLowerCase());
+      }));
     } else {
       return results;
     }
