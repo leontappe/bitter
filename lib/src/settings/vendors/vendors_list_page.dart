@@ -35,8 +35,6 @@ class _VendorsPageState extends State<VendorsPage> {
           ],
         ),
       ),
-      floatingActionButton:
-          FloatingActionButton(onPressed: onGetVendors, child: Icon(Icons.refresh)),
     );
   }
 

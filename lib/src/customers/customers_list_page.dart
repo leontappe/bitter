@@ -63,8 +63,6 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
         ),
         onRefresh: onGetCustomers,
       ),
-      floatingActionButton:
-          FloatingActionButton(onPressed: onGetCustomers, child: Icon(Icons.refresh)),
     );
   }
 
