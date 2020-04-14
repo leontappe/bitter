@@ -24,6 +24,10 @@ class PdfGenerator {
     final doc = Document();
     final items = bill.items;
 
+    for (var i = 0; i < items.length; i++) {
+      items[i].id = '${i + 1}';
+    }
+
     doc.addPage(
       MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -108,7 +112,7 @@ class PdfGenerator {
             ...items.map(
               (e) => <String>[
                 e.id.toString(),
-                '${e.title} - ${e.description}',
+                (e.description != null) ? '${e.title} - ${e.description}' : '${e.title}',
                 e.quantity.toString(),
                 e.tax.toStringAsFixed(2),
                 (e.price / 100.0).toStringAsFixed(2),
@@ -129,8 +133,24 @@ class PdfGenerator {
     return doc;
   }
 
-  List<int> getBytesFromBill(String billNr, Draft bill, Customer customer, Vendor vendor) =>
-      createDocumentFromBill(billNr, bill, customer, vendor).save();
+  List<int> getBytesFromBill(
+    String billNr,
+    Draft bill,
+    Customer customer,
+    Vendor vendor, {
+    Uint8List leftHeader,
+    Uint8List centerHeader,
+    Uint8List rightHeader,
+  }) =>
+      createDocumentFromBill(
+        billNr,
+        bill,
+        customer,
+        vendor,
+        leftHeader: leftHeader,
+        centerHeader: centerHeader,
+        rightHeader: rightHeader,
+      ).save();
 
   Widget _createHeaderFromImages(PdfDocument doc,
       {Uint8List left, Uint8List center, Uint8List right}) {
