@@ -17,7 +17,7 @@ class Bill {
         id: map['id'] as int,
         billNr: map['bill_nr'].toString(),
         file: base64.decode(map['file'].toString()),
-        created: DateTime.parse(map['created'].toString()),
+        created: DateTime.parse(map['created'].toString()).toLocal(),
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{

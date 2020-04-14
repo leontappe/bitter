@@ -51,7 +51,7 @@ class _BillsListPageState extends State<BillsListPage> {
             ...bills.reversed.map(
               (Bill b) => ListTile(
                 title: Text(b.billNr),
-                subtitle: Text(b.created.toLocal().toString().split('.').first),
+                subtitle: Text(b.created.toString().split('.').first),
                 trailing:
                     IconButton(icon: Icon(Icons.file_download), onPressed: () => onSaveBill(b)),
               ),
