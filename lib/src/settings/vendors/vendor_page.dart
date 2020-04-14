@@ -34,7 +34,9 @@ class _VendorPageState extends State<VendorPage> {
     if (vendor != null) {
       return Scaffold(
         appBar: AppBar(
-          leading: IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: onPopRoute),
+          leading: IconButton(
+              icon: Icon((widget.id != null) ? Icons.arrow_back_ios : Icons.cancel),
+              onPressed: onPopRoute),
           title: Text((widget.id != null) ? 'Verkäuferansicht' : 'Verkäufer hinzufügen'),
           actions: <Widget>[
             if (widget.id != null)
