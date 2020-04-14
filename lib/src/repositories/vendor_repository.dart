@@ -2,6 +2,8 @@ import '../models/vendor.dart';
 import '../providers/database_provider.dart';
 import 'settings_repository.dart';
 
+export '../models/vendor.dart';
+
 const String tableName = 'vendors';
 
 class VendorRepository<T extends DatabaseProvider> {

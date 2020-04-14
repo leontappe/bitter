@@ -2,6 +2,8 @@ import '../models/draft.dart';
 import '../providers/database_provider.dart';
 import 'settings_repository.dart';
 
+export '../models/draft.dart';
+
 const String tableName = 'drafts';
 
 class DraftRepository<T extends DatabaseProvider> {

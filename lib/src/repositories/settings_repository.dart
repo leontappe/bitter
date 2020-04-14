@@ -5,6 +5,8 @@ import 'package:path_provider/path_provider.dart';
 
 import '../models/mysql_settings.dart';
 
+export '../models/mysql_settings.dart';
+
 class SettingsRepository {
   String basePath;
   String dataPath;
