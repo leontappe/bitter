@@ -4,7 +4,6 @@ import '../../models/vendor.dart';
 import '../../providers/inherited_database.dart';
 import '../../providers/mysql_provider.dart';
 import '../../repositories/vendor_repository.dart';
-import 'vendor_adding.dart';
 import 'vendor_page.dart';
 
 class VendorsPage extends StatefulWidget {
@@ -60,7 +59,7 @@ class _VendorsPageState extends State<VendorsPage> {
 
   void onPushVendorAddPage() async {
     final updated = await Navigator.push<bool>(
-        context, MaterialPageRoute<bool>(builder: (BuildContext context) => VendorAddingPage()));
+        context, MaterialPageRoute<bool>(builder: (BuildContext context) => VendorPage()));
     if (updated) {
       await onGetVendors();
     }
@@ -69,7 +68,7 @@ class _VendorsPageState extends State<VendorsPage> {
   Future<void> onPushVendorPage(BuildContext context, int id) async {
     final updated = await Navigator.push<bool>(
       context,
-      MaterialPageRoute<bool>(builder: (BuildContext context) => VendorPage(id)),
+      MaterialPageRoute<bool>(builder: (BuildContext context) => VendorPage(id: id)),
     );
     if (updated) {
       await onGetVendors();
