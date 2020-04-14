@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../drafts/draft_popup_menu.dart';
 import '../models/draft.dart';
 import '../providers/inherited_database.dart';
 import '../providers/mysql_provider.dart';
-import '../repositories/bill_repository.dart';
 import '../repositories/customer_repository.dart';
 import '../repositories/draft_repository.dart';
 import '../repositories/vendor_repository.dart';
 import 'draft_creator.dart';
-import 'pdf_generator.dart';
 
 class DraftsListPage extends StatefulWidget {
   @override
@@ -17,13 +16,12 @@ class DraftsListPage extends StatefulWidget {
 
 class _DraftsListPageState extends State<DraftsListPage> {
   DraftRepository<MySqlProvider> draftRepo;
-  BillRepository<MySqlProvider> billRepo;
   CustomerRepository<MySqlProvider> customerRepo;
   VendorRepository<MySqlProvider> vendorRepo;
 
-  PdfGenerator pdfGen;
-
   List<Draft> drafts = [];
+  List<Customer> customers = [];
+  List<Vendor> vendors = [];
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +41,13 @@ class _DraftsListPageState extends State<DraftsListPage> {
           children: [
             ...drafts.reversed.map((Draft d) => ListTile(
                   title: Text('Entwurf ${d.id}'),
-                  trailing: IconButton(
-                      icon: Icon(Icons.picture_as_pdf), onPressed: () => onCreateBill(d.id)),
+                  subtitle: Text((vendors.isNotEmpty && customers.isNotEmpty)
+                      ? 'Bearbeiter*in: ${d.editor}, ${vendors.singleWhere((Vendor v) => v.id == d.vendor).name} - Kunde*in: ${customers.singleWhere((Customer c) => c.id == d.customer).company ?? ''} ${customers.singleWhere((Customer c) => c.id == d.customer).surname}'
+                      : 'Bearbeiter*in: ${d.editor}'),
+                  trailing: DraftPopupMenu(
+                    id: d.id,
+                    onCompleted: (bool changed) => changed ? onGetDrafts() : null,
+                  ),
                   onTap: () => onPushDraftCreator(draft: d),
                 )),
           ],
@@ -62,44 +65,17 @@ class _DraftsListPageState extends State<DraftsListPage> {
 
   Future<void> initDb() async {
     draftRepo = DraftRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
-    billRepo = BillRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
     vendorRepo = VendorRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
     customerRepo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
     await draftRepo.setUp();
-    await billRepo.setUp();
     await vendorRepo.setUp();
+    await customerRepo.setUp();
 
     await onGetDrafts();
-  }
 
-  @override
-  void initState() {
-    super.initState();
-    pdfGen = PdfGenerator();
-  }
-
-  void onCreateBill(int id) async {
-    final bill = drafts.singleWhere((Draft d) => d.id == id);
-    final customer = await customerRepo.selectSingle(bill.customer);
-    final vendor = await vendorRepo.selectSingle(bill.vendor);
-
-    final bills = await billRepo.select();
-    int billNr;
-
-    if (bills.isEmpty) {
-      billNr = 1;
-    } else {
-      billNr = int.parse(bills.last.billNr.substring(2)) + 1;
-    }
-
-    final billNrString = '${vendor.billPrefix}$billNr';
-
-    final doc = pdfGen.getBytesFromBill(billNrString, bill, customer, vendor);
-
-    bills.add(await billRepo
-        .insert(Bill(billNr: billNrString, file: doc, created: DateTime.now().toUtc())));
-
-    setState(() => bills);
+    customers = await customerRepo.select();
+    vendors = await vendorRepo.select();
+    setState(() => vendors);
   }
 
   Future<void> onGetDrafts() async {

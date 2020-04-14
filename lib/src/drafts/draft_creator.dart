@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bitter/src/drafts/draft_popup_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -56,6 +57,11 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
               icon: Icon(Icons.save, color: Colors.white),
               onPressed: onSaveDraft,
               tooltip: 'Neuen Rechnungsentwurf abspeichern'),
+          if (widget.draft != null)
+            DraftPopupMenu(
+              id: draft.id,
+              onCompleted: (bool changed) => changed ? Navigator.pop(context, true) : null,
+            )
         ],
       ),
       body: Padding(
