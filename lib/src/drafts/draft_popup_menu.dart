@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 import '../providers/inherited_database.dart';
@@ -106,7 +108,8 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
 
     final billNrString = '${vendor.billPrefix}$billNr';
 
-    final doc = pdfGen.getBytesFromBill(billNrString, draft, customer, vendor);
+    final doc = pdfGen.getBytesFromBill(billNrString, draft, customer, vendor,
+        rightHeader: (vendor.headerImage != null) ? Uint8List.fromList(vendor.headerImage) : null);
 
     await billRepo.insert(Bill(billNr: billNrString, file: doc, created: DateTime.now().toUtc()));
 

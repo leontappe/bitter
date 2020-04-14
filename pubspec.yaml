@@ -25,6 +25,9 @@ dependencies:
   path_provider_fde:
     git: https://git.uni-paderborn.de/asta/path_provider_fde.git
     #path: ../path_provider_fde
+  file_chooser:
+    git: https://git.uni-paderborn.de/asta/file_chooser.git
+    #path: ../file_chooser
 
 dev_dependencies:
   flutter_test:

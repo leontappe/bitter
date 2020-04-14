@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:meta/meta.dart';
 
 class Vendor {
@@ -15,6 +17,8 @@ class Vendor {
   String fullAddress;
   String billPrefix;
 
+  List<int> headerImage;
+
   Vendor({
     this.id,
     @required this.name,
@@ -28,6 +32,7 @@ class Vendor {
     this.website,
     @required this.fullAddress,
     @required this.billPrefix,
+    this.headerImage,
   });
 
   factory Vendor.empty() => Vendor(
@@ -54,6 +59,7 @@ class Vendor {
         website: (map['website'] != null) ? map['website'].toString() : null,
         fullAddress: map['full_address'].toString(),
         billPrefix: map['bill_prefix'].toString(),
+        headerImage: base64.decode(map['header_image'].toString()),
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
@@ -68,6 +74,7 @@ class Vendor {
         'website': website,
         'full_address': fullAddress,
         'bill_prefix': billPrefix,
+        'header_image': base64.encode(headerImage),
       };
 
   @override

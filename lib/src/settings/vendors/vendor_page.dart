@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:file_chooser/file_chooser.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../models/vendor.dart';
 import '../../providers/inherited_database.dart';
@@ -63,6 +67,8 @@ class _VendorPageState extends State<VendorPage> {
                     if (vendor.website != null) Text('Website: ${vendor.website}'),
                     Text('Adresszeile für Briefkopf: ${vendor.fullAddress}'),
                     Text('Prefix für Rechnungsnummern: ${vendor.billPrefix}'),
+                    Text(
+                        'Kopfzeilenbild: ${vendor.headerImage != null ? 'Vorhanden' : 'Nicht vorhanden'}'),
                   ],
                 ),
               ),
@@ -178,6 +184,15 @@ class _VendorPageState extends State<VendorPage> {
                             _formKey.currentState.validate();
                             dirty = true;
                           }),
+                      ListTile(
+                        title: Text('Kopfzeilenbild'),
+                        subtitle:
+                            Text(vendor.headerImage == null ? 'Nicht vorhanden' : 'Vorhanden'),
+                        trailing: MaterialButton(
+                          child: Text('Bild auswählen'),
+                          onPressed: onOpenImage,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -187,6 +202,27 @@ class _VendorPageState extends State<VendorPage> {
       );
     }
     return Container(width: 0.0, height: 0.0);
+  }
+
+  Future<void> onOpenImage() async {
+    print('get that image');
+    final result = await showOpenPanel(
+      initialDirectory: (await getApplicationDocumentsDirectory()).path,
+      allowedFileTypes: [
+        FileTypeFilterGroup(label: 'images', fileExtensions: ['png', 'jpg', 'jpeg', 'gif'])
+      ],
+      allowsMultipleSelection: false,
+      canSelectDirectories: false,
+      confirmButtonText: 'Auswählen',
+    );
+
+    if (result.canceled) {
+      return;
+    }
+
+    vendor.headerImage = await File(result.paths.first).readAsBytes();
+
+    await repo.update(vendor);
   }
 
   @override

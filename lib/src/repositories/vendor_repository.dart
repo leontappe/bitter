@@ -63,6 +63,7 @@ class VendorRepository<T extends DatabaseProvider> {
         'website',
         'full_address',
         'bill_prefix',
+        'header_image'
       ],
       [
         'INTEGER',
@@ -77,6 +78,7 @@ class VendorRepository<T extends DatabaseProvider> {
         'TEXT',
         'TEXT',
         'TEXT',
+        'TEXT'
       ],
       'id',
       nullable: <bool>[
@@ -92,6 +94,7 @@ class VendorRepository<T extends DatabaseProvider> {
         true,
         false,
         false,
+        true,
       ],
     );
   }

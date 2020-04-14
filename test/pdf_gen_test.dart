@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:bitter/src/bills/pdf_generator.dart';
+import 'package:bitter/src/drafts/pdf_generator.dart';
 import 'package:pdf/widgets.dart';
 
 import 'example_data.dart';
