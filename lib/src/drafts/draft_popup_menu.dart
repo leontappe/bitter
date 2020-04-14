@@ -107,7 +107,16 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
 
     final doc = pdfGen.getBytesFromBill(billNrString, draft, customer, vendor);
 
-    bills.add(await billRepo
-        .insert(Bill(billNr: billNrString, file: doc, created: DateTime.now().toUtc())));
+    await billRepo.insert(Bill(billNr: billNrString, file: doc, created: DateTime.now().toUtc()));
+
+    if ((await billRepo.select()).length > bills.length) {
+      await repo.delete(draft.id);
+    } else {
+      Scaffold.of(context).showSnackBar(const SnackBar(
+        content: Text(
+            'Die Rechnung wurde nicht abgespeichert, bitte starte die Anwendung neu und versuche es noch mal'),
+        duration: Duration(seconds: 3),
+      ));
+    }
   }
 }
