@@ -15,13 +15,35 @@ class BillsListPage extends StatefulWidget {
 class _BillsListPageState extends State<BillsListPage> {
   BillRepository<MySqlProvider> billRepo;
 
+  bool searchEnabled = false;
+
   List<Bill> bills = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Rechnungen'),
+        automaticallyImplyLeading: !searchEnabled,
+        title: searchEnabled
+            ? TextField(
+                autofocus: true,
+                maxLines: 1,
+                style: TextStyle(color: Colors.white),
+                cursorColor: Colors.white,
+                decoration: InputDecoration(
+                    hintStyle: TextStyle(color: Colors.white),
+                    fillColor: Colors.white,
+                    hintText: 'Suchbegriff',
+                    suffixIcon: IconButton(
+                        icon: Icon(Icons.clear, color: Colors.white), onPressed: onToggleSearch)),
+                onChanged: onSearchChanged,
+              )
+            : Text('Rechnungen'),
+        actions: <Widget>[
+          if (!searchEnabled) ...[
+            IconButton(icon: Icon(Icons.search), onPressed: onToggleSearch),
+          ],
+        ],
       ),
       body: RefreshIndicator(
         child: ListView(
@@ -70,5 +92,24 @@ class _BillsListPageState extends State<BillsListPage> {
     final file = File('${downloadsPath}/bitter/${bill.billNr}.pdf');
     await file.create(recursive: true);
     await file.writeAsBytes(bill.file);
+  }
+
+  Future<void> onSearchChanged(String value) async {
+    bills = await billRepo.select(searchQuery: value);
+    setState(() => bills);
+  }
+
+  void onToggleSearch() async {
+    setState(() {
+      if (searchEnabled) {
+        searchEnabled = false;
+      } else {
+        searchEnabled = true;
+      }
+    });
+
+    if (!searchEnabled) {
+      await onGetBills();
+    }
   }
 }

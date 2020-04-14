@@ -23,17 +23,37 @@ class _DraftsListPageState extends State<DraftsListPage> {
   List<Customer> customers = [];
   List<Vendor> vendors = [];
 
+  bool searchEnabled = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Entwürfe'),
+        automaticallyImplyLeading: !searchEnabled,
+        title: searchEnabled
+            ? TextField(
+                autofocus: true,
+                maxLines: 1,
+                style: TextStyle(color: Colors.white),
+                cursorColor: Colors.white,
+                decoration: InputDecoration(
+                    hintStyle: TextStyle(color: Colors.white),
+                    fillColor: Colors.white,
+                    hintText: 'Suchbegriff',
+                    suffixIcon: IconButton(
+                        icon: Icon(Icons.clear, color: Colors.white), onPressed: onToggleSearch)),
+                onChanged: onSearchChanged,
+              )
+            : Text('Entwürfe'),
         actions: <Widget>[
-          IconButton(
-            tooltip: 'Neue Rechnung erstellen',
-            icon: Icon(Icons.note_add),
-            onPressed: onPushDraftCreator,
-          )
+          if (!searchEnabled) ...[
+            IconButton(
+              tooltip: 'Neue Rechnung erstellen',
+              icon: Icon(Icons.note_add),
+              onPressed: onPushDraftCreator,
+            ),
+            IconButton(icon: Icon(Icons.search), onPressed: onToggleSearch),
+          ],
         ],
       ),
       body: RefreshIndicator(
@@ -88,6 +108,27 @@ class _DraftsListPageState extends State<DraftsListPage> {
     final updated = await Navigator.push<bool>(context,
         MaterialPageRoute<bool>(builder: (BuildContext context) => DraftCreatorPage(draft: draft)));
     if (updated) {
+      await onGetDrafts();
+    }
+  }
+
+  Future<void> onSearchChanged(String value) async {
+    drafts = await draftRepo.select(searchQuery: value);
+    setState(() {
+      return drafts;
+    });
+  }
+
+  void onToggleSearch() async {
+    setState(() {
+      if (searchEnabled) {
+        searchEnabled = false;
+      } else {
+        searchEnabled = true;
+      }
+    });
+
+    if (!searchEnabled) {
       await onGetDrafts();
     }
   }
