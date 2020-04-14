@@ -97,10 +97,11 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
     final bills = await billRepo.select();
 
     int billNr;
-    if (bills.isEmpty) {
+    final relatedBills = bills.where((Bill b) => b.billNr.substring(0, 2) == vendor.billPrefix);
+    if (relatedBills.isEmpty) {
       billNr = 1;
     } else {
-      billNr = int.parse(bills.last.billNr.substring(2)) + 1;
+      billNr = int.parse(relatedBills.last.billNr.substring(2)) + 1;
     }
 
     final billNrString = '${vendor.billPrefix}$billNr';
