@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:image/image.dart' as im;
+import 'package:image/image.dart' as img;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
@@ -78,29 +78,36 @@ class PdfGenerator {
               ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(left: 375.0, top: 16.0, bottom: 64.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Paragraph(
-                  text: 'Kundennummer: ${bill.customer}',
-                  style: TextStyle(fontSize: fontsize),
-                  margin: EdgeInsets.all(0.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Spacer(),
+              Padding(
+                padding: EdgeInsets.only(top: 16.0, bottom: 64.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Paragraph(
+                      text: 'Kundennummer: ${bill.customer}',
+                      style: TextStyle(fontSize: fontsize),
+                      margin: EdgeInsets.all(0.0),
+                    ),
+                    Paragraph(
+                      text: 'Bearbeiter*in: ${bill.editor.trim()}',
+                      style: TextStyle(fontSize: fontsize),
+                      margin: EdgeInsets.all(0.0),
+                    ),
+                    Paragraph(
+                      text:
+                          'Datum: ${DateTime.now().day}.${DateTime.now().month}.${DateTime.now().year}',
+                      style: TextStyle(fontSize: fontsize),
+                      margin: EdgeInsets.all(0.0),
+                    ),
+                  ],
                 ),
-                Paragraph(
-                  text: 'Bearbeiter*in: ${bill.editor}',
-                  style: TextStyle(fontSize: fontsize),
-                  margin: EdgeInsets.all(0.0),
-                ),
-                Paragraph(
-                  text:
-                      'Datum: ${DateTime.now().day}.${DateTime.now().month}.${DateTime.now().year}',
-                  style: TextStyle(fontSize: fontsize),
-                  margin: EdgeInsets.all(0.0),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
           Header(level: 1, text: 'Rechnung ${billNr}', textStyle: TextStyle(font: ttfSans)),
           Paragraph(text: 'Sehr geehrte Damen und Herren,', style: TextStyle(font: ttfSans)),
@@ -154,18 +161,18 @@ class PdfGenerator {
 
   Widget _createHeaderFromImages(PdfDocument doc,
       {Uint8List left, Uint8List center, Uint8List right}) {
-    im.Image leftImg;
-    im.Image rightImg;
-    im.Image centerImg;
+    img.Image leftImg;
+    img.Image rightImg;
+    img.Image centerImg;
 
     if (left != null) {
-      leftImg = im.decodeImage(left);
+      leftImg = img.decodeImage(left);
     }
     if (right != null) {
-      rightImg = im.decodeImage(right);
+      rightImg = img.decodeImage(right);
     }
     if (center != null) {
-      centerImg = im.decodeImage(center);
+      centerImg = img.decodeImage(center);
     }
 
     return Row(
