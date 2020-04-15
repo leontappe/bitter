@@ -165,7 +165,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "7d30fddbd6b2511fc0131627d9c296bc1a5c3613"
+      resolved-ref: "9572e1be2c7e83e10bcc0538868030ebb1879586"
       url: "https://git.uni-paderborn.de/asta/path_provider_fde.git"
     source: git
     version: "0.0.1"
@@ -203,7 +203,7 @@ packages:
       name: petitparser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.2"
+    version: "2.4.0"
   platform:
     dependency: transitive
     description:
@@ -327,7 +327,7 @@ packages:
       name: xml
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.7.0"
+    version: "3.6.1"
 sdks:
   dart: ">=2.7.0 <3.0.0"
   flutter: ">=1.12.1 <2.0.0"

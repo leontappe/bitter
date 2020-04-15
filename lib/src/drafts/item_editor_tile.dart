@@ -26,7 +26,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
       leading: Container(
         width: 50.0,
         child: TextFormField(
-          controller: TextEditingController(text: widget.item.quantity?.toString() ?? '1'),
+          initialValue: widget.item.quantity?.toString() ?? '1',
           onChanged: (String input) {
             setState(() => widget.item.quantity = int.parse(input));
             widget.itemChanged(widget.item);
@@ -35,7 +35,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
         ),
       ),
       title: TextFormField(
-        controller: TextEditingController(text: widget.item.title ?? ''),
+        initialValue: widget.item.title ?? '',
         onChanged: (String input) {
           setState(() => widget.item.title = input);
           widget.itemChanged(widget.item);
@@ -43,7 +43,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
         decoration: InputDecoration(hintText: 'Artikelbezeichnung'),
       ),
       subtitle: TextFormField(
-        controller: TextEditingController(text: widget.item.description ?? ''),
+        initialValue: widget.item.description ?? '',
         onChanged: (String input) {
           setState(() => widget.item.description = input);
           widget.itemChanged(widget.item);
@@ -58,7 +58,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
             padding: EdgeInsets.all(8.0),
             width: 80.0,
             child: TextFormField(
-              controller: TextEditingController(text: widget.defaultTax.toString() ?? ''),
+              initialValue: widget.defaultTax.toString() ?? '19',
               onChanged: (String input) {
                 setState(() => widget.item.tax = int.tryParse(input) ?? widget.defaultTax);
                 widget.itemChanged(widget.item);
@@ -70,10 +70,9 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
             padding: EdgeInsets.all(8.0),
             width: 80.0,
             child: TextFormField(
-              controller: TextEditingController(
-                  text: (widget.item.price != null)
-                      ? (widget.item.price.toDouble() / 100.0).toStringAsFixed(2)
-                      : ''),
+              initialValue: (widget.item.price != null)
+                  ? (widget.item.price.toDouble() / 100.0).toStringAsFixed(2)
+                  : '',
               onChanged: (String input) {
                 setState(() =>
                     widget.item.price = (double.parse(input.replaceAll(',', '.')) * 100).toInt());
