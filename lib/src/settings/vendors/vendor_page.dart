@@ -193,7 +193,7 @@ class _VendorPageState extends State<VendorPage> {
                     TextFormField(
                         maxLines: 1,
                         initialValue: newVendor.billPrefix,
-                        decoration: InputDecoration(labelText: 'Prefix für Rechnungsnummern'),
+                        decoration: InputDecoration(labelText: 'Prefix für Rechnungsnummern (Zweistellig)'),
                         validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                         onChanged: (String input) {
                           newVendor.billPrefix = input;

@@ -32,14 +32,15 @@ class DraftRepository<T extends DatabaseProvider> {
         List<Draft>.from((await db.select(tableName)).map<Draft>((Map e) => Draft.fromMap(e)));
     if (searchQuery != null && searchQuery.isNotEmpty) {
       return List.from(results.where((Draft d) {
-        final customer = (customers.where((Customer c) => c.id == d.id).isNotEmpty)
-            ? customers.singleWhere((Customer c) => c.id == d.id)
+        final customer = (customers.where((Customer c) => c.id == d.customer).isNotEmpty)
+            ? customers.singleWhere((Customer c) => c.id == d.customer)
             : null;
         final vendor = (vendors.where((Vendor v) => v.id == d.vendor).isNotEmpty)
             ? vendors.singleWhere((Vendor v) => v.id == d.vendor)
             : null;
 
-        return d.editor.toLowerCase().contains(searchQuery.toLowerCase()) ||
+        return d.id.toString().contains(searchQuery) ||
+            d.editor.toLowerCase().contains(searchQuery.toLowerCase()) ||
             d.items
                 .where((Item i) => i.title.toLowerCase().contains(searchQuery.toLowerCase()))
                 .isNotEmpty ||
@@ -47,10 +48,11 @@ class DraftRepository<T extends DatabaseProvider> {
                 .where((Item i) =>
                     (i.description ?? '').toLowerCase().contains(searchQuery.toLowerCase()))
                 .isNotEmpty ||
-            '${customer?.company ?? ''} ${customer?.name ?? ''} ${customer?.surname ?? ''}'
-                .toLowerCase()
-                .contains(searchQuery.toLowerCase()) ||
-            '${vendor?.name ?? ''}'.toLowerCase().contains(searchQuery.toLowerCase());
+            (customer?.company ?? '').toLowerCase().contains(searchQuery) ||
+            (customer?.organizationUnit ?? '').toLowerCase().contains(searchQuery) ||
+            (customer?.name ?? '').toLowerCase().contains(searchQuery) ||
+            (customer?.surname ?? '').toLowerCase().contains(searchQuery) ||
+            (vendor?.name ?? '').toLowerCase().contains(searchQuery.toLowerCase());
       }));
     } else {
       return results;
