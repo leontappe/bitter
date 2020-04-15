@@ -93,9 +93,10 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
   }
 
   Future<void> _createBill(int id) async {
+    draft = await repo.selectSingle(id);
+
     final customer = await customerRepo.selectSingle(draft.customer);
     final vendor = await vendorRepo.selectSingle(draft.vendor);
-
     final bills = await billRepo.select();
 
     int billNr;
