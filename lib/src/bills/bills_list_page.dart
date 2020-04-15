@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import '../providers/inherited_database.dart';
 import '../providers/mysql_provider.dart';
 import '../repositories/bill_repository.dart';
+import 'bill_page.dart';
 
 class BillsListPage extends StatefulWidget {
   @override
@@ -54,6 +55,8 @@ class _BillsListPageState extends State<BillsListPage> {
                 subtitle: Text(b.created.toString().split('.').first),
                 trailing:
                     IconButton(icon: Icon(Icons.file_download), onPressed: () => onSaveBill(b)),
+                onTap: () => Navigator.push<bool>(context,
+                    MaterialPageRoute(builder: (BuildContext context) => BillPage(bill: b))),
               ),
             ),
           ],
