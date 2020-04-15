@@ -19,7 +19,7 @@ void main() {
     rightHeader: logo.readAsBytesSync(),
   );
 
-  var file = File('./test.pdf');
+  var file = File('test/test.pdf');
 
   file.writeAsBytesSync(doc.save());
 
