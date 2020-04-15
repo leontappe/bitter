@@ -1,8 +1,9 @@
-import '../providers/mysql_provider.dart';
 import 'package:flutter/material.dart';
 
 import '../providers/inherited_database.dart';
+import '../providers/mysql_provider.dart';
 import '../repositories/customer_repository.dart';
+import '../widgets/customer_card.dart';
 
 class CustomerPage extends StatefulWidget {
   final int id;
@@ -49,40 +50,7 @@ class _CustomerPageState extends State<CustomerPage> {
           children: <Widget>[
             if (widget.id != null)
               Text(' Aktuelle Informationen', style: Theme.of(context).textTheme.headline4),
-            if (widget.id != null)
-              Card(
-                margin: EdgeInsets.all(16.0),
-                elevation: 8.0,
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      if (customer.company != null && customer.company.isNotEmpty)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(customer.company, style: Theme.of(context).textTheme.headline5),
-                            Text('Ansprechpartner: ' + customer.name + ' ' + customer.surname)
-                          ],
-                        )
-                      else
-                        Text(customer.name + ' ' + customer.surname,
-                            style: Theme.of(context).textTheme.headline5),
-                      if (customer.organizationUnit != null && customer.organizationUnit.isNotEmpty)
-                        Text('Abteilung: ${customer.organizationUnit}'),
-                      Text('Adresse: ${customer.address}'),
-                      Text('Stadt: ${customer.zipCode} ${customer.city}'),
-                      if (customer.country != null) Text('Land: ${customer.country}'),
-                      if (customer.telephone != null) Text('Telefon: ${customer.telephone}'),
-                      if (customer.fax != null) Text('Fax: ${customer.fax}'),
-                      if (customer.mobile != null) Text('Mobil: ${customer.mobile}'),
-                      Text('E-Mail: ${customer.email}')
-                    ],
-                  ),
-                ),
-              ),
+            if (widget.id != null) CustomerCard(customer: customer),
             if (widget.id != null)
               Text(' Kunde bearbeiten', style: Theme.of(context).textTheme.headline4),
             Padding(
@@ -253,15 +221,6 @@ class _CustomerPageState extends State<CustomerPage> {
     super.didChangeDependencies();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    if (widget.id == null) {
-      newCustomer.gender = Gender.diverse;
-      customer = newCustomer;
-    }
-  }
-
   void initDb() async {
     repo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
     if (widget.id != null) {
@@ -275,6 +234,15 @@ class _CustomerPageState extends State<CustomerPage> {
         dropdownValue = customer.gender.index;
         return customer;
       });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.id == null) {
+      newCustomer.gender = Gender.diverse;
+      customer = newCustomer;
     }
   }
 

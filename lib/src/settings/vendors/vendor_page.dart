@@ -5,6 +5,7 @@ import 'package:file_chooser/file_chooser.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../widgets/vendor_card.dart';
 import '../../models/vendor.dart';
 import '../../providers/inherited_database.dart';
 import '../../providers/mysql_provider.dart';
@@ -52,33 +53,7 @@ class _VendorPageState extends State<VendorPage> {
           children: <Widget>[
             if (widget.id != null)
               Text(' Aktuelle Informationen', style: Theme.of(context).textTheme.headline4),
-            if (widget.id != null)
-              Card(
-                margin: EdgeInsets.all(16.0),
-                elevation: 8.0,
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(vendor.name, style: Theme.of(context).textTheme.headline5),
-                      Text('Adresse: ${vendor.address}'),
-                      Text('Stadt: ${vendor.city}'),
-                      Text('IBAN: ${vendor.iban}'),
-                      Text('BIC: ${vendor.bic}'),
-                      Text('Bank: ${vendor.bank}'),
-                      Text('Steuernummer: ${vendor.taxNr}'),
-                      Text('Umsatzsteuernummer: ${vendor.vatNr}'),
-                      if (vendor.website != null) Text('Website: ${vendor.website}'),
-                      Text('Adresszeile für Briefkopf: ${vendor.fullAddress}'),
-                      Text('Prefix für Rechnungsnummern: ${vendor.billPrefix}'),
-                      Text(
-                          'Kopfzeilenbild: ${vendor.headerImage != null ? 'Vorhanden' : 'Nicht vorhanden'}'),
-                    ],
-                  ),
-                ),
-              ),
+            if (widget.id != null) VendorCard(vendor: vendor),
             if (widget.id != null)
               Text(' Verkäufer bearbeiten', style: Theme.of(context).textTheme.headline4),
             Padding(
@@ -193,7 +168,8 @@ class _VendorPageState extends State<VendorPage> {
                     TextFormField(
                         maxLines: 1,
                         initialValue: newVendor.billPrefix,
-                        decoration: InputDecoration(labelText: 'Prefix für Rechnungsnummern (Zweistellig)'),
+                        decoration:
+                            InputDecoration(labelText: 'Prefix für Rechnungsnummern (Zweistellig)'),
                         validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                         onChanged: (String input) {
                           newVendor.billPrefix = input;
