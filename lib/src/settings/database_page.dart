@@ -133,7 +133,7 @@ class _DatabasePageState extends State<DatabasePage> {
 
   void onPopRoute(BuildContext context) async {
     if (!_formKey.currentState.validate() || dirty) {
-      var result = await showDialog<int>(
+      await showDialog<int>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
                 title: Text(

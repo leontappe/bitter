@@ -80,6 +80,11 @@ class Customer {
         'email': email,
       };
 
+  Map<String, dynamic> get toMapLong => <String, dynamic>{
+        'id': id,
+        ...toMap,
+      };
+
   Map<String, dynamic> get toShortMap => <String, dynamic>{
         if (company != null) 'company': company,
         if (organizationUnit != null) 'organization_unit': organizationUnit,

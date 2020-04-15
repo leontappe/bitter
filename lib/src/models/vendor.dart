@@ -78,6 +78,11 @@ class Vendor {
         'header_image': (headerImage != null) ? base64.encode(headerImage) : null,
       };
 
+  Map<String, dynamic> get toMapLong => <String, dynamic>{
+        'id': id,
+        ...toMap,
+      };
+
   @override
   String toString() => '[Vendor $id $toMap]';
 }
