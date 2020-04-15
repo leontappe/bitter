@@ -262,6 +262,12 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
     if (_formKey.currentState.validate() && validateDropdowns()) {
       draft.items = itemsBloc.items;
 
+      for (var i = 0; i < draft.items.length; i++) {
+        if (draft.items[i].tax == null || draft.items[i].tax == 0) {
+          draft.items[i].tax = draft.tax;
+        }
+      }
+
       if (widget.draft != null) {
         await repo.update(draft);
       } else {
