@@ -160,8 +160,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                     ...state.items.map<ItemEditorTile>((Item e) => ItemEditorTile(
                           item: e,
                           defaultTax: draft.tax,
-                          itemChanged: (Item e) => itemsBloc.onUpdateItem(e),
-                          itemDeleted: (Item e) => itemsBloc.onRemoveItem(e.id),
+                          itemChanged: onUpdateItem,
+                          itemDeleted: (Item e) => onRemoveItem(e.id),
                         )),
                   ],
                 ),
@@ -251,6 +251,11 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
     }
   }
 
+  void onRemoveItem(String id) {
+    itemsBloc.onRemoveItem(id);
+    dirty = true;
+  }
+
   Future<bool> onSaveDraft() async {
     if (_formKey.currentState.validate() && validateDropdowns()) {
       draft.items = itemsBloc.items;
@@ -262,10 +267,17 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
       }
 
       dirty = false;
-      Navigator.pop<bool>(context, true);
+      if (widget.draft == null) {
+        Navigator.pop<bool>(context, true);
+      }
       return true;
     }
     return false;
+  }
+
+  void onUpdateItem(Item item) {
+    itemsBloc.onUpdateItem(item);
+    dirty = true;
   }
 
   bool validateDropdowns() {
