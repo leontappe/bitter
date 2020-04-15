@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:crypto/crypto.dart';
@@ -41,7 +42,8 @@ class ItemsBloc extends Bloc<ItemsEvent, ItemsState> {
   Stream<ItemsState> mapEventToState(ItemsEvent event) async* {
     if (event is AddItem) {
       event.item.id ??= sha256
-          .convert(utf8.encode('${event.item.title} + ${DateTime.now().toString()}'))
+          .convert(utf8.encode(
+              '${event.item.title}${DateTime.now().toString()}${Random().nextInt(1024).toString()}'))
           .toString();
       _items.add(event.item);
     } else if (event is RemoveItem) {
@@ -49,7 +51,9 @@ class ItemsBloc extends Bloc<ItemsEvent, ItemsState> {
     } else if (event is UpdateItem) {
       _items[_items.indexWhere((Item item) => item.id == event.item.id)] = event.item;
     } else if (event is BulkAdd) {
-      _items.addAll(event.items);
+      for (var item in event.items) {
+        add(AddItem(item));
+      }
     }
 
     yield ItemsState(_items);

@@ -101,7 +101,6 @@ class _DraftsListPageState extends State<DraftsListPage> {
   Future<void> onGetDrafts() async {
     drafts = await draftRepo.select();
     setState(() => drafts);
-    return;
   }
 
   Future<void> onPushDraftCreator({Draft draft}) async {
@@ -114,9 +113,7 @@ class _DraftsListPageState extends State<DraftsListPage> {
 
   Future<void> onSearchChanged(String value) async {
     drafts = await draftRepo.select(searchQuery: value, customers: customers, vendors: vendors);
-    setState(() {
-      return drafts;
-    });
+    setState(() => drafts);
   }
 
   void onToggleSearch() async {
