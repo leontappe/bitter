@@ -140,13 +140,13 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   width: 80.0,
                   height: 64.0,
                   child: TextFormField(
-                    initialValue: '19',
+                    initialValue: draft.tax.toString() ?? '19',
                     maxLines: 1,
                     keyboardType: TextInputType.numberWithOptions(),
                     decoration: InputDecoration(hintText: '19', suffixText: '%'),
                     validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                     onChanged: (String input) {
-                      draft.tax = int.parse(input);
+                      setState(() => draft.tax = int.parse(input));
                       _formKey.currentState.validate();
                       dirty = true;
                     },
