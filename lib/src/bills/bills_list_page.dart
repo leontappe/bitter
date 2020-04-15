@@ -34,13 +34,20 @@ class _BillsListPageState extends State<BillsListPage> {
                     fillColor: Colors.white,
                     hintText: 'Suchbegriff',
                     suffixIcon: IconButton(
-                        icon: Icon(Icons.clear, color: Colors.white), onPressed: onToggleSearch)),
+                      tooltip: 'Suchleiste deaktivieren',
+                      icon: Icon(Icons.clear, color: Colors.white),
+                      onPressed: onToggleSearch,
+                    )),
                 onChanged: onSearchChanged,
               )
             : Text('Rechnungen'),
         actions: <Widget>[
           if (!searchEnabled) ...[
-            IconButton(icon: Icon(Icons.search), onPressed: onToggleSearch),
+            IconButton(
+              tooltip: 'Suchleiste aktivieren',
+              icon: Icon(Icons.search),
+              onPressed: onToggleSearch,
+            ),
           ],
         ],
       ),

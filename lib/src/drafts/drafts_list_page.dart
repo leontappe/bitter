@@ -41,7 +41,10 @@ class _DraftsListPageState extends State<DraftsListPage> {
                     fillColor: Colors.white,
                     hintText: 'Suchbegriff',
                     suffixIcon: IconButton(
-                        icon: Icon(Icons.clear, color: Colors.white), onPressed: onToggleSearch)),
+                      tooltip: 'Suchleiste deaktivieren',
+                      icon: Icon(Icons.clear, color: Colors.white),
+                      onPressed: onToggleSearch,
+                    )),
                 onChanged: onSearchChanged,
               )
             : Text('Entwürfe'),
@@ -52,7 +55,11 @@ class _DraftsListPageState extends State<DraftsListPage> {
               icon: Icon(Icons.note_add),
               onPressed: onPushDraftCreator,
             ),
-            IconButton(icon: Icon(Icons.search), onPressed: onToggleSearch),
+            IconButton(
+              tooltip: 'Suchleiste aktivieren',
+              icon: Icon(Icons.search),
+              onPressed: onToggleSearch,
+            ),
           ],
         ],
       ),

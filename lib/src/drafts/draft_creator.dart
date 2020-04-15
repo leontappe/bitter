@@ -48,15 +48,18 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
       appBar: AppBar(
         leading: Builder(
             builder: (BuildContext context) => IconButton(
-                icon: Icon((widget.draft != null) ? Icons.arrow_back_ios : Icons.cancel),
-                onPressed: () => onPopRoute(context))),
+                  tooltip: 'Zurück',
+                  icon: Icon((widget.draft != null) ? Icons.arrow_back_ios : Icons.cancel),
+                  onPressed: () => onPopRoute(context),
+                )),
         title: Text(
             (widget.draft != null) ? 'Entwurf ${widget.draft.id}' : 'Rechnungsentwurf hinzufügen'),
         actions: <Widget>[
           IconButton(
-              icon: Icon(Icons.save, color: Colors.white),
-              onPressed: onSaveDraft,
-              tooltip: 'Neuen Rechnungsentwurf abspeichern'),
+            icon: Icon(Icons.save, color: Colors.white),
+            onPressed: onSaveDraft,
+            tooltip: 'Rechnungsentwurf abspeichern',
+          ),
           if (widget.draft != null)
             DraftPopupMenu(
               id: draft.id,

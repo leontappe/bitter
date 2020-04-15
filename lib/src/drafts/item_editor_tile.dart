@@ -81,7 +81,11 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
               decoration: InputDecoration(suffixText: '€', hintText: 'Preis'),
             ),
           ),
-          IconButton(icon: Icon(Icons.delete), onPressed: () => widget.itemDeleted(widget.item))
+          IconButton(
+            tooltip: 'Artikel löschen',
+            icon: Icon(Icons.delete),
+            onPressed: () => widget.itemDeleted(widget.item),
+          )
         ],
       ),
     );

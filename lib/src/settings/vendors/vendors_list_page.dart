@@ -22,7 +22,11 @@ class _VendorsPageState extends State<VendorsPage> {
       appBar: AppBar(
         title: Text('Verkäufer'),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.add), onPressed: onPushVendorAddPage),
+          IconButton(
+            tooltip: 'Neuen Verkäufer hinzufügen',
+            icon: Icon(Icons.add),
+            onPressed: onPushVendorAddPage,
+          ),
         ],
       ),
       body: RefreshIndicator(

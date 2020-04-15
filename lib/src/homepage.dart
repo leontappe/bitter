@@ -21,6 +21,7 @@ class _HomepageState extends State<Homepage> {
         title: Text('bitter Rechnungen'),
         actions: <Widget>[
           IconButton(
+              tooltip: 'Informationen über die App anzeigen',
               icon: Icon(Icons.info),
               onPressed: () => showAboutDialog(
                   context: context,

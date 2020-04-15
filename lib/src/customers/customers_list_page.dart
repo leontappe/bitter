@@ -35,14 +35,25 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
                     fillColor: Colors.white,
                     hintText: 'Suchbegriff',
                     suffixIcon: IconButton(
-                        icon: Icon(Icons.clear, color: Colors.white), onPressed: onToggleSearch)),
+                      tooltip: 'Suchleiste deaktivieren',
+                      icon: Icon(Icons.clear, color: Colors.white),
+                      onPressed: onToggleSearch,
+                    )),
                 onChanged: onSearchChanged,
               )
             : Text('Kundenliste'),
         actions: <Widget>[
           if (!searchEnabled) ...[
-            IconButton(icon: Icon(Icons.add), onPressed: onPushUserAddpage),
-            IconButton(icon: Icon(Icons.search), onPressed: onToggleSearch),
+            IconButton(
+              tooltip: 'Neuen Kunden hinzufügen',
+              icon: Icon(Icons.add),
+              onPressed: onPushUserAddpage,
+            ),
+            IconButton(
+              tooltip: 'Suchleiste aktivieren',
+              icon: Icon(Icons.search),
+              onPressed: onToggleSearch,
+            ),
           ],
         ],
       ),

@@ -37,16 +37,23 @@ class _VendorPageState extends State<VendorPage> {
       return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-              icon: Icon((widget.id != null) ? Icons.arrow_back_ios : Icons.cancel),
-              onPressed: onPopRoute),
+            tooltip: 'Zurück',
+            icon: Icon((widget.id != null) ? Icons.arrow_back_ios : Icons.cancel),
+            onPressed: onPopRoute,
+          ),
           title: Text((widget.id != null) ? 'Verkäuferansicht' : 'Verkäufer hinzufügen'),
           actions: <Widget>[
             if (widget.id != null)
               IconButton(
+                tooltip: 'Diesen Verkäufer löschen',
                 icon: Icon(Icons.delete),
                 onPressed: onDeleteVendor,
               ),
-            IconButton(icon: Icon(Icons.save), onPressed: onSaveVendor),
+            IconButton(
+              tooltip: 'Verkäufer abspeichern',
+              icon: Icon(Icons.save),
+              onPressed: onSaveVendor,
+            ),
           ],
         ),
         body: ListView(

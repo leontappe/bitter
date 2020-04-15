@@ -23,14 +23,18 @@ class _DatabasePageState extends State<DatabasePage> {
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
-            builder: (BuildContext context) =>
-                IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: () => onPopRoute(context))),
+            builder: (BuildContext context) => IconButton(
+                  tooltip: 'Zurück',
+                  icon: Icon(Icons.arrow_back_ios),
+                  onPressed: () => onPopRoute(context),
+                )),
         title: Text('Datenbankeinstellungen'),
         actions: <Widget>[
           IconButton(
-              icon: Icon(Icons.save, color: Colors.white),
-              onPressed: onSaveConfig,
-              tooltip: 'Einstellungen abspeichern'),
+            tooltip: 'Einstellungen abspeichern',
+            icon: Icon(Icons.save, color: Colors.white),
+            onPressed: onSaveConfig,
+          ),
         ],
       ),
       body: Padding(

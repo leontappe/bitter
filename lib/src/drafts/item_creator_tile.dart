@@ -74,7 +74,11 @@ class _ItemCreatorTileState extends State<ItemCreatorTile> {
               ),
             ),
             if (widget.itemAdded != null)
-              IconButton(icon: Icon(Icons.add), onPressed: () => _onItemAdded())
+              IconButton(
+                tooltip: 'Artikel hinzufügen',
+                icon: Icon(Icons.add),
+                onPressed: () => _onItemAdded(),
+              )
           ],
         ),
       ),

@@ -33,16 +33,23 @@ class _CustomerPageState extends State<CustomerPage> {
       return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-              icon: Icon(widget.id != null ? Icons.arrow_back_ios : Icons.cancel),
-              onPressed: onPopRoute),
+            tooltip: 'Zurück',
+            icon: Icon(widget.id != null ? Icons.arrow_back_ios : Icons.cancel),
+            onPressed: onPopRoute,
+          ),
           title: Text(widget.id != null ? 'Kundenansicht' : 'Kunden hinzufügen'),
           actions: <Widget>[
             if (widget.id != null)
               IconButton(
+                tooltip: 'Diesen Kunden löschen',
                 icon: Icon(Icons.delete),
                 onPressed: onDeleteCustomer,
               ),
-            IconButton(icon: Icon(Icons.save), onPressed: onSaveCustomer),
+            IconButton(
+              tooltip: 'Diesen Kunden speichern',
+              icon: Icon(Icons.save),
+              onPressed: onSaveCustomer,
+            ),
           ],
         ),
         body: ListView(
