@@ -241,6 +241,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   'Es gibt noch Fehler und/oder fehlende Felder in dem Formular, sodass gerade nicht gespeichert werden kann.'),
               duration: Duration(seconds: 3),
             ));
+          } else {
+            Navigator.pop(context, true);
           }
           break;
         default:
