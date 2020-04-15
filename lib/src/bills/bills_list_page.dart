@@ -1,12 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../providers/inherited_database.dart';
 import '../providers/mysql_provider.dart';
 import '../repositories/bill_repository.dart';
 import 'bill_page.dart';
+import 'save_bill_button.dart';
 
 class BillsListPage extends StatefulWidget {
   @override
@@ -53,8 +51,7 @@ class _BillsListPageState extends State<BillsListPage> {
               (Bill b) => ListTile(
                 title: Text(b.billNr),
                 subtitle: Text(b.created.toString().split('.').first),
-                trailing:
-                    IconButton(icon: Icon(Icons.file_download), onPressed: () => onSaveBill(b)),
+                trailing: SaveBillButton(bill: b),
                 onTap: () => Navigator.push<bool>(context,
                     MaterialPageRoute(builder: (BuildContext context) => BillPage(bill: b))),
               ),
@@ -83,18 +80,6 @@ class _BillsListPageState extends State<BillsListPage> {
     bills = await billRepo.select();
     setState(() => bills);
     return;
-  }
-
-  Future<void> onSaveBill(Bill bill) async {
-    String downloadsPath;
-    if (Platform.isWindows) {
-      downloadsPath = (await getApplicationDocumentsDirectory()).path;
-    } else {
-      downloadsPath = (await getDownloadsDirectory()).path;
-    }
-    final file = File('${downloadsPath}/bitter/${bill.billNr}.pdf');
-    await file.create(recursive: true);
-    await file.writeAsBytes(bill.file);
   }
 
   Future<void> onSearchChanged(String value) async {

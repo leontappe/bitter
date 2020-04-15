@@ -4,6 +4,7 @@ import '../models/bill.dart';
 import '../widgets/customer_card.dart';
 import '../widgets/items_card.dart';
 import '../widgets/vendor_card.dart';
+import 'save_bill_button.dart';
 
 class BillPage extends StatefulWidget {
   final Bill bill;
@@ -20,6 +21,7 @@ class _BillPageState extends State<BillPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.bill.billNr),
+        actions: [SaveBillButton(bill: widget.bill)],
       ),
       body: ListView(
         children: <Widget>[
