@@ -18,6 +18,7 @@ class Bitter extends StatelessWidget {
     return InheritedDatabase<MySqlProvider>(
       provider: MySqlProvider(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'bitter',
         theme: ThemeData(
           primarySwatch: Colors.blueGrey,
