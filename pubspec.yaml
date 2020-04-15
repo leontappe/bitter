@@ -23,10 +23,16 @@ dependencies:
   path_provider: ^1.6.5
   path_provider_macos: ^0.0.4
   path_provider_fde:
-    git: https://git.uni-paderborn.de/asta/path_provider_fde.git
+    git:
+      url: git://github.com/google/flutter-desktop-embedding.git
+      path: plugins/flutter_plugins/path_provider_fde
+    #git: https://git.uni-paderborn.de/asta/path_provider_fde.git
     #path: ../path_provider_fde
   file_chooser:
-    git: https://git.uni-paderborn.de/asta/file_chooser.git
+    git:
+      url: git://github.com/google/flutter-desktop-embedding.git
+      path: plugins/file_chooser
+    #git: https://git.uni-paderborn.de/asta/file_chooser.git
     #path: ../file_chooser
 
 dev_dependencies:
