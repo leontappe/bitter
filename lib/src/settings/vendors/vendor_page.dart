@@ -246,23 +246,69 @@ class _VendorPageState extends State<VendorPage> {
   }
 
   Future<void> onOpenImage() async {
-    final result = await showOpenPanel(
-      initialDirectory: (await getApplicationDocumentsDirectory()).path,
-      allowedFileTypes: [
-        FileTypeFilterGroup(label: 'images', fileExtensions: ['png', 'jpg', 'jpeg', 'gif'])
-      ],
-      allowsMultipleSelection: false,
-      canSelectDirectories: false,
-      confirmButtonText: 'Auswählen',
-    );
+    if (!Platform.isWindows) {
+      final result = await showOpenPanel(
+        initialDirectory: (await getApplicationDocumentsDirectory()).path,
+        allowedFileTypes: [
+          FileTypeFilterGroup(label: 'images', fileExtensions: ['png', 'jpg', 'jpeg', 'gif'])
+        ],
+        allowsMultipleSelection: false,
+        canSelectDirectories: false,
+        confirmButtonText: 'Auswählen',
+      );
 
-    if (result.canceled) {
-      return;
+      if (result.canceled) {
+        return;
+      }
+
+      newVendor.headerImage = await File(result.paths.first).readAsBytes();
+      setState(() => newVendor);
+      await repo.update(newVendor);
+    } else {
+      final result = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text('Kopfzeilenbild festlegen'),
+          content: Text('''
+Um ein Kopfzeilenbild für diesen Verkäufer festzulegen, bitte ein Bild unter Dokumente\\bitter\\config platzieren und danach \'Fertig\' drücken. 
+(Das Bild löscht sich dort selber nachdem bitter es in die Datenbank kopiert hat)
+'''),
+          actions: [
+            MaterialButton(
+              child: Text('Abbrechen'),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            MaterialButton(
+              child: Text('Fertig'),
+              onPressed: () => Navigator.pop(context, true),
+            ),
+          ],
+        ),
+      );
+      if (result) {
+        final docPath = '${(await getApplicationDocumentsDirectory()).path}\\bitter\\config';
+        final docs = Directory(docPath);
+        var images = docs
+            .listSync(followLinks: false)
+            .where((e) =>
+                e.path.contains('.png') ||
+                e.path.contains('.jpg') ||
+                e.path.contains('.jpeg') ||
+                e.path.contains('.gif'))
+            .toList();
+        images.removeWhere((element) => element.path.contains('.json'));
+
+        if (images.isEmpty) return;
+
+        newVendor.headerImage = await File(images.first.path).readAsBytes();
+        setState(() => newVendor);
+        await repo.update(newVendor);
+
+        await File(images.first.path).delete();
+      } else {
+        return;
+      }
     }
-
-    newVendor.headerImage = await File(result.paths.first).readAsBytes();
-    setState(() => newVendor);
-    await repo.update(vendor);
   }
 
   void onPopRoute() async {
