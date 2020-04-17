@@ -83,6 +83,17 @@ class _VendorPageState extends State<VendorPage> {
                       },
                     ),
                     TextFormField(
+                      initialValue: newVendor.contact,
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'Ansprechpartner'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        newVendor.contact = input;
+                        _formKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
                       initialValue: newVendor.address,
                       maxLines: 1,
                       decoration: InputDecoration(labelText: 'Adresse'),
@@ -235,8 +246,10 @@ class _VendorPageState extends State<VendorPage> {
         builder: (BuildContext context) => AlertDialog(
               title: Text('Soll dieser Verkäufer wirlich gelöscht werden?'),
               actions: <Widget>[
-                MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
-                MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
+                MaterialButton(
+                    onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
+                MaterialButton(
+                    onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
               ],
             ));
     if (result == 1) {
@@ -321,8 +334,10 @@ Um ein Kopfzeilenbild für diesen Verkäufer festzulegen, bitte ein Bild unter D
                 actions: <Widget>[
                   MaterialButton(
                       onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),
-                  MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
-                  MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
+                  MaterialButton(
+                      onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
+                  MaterialButton(
+                      onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
                 ],
               ));
       switch (result) {

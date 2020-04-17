@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 class Vendor {
   int id;
   String name;
+  String contact;
   String address;
   String city;
   String iban;
@@ -22,6 +23,7 @@ class Vendor {
   Vendor({
     this.id,
     @required this.name,
+    @required this.contact,
     @required this.address,
     @required this.city,
     @required this.iban,
@@ -37,6 +39,7 @@ class Vendor {
 
   factory Vendor.empty() => Vendor(
         name: null,
+        contact: null,
         address: null,
         city: null,
         iban: null,
@@ -49,6 +52,7 @@ class Vendor {
   factory Vendor.fromMap(Map map) => Vendor(
         id: map['id'] as int,
         name: map['name'].toString(),
+        contact: map['contact'].toString(),
         address: map['address'].toString(),
         city: map['city'].toString(),
         iban: map['iban'].toString(),
@@ -65,6 +69,7 @@ class Vendor {
 
   Map<String, dynamic> get toMap => <String, dynamic>{
         'name': name,
+        'contact': contact,
         'address': address,
         'city': city,
         'iban': iban,

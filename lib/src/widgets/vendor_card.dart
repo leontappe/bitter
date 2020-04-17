@@ -19,6 +19,7 @@ class VendorCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(vendor.name, style: Theme.of(context).textTheme.headline5),
+            Text('Ansprechpartner: ${vendor.contact}'),
             Text('Adresse: ${vendor.address}'),
             Text('Stadt: ${vendor.city}'),
             Text('IBAN: ${vendor.iban}'),
