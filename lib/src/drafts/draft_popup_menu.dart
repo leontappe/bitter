@@ -100,14 +100,14 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
     final bills = await billRepo.select();
 
     int billNr;
-    final relatedBills = bills.where((Bill b) => b.billNr.substring(0, 2) == vendor.billPrefix);
+    final relatedBills = bills.where((Bill b) => b.billNr.split('-').first == vendor.billPrefix);
     if (relatedBills.isEmpty) {
       billNr = 1;
     } else {
-      billNr = int.parse(relatedBills.last.billNr.substring(2)) + 1;
+      billNr = int.parse(relatedBills.last.billNr.split('-').last) + 1;
     }
 
-    final billNrString = '${vendor.billPrefix}$billNr';
+    final billNrString = '${vendor.billPrefix}-$billNr';
 
     final doc = pdfGen.getBytesFromBill(billNrString, draft, customer, vendor,
         rightHeader: (vendor.headerImage != null) ? Uint8List.fromList(vendor.headerImage) : null);
