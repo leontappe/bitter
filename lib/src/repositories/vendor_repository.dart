@@ -64,6 +64,8 @@ class VendorRepository<T extends DatabaseProvider> {
         'website',
         'full_address',
         'bill_prefix',
+        'default_due_days',
+        'default_tax',
         'header_image'
       ],
       [
@@ -80,6 +82,8 @@ class VendorRepository<T extends DatabaseProvider> {
         'TEXT',
         'TEXT',
         'TEXT',
+        'INTEGER',
+        'INTEGER',
         'TEXT'
       ],
       'id',
@@ -97,6 +101,8 @@ class VendorRepository<T extends DatabaseProvider> {
         true,
         false,
         false,
+        true,
+        true,
         true,
       ],
     );

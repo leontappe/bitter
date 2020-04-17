@@ -18,6 +18,9 @@ class Vendor {
   String fullAddress;
   String billPrefix;
 
+  int defaultDueDays;
+  int defaultTax;
+
   List<int> headerImage;
 
   Vendor({
@@ -34,6 +37,8 @@ class Vendor {
     this.website,
     @required this.fullAddress,
     @required this.billPrefix,
+    this.defaultDueDays,
+    this.defaultTax,
     this.headerImage,
   });
 
@@ -47,6 +52,8 @@ class Vendor {
         bank: null,
         fullAddress: null,
         billPrefix: null,
+        defaultDueDays: 14,
+        defaultTax: 19,
       );
 
   factory Vendor.fromMap(Map map) => Vendor(
@@ -63,6 +70,8 @@ class Vendor {
         website: (map['website'] != null) ? map['website'].toString() : null,
         fullAddress: map['full_address'].toString(),
         billPrefix: map['bill_prefix'].toString(),
+        defaultDueDays: map['default_due_days'] as int,
+        defaultTax: map['default_tax'] as int,
         headerImage:
             (map['header_image'] != null) ? base64.decode(map['header_image'].toString()) : null,
       );
@@ -80,6 +89,8 @@ class Vendor {
         'website': website,
         'full_address': fullAddress,
         'bill_prefix': billPrefix,
+        'default_due_days': defaultDueDays,
+        'default_tax': defaultTax,
         'header_image': (headerImage != null) ? base64.encode(headerImage) : null,
       };
 

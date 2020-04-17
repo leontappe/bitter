@@ -30,6 +30,8 @@ class VendorCard extends StatelessWidget {
             if (vendor.website != null) Text('Website: ${vendor.website}'),
             Text('Adresszeile für Briefkopf: ${vendor.fullAddress}'),
             Text('Prefix für Rechnungsnummern: ${vendor.billPrefix}'),
+            Text('Standard Zahlungsfrist: ${vendor.defaultDueDays} Tage'),
+            Text('Standard Umsatzsteuer: ${vendor.defaultTax} %'),
             Text('Kopfzeilenbild: ${vendor.headerImage != null ? 'Vorhanden' : 'Nicht vorhanden'}'),
           ],
         ),

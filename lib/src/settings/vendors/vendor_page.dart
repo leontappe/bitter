@@ -105,95 +105,129 @@ class _VendorPageState extends State<VendorPage> {
                       },
                     ),
                     TextFormField(
-                        initialValue: newVendor.city,
-                        maxLines: 1,
-                        decoration: InputDecoration(labelText: 'Stadt'),
-                        validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                        onChanged: (String input) {
-                          newVendor.city = input;
-                          _formKey.currentState.validate();
-                          dirty = true;
-                        }),
+                      initialValue: newVendor.city,
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'Stadt'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        newVendor.city = input;
+                        _formKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
                     TextFormField(
-                        initialValue: newVendor.iban,
-                        maxLines: 1,
-                        decoration: InputDecoration(labelText: 'IBAN'),
-                        validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                        onChanged: (String input) {
-                          newVendor.iban = input;
-                          _formKey.currentState.validate();
-                          dirty = true;
-                        }),
+                      initialValue: newVendor.iban,
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'IBAN'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        newVendor.iban = input;
+                        _formKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
                     TextFormField(
-                        initialValue: newVendor.bic,
-                        maxLines: 1,
-                        decoration: InputDecoration(labelText: 'BIC'),
-                        validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                        onChanged: (String input) {
-                          newVendor.bic = input;
-                          _formKey.currentState.validate();
-                          dirty = true;
-                        }),
+                      initialValue: newVendor.bic,
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'BIC'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        newVendor.bic = input;
+                        _formKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
                     TextFormField(
-                        initialValue: newVendor.bank,
-                        maxLines: 1,
-                        decoration: InputDecoration(labelText: 'Bank'),
-                        keyboardType: TextInputType.numberWithOptions(),
-                        validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                        onChanged: (String input) {
-                          newVendor.bank = input;
-                          _formKey.currentState.validate();
-                          dirty = true;
-                        }),
+                      initialValue: newVendor.bank,
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'Bank'),
+                      keyboardType: TextInputType.numberWithOptions(),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        newVendor.bank = input;
+                        _formKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
                     TextFormField(
-                        initialValue: newVendor.taxNr,
-                        maxLines: 1,
-                        decoration: InputDecoration(labelText: 'Steuernummer'),
-                        validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                        onChanged: (String input) {
-                          newVendor.taxNr = input;
-                          _formKey.currentState.validate();
-                          dirty = true;
-                        }),
+                      initialValue: newVendor.taxNr,
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'Steuernummer'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        newVendor.taxNr = input;
+                        _formKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
                     TextFormField(
-                        initialValue: newVendor.vatNr,
-                        maxLines: 1,
-                        decoration: InputDecoration(labelText: 'Umsatzsteuernummer'),
-                        validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                        onChanged: (String input) {
-                          newVendor.vatNr = input;
-                          _formKey.currentState.validate();
-                          dirty = true;
-                        }),
+                      initialValue: newVendor.vatNr,
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'Umsatzsteuernummer'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        newVendor.vatNr = input;
+                        _formKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
                     TextFormField(
-                        initialValue: newVendor.website,
-                        maxLines: 1,
-                        decoration: InputDecoration(labelText: 'Website'),
-                        onChanged: (String input) {
-                          newVendor.website = input;
-                          dirty = true;
-                        }),
+                      initialValue: newVendor.website,
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'Website'),
+                      onChanged: (String input) {
+                        newVendor.website = input;
+                        dirty = true;
+                      },
+                    ),
                     TextFormField(
-                        initialValue: newVendor.fullAddress,
-                        maxLines: 1,
-                        decoration: InputDecoration(labelText: 'Adresszeile für Briefkopf'),
-                        validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                        onChanged: (String input) {
-                          newVendor.fullAddress = input;
-                          _formKey.currentState.validate();
-                          dirty = true;
-                        }),
+                      initialValue: newVendor.fullAddress,
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'Adresszeile für Briefkopf'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        newVendor.fullAddress = input;
+                        _formKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
                     TextFormField(
-                        maxLines: 1,
-                        initialValue: newVendor.billPrefix,
-                        decoration:
-                            InputDecoration(labelText: 'Prefix für Rechnungsnummern (Zweistellig)'),
-                        validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                        onChanged: (String input) {
-                          newVendor.billPrefix = input;
-                          _formKey.currentState.validate();
-                          dirty = true;
-                        }),
+                      maxLines: 1,
+                      initialValue: newVendor.billPrefix,
+                      decoration: InputDecoration(labelText: 'Prefix für Rechnungsnummern'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        newVendor.billPrefix = input;
+                        _formKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
+                      maxLines: 1,
+                      initialValue: newVendor.defaultDueDays?.toString() ?? '14',
+                      keyboardType: TextInputType.numberWithOptions(),
+                      decoration:
+                          InputDecoration(labelText: 'Standard Zahlungsfrist', suffixText: 'Tage'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        newVendor.defaultDueDays = int.parse(input);
+                        _formKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
+                      maxLines: 1,
+                      initialValue: newVendor.defaultTax?.toString() ?? '19',
+                      keyboardType: TextInputType.numberWithOptions(),
+                      decoration:
+                          InputDecoration(labelText: 'Standard Umsatzsteuer', suffixText: '%'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        newVendor.defaultTax = int.parse(input);
+                        _formKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
                     ListTile(
                       title: Text('Kopfzeilenbild'),
                       subtitle: (newVendor.headerImage != null)

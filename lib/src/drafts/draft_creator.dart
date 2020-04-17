@@ -45,6 +45,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   bool vendorIsset;
   List<Customer> _customers;
   List<Vendor> _vendors;
+  Vendor _vendor;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +68,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
           if (widget.draft != null)
             DraftPopupMenu(
               id: draft.id,
-              onCompleted: (bool changed) => changed ? Navigator.popAndPushNamed(context, '/bills', result: true) : null,
+              onCompleted: (bool changed) =>
+                  changed ? Navigator.popAndPushNamed(context, '/bills', result: true) : null,
             )
         ],
       ),
@@ -110,8 +112,15 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   isExpanded: true,
                   value: draft.vendor,
                   onChanged: (int value) {
+                    _vendor = _vendors.singleWhere((Vendor v) => v.id == value);
                     setState(() {
                       draft.vendor = value;
+                      if (_vendor.defaultDueDays != null) {
+                        draft.dueDays = _vendor.defaultDueDays;
+                      }
+                      if (_vendor.defaultTax != null) {
+                        draft.tax = _vendor.defaultTax;
+                      }
                     });
                     dirty = true;
                     validateDropdowns();
@@ -130,7 +139,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   width: 80.0,
                   height: 64.0,
                   child: TextFormField(
-                    initialValue: draft.tax.toString() ?? '19',
+                    controller: TextEditingController(text: draft.tax.toString() ?? '19'),
                     maxLines: 1,
                     keyboardType: TextInputType.numberWithOptions(),
                     decoration: InputDecoration(hintText: '19', suffixText: '%'),
@@ -174,7 +183,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   width: 80.0,
                   height: 64.0,
                   child: TextFormField(
-                    initialValue: draft.dueDays?.toString() ?? '14',
+                    controller: TextEditingController(text: draft.dueDays?.toString() ?? '14'),
                     maxLines: 1,
                     keyboardType: TextInputType.numberWithOptions(),
                     decoration: InputDecoration(hintText: '14', suffixText: 'Tage'),
