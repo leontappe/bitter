@@ -1,3 +1,5 @@
+import 'package:bitter/src/drafts/items_bloc.dart';
+
 import '../models/bill.dart';
 import '../providers/database_provider.dart';
 import 'settings_repository.dart';
@@ -20,8 +22,16 @@ class BillRepository<T extends DatabaseProvider> {
     final results =
         List<Bill>.from((await db.select(tableName)).map<Bill>((Map e) => Bill.fromMap(e)));
     if (searchQuery != null && searchQuery.isNotEmpty) {
-      return List.from(
-          results.where((Bill d) => d.billNr.toLowerCase().contains(searchQuery.toLowerCase())));
+      return List.from(results.where((Bill d) =>
+          d.billNr.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          '${d.customer.name} ${d.customer.surname} ${d.customer.company ?? ''} ${d.customer.organizationUnit ?? ''}'
+              .toLowerCase()
+              .contains(searchQuery) ||
+          '${d.vendor.name} ${d.vendor.contact}'.toLowerCase().contains(searchQuery) ||
+          d.items
+              .where((Item i) =>
+                  '${i.title} ${i.description}'.toLowerCase().contains(searchQuery.toLowerCase()))
+              .isNotEmpty));
     } else {
       return results;
     }
