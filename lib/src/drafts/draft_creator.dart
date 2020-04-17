@@ -67,7 +67,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
           if (widget.draft != null)
             DraftPopupMenu(
               id: draft.id,
-              onCompleted: (bool changed) => changed ? Navigator.pop(context, true) : null,
+              onCompleted: (bool changed) => changed ? Navigator.popAndPushNamed(context, '/bills', result: true) : null,
             )
         ],
       ),
