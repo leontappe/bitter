@@ -79,8 +79,7 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
   Future<void> onSelected(DraftPopupSelection value) async {
     switch (value) {
       case DraftPopupSelection.createBill:
-        await _createBill(widget.id);
-        (widget.onCompleted != null) ? widget.onCompleted(true) : null;
+        (widget.onCompleted != null) ? widget.onCompleted(await _createBill(widget.id)) : null;
         break;
       case DraftPopupSelection.delete:
         await repo.delete(widget.id);
@@ -92,8 +91,14 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
     }
   }
 
-  Future<void> _createBill(int id) async {
+  Future<bool> _createBill(int id) async {
     draft = await repo.selectSingle(id);
+
+    if (draft.items.isEmpty) {
+      Scaffold.of(context).showSnackBar(const SnackBar(
+          content: Text('Dieser Entwurf enthält keine Artikel'), duration: Duration(seconds: 3)));
+      return false;
+    }
 
     final customer = await customerRepo.selectSingle(draft.customer);
     final vendor = await vendorRepo.selectSingle(draft.vendor);
@@ -127,12 +132,14 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
 
     if ((await billRepo.select()).length > bills.length) {
       await repo.delete(draft.id);
+      return true;
     } else {
       Scaffold.of(context).showSnackBar(const SnackBar(
         content: Text(
             'Die Rechnung wurde nicht abgespeichert, bitte starte die Anwendung neu und versuche es noch mal'),
         duration: Duration(seconds: 3),
       ));
+      return false;
     }
   }
 }
