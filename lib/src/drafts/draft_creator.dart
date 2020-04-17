@@ -312,7 +312,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
       draft.items = itemsBloc.items;
 
       for (var i = 0; i < draft.items.length; i++) {
-        if (draft.items[i].tax == null || draft.items[i].tax == 0) {
+        if (draft.items[i].tax == null) {
           draft.items[i].tax = draft.tax;
         }
       }
