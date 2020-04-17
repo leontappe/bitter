@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bitter/src/drafts/draft_popup_menu.dart';
+import 'package:bitter/src/repositories/settings_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -31,8 +32,11 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   DraftRepository repo;
   CustomerRepository customerRepo;
   VendorRepository vendorRepo;
+  SettingsRepository settingsRepo;
 
   ItemsBloc itemsBloc;
+
+  String editor;
 
   Draft draft;
   bool dirty;
@@ -73,20 +77,6 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
           key: _formKey,
           child: ListView(
             children: <Widget>[
-              ListTile(
-                title: Text('Bearbeiter*in', style: Theme.of(context).textTheme.headline6),
-                subtitle: TextFormField(
-                  controller: TextEditingController(text: draft.editor ?? ''),
-                  maxLines: 1,
-                  decoration: InputDecoration(hintText: 'Erika Musterfrau'),
-                  validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                  onChanged: (String input) {
-                    draft.editor = input;
-                    _formKey.currentState.validate();
-                    dirty = true;
-                  },
-                ),
-              ),
               ListTile(
                 title: Text('Kunde', style: Theme.of(context).textTheme.headline6),
                 trailing: (customerIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
@@ -232,6 +222,11 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
     repo = DraftRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
     customerRepo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
     vendorRepo = VendorRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    settingsRepo = SettingsRepository();
+
+    await settingsRepo.setUp();
+
+    editor = await settingsRepo.getUsername();
 
     _customers = await customerRepo.select();
     _vendors = await vendorRepo.select();
@@ -318,6 +313,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
       }
 
       draft.dueDays ??= 14;
+      draft.editor = editor;
 
       if (widget.draft != null) {
         await repo.update(draft);

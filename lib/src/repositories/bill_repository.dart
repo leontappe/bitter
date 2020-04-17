@@ -32,6 +32,7 @@ class BillRepository<T extends DatabaseProvider> {
               .where((Item i) =>
                   '${i.title} ${i.description}'.toLowerCase().contains(searchQuery.toLowerCase()))
               .isNotEmpty));
+
     } else {
       return results;
     }

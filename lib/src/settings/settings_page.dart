@@ -15,9 +15,9 @@ class SettingsPage extends StatelessWidget {
           onTap: () => Navigator.pushNamed(context, '/settings/vendors'),
         ),
         ListTile(
-          title: Text('Datenbankeinstellungen', style: Theme.of(context).textTheme.headline6),
-          subtitle: Text('Einstellen der Datenbankverbindung'),
-          onTap: () => Navigator.pushNamed(context, '/settings/database'),
+          title: Text('Anwendungseinstellungen', style: Theme.of(context).textTheme.headline6),
+          subtitle: Text('Einstellen der Datenbankverbindung und der Bearbeiter*in'),
+          onTap: () => Navigator.pushNamed(context, '/settings/app'),
         ),
       ]),
     );

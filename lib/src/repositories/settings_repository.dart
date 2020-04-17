@@ -17,8 +17,15 @@ class SettingsRepository {
 
   Future<Map> get _getCurrentSettings async => (json.decode(data.readAsStringSync())) as Map;
 
-  Future<bool> hasMySqlSettings() async =>
-      (await _getCurrentSettings).containsKey('mysql_settings');
+  Future<MySqlSettings> getMySqlSettings() async {
+    return MySqlSettings.fromMap(await select('mysql_settings') as Map);
+  }
+
+  Future<String> getUsername() async => (await select('username')) as String;
+
+  Future<bool> hasMySqlSettings() => _hasGeneric('username');
+
+  Future<bool> hasUsername() => _hasGeneric('username');
 
   Future<void> insert(String key, dynamic value) async {
     final settings = await _getCurrentSettings;
@@ -26,16 +33,16 @@ class SettingsRepository {
     await _writeSettings(settings);
   }
 
-  Future<dynamic> select(dynamic key) async {
-    return (await _getCurrentSettings)[key];
+  Future<dynamic> select(String key) async {
+    if (await _hasGeneric(key)) {
+      return (await _getCurrentSettings)[key];
+    } else {
+      return null;
+    }
   }
 
   Future<void> setMySqlSettings(MySqlSettings settings) async {
     await insert('mysql_settings', settings.toMap);
-  }
-
-  Future<MySqlSettings> getMySqlSettings() async {
-    return MySqlSettings.fromMap(await select('mysql_settings') as Map);
   }
 
   Future<void> setUp() async {
@@ -52,6 +59,11 @@ class SettingsRepository {
       await _writeSettings(<String, String>{});
     }
   }
+
+  Future<void> setUsername(String username) async => await insert('username', username);
+
+  Future<bool> _hasGeneric(String key) async =>
+      ((await _getCurrentSettings).containsKey(key)); //&& ((await select(key)).toString().isNotEmpty);
 
   Future<void> _writeSettings(Map map) async =>
       await data.writeAsBytes(utf8.encode(json.encode(map)));

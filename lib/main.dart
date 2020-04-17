@@ -6,7 +6,7 @@ import 'src/drafts/drafts_list_page.dart';
 import 'src/homepage.dart';
 import 'src/providers/inherited_database.dart';
 import 'src/providers/mysql_provider.dart';
-import 'src/settings/database_page.dart';
+import 'src/settings/app_settings_page.dart';
 import 'src/settings/settings_page.dart';
 import 'src/settings/vendors/vendors_list_page.dart';
 
@@ -31,7 +31,7 @@ class Bitter extends StatelessWidget {
           '/drafts': (BuildContext context) => DraftsListPage(),
           '/settings': (BuildContext context) => SettingsPage(),
           '/settings/vendors': (BuildContext context) => VendorsPage(),
-          '/settings/database': (BuildContext context) => DatabasePage(),
+          '/settings/app': (BuildContext context) => AppSettingsPage(),
         },
       ),
     );

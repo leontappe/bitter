@@ -115,18 +115,19 @@ class _HomepageState extends State<Homepage> {
   Future<void> initDb() async {
     final settings = SettingsRepository();
     await settings.setUp();
-    if (!await settings.hasMySqlSettings()) {
+    if (!await settings.hasMySqlSettings() || !await settings.hasUsername()) {
       await showDialog<dynamic>(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: Text('Datenbank einstellen'),
+          title: Text('Anwendungseinstellungen festlegen'),
           content: Text(
-              'Es ist noch keine Datenbankverbindung eingestellt. Gebe hier die Verbindungsinformationen für den MySQL Server ein um fortzufahren.'),
+              'Es ist noch keine Datenbankverbindung eingestellt. Gebe auf der folgenden Seite deinen vollen Namen und die Verbindungsinformationen für den MySQL Server ein um fortzufahren.'),
           actions: <Widget>[
             MaterialButton(
-                onPressed: () => Navigator.of(context).popAndPushNamed('/settings/database'),
-                child: Text('Fortfahren')),
+              child: Text('Fortfahren'),
+              onPressed: () => Navigator.of(context).popAndPushNamed('/settings/app'),
+            ),
           ],
         ),
       );
