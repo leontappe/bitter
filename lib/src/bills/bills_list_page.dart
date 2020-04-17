@@ -60,7 +60,7 @@ class _BillsListPageState extends State<BillsListPage> {
                 subtitle: Text(b.created.toString().split('.').first),
                 trailing: SaveBillButton(bill: b),
                 onTap: () => Navigator.push<bool>(context,
-                    MaterialPageRoute(builder: (BuildContext context) => BillPage(bill: b))),
+                    MaterialPageRoute(builder: (BuildContext context) => BillPage(id: b.id))),
               ),
             ),
           ],

@@ -29,6 +29,7 @@ class Bill {
   final List<Item> items;
 
   BillStatus status;
+  String note;
 
   Bill({
     this.id,
@@ -43,6 +44,7 @@ class Bill {
     @required this.created,
     @required this.serviceDate,
     @required this.dueDate,
+    this.note,
   });
 
   factory Bill.empty() => Bill(
@@ -72,6 +74,7 @@ class Bill {
         created: DateTime.parse(map['created'].toString()).toLocal(),
         serviceDate: DateTime.parse(map['service_date'].toString()).toLocal(),
         dueDate: DateTime.parse(map['due_date'].toString()).toLocal(),
+        note: (map['note'] != null) ? map['note'].toString() : null,
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
@@ -86,6 +89,7 @@ class Bill {
         'created': created.toUtc(),
         'service_date': serviceDate.toUtc(),
         'due_date': dueDate.toUtc(),
+        if (note != null) 'note': note,
       };
 
   @override

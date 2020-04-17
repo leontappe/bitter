@@ -31,6 +31,10 @@ class BillRepository<T extends DatabaseProvider> {
     return Bill.fromMap(await db.selectSingle(tableName, id));
   }
 
+  Future<void> update(Bill bill) async {
+    await db.update(tableName, bill.id, bill.toMap);
+  }
+
   Future<void> setUp() async {
     final settingsRepo = SettingsRepository();
     await settingsRepo.setUp();
@@ -57,7 +61,8 @@ class BillRepository<T extends DatabaseProvider> {
         'items',
         'created',
         'service_date',
-        'due_date'
+        'due_date',
+        'note'
       ],
       [
         'INTEGER',
@@ -71,7 +76,8 @@ class BillRepository<T extends DatabaseProvider> {
         'TEXT',
         'DATETIME',
         'DATETIME',
-        'DATETIME'
+        'DATETIME',
+        'TEXT'
       ],
       'id',
       nullable: <bool>[
@@ -86,7 +92,8 @@ class BillRepository<T extends DatabaseProvider> {
         false,
         false,
         false,
-        false
+        false,
+        true
       ],
     );
   }
