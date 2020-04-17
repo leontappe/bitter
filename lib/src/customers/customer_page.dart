@@ -137,7 +137,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           changed = true;
                         }),
                     TextFormField(
-                        initialValue: newCustomer.zipCode.toString(),
+                        initialValue: newCustomer.zipCode?.toString() ?? '',
                         maxLines: 1,
                         decoration: InputDecoration(labelText: 'Postleitzahl'),
                         keyboardType: TextInputType.numberWithOptions(),
