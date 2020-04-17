@@ -32,6 +32,18 @@ class _BillPageState extends State<BillPage> {
             trailing: Text('von ${widget.bill.editor}'),
           ),
           ListTile(
+            title: Text('${widget.bill.status}'),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                    'Lieferdatum/Leistungsdatum: ${widget.bill.serviceDate.day}.${widget.bill.serviceDate.month}.${widget.bill.serviceDate.year}'),
+                Text(
+                    'Zahlungsziel: ${widget.bill.dueDate.day}.${widget.bill.dueDate.month}.${widget.bill.dueDate.year}'),
+              ],
+            ),
+          ),
+          ListTile(
             title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
             subtitle: VendorCard(vendor: widget.bill.vendor),
           ),

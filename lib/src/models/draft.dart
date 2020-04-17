@@ -13,6 +13,9 @@ class Draft {
   List<Item> items;
   int tax;
 
+  DateTime serviceDate;
+  int dueDays;
+
   int get sum {
     var sum = 0;
     for (var item in items) {
@@ -28,6 +31,8 @@ class Draft {
     @required this.vendor,
     @required this.items,
     @required this.tax,
+    @required this.serviceDate,
+    @required this.dueDays,
   });
 
   factory Draft.empty() => Draft(
@@ -36,6 +41,8 @@ class Draft {
         items: <Item>[],
         tax: null,
         vendor: null,
+        serviceDate: null,
+        dueDays: null,
       );
 
   factory Draft.fromMap(Map map) => Draft(
@@ -46,6 +53,10 @@ class Draft {
         items: ((json.decode(map['items'].toString()) as List)
             .map<Item>((dynamic map) => Item.fromMap(map as Map))).toList(),
         tax: map['tax'] as int,
+        serviceDate: (map['service_date'] != null)
+            ? DateTime.parse(map['service_date'].toString()).toLocal()
+            : null,
+        dueDays: int.parse(map['due_days'].toString()),
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
@@ -54,6 +65,8 @@ class Draft {
         'vendor': vendor,
         'items': json.encode(items.map((e) => e.toMap).toList()),
         'tax': tax,
+        if (serviceDate != null) 'service_date': serviceDate.toUtc(),
+        'due_days': dueDays,
       };
 
   @override

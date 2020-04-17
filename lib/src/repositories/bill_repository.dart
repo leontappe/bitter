@@ -45,10 +45,49 @@ class BillRepository<T extends DatabaseProvider> {
 
     await db.createTable(
       tableName,
-      ['id', 'bill_nr', 'file', 'sum', 'editor', 'vendor', 'customer', 'items', 'created'],
-      ['INTEGER', 'TEXT', 'TEXT', 'INTEGER', 'TEXT', 'TEXT', 'TEXT', 'TEXT', 'DATETIME'],
+      [
+        'id',
+        'status',
+        'bill_nr',
+        'file',
+        'sum',
+        'editor',
+        'vendor',
+        'customer',
+        'items',
+        'created',
+        'service_date',
+        'due_date'
+      ],
+      [
+        'INTEGER',
+        'INTEGER',
+        'TEXT',
+        'TEXT',
+        'INTEGER',
+        'TEXT',
+        'TEXT',
+        'TEXT',
+        'TEXT',
+        'DATETIME',
+        'DATETIME',
+        'DATETIME'
+      ],
       'id',
-      nullable: <bool>[true, false, false, false, false, false, false, false, false],
+      nullable: <bool>[
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
     );
   }
 }

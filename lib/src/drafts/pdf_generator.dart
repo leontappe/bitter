@@ -28,6 +28,8 @@ class PdfGenerator {
       items[i].id = '${i + 1}';
     }
 
+    bill.serviceDate ??= DateTime.now();
+
     doc.addPage(
       MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -114,26 +116,53 @@ class PdfGenerator {
           Paragraph(
               text: 'hiermit berechnen wir Ihnen die folgenden Positionen:',
               style: TextStyle(font: ttfSans)),
+          Table(),
           Table.fromTextArray(context: context, data: <List<String>>[
-            <String>['Pos', 'Artikel', 'Menge', 'USt.', 'Einzelpreis EUR', 'Nettopreis EUR'],
+            <String>['Pos', 'Artikel', 'Menge', 'USt.', 'Einzelpreis', 'Bruttopreis'],
             ...items.map(
               (e) => <String>[
                 e.id.toString(),
                 (e.description != null) ? '${e.title} - ${e.description}' : '${e.title}',
                 e.quantity.toString(),
-                (e.tax == 0) ? bill.tax.toStringAsFixed(2) : e.tax.toStringAsFixed(2),
-                (e.price / 100.0).toStringAsFixed(2),
-                (e.sum / 100.0).toStringAsFixed(2),
+                (e.tax == 0) ? '${bill.tax.toStringAsFixed(0)}%' : '${e.tax.toStringAsFixed(0)} %',
+                (e.price / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' EUR',
+                (e.sum / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' EUR',
               ],
             )
           ]),
-          Table.fromTextArray(context: context, data: <List<String>>[
-            <String>['Gesamtbetrag', '${(bill.sum / 100.0).toStringAsFixed(2)} Euro'],
-            <String>[
-              'Davon Steuern',
-              '${((bill.sum * (bill.tax / 100.0)) / 100.0).toStringAsFixed(2)} Euro'
-            ]
-          ]),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Paragraph(
+                    text:
+                        'Gesamtbetrag: ${(bill.sum / 100.0).toStringAsFixed(2).replaceAll('.', ',')} EUR',
+                    style: TextStyle(fontSize: fontsize, fontWeight: FontWeight.bold),
+                    margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  ),
+                  Paragraph(
+                    text:
+                        'Davon Umsatzsteuer: ${((bill.sum * (bill.tax / 100.0)) / 100.0).toStringAsFixed(2).replaceAll('.', ',')} EUR',
+                    style: TextStyle(fontSize: fontsize),
+                    margin: EdgeInsets.all(0.0),
+                  )
+                ],
+              ),
+            ],
+          ),
+          Paragraph(
+              text:
+                  'Lieferdatum/Leistungsdatum: ${bill.serviceDate.day}.${bill.serviceDate.month}.${bill.serviceDate.year}',
+              style: TextStyle(font: ttfSans)),
+          Paragraph(text: 'Veranstaltung: TODO optional', style: TextStyle(font: ttfSans)), // TODO
+          Paragraph(
+              text:
+                  'Bezahlbar ohne Abzug bis: ${bill.serviceDate.add(Duration(days: bill.dueDays)).day}.${bill.serviceDate.add(Duration(days: bill.dueDays)).month}.${bill.serviceDate.add(Duration(days: bill.dueDays)).year}',
+              style: TextStyle(font: ttfSans)),
         ],
       ),
     );

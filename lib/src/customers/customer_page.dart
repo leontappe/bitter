@@ -259,8 +259,8 @@ class _CustomerPageState extends State<CustomerPage> {
         builder: (BuildContext context) => AlertDialog(
               title: Text('Soll dieser Kunde wirlich gelöscht werden?'),
               actions: <Widget>[
-                MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Nein')),
-                MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Ja')),
+                MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
+                MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
               ],
             ));
     if (result == 1) {
@@ -279,8 +279,8 @@ class _CustomerPageState extends State<CustomerPage> {
                 actions: <Widget>[
                   MaterialButton(
                       onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),
-                  MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Nein')),
-                  MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Ja')),
+                  MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
+                  MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
                 ],
               ));
       switch (result) {

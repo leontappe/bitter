@@ -120,7 +120,9 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
       vendor: vendor,
       customer: customer,
       items: draft.items,
-      created: DateTime.now().toUtc(),
+      created: DateTime.now(),
+      serviceDate: draft.serviceDate ?? DateTime.now(),
+      dueDate: DateTime.now().add(Duration(days: draft.dueDays)),
     ));
 
     if ((await billRepo.select()).length > bills.length) {

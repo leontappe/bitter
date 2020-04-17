@@ -153,6 +153,50 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   ),
                 ),
               ),
+              ListTile(
+                title: Text('Lieferdatum/Leistungsdatum:',
+                    style: Theme.of(context).textTheme.headline6),
+                trailing: Container(
+                  width: 196.0,
+                  height: 64.0,
+                  child: MaterialButton(
+                    child: Text((draft.serviceDate != null)
+                        ? draft.serviceDate.toString().split(' ').first
+                        : 'Am Rechnungsdatum'),
+                    onPressed: () async {
+                      draft.serviceDate = await showDatePicker(
+                        context: context,
+                        initialDate: draft.serviceDate ?? DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(DateTime.now().year + 20),
+                        cancelText: 'Abbrechen',
+                        confirmText: 'Ok',
+                      );
+                      setState(() => draft);
+                      dirty = true;
+                    },
+                  ),
+                ),
+              ),
+              ListTile(
+                title: Text('Zahlungsziel:', style: Theme.of(context).textTheme.headline6),
+                trailing: Container(
+                  width: 80.0,
+                  height: 64.0,
+                  child: TextFormField(
+                    initialValue: draft.dueDays?.toString() ?? '14',
+                    maxLines: 1,
+                    keyboardType: TextInputType.numberWithOptions(),
+                    decoration: InputDecoration(hintText: '14', suffixText: 'Tage'),
+                    validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                    onChanged: (String input) {
+                      setState(() => draft.dueDays = int.parse(input));
+                      _formKey.currentState.validate();
+                      dirty = true;
+                    },
+                  ),
+                ),
+              ),
               Text('Artikel', style: Theme.of(context).textTheme.headline6),
               BlocBuilder<ItemsBloc, ItemsState>(
                 bloc: itemsBloc,
@@ -229,8 +273,10 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                 actions: <Widget>[
                   MaterialButton(
                       onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),
-                  MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Nein')),
-                  MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Ja')),
+                  MaterialButton(
+                      onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
+                  MaterialButton(
+                      onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
                 ],
               ));
       switch (result) {
@@ -270,6 +316,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
           draft.items[i].tax = draft.tax;
         }
       }
+
+      draft.dueDays ??= 14;
 
       if (widget.draft != null) {
         await repo.update(draft);

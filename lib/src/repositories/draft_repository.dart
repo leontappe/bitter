@@ -77,10 +77,10 @@ class DraftRepository<T extends DatabaseProvider> {
 
     await db.createTable(
       tableName,
-      ['id', 'editor', 'customer', 'vendor', 'items', 'tax'],
-      ['INTEGER', 'TEXT', 'INTEGER', 'INTEGER', 'TEXT', 'INTEGER'],
+      ['id', 'editor', 'customer', 'vendor', 'items', 'tax', 'service_date', 'due_days'],
+      ['INTEGER', 'TEXT', 'INTEGER', 'INTEGER', 'TEXT', 'INTEGER', 'DATETIME', 'INTEGER'],
       'id',
-      nullable: <bool>[true, false, false, false, false, false],
+      nullable: <bool>[true, false, false, false, false, false, true, false],
     );
   }
 

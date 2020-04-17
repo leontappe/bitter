@@ -235,8 +235,8 @@ class _VendorPageState extends State<VendorPage> {
         builder: (BuildContext context) => AlertDialog(
               title: Text('Soll dieser Verkäufer wirlich gelöscht werden?'),
               actions: <Widget>[
-                MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Nein')),
-                MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Ja')),
+                MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
+                MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
               ],
             ));
     if (result == 1) {
@@ -321,8 +321,8 @@ Um ein Kopfzeilenbild für diesen Verkäufer festzulegen, bitte ein Bild unter D
                 actions: <Widget>[
                   MaterialButton(
                       onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),
-                  MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Nein')),
-                  MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Ja')),
+                  MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
+                  MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
                 ],
               ));
       switch (result) {
