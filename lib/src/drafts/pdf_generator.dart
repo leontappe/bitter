@@ -7,7 +7,20 @@ import 'package:pdf/widgets.dart';
 import '../../fonts/LiberationSans.dart';
 import '../models/customer.dart';
 import '../models/draft.dart';
+import '../models/item.dart';
 import '../models/vendor.dart';
+
+class PaddedHeaderText extends Padding {
+  PaddedHeaderText(String text)
+      : super(
+            padding: EdgeInsets.all(4.0),
+            child: Text(text, style: TextStyle(fontWeight: FontWeight.bold)));
+}
+
+class PaddedText extends Padding {
+  PaddedText(String text, Font font)
+      : super(padding: EdgeInsets.all(2.0), child: Text(text, style: TextStyle(font: font)));
+}
 
 class PdfGenerator {
   Font ttfSans;
@@ -116,20 +129,43 @@ class PdfGenerator {
           Paragraph(
               text: 'hiermit berechnen wir Ihnen die folgenden Positionen:',
               style: TextStyle(font: ttfSans)),
-          Table(),
-          Table.fromTextArray(context: context, data: <List<String>>[
-            <String>['Pos', 'Artikel', 'Menge', 'USt.', 'Einzelpreis', 'Bruttopreis'],
-            ...items.map(
-              (e) => <String>[
-                e.id.toString(),
-                (e.description != null) ? '${e.title} - ${e.description}' : '${e.title}',
-                e.quantity.toString(),
-                (e.tax == 0) ? '${bill.tax.toStringAsFixed(0)}%' : '${e.tax.toStringAsFixed(0)} %',
-                (e.price / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' EUR',
-                (e.sum / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' EUR',
-              ],
-            )
-          ]),
+          Table(
+            columnWidths: <int, TableColumnWidth>{
+              0: FixedColumnWidth(20.0),
+              2: FixedColumnWidth(32.0),
+              3: FixedColumnWidth(24.0),
+              4: FixedColumnWidth(50.0),
+              5: FixedColumnWidth(50.0),
+            },
+            tableWidth: TableWidth.max,
+            border: TableBorder(),
+            children: <TableRow>[
+              TableRow(children: <Widget>[
+                PaddedHeaderText('Pos.'),
+                PaddedHeaderText('Artikel'),
+                PaddedHeaderText('Menge'),
+                PaddedHeaderText('Ust.'),
+                PaddedHeaderText('Einzelpreis'),
+                PaddedHeaderText('Bruttopreis')
+              ]),
+              ...items.map((Item i) => TableRow(children: <Widget>[
+                    PaddedText(i.id.toString(), ttfSans),
+                    PaddedText(
+                        (i.description != null) ? '${i.title} - ${i.description}' : '${i.title}',
+                        ttfSans),
+                    PaddedText(i.quantity.toString(), ttfSans),
+                    PaddedText(
+                        (i.tax == 0)
+                            ? '${bill.tax.toStringAsFixed(0)}%'
+                            : '${i.tax.toStringAsFixed(0)} %',
+                        ttfSans),
+                    PaddedText(
+                        (i.price / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' €', ttfSans),
+                    PaddedText(
+                        (i.sum / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' €', ttfSans),
+                  ])),
+            ],
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
