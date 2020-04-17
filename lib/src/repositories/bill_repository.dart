@@ -26,8 +26,8 @@ class BillRepository<T extends DatabaseProvider> {
           d.billNr.toLowerCase().contains(searchQuery.toLowerCase()) ||
           '${d.customer.name} ${d.customer.surname} ${d.customer.company ?? ''} ${d.customer.organizationUnit ?? ''}'
               .toLowerCase()
-              .contains(searchQuery) ||
-          '${d.vendor.name} ${d.vendor.contact}'.toLowerCase().contains(searchQuery) ||
+              .contains(searchQuery.toLowerCase()) ||
+          '${d.vendor.name} ${d.vendor.contact}'.toLowerCase().contains(searchQuery.toLowerCase()) ||
           d.items
               .where((Item i) =>
                   '${i.title} ${i.description}'.toLowerCase().contains(searchQuery.toLowerCase()))

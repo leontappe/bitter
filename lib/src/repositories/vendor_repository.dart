@@ -66,7 +66,8 @@ class VendorRepository<T extends DatabaseProvider> {
         'bill_prefix',
         'default_due_days',
         'default_tax',
-        'header_image'
+        'header_image',
+        'user_message_label',
       ],
       [
         'INTEGER',
@@ -84,7 +85,8 @@ class VendorRepository<T extends DatabaseProvider> {
         'TEXT',
         'INTEGER',
         'INTEGER',
-        'TEXT'
+        'TEXT',
+        'TEXT',
       ],
       'id',
       nullable: <bool>[
@@ -101,6 +103,7 @@ class VendorRepository<T extends DatabaseProvider> {
         true,
         false,
         false,
+        true,
         true,
         true,
         true,

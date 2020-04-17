@@ -196,6 +196,20 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   ),
                 ),
               ),
+              ListTile(
+                title: Text(_vendor?.userMessageLabel ?? 'Benutzerdefinierter Rechnungskommentar:',
+                    style: Theme.of(context).textTheme.headline6),
+                trailing: Container(
+                  width: 196.0,
+                  child: TextFormField(
+                    initialValue: draft.userMessage,
+                    onChanged: (String input) {
+                      setState(() => draft.userMessage = input);
+                      dirty = true;
+                    },
+                  ),
+                ),
+              ),
               Text('Artikel', style: Theme.of(context).textTheme.headline6),
               BlocBuilder<ItemsBloc, ItemsState>(
                 bloc: itemsBloc,

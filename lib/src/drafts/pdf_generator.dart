@@ -155,10 +155,13 @@ class PdfGenerator {
             ],
           ),
           Paragraph(
+              text: ((vendor.userMessageLabel != null) ? '${vendor.userMessageLabel}: ' : '') +
+                  (bill.userMessage ?? ''),
+              style: TextStyle(font: ttfSans)),
+          Paragraph(
               text:
                   'Lieferdatum/Leistungsdatum: ${bill.serviceDate.day}.${bill.serviceDate.month}.${bill.serviceDate.year}',
               style: TextStyle(font: ttfSans)),
-          Paragraph(text: 'Veranstaltung: TODO optional', style: TextStyle(font: ttfSans)), // TODO
           Paragraph(
               text:
                   'Bezahlbar ohne Abzug bis: ${bill.serviceDate.add(Duration(days: bill.dueDays)).day}.${bill.serviceDate.add(Duration(days: bill.dueDays)).month}.${bill.serviceDate.add(Duration(days: bill.dueDays)).year}',
@@ -279,6 +282,8 @@ class PdfGenerator {
                   style: TextStyle(fontSize: fontSize, font: ttfSans, color: color),
                   margin: EdgeInsets.only(bottom: 8.0)),
               Text(vendor.name, style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
+              Text(vendor.contact,
+                  style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
               Text(vendor.address,
                   style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
               Text(vendor.city, style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),

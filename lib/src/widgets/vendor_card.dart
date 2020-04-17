@@ -33,6 +33,7 @@ class VendorCard extends StatelessWidget {
             Text('Standard Zahlungsfrist: ${vendor.defaultDueDays} Tage'),
             Text('Standard Umsatzsteuer: ${vendor.defaultTax} %'),
             Text('Kopfzeilenbild: ${vendor.headerImage != null ? 'Vorhanden' : 'Nicht vorhanden'}'),
+            Text('Label für benutzerdefinierten Rechnungskommentar: ${vendor.userMessageLabel ?? 'Keins'}'),
           ],
         ),
       ),

@@ -240,6 +240,15 @@ class _VendorPageState extends State<VendorPage> {
                               onPressed: onOpenImage,
                             ),
                     ),
+                    TextFormField(
+                      initialValue: newVendor.userMessageLabel,
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'Label für benutzerdefinierten Rechnungskommentar'),
+                      onChanged: (String input) {
+                        newVendor.userMessageLabel = input;
+                        dirty = true;
+                      },
+                    ),
                   ],
                 ),
               ),

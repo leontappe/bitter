@@ -23,6 +23,8 @@ class Vendor {
 
   List<int> headerImage;
 
+  String userMessageLabel;
+
   Vendor({
     this.id,
     @required this.name,
@@ -40,6 +42,7 @@ class Vendor {
     this.defaultDueDays,
     this.defaultTax,
     this.headerImage,
+    this.userMessageLabel,
   });
 
   factory Vendor.empty() => Vendor(
@@ -74,6 +77,8 @@ class Vendor {
         defaultTax: map['default_tax'] as int,
         headerImage:
             (map['header_image'] != null) ? base64.decode(map['header_image'].toString()) : null,
+        userMessageLabel:
+            (map['user_message_label'] != null) ? map['user_message_label'].toString() : null,
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
@@ -92,6 +97,7 @@ class Vendor {
         'default_due_days': defaultDueDays,
         'default_tax': defaultTax,
         'header_image': (headerImage != null) ? base64.encode(headerImage) : null,
+        'user_message_label': userMessageLabel,
       };
 
   Map<String, dynamic> get toMapLong => <String, dynamic>{

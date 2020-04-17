@@ -48,11 +48,12 @@ class DraftRepository<T extends DatabaseProvider> {
                 .where((Item i) =>
                     (i.description ?? '').toLowerCase().contains(searchQuery.toLowerCase()))
                 .isNotEmpty ||
-            (customer?.company ?? '').toLowerCase().contains(searchQuery) ||
-            (customer?.organizationUnit ?? '').toLowerCase().contains(searchQuery) ||
-            (customer?.name ?? '').toLowerCase().contains(searchQuery) ||
-            (customer?.surname ?? '').toLowerCase().contains(searchQuery) ||
-            (vendor?.name ?? '').toLowerCase().contains(searchQuery.toLowerCase());
+            (customer?.company ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
+            (customer?.organizationUnit ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
+            (customer?.name ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
+            (customer?.surname ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
+            (vendor?.name ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
+            d.userMessage.toLowerCase().contains(searchQuery.toLowerCase());
       }));
     } else {
       return results;
@@ -77,10 +78,20 @@ class DraftRepository<T extends DatabaseProvider> {
 
     await db.createTable(
       tableName,
-      ['id', 'editor', 'customer', 'vendor', 'items', 'tax', 'service_date', 'due_days'],
-      ['INTEGER', 'TEXT', 'INTEGER', 'INTEGER', 'TEXT', 'INTEGER', 'DATETIME', 'INTEGER'],
+      [
+        'id',
+        'editor',
+        'customer',
+        'vendor',
+        'items',
+        'tax',
+        'service_date',
+        'due_days',
+        'user_message'
+      ],
+      ['INTEGER', 'TEXT', 'INTEGER', 'INTEGER', 'TEXT', 'INTEGER', 'DATETIME', 'INTEGER', 'TEXT'],
       'id',
-      nullable: <bool>[true, false, false, false, false, false, true, false],
+      nullable: <bool>[true, false, false, false, false, false, true, false, true],
     );
   }
 

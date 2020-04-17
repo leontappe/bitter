@@ -16,13 +16,7 @@ class Draft {
   DateTime serviceDate;
   int dueDays;
 
-  int get sum {
-    var sum = 0;
-    for (var item in items) {
-      sum += item.sum;
-    }
-    return sum;
-  }
+  String userMessage;
 
   Draft({
     this.id,
@@ -33,6 +27,7 @@ class Draft {
     @required this.tax,
     @required this.serviceDate,
     @required this.dueDays,
+    this.userMessage,
   });
 
   factory Draft.empty() => Draft(
@@ -57,7 +52,16 @@ class Draft {
             ? DateTime.parse(map['service_date'].toString()).toLocal()
             : null,
         dueDays: int.parse(map['due_days'].toString()),
+        userMessage: (map['user_message'] != null) ? map['user_message'].toString() : null,
       );
+
+  int get sum {
+    var sum = 0;
+    for (var item in items) {
+      sum += item.sum;
+    }
+    return sum;
+  }
 
   Map<String, dynamic> get toMap => <String, dynamic>{
         'editor': editor,
@@ -67,6 +71,7 @@ class Draft {
         'tax': tax,
         if (serviceDate != null) 'service_date': serviceDate.toUtc(),
         'due_days': dueDays,
+        'user_message': userMessage,
       };
 
   @override
