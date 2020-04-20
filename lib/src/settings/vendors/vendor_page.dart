@@ -104,16 +104,42 @@ class _VendorPageState extends State<VendorPage> {
                         dirty = true;
                       },
                     ),
-                    TextFormField(
-                      initialValue: newVendor.city,
-                      maxLines: 1,
-                      decoration: InputDecoration(labelText: 'Stadt'),
-                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                      onChanged: (String input) {
-                        newVendor.city = input;
-                        _formKey.currentState.validate();
-                        dirty = true;
-                      },
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: TextFormField(
+                            expands: false,
+                            initialValue: newVendor.zipCode?.toString() ?? '',
+                            maxLines: 1,
+                            decoration: InputDecoration(labelText: 'Postleitzahl'),
+                            keyboardType: TextInputType.numberWithOptions(),
+                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            onChanged: (String input) {
+                              newVendor.zipCode = int.parse(input);
+                              _formKey.currentState.validate();
+                              dirty = true;
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: TextFormField(
+                            expands: false,
+                            initialValue: newVendor.city,
+                            maxLines: 1,
+                            decoration: InputDecoration(labelText: 'Stadt'),
+                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            onChanged: (String input) {
+                              newVendor.city = input;
+                              _formKey.currentState.validate();
+                              dirty = true;
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                     TextFormField(
                       initialValue: newVendor.iban,
@@ -243,7 +269,8 @@ class _VendorPageState extends State<VendorPage> {
                     TextFormField(
                       initialValue: newVendor.userMessageLabel,
                       maxLines: 1,
-                      decoration: InputDecoration(labelText: 'Label für benutzerdefinierten Rechnungskommentar'),
+                      decoration: InputDecoration(
+                          labelText: 'Label für benutzerdefinierten Rechnungskommentar'),
                       onChanged: (String input) {
                         newVendor.userMessageLabel = input;
                         dirty = true;

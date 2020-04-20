@@ -322,7 +322,8 @@ class PdfGenerator {
                   style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
               Text(vendor.address,
                   style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
-              Text(vendor.city, style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
+              Text('${vendor.zipCode} ${vendor.city}',
+                  style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
             ],
           ),
           Column(

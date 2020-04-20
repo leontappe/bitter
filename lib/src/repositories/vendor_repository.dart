@@ -55,7 +55,8 @@ class VendorRepository<T extends DatabaseProvider> {
         'name',
         'contact',
         'address',
-        'city',
+        'zip_code'
+            'city',
         'iban',
         'bic',
         'bank',
@@ -74,6 +75,7 @@ class VendorRepository<T extends DatabaseProvider> {
         'TEXT',
         'TEXT',
         'TEXT',
+        'INTEGER',
         'TEXT',
         'TEXT',
         'TEXT',
@@ -91,6 +93,7 @@ class VendorRepository<T extends DatabaseProvider> {
       'id',
       nullable: <bool>[
         true,
+        false,
         false,
         false,
         false,

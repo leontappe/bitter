@@ -21,6 +21,7 @@ class VendorCard extends StatelessWidget {
             Text(vendor.name, style: Theme.of(context).textTheme.headline5),
             Text('Ansprechpartner: ${vendor.contact}'),
             Text('Adresse: ${vendor.address}'),
+            Text('Postleitzahl: ${vendor.zipCode}'),
             Text('Stadt: ${vendor.city}'),
             Text('IBAN: ${vendor.iban}'),
             Text('BIC: ${vendor.bic}'),
@@ -33,7 +34,8 @@ class VendorCard extends StatelessWidget {
             Text('Standard Zahlungsfrist: ${vendor.defaultDueDays} Tage'),
             Text('Standard Umsatzsteuer: ${vendor.defaultTax} %'),
             Text('Kopfzeilenbild: ${vendor.headerImage != null ? 'Vorhanden' : 'Nicht vorhanden'}'),
-            Text('Label für benutzerdefinierten Rechnungskommentar: ${vendor.userMessageLabel ?? 'Keins'}'),
+            Text(
+                'Label für benutzerdefinierten Rechnungskommentar: ${vendor.userMessageLabel ?? 'Keins'}'),
           ],
         ),
       ),

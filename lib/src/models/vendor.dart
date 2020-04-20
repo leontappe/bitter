@@ -7,6 +7,7 @@ class Vendor {
   String name;
   String contact;
   String address;
+  int zipCode;
   String city;
   String iban;
   String bic;
@@ -30,6 +31,7 @@ class Vendor {
     @required this.name,
     @required this.contact,
     @required this.address,
+    @required this.zipCode,
     @required this.city,
     @required this.iban,
     @required this.bic,
@@ -49,6 +51,7 @@ class Vendor {
         name: null,
         contact: null,
         address: null,
+        zipCode: null,
         city: null,
         iban: null,
         bic: null,
@@ -64,6 +67,7 @@ class Vendor {
         name: map['name'].toString(),
         contact: map['contact'].toString(),
         address: map['address'].toString(),
+        zipCode: int.parse(map['zip_code'].toString()),
         city: map['city'].toString(),
         iban: map['iban'].toString(),
         bic: map['bic'].toString(),
@@ -85,6 +89,7 @@ class Vendor {
         'name': name,
         'contact': contact,
         'address': address,
+        'zip_code': zipCode,
         'city': city,
         'iban': iban,
         'bic': bic,

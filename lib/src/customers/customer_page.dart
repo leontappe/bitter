@@ -136,29 +136,40 @@ class _CustomerPageState extends State<CustomerPage> {
                           dirty = true;
                           changed = true;
                         }),
-                    TextFormField(
-                        initialValue: newCustomer.zipCode?.toString() ?? '',
-                        maxLines: 1,
-                        decoration: InputDecoration(labelText: 'Postleitzahl'),
-                        keyboardType: TextInputType.numberWithOptions(),
-                        validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                        onChanged: (String input) {
-                          newCustomer.zipCode = int.parse(input);
-                          _formKey.currentState.validate();
-                          dirty = true;
-                          changed = true;
-                        }),
-                    TextFormField(
-                        initialValue: newCustomer.city,
-                        maxLines: 1,
-                        decoration: InputDecoration(labelText: 'Stadt'),
-                        validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                        onChanged: (String input) {
-                          newCustomer.city = input;
-                          _formKey.currentState.validate();
-                          dirty = true;
-                          changed = true;
-                        }),
+                    Row(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: TextFormField(
+                                initialValue: newCustomer.zipCode?.toString() ?? '',
+                                maxLines: 1,
+                                decoration: InputDecoration(labelText: 'Postleitzahl'),
+                                keyboardType: TextInputType.numberWithOptions(),
+                                validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                                onChanged: (String input) {
+                                  newCustomer.zipCode = int.parse(input);
+                                  _formKey.currentState.validate();
+                                  dirty = true;
+                                  changed = true;
+                                }),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: TextFormField(
+                                initialValue: newCustomer.city,
+                                maxLines: 1,
+                                decoration: InputDecoration(labelText: 'Stadt'),
+                                validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                                onChanged: (String input) {
+                                  newCustomer.city = input;
+                                  _formKey.currentState.validate();
+                                  dirty = true;
+                                  changed = true;
+                                }),
+                          ),
+                        ]),
                     TextFormField(
                       initialValue: newCustomer.country,
                       maxLines: 1,
@@ -259,8 +270,10 @@ class _CustomerPageState extends State<CustomerPage> {
         builder: (BuildContext context) => AlertDialog(
               title: Text('Soll dieser Kunde wirlich gelöscht werden?'),
               actions: <Widget>[
-                MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
-                MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
+                MaterialButton(
+                    onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
+                MaterialButton(
+                    onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
               ],
             ));
     if (result == 1) {
@@ -279,8 +292,10 @@ class _CustomerPageState extends State<CustomerPage> {
                 actions: <Widget>[
                   MaterialButton(
                       onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),
-                  MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
-                  MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
+                  MaterialButton(
+                      onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
+                  MaterialButton(
+                      onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
                 ],
               ));
       switch (result) {
