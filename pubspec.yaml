@@ -30,7 +30,7 @@ dependencies:
     #path: ../path_provider_fde
   file_chooser:
     git:
-      url: git://github.com/google/flutter-desktop-embedding.git
+      url: git://github.com/leontappe/flutter-desktop-embedding.git
       path: plugins/file_chooser
     #git: https://git.uni-paderborn.de/asta/file_chooser.git
     #path: ../file_chooser

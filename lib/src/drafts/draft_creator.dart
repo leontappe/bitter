@@ -168,8 +168,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                         initialDate: draft.serviceDate ?? DateTime.now(),
                         firstDate: DateTime.now(),
                         lastDate: DateTime(DateTime.now().year + 20),
-                        cancelText: 'Abbrechen',
-                        confirmText: 'Ok',
+                        cancelText: 'Löschen',
+                        confirmText: 'Übernehmen',
                       );
                       setState(() => draft);
                       dirty = true;
