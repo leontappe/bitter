@@ -28,7 +28,7 @@ packages:
       name: barcode
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.5.0"
+    version: "1.7.0"
   bloc:
     dependency: "direct main"
     description:
@@ -90,7 +90,7 @@ packages:
     description:
       path: "plugins/file_chooser"
       ref: HEAD
-      resolved-ref: ce26e3feb7249520b1da14c6020b531b6bbe8827
+      resolved-ref: "6f5e088516aabea7c7c4c0420a68dfd90f7126b4"
       url: "git://github.com/leontappe/flutter-desktop-embedding.git"
     source: git
     version: "0.1.0"
@@ -179,8 +179,8 @@ packages:
     description:
       path: "plugins/flutter_plugins/path_provider_fde"
       ref: HEAD
-      resolved-ref: ce26e3feb7249520b1da14c6020b531b6bbe8827
-      url: "git://github.com/google/flutter-desktop-embedding.git"
+      resolved-ref: "6f5e088516aabea7c7c4c0420a68dfd90f7126b4"
+      url: "git://github.com/leontappe/flutter-desktop-embedding.git"
     source: git
     version: "0.0.1"
   path_provider_macos:
@@ -203,7 +203,7 @@ packages:
       name: pdf
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.6.0"
+    version: "1.6.1"
   pedantic:
     dependency: "direct dev"
     description:

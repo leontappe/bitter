@@ -17,8 +17,16 @@ class MySqlSettings {
 
   factory MySqlSettings.empty() => MySqlSettings(user: null, password: null, database: null);
 
+  factory MySqlSettings.standard() => MySqlSettings(
+        host: '127.0.0.1',
+        port: 3306,
+        database: 'bitter',
+        password: '',
+        user: '',
+      );
+
   factory MySqlSettings.fromMap(Map map) => MySqlSettings(
-        host: map['host'].toString(),
+        host: (map['host'] != null) ? map['host'].toString() : null,
         port: map['port'] as int,
         user: map['user'].toString(),
         password: map['password'].toString(),

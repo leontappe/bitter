@@ -147,13 +147,7 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
   @override
   void initState() {
     super.initState();
-    settings = MySqlSettings(
-      host: '127.0.0.1',
-      port: 3306,
-      database: 'bitter',
-      password: '',
-      user: '',
-    );
+    settings = MySqlSettings.standard();
     dirty = false;
   }
 

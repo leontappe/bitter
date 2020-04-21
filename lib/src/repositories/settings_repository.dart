@@ -18,7 +18,12 @@ class SettingsRepository {
   Future<Map> get _getCurrentSettings async => (json.decode(data.readAsStringSync())) as Map;
 
   Future<MySqlSettings> getMySqlSettings() async {
-    return MySqlSettings.fromMap(await select('mysql_settings') as Map);
+    final settings = await select('mysql_settings') as Map;
+    if (settings != null) {
+      return MySqlSettings.fromMap(settings);
+    } else {
+      return MySqlSettings.standard();
+    }
   }
 
   Future<String> getUsername() async => (await select('username')) as String;
@@ -49,6 +54,8 @@ class SettingsRepository {
     basePath = (await getApplicationDocumentsDirectory()).path;
     if (Platform.isWindows) {
       dataPath = basePath + '/bitter/config/settings.json';
+    } else if (Platform.isLinux) {
+      dataPath = basePath + 'bitter/settings.json';
     } else {
       dataPath = basePath + '/settings.json';
     }
@@ -62,8 +69,8 @@ class SettingsRepository {
 
   Future<void> setUsername(String username) async => await insert('username', username);
 
-  Future<bool> _hasGeneric(String key) async =>
-      ((await _getCurrentSettings).containsKey(key)); //&& ((await select(key)).toString().isNotEmpty);
+  Future<bool> _hasGeneric(String key) async => ((await _getCurrentSettings)
+      .containsKey(key)); //&& ((await select(key)).toString().isNotEmpty);
 
   Future<void> _writeSettings(Map map) async =>
       await data.writeAsBytes(utf8.encode(json.encode(map)));
