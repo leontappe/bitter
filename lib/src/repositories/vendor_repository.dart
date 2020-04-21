@@ -55,8 +55,8 @@ class VendorRepository<T extends DatabaseProvider> {
         'name',
         'contact',
         'address',
-        'zip_code'
-            'city',
+        'zip_code',
+        'city',
         'iban',
         'bic',
         'bank',
