@@ -39,7 +39,7 @@ class MySqlProvider extends DatabaseProvider {
   }
 
   @override
-  Future<int> insert(String table, Map item) async {
+  Future<int> insert(String table, Map<String, dynamic> item) async {
     var cols = '';
     for (var col in item.keys) {
       cols += '$col, ';
@@ -77,7 +77,7 @@ class MySqlProvider extends DatabaseProvider {
   }
 
   @override
-  Future<int> update(String table, int id, Map item) async {
+  Future<int> update(String table, int id, Map<String, dynamic> item) async {
     final columns = item.keys;
     final values = item.values;
     var cols = '';
