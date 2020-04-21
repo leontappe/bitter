@@ -2,6 +2,12 @@ import 'dart:convert';
 
 import 'package:meta/meta.dart';
 
+enum HeaderImage {
+  right,
+  center,
+  left,
+}
+
 class Vendor {
   int id;
   String name;
@@ -22,7 +28,9 @@ class Vendor {
   int defaultDueDays;
   int defaultTax;
 
-  List<int> headerImage;
+  List<int> headerImageRight;
+  List<int> headerImageCenter;
+  List<int> headerImageLeft;
 
   String userMessageLabel;
 
@@ -43,7 +51,9 @@ class Vendor {
     @required this.billPrefix,
     this.defaultDueDays,
     this.defaultTax,
-    this.headerImage,
+    this.headerImageRight,
+    this.headerImageCenter,
+    this.headerImageLeft,
     this.userMessageLabel,
   });
 
@@ -79,13 +89,34 @@ class Vendor {
         billPrefix: map['bill_prefix'].toString(),
         defaultDueDays: map['default_due_days'] as int,
         defaultTax: map['default_tax'] as int,
-        headerImage:
-            (map['header_image'] != null) ? base64.decode(map['header_image'].toString()) : null,
+        headerImageRight: (map['header_image_right'] != null)
+            ? base64.decode(map['header_image_right'].toString())
+            : null,
+        headerImageCenter: (map['header_image_center'] != null)
+            ? base64.decode(map['header_image_center'].toString())
+            : null,
+        headerImageLeft: (map['header_image_left'] != null)
+            ? base64.decode(map['header_image_left'].toString())
+            : null,
         userMessageLabel:
             (map['user_message_label'] != null) ? map['user_message_label'].toString() : null,
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
+        ...toMapShort,
+        'header_image_right': (headerImageRight != null) ? base64.encode(headerImageRight) : null,
+        'header_image_center':
+            (headerImageCenter != null) ? base64.encode(headerImageCenter) : null,
+        'header_image_left': (headerImageLeft != null) ? base64.encode(headerImageLeft) : null,
+        'user_message_label': userMessageLabel,
+      };
+
+  Map<String, dynamic> get toMapLong => <String, dynamic>{
+        'id': id,
+        ...toMap,
+      };
+
+  Map<String, dynamic> get toMapShort => <String, dynamic>{
         'name': name,
         'contact': contact,
         'address': address,
@@ -101,13 +132,6 @@ class Vendor {
         'bill_prefix': billPrefix,
         'default_due_days': defaultDueDays,
         'default_tax': defaultTax,
-        'header_image': (headerImage != null) ? base64.encode(headerImage) : null,
-        'user_message_label': userMessageLabel,
-      };
-
-  Map<String, dynamic> get toMapLong => <String, dynamic>{
-        'id': id,
-        ...toMap,
       };
 
   @override

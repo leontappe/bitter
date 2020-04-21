@@ -114,8 +114,18 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
 
     final billNrString = '${vendor.billPrefix}-$billNr';
 
-    final doc = pdfGen.getBytesFromBill(billNrString, draft, customer, vendor,
-        rightHeader: (vendor.headerImage != null) ? Uint8List.fromList(vendor.headerImage) : null);
+    final doc = pdfGen.getBytesFromBill(
+      billNrString,
+      draft,
+      customer,
+      vendor,
+      rightHeader:
+          (vendor.headerImageRight != null) ? Uint8List.fromList(vendor.headerImageRight) : null,
+      centerHeader:
+          (vendor.headerImageCenter != null) ? Uint8List.fromList(vendor.headerImageCenter) : null,
+      leftHeader:
+          (vendor.headerImageLeft != null) ? Uint8List.fromList(vendor.headerImageLeft) : null,
+    );
 
     await billRepo.insert(Bill(
       billNr: billNrString,
