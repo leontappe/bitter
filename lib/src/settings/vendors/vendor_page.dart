@@ -324,7 +324,8 @@ class _VendorPageState extends State<VendorPage> {
   }
 
   void initDb() async {
-    repo = VendorRepository<DatabaseProvider>(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    repo = VendorRepository<DatabaseProvider>(
+        InheritedDatabase.of<DatabaseProvider>(context).provider);
     if (widget.id != null) {
       vendor = await repo.selectSingle(widget.id);
       if (vendor == null) {

@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common/sqlite_api.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'database_provider.dart';
 
@@ -46,7 +50,14 @@ class SqliteProvider extends DatabaseProvider {
   @override
   Future<void> open(String path, {String host, int port, String user, String password}) async {
     final dbPath = (await getApplicationDocumentsDirectory()).path + '/bitter/bitter.db';
-    conn = await openDatabase(dbPath, version: 1);
+
+    if (Platform.isLinux || Platform.isWindows) {
+      sqfliteFfiInit();
+      var databaseFactory = databaseFactoryFfi;
+      conn = await databaseFactoryFfi.openDatabase(dbPath);
+    } else {
+      conn = await openDatabase(dbPath);
+    }
   }
 
   @override

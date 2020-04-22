@@ -202,7 +202,7 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
       settings = settings;
       await repo.setMySqlSettings(settings);
       await repo.setUsername(username);
-      if (repo.getDbEngine() != dbEngine) {
+      if (repo.getDbEngine() != null && repo.getDbEngine() != dbEngine) {
         await showDialog<void>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -217,8 +217,8 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
             ],
           ),
         );
-        await repo.setDbEngine(dbEngine);
       }
+      await repo.setDbEngine(dbEngine);
       dirty = false;
       return true;
     }
