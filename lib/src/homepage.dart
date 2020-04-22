@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
 import 'repositories/settings_repository.dart';
+import 'bitter_platform_path_provider.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -148,5 +150,6 @@ class _HomepageState extends State<Homepage> {
   void initState() {
     super.initState();
     if (!kIsWeb) if (Platform.isAndroid || Platform.isIOS) initPackageInfo();
+    PathProviderPlatform.instance = BitterPlatformPathProvider();
   }
 }
