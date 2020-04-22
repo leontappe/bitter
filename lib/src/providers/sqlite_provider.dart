@@ -53,8 +53,8 @@ class SqliteProvider extends DatabaseProvider {
 
     if (Platform.isLinux || Platform.isWindows) {
       sqfliteFfiInit();
-      var databaseFactory = databaseFactoryFfi;
-      conn = await databaseFactoryFfi.openDatabase(dbPath);
+      final databaseFactory = databaseFactoryFfi;
+      conn = await databaseFactory.openDatabase(dbPath);
     } else {
       conn = await openDatabase(dbPath);
     }
