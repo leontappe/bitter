@@ -6,12 +6,6 @@ import 'customer.dart';
 import 'item.dart';
 import 'vendor.dart';
 
-enum BillStatus {
-  unpaid,
-  paid,
-  cancelled,
-}
-
 class Bill {
   int id;
 
@@ -78,22 +72,26 @@ class Bill {
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
+        'file': base64.encode(file),
+        ...toMapShort,
+      };
+
+  Map<String, dynamic> get toMapShort => <String, dynamic>{
         'status': status.index,
         'bill_nr': billNr,
-        'file': base64.encode(file),
         'sum': sum.toString(),
         'editor': editor,
         'vendor': json.encode(vendor.toMapLong),
         'customer': json.encode(customer.toMapLong),
         'items': json.encode(items.map((e) => e.toMap).toList()),
-        'created': created.toUtc().toIso8601String(),
-        'service_date': serviceDate.toUtc().toIso8601String(),
-        'due_date': dueDate.toUtc().toIso8601String(),
+        'created': created.toUtc().toString(),
+        'service_date': serviceDate.toUtc().toString(),
+        'due_date': dueDate.toUtc().toString(),
         if (note != null) 'note': note,
       };
 
   @override
-  String toString() => '[Bill $id $toMap]';
+  String toString() => '[Bill $id $toMapShort]';
 
   static BillStatus _intToStatus(int i) {
     switch (i) {
@@ -107,4 +105,10 @@ class Bill {
         return BillStatus.unpaid;
     }
   }
+}
+
+enum BillStatus {
+  unpaid,
+  paid,
+  cancelled,
 }

@@ -1,7 +1,9 @@
+import 'package:bitter/src/models/vendor.dart';
+import 'package:bitter/src/repositories/settings_repository.dart';
 import 'package:flutter/material.dart';
 
-import '../providers/inherited_database.dart';
 import '../providers/database_provider.dart';
+import '../providers/inherited_database.dart';
 import '../repositories/bill_repository.dart';
 import 'bill_page.dart';
 import 'save_bill_button.dart';
@@ -13,10 +15,14 @@ class BillsListPage extends StatefulWidget {
 
 class _BillsListPageState extends State<BillsListPage> {
   BillRepository<DatabaseProvider> billRepo;
+  SettingsRepository settings;
 
   bool searchEnabled = false;
 
   List<Bill> bills = [];
+  List<Vendor> vendors = [];
+  int filterVendor;
+  String searchQuery;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +49,19 @@ class _BillsListPageState extends State<BillsListPage> {
             : Text('Rechnungen'),
         actions: <Widget>[
           if (!searchEnabled) ...[
+            DropdownButton<int>(
+              value: filterVendor,
+              dropdownColor: Colors.grey[800],
+              iconEnabledColor: Colors.white70,
+              style:
+                  TextStyle(color: Colors.white, decorationColor: Colors.white70, fontSize: 14.0),
+              hint: Text('Nach Verkäufer filtern', style: TextStyle(color: Colors.white)),
+              items: <DropdownMenuItem<int>>[
+                DropdownMenuItem(child: Text('Filter zurücksetzen'), value: -1),
+                ...vendors.map((Vendor v) => DropdownMenuItem(value: v.id, child: Text(v.name)))
+              ],
+              onChanged: onFilter,
+            ),
             IconButton(
               tooltip: 'Suchleiste aktivieren',
               icon: Icon(Icons.search),
@@ -91,20 +110,54 @@ class _BillsListPageState extends State<BillsListPage> {
 
   Future<void> initDb() async {
     billRepo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    settings = SettingsRepository();
     await billRepo.setUp();
+    await settings.setUp();
+
+    await onGetBills();
+
+    filterVendor = settings.select<int>('bills_filter');
 
     await onGetBills();
   }
 
+  Future<void> onFilter(int value) async {
+    if (value >= 0) {
+      filterVendor = value;
+    } else {
+      filterVendor = null;
+    }
+    await onGetBills();
+    await settings.insert('bills_filter', filterVendor);
+  }
+
   Future<void> onGetBills() async {
-    bills = await billRepo.select();
+    bills = await billRepo.select(searchQuery: searchQuery, vendorFilter: filterVendor);
+    if (filterVendor == null) {
+      for (var bill in bills) {
+        if (!vendors.contains(bill.vendor)) {
+          vendors.add(bill.vendor);
+        }
+      }
+    }
     setState(() => bills);
     return;
   }
 
+  Future<void> onPushBillPage(int id) async {
+    if (await Navigator.push<bool>(
+        context, MaterialPageRoute(builder: (BuildContext context) => BillPage(id: id)))) {
+      await onGetBills();
+    }
+  }
+
   Future<void> onSearchChanged(String value) async {
-    bills = await billRepo.select(searchQuery: value);
-    setState(() => bills);
+    if (value.isNotEmpty) {
+      searchQuery = value;
+    } else {
+      searchQuery = null;
+    }
+    await onGetBills();
   }
 
   void onToggleSearch() async {
@@ -117,13 +170,6 @@ class _BillsListPageState extends State<BillsListPage> {
     });
 
     if (!searchEnabled) {
-      await onGetBills();
-    }
-  }
-
-  Future<void> onPushBillPage(int id) async {
-    if (await Navigator.push<bool>(
-        context, MaterialPageRoute(builder: (BuildContext context) => BillPage(id: id)))) {
       await onGetBills();
     }
   }

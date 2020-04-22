@@ -102,6 +102,9 @@ class Vendor {
             (map['user_message_label'] != null) ? map['user_message_label'].toString() : null,
       );
 
+  @override
+  int get hashCode => name.hashCode;
+
   Map<String, dynamic> get toMap => <String, dynamic>{
         ...toMapShort,
         'header_image_right': (headerImageRight != null) ? base64.encode(headerImageRight) : null,
@@ -133,6 +136,11 @@ class Vendor {
         'default_due_days': defaultDueDays,
         'default_tax': defaultTax,
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Vendor && runtimeType == other.runtimeType && id == other.id;
 
   @override
   String toString() => '[Vendor $id $toMap]';

@@ -18,12 +18,13 @@ class BillRepository<T extends DatabaseProvider> {
     return bill;
   }
 
-  Future<List<Bill>> select({String searchQuery}) async {
-    final results =
+  Future<List<Bill>> select({String searchQuery, int vendorFilter}) async {
+    var results =
         List<Bill>.from((await db.select(tableName)).map<Bill>((Map e) => Bill.fromMap(e)));
     if (searchQuery != null && searchQuery.isNotEmpty) {
-      return List.from(results.where((Bill d) =>
-          d.billNr.toLowerCase().contains(searchQuery.toLowerCase()) ||
+      results = List.from(results.where((Bill d) => (d.billNr
+              .toLowerCase()
+              .contains(searchQuery.toLowerCase()) ||
           '${d.customer.name} ${d.customer.surname} ${d.customer.company ?? ''} ${d.customer.organizationUnit ?? ''}'
               .toLowerCase()
               .contains(searchQuery.toLowerCase()) ||
@@ -33,10 +34,13 @@ class BillRepository<T extends DatabaseProvider> {
           d.items
               .where((Item i) =>
                   '${i.title} ${i.description}'.toLowerCase().contains(searchQuery.toLowerCase()))
-              .isNotEmpty));
-    } else {
-      return results;
+              .isNotEmpty)));
     }
+    if (vendorFilter != null) {
+      results = List.from(
+          results.where((Bill b) => ((vendorFilter != null) ? b.vendor.id == vendorFilter : true)));
+    }
+    return results;
   }
 
   Future<Bill> selectSingle(int id) async {
