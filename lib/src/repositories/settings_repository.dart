@@ -72,7 +72,7 @@ class SettingsRepository {
     if (Platform.isWindows) {
       dataPath = basePath + '/bitter/config/settings.json';
     } else if (Platform.isLinux) {
-      dataPath = basePath + 'bitter/settings.json';
+      dataPath = basePath + '/bitter/settings.json';
     } else {
       dataPath = basePath + '/settings.json';
     }
@@ -95,7 +95,7 @@ class SettingsRepository {
       case 1:
         return DbEngine.sqlite;
       default:
-        return DbEngine.sqlite;
+        return null;
     }
   } //&& ((await select(key)).toString().isNotEmpty);
 
