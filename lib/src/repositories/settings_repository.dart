@@ -27,12 +27,12 @@ class SettingsRepository {
   Map get _getCurrentSettings => (json.decode(data.readAsStringSync())) as Map;
 
   DbEngine getDbEngine() {
-    final setting = select(dbKey) as int;
+    final setting = select<int>(dbKey);
     return _intToDb(setting);
   }
 
-  Future<MySqlSettings> getMySqlSettings() async {
-    final settings = await select(mySqlKey) as Map;
+  MySqlSettings getMySqlSettings() {
+    final settings = select<Map>(mySqlKey);
     if (settings != null) {
       return MySqlSettings.fromMap(settings);
     } else {
@@ -40,7 +40,7 @@ class SettingsRepository {
     }
   }
 
-  Future<String> getUsername() async => (await select(userKey)) as String;
+  String getUsername() => select<String>(userKey);
 
   bool hasDbEngine() => _hasGeneric(dbKey);
 
@@ -54,9 +54,9 @@ class SettingsRepository {
     await _writeSettings(settings);
   }
 
-  dynamic select(String key) {
+  T select<T>(String key) {
     if (_hasGeneric(key)) {
-      return _getCurrentSettings[key];
+      return _getCurrentSettings[key] as T;
     } else {
       return null;
     }
