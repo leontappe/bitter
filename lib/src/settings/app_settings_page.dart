@@ -16,6 +16,7 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
 
   MySqlSettings settings;
   String username;
+  DbEngine dbEngine;
 
   bool dirty;
 
@@ -61,70 +62,93 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
           ListTile(title: Text('Datenbank', style: Theme.of(context).textTheme.headline6)),
           Padding(
             padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
-            child: Form(
-              key: _databaseFormKey,
-              child: Column(
-                children: <Widget>[
-                  TextFormField(
-                    controller: TextEditingController(text: settings.host ?? ''),
-                    maxLines: 1,
-                    decoration: InputDecoration(labelText: 'Host/IP'),
-                    validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                    onChanged: (String input) {
-                      if (_databaseFormKey.currentState.validate()) settings.host = input;
-                      dirty = true;
-                    },
-                  ),
-                  TextFormField(
-                    controller: TextEditingController(text: settings.port?.toString() ?? ''),
-                    maxLines: 1,
-                    decoration: InputDecoration(labelText: 'Port'),
-                    validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                    keyboardType: TextInputType.numberWithOptions(),
-                    onChanged: (String input) {
-                      settings.port = int.parse(input);
-                      _databaseFormKey.currentState.validate();
-                      dirty = true;
-                    },
-                  ),
-                  TextFormField(
-                    controller: TextEditingController(text: settings.user ?? ''),
-                    maxLines: 1,
-                    decoration: InputDecoration(labelText: 'Nutzer'),
-                    validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                    onChanged: (String input) {
-                      settings.user = input;
-                      _databaseFormKey.currentState.validate();
-                      dirty = true;
-                    },
-                  ),
-                  TextFormField(
-                    controller: TextEditingController(text: settings.password ?? ''),
-                    maxLines: 1,
-                    decoration: InputDecoration(labelText: 'Passwort'),
-                    validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                    obscureText: true,
-                    onChanged: (String input) {
-                      settings.password = input;
-                      _databaseFormKey.currentState.validate();
-                      dirty = true;
-                    },
-                  ),
-                  TextFormField(
-                    controller: TextEditingController(text: settings.database ?? ''),
-                    maxLines: 1,
-                    decoration: InputDecoration(labelText: 'Datenbankname'),
-                    validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                    onChanged: (String input) {
-                      settings.database = input;
-                      _databaseFormKey.currentState.validate();
-                      dirty = true;
-                    },
-                  ),
-                ],
-              ),
+            child: DropdownButton<DbEngine>(
+              value: dbEngine,
+              items: <DropdownMenuItem<DbEngine>>[
+                DropdownMenuItem<DbEngine>(
+                  child: Text('SQLite'),
+                  value: DbEngine.sqlite,
+                ),
+                DropdownMenuItem<DbEngine>(
+                  child: Text('MySQL'),
+                  value: DbEngine.mysql,
+                ),
+              ],
+              onChanged: (DbEngine engine) {
+                setState(() {
+                  dbEngine = engine;
+                });
+                dirty = true;
+              },
             ),
-          )
+          ),
+          if (dbEngine == DbEngine.mysql)
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
+              child: Form(
+                key: _databaseFormKey,
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      controller: TextEditingController(text: settings.host ?? ''),
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'Host/IP'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        if (_databaseFormKey.currentState.validate()) settings.host = input;
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
+                      controller: TextEditingController(text: settings.port?.toString() ?? ''),
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'Port'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      keyboardType: TextInputType.numberWithOptions(),
+                      onChanged: (String input) {
+                        settings.port = int.parse(input);
+                        _databaseFormKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
+                      controller: TextEditingController(text: settings.user ?? ''),
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'Nutzer'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        settings.user = input;
+                        _databaseFormKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
+                      controller: TextEditingController(text: settings.password ?? ''),
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'Passwort'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      obscureText: true,
+                      onChanged: (String input) {
+                        settings.password = input;
+                        _databaseFormKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
+                      controller: TextEditingController(text: settings.database ?? ''),
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'Datenbankname'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        settings.database = input;
+                        _databaseFormKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            )
         ],
       ),
     );
@@ -141,6 +165,7 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
     await repo.setUp();
     settings = await repo.getMySqlSettings();
     username = await repo.getUsername() ?? '';
+    dbEngine = await repo.getDbEngine() ?? DbEngine.sqlite;
     setState(() => settings);
   }
 
@@ -149,10 +174,11 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
     super.initState();
     settings = MySqlSettings.standard();
     dirty = false;
+    dbEngine = DbEngine.sqlite;
   }
 
   void onPopRoute(BuildContext context) async {
-    if (!_databaseFormKey.currentState.validate() ||
+    if (!((dbEngine == DbEngine.sqlite) ? true : _databaseFormKey.currentState.validate()) ||
         !_usernameFormKey.currentState.validate() ||
         dirty) {
       await showDialog<int>(
@@ -171,10 +197,28 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
   }
 
   Future<bool> onSaveConfig() async {
-    if (_databaseFormKey.currentState.validate() && _usernameFormKey.currentState.validate()) {
+    if (((dbEngine == DbEngine.sqlite) ? true : _databaseFormKey.currentState.validate()) &&
+        _usernameFormKey.currentState.validate()) {
       settings = settings;
       await repo.setMySqlSettings(settings);
-      await repo.insert('username', username);
+      await repo.setUsername(username);
+      if (repo.getDbEngine() != dbEngine) {
+        await showDialog<void>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text('Datenbank geändert'),
+            content: Text(
+                'Nach dem Ändern der Datenbank muss bitter neu gestartet werden damit die Änderung wirksam wird. Bis dahin funktionieren die alten Einstellungen normal.'),
+            actions: [
+              MaterialButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Weiter'),
+              )
+            ],
+          ),
+        );
+        await repo.setDbEngine(dbEngine);
+      }
       dirty = false;
       return true;
     }

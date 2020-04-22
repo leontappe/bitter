@@ -45,7 +45,7 @@ class SqliteProvider extends DatabaseProvider {
 
   @override
   Future<void> open(String path, {String host, int port, String user, String password}) async {
-    final dbPath = (await getApplicationDocumentsDirectory()).path + '/bitter.db';
+    final dbPath = (await getApplicationDocumentsDirectory()).path + '/bitter/bitter.db';
     conn = await openDatabase(dbPath, version: 1);
   }
 
