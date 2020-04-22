@@ -25,13 +25,13 @@ class DraftRepository<T extends DatabaseProvider> {
 
   Future<List<Draft>> select({
     String searchQuery,
+    int vendorFilter,
     List<Customer> customers = const [],
     List<Vendor> vendors = const [],
   }) async {
-    final results =
-        List<Draft>.from((await db.select(tableName)).map<Draft>((Map e) => Draft.fromMap(e)));
+    var results = (await db.select(tableName)).map<Draft>((Map e) => Draft.fromMap(e));
     if (searchQuery != null && searchQuery.isNotEmpty) {
-      return List.from(results.where((Draft d) {
+      results = results.where((Draft d) {
         final customer = (customers.where((Customer c) => c.id == d.customer).isNotEmpty)
             ? customers.singleWhere((Customer c) => c.id == d.customer)
             : null;
@@ -54,10 +54,13 @@ class DraftRepository<T extends DatabaseProvider> {
             (customer?.surname ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
             (vendor?.name ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
             d.userMessage.toLowerCase().contains(searchQuery.toLowerCase());
-      }));
-    } else {
-      return results;
+      });
     }
+    if (vendorFilter != null) {
+      results = results.where((Draft d) => d.vendor == vendorFilter);
+    }
+
+    return List<Draft>.from(results);
   }
 
   Future<Draft> selectSingle(int id) async {

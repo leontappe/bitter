@@ -7,6 +7,15 @@ import '../models/mysql_settings.dart';
 
 export '../models/mysql_settings.dart';
 
+const dbKey = 'db_engine';
+const mySqlKey = 'mysql_settings';
+const userKey = 'username';
+
+enum DbEngine {
+  mysql,
+  sqlite,
+}
+
 class SettingsRepository {
   String basePath;
   String dataPath;
@@ -15,10 +24,15 @@ class SettingsRepository {
 
   SettingsRepository();
 
-  Future<Map> get _getCurrentSettings async => (json.decode(data.readAsStringSync())) as Map;
+  Map get _getCurrentSettings => (json.decode(data.readAsStringSync())) as Map;
 
-  Future<MySqlSettings> getMySqlSettings() async {
-    final settings = await select('mysql_settings') as Map;
+  DbEngine getDbEngine() {
+    final setting = select<int>(dbKey);
+    return _intToDb(setting);
+  }
+
+  MySqlSettings getMySqlSettings() {
+    final settings = select<Map>(mySqlKey);
     if (settings != null) {
       return MySqlSettings.fromMap(settings);
     } else {
@@ -26,11 +40,13 @@ class SettingsRepository {
     }
   }
 
-  Future<String> getUsername() async => (await select('username')) as String;
+  String getUsername() => select<String>(userKey);
 
-  Future<bool> hasMySqlSettings() => _hasGeneric('username');
+  bool hasDbEngine() => _hasGeneric(dbKey);
 
-  Future<bool> hasUsername() => _hasGeneric('username');
+  bool hasMySqlSettings() => _hasGeneric(userKey);
+
+  bool hasUsername() => _hasGeneric(userKey);
 
   Future<void> insert(String key, dynamic value) async {
     final settings = await _getCurrentSettings;
@@ -38,20 +54,21 @@ class SettingsRepository {
     await _writeSettings(settings);
   }
 
-  Future<dynamic> select(String key) async {
-    if (await _hasGeneric(key)) {
-      return (await _getCurrentSettings)[key];
+  T select<T>(String key) {
+    if (_hasGeneric(key)) {
+      return _getCurrentSettings[key] as T;
     } else {
       return null;
     }
   }
 
-  Future<void> setMySqlSettings(MySqlSettings settings) async {
-    await insert('mysql_settings', settings.toMap);
-  }
+  Future<void> setDbEngine(DbEngine engine) => insert(dbKey, engine.index);
+
+  Future<void> setMySqlSettings(MySqlSettings settings) => insert(mySqlKey, settings.toMap);
 
   Future<void> setUp() async {
     basePath = (await getApplicationDocumentsDirectory()).path;
+    //print(basePath);
     if (Platform.isWindows) {
       dataPath = basePath + '/bitter/config/settings.json';
     } else if (Platform.isLinux) {
@@ -67,10 +84,20 @@ class SettingsRepository {
     }
   }
 
-  Future<void> setUsername(String username) async => await insert('username', username);
+  Future<void> setUsername(String username) => insert(userKey, username);
 
-  Future<bool> _hasGeneric(String key) async => ((await _getCurrentSettings)
-      .containsKey(key)); //&& ((await select(key)).toString().isNotEmpty);
+  bool _hasGeneric(String key) => _getCurrentSettings.containsKey(key);
+
+  DbEngine _intToDb(int index) {
+    switch (index) {
+      case 0:
+        return DbEngine.mysql;
+      case 1:
+        return DbEngine.sqlite;
+      default:
+        return DbEngine.sqlite;
+    }
+  } //&& ((await select(key)).toString().isNotEmpty);
 
   Future<void> _writeSettings(Map map) async =>
       await data.writeAsBytes(utf8.encode(json.encode(map)));

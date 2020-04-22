@@ -9,7 +9,7 @@ import '../models/draft.dart';
 import '../models/item.dart';
 import '../models/vendor.dart';
 import '../providers/inherited_database.dart';
-import '../providers/mysql_provider.dart';
+import '../providers/database_provider.dart';
 import '../repositories/customer_repository.dart';
 import '../repositories/draft_repository.dart';
 import '../repositories/vendor_repository.dart';
@@ -242,9 +242,9 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   }
 
   Future<void> initDb() async {
-    repo = DraftRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
-    customerRepo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    repo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     settingsRepo = SettingsRepository();
 
     await settingsRepo.setUp();

@@ -18,12 +18,12 @@ class BillRepository<T extends DatabaseProvider> {
     return bill;
   }
 
-  Future<List<Bill>> select({String searchQuery}) async {
-    final results =
-        List<Bill>.from((await db.select(tableName)).map<Bill>((Map e) => Bill.fromMap(e)));
+  Future<List<Bill>> select({String searchQuery, int vendorFilter}) async {
+    var results = (await db.select(tableName)).map<Bill>((Map e) => Bill.fromMap(e));
     if (searchQuery != null && searchQuery.isNotEmpty) {
-      return List.from(results.where((Bill d) =>
-          d.billNr.toLowerCase().contains(searchQuery.toLowerCase()) ||
+      results = results.where((Bill d) => (d.billNr
+              .toLowerCase()
+              .contains(searchQuery.toLowerCase()) ||
           '${d.customer.name} ${d.customer.surname} ${d.customer.company ?? ''} ${d.customer.organizationUnit ?? ''}'
               .toLowerCase()
               .contains(searchQuery.toLowerCase()) ||
@@ -34,9 +34,12 @@ class BillRepository<T extends DatabaseProvider> {
               .where((Item i) =>
                   '${i.title} ${i.description}'.toLowerCase().contains(searchQuery.toLowerCase()))
               .isNotEmpty));
-    } else {
-      return results;
     }
+    if (vendorFilter != null) {
+      results =
+          results.where((Bill b) => ((vendorFilter != null) ? b.vendor.id == vendorFilter : true));
+    }
+    return List<Bill>.from(results);
   }
 
   Future<Bill> selectSingle(int id) async {
@@ -80,15 +83,15 @@ class BillRepository<T extends DatabaseProvider> {
         'INTEGER',
         'INTEGER',
         'TEXT',
-        'TEXT',
+        'LONGTEXT',
         'INTEGER',
         'TEXT',
+        'LONGTEXT',
         'TEXT',
         'TEXT',
         'TEXT',
-        'DATETIME',
-        'DATETIME',
-        'DATETIME',
+        'TEXT',
+        'TEXT',
         'TEXT'
       ],
       'id',

@@ -191,7 +191,9 @@ class PdfGenerator {
             ],
           ),
           Paragraph(
-              text: ((vendor.userMessageLabel != null) ? '${vendor.userMessageLabel}: ' : '') +
+              text: ((vendor.userMessageLabel != null && bill.userMessage != null)
+                      ? '${vendor.userMessageLabel}: '
+                      : '') +
                   (bill.userMessage ?? ''),
               style: TextStyle(font: ttfSans)),
           Paragraph(

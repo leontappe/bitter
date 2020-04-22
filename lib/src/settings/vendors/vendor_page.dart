@@ -1,15 +1,14 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:bitter/src/providers/database_provider.dart';
 import 'package:file_chooser/file_chooser.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 
-import '../../widgets/vendor_card.dart';
 import '../../models/vendor.dart';
 import '../../providers/inherited_database.dart';
-import '../../providers/mysql_provider.dart';
 import '../../repositories/vendor_repository.dart';
+import '../../widgets/vendor_card.dart';
 
 class VendorPage extends StatefulWidget {
   final int id;
@@ -254,18 +253,6 @@ class _VendorPageState extends State<VendorPage> {
                         dirty = true;
                       },
                     ),
-                    ListTile(
-                      title: Text('Kopfzeilenbild'),
-                      subtitle: (newVendor.headerImage != null)
-                          ? Image.memory(Uint8List.fromList(vendor.headerImage))
-                          : Text('Nicht vorhanden'),
-                      trailing: (newVendor.headerImage != null)
-                          ? MaterialButton(onPressed: onClearImage, child: Text('Bild entfernen'))
-                          : MaterialButton(
-                              child: Text('Bild auswählen'),
-                              onPressed: onOpenImage,
-                            ),
-                    ),
                     TextFormField(
                       initialValue: newVendor.userMessageLabel,
                       maxLines: 1,
@@ -275,6 +262,49 @@ class _VendorPageState extends State<VendorPage> {
                         newVendor.userMessageLabel = input;
                         dirty = true;
                       },
+                    ),
+                    ListTile(title: Text('Kopfzeilenbilder')),
+                    ListTile(
+                      title: Text('Rechtes Kopfzeilenbild'),
+                      subtitle: (newVendor.headerImageRight != null)
+                          ? Image.memory(Uint8List.fromList(vendor.headerImageRight))
+                          : Text('Nicht vorhanden'),
+                      trailing: (newVendor.headerImageRight != null)
+                          ? MaterialButton(
+                              onPressed: () => onClearImage(HeaderImage.right),
+                              child: Text('Bild entfernen'))
+                          : MaterialButton(
+                              child: Text('Bild auswählen'),
+                              onPressed: () => onOpenImage(HeaderImage.right),
+                            ),
+                    ),
+                    ListTile(
+                      title: Text('Mittleres Kopfzeilenbild'),
+                      subtitle: (newVendor.headerImageCenter != null)
+                          ? Image.memory(Uint8List.fromList(vendor.headerImageCenter))
+                          : Text('Nicht vorhanden'),
+                      trailing: (newVendor.headerImageCenter != null)
+                          ? MaterialButton(
+                              onPressed: () => onClearImage(HeaderImage.center),
+                              child: Text('Bild entfernen'))
+                          : MaterialButton(
+                              child: Text('Bild auswählen'),
+                              onPressed: () => onOpenImage(HeaderImage.center),
+                            ),
+                    ),
+                    ListTile(
+                      title: Text('Linkes Kopfzeilenbild'),
+                      subtitle: (newVendor.headerImageLeft != null)
+                          ? Image.memory(Uint8List.fromList(vendor.headerImageLeft))
+                          : Text('Nicht vorhanden'),
+                      trailing: (newVendor.headerImageLeft != null)
+                          ? MaterialButton(
+                              onPressed: () => onClearImage(HeaderImage.left),
+                              child: Text('Bild entfernen'))
+                          : MaterialButton(
+                              child: Text('Bild auswählen'),
+                              onPressed: () => onOpenImage(HeaderImage.left),
+                            ),
                     ),
                   ],
                 ),
@@ -294,7 +324,7 @@ class _VendorPageState extends State<VendorPage> {
   }
 
   void initDb() async {
-    repo = VendorRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    repo = VendorRepository<DatabaseProvider>(InheritedDatabase.of<DatabaseProvider>(context).provider);
     if (widget.id != null) {
       vendor = await repo.selectSingle(widget.id);
       if (vendor == null) {
@@ -308,6 +338,23 @@ class _VendorPageState extends State<VendorPage> {
     setState(() {
       return vendor;
     });
+  }
+
+  void onClearImage(HeaderImage image) {
+    switch (image) {
+      case HeaderImage.right:
+        newVendor.headerImageRight = null;
+        break;
+      case HeaderImage.center:
+        newVendor.headerImageCenter = null;
+        break;
+      case HeaderImage.left:
+        newVendor.headerImageLeft = null;
+        break;
+      default:
+    }
+    setState(() => newVendor);
+    dirty = true;
   }
 
   void onDeleteVendor() async {
@@ -328,70 +375,36 @@ class _VendorPageState extends State<VendorPage> {
     }
   }
 
-  Future<void> onOpenImage() async {
-    if (!Platform.isWindows) {
-      final result = await showOpenPanel(
-        initialDirectory: (await getApplicationDocumentsDirectory()).path,
-        allowedFileTypes: [
-          FileTypeFilterGroup(label: 'images', fileExtensions: ['png', 'jpg', 'jpeg', 'gif'])
-        ],
-        allowsMultipleSelection: false,
-        canSelectDirectories: false,
-        confirmButtonText: 'Auswählen',
-      );
+  Future<void> onOpenImage(HeaderImage image) async {
+    final result = await showOpenPanel(
+      //initialDirectory: (await getApplicationDocumentsDirectory()).path,
+      allowedFileTypes: [
+        FileTypeFilterGroup(label: 'images', fileExtensions: ['png', 'jpg', 'jpeg', 'gif'])
+      ],
+      allowsMultipleSelection: false,
+      canSelectDirectories: false,
+      confirmButtonText: 'Auswählen',
+    );
 
-      if (result.canceled) {
-        return;
-      }
-
-      newVendor.headerImage = await File(result.paths.first).readAsBytes();
-      setState(() => newVendor);
-      await repo.update(newVendor);
-    } else {
-      final result = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: Text('Kopfzeilenbild festlegen'),
-          content: Text('''
-Um ein Kopfzeilenbild für diesen Verkäufer festzulegen, bitte ein Bild unter Dokumente\\bitter\\config platzieren und danach \'Fertig\' drücken. 
-(Das Bild löscht sich dort selber nachdem bitter es in die Datenbank kopiert hat)
-'''),
-          actions: [
-            MaterialButton(
-              child: Text('Abbrechen'),
-              onPressed: () => Navigator.pop(context, false),
-            ),
-            MaterialButton(
-              child: Text('Fertig'),
-              onPressed: () => Navigator.pop(context, true),
-            ),
-          ],
-        ),
-      );
-      if (result) {
-        final docPath = '${(await getApplicationDocumentsDirectory()).path}\\bitter\\config';
-        final docs = Directory(docPath);
-        var images = docs
-            .listSync(followLinks: false)
-            .where((e) =>
-                e.path.contains('.png') ||
-                e.path.contains('.jpg') ||
-                e.path.contains('.jpeg') ||
-                e.path.contains('.gif'))
-            .toList();
-        images.removeWhere((element) => element.path.contains('.json'));
-
-        if (images.isEmpty) return;
-
-        newVendor.headerImage = await File(images.first.path).readAsBytes();
-        setState(() => newVendor);
-        await repo.update(newVendor);
-
-        await File(images.first.path).delete();
-      } else {
-        return;
-      }
+    if (result.canceled) {
+      return;
     }
+
+    switch (image) {
+      case HeaderImage.right:
+        newVendor.headerImageRight = await File(result.paths.first).readAsBytes();
+        break;
+      case HeaderImage.center:
+        newVendor.headerImageCenter = await File(result.paths.first).readAsBytes();
+        break;
+      case HeaderImage.left:
+        newVendor.headerImageLeft = await File(result.paths.first).readAsBytes();
+        break;
+      default:
+    }
+
+    setState(() => newVendor);
+    await repo.update(newVendor);
   }
 
   void onPopRoute() async {
@@ -436,10 +449,5 @@ Um ein Kopfzeilenbild für diesen Verkäufer festzulegen, bitte ein Bild unter D
         Navigator.pop<bool>(context, true);
       }
     }
-  }
-
-  void onClearImage() {
-    setState(() => newVendor.headerImage = null);
-    dirty = true;
   }
 }

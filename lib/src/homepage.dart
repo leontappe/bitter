@@ -117,7 +117,7 @@ class _HomepageState extends State<Homepage> {
   Future<void> initDb() async {
     final settings = SettingsRepository();
     await settings.setUp();
-    if (!await settings.hasMySqlSettings() || !await settings.hasUsername()) {
+    if (!await settings.hasDbEngine() || !await settings.hasUsername()) {
       await showDialog<dynamic>(
         barrierDismissible: false,
         context: context,

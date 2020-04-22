@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import '../providers/inherited_database.dart';
-import '../providers/mysql_provider.dart';
+import '../providers/database_provider.dart';
 import '../repositories/bill_repository.dart';
 import '../repositories/customer_repository.dart';
 import '../repositories/draft_repository.dart';
@@ -60,10 +60,10 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
   }
 
   Future<void> initDb() async {
-    repo = DraftRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
-    customerRepo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
-    billRepo = BillRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    repo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    billRepo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
 
     await billRepo.setUp();
 
@@ -114,8 +114,18 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
 
     final billNrString = '${vendor.billPrefix}-$billNr';
 
-    final doc = pdfGen.getBytesFromBill(billNrString, draft, customer, vendor,
-        rightHeader: (vendor.headerImage != null) ? Uint8List.fromList(vendor.headerImage) : null);
+    final doc = pdfGen.getBytesFromBill(
+      billNrString,
+      draft,
+      customer,
+      vendor,
+      rightHeader:
+          (vendor.headerImageRight != null) ? Uint8List.fromList(vendor.headerImageRight) : null,
+      centerHeader:
+          (vendor.headerImageCenter != null) ? Uint8List.fromList(vendor.headerImageCenter) : null,
+      leftHeader:
+          (vendor.headerImageLeft != null) ? Uint8List.fromList(vendor.headerImageLeft) : null,
+    );
 
     await billRepo.insert(Bill(
       billNr: billNrString,

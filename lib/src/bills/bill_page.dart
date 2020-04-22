@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/bill.dart';
 import '../providers/inherited_database.dart';
-import '../providers/mysql_provider.dart';
+import '../providers/database_provider.dart';
 import '../repositories/bill_repository.dart';
 import '../widgets/customer_card.dart';
 import '../widgets/items_card.dart';
@@ -118,7 +118,7 @@ class _BillPageState extends State<BillPage> {
   }
 
   Future<void> initDb() async {
-    repo = BillRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    repo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
 
     bill = await repo.selectSingle(widget.id);
 
