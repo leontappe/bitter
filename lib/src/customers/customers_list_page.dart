@@ -1,4 +1,4 @@
-import '../providers/mysql_provider.dart';
+import '../providers/database_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -84,7 +84,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
   }
 
   Future<void> initDb() async {
-    repo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    repo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     await repo.setUp();
     await onGetCustomers();
   }

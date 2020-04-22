@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../providers/inherited_database.dart';
-import '../providers/mysql_provider.dart';
+import '../providers/database_provider.dart';
 import '../repositories/bill_repository.dart';
 import 'bill_page.dart';
 import 'save_bill_button.dart';
@@ -12,7 +12,7 @@ class BillsListPage extends StatefulWidget {
 }
 
 class _BillsListPageState extends State<BillsListPage> {
-  BillRepository<MySqlProvider> billRepo;
+  BillRepository<DatabaseProvider> billRepo;
 
   bool searchEnabled = false;
 
@@ -90,7 +90,7 @@ class _BillsListPageState extends State<BillsListPage> {
   }
 
   Future<void> initDb() async {
-    billRepo = BillRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    billRepo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     await billRepo.setUp();
 
     await onGetBills();

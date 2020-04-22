@@ -1,15 +1,14 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:bitter/src/providers/database_provider.dart';
 import 'package:file_chooser/file_chooser.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 
-import '../../widgets/vendor_card.dart';
 import '../../models/vendor.dart';
 import '../../providers/inherited_database.dart';
-import '../../providers/mysql_provider.dart';
 import '../../repositories/vendor_repository.dart';
+import '../../widgets/vendor_card.dart';
 
 class VendorPage extends StatefulWidget {
   final int id;
@@ -325,7 +324,7 @@ class _VendorPageState extends State<VendorPage> {
   }
 
   void initDb() async {
-    repo = VendorRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    repo = VendorRepository<DatabaseProvider>(InheritedDatabase.of<DatabaseProvider>(context).provider);
     if (widget.id != null) {
       vendor = await repo.selectSingle(widget.id);
       if (vendor == null) {
@@ -339,6 +338,23 @@ class _VendorPageState extends State<VendorPage> {
     setState(() {
       return vendor;
     });
+  }
+
+  void onClearImage(HeaderImage image) {
+    switch (image) {
+      case HeaderImage.right:
+        newVendor.headerImageRight = null;
+        break;
+      case HeaderImage.center:
+        newVendor.headerImageCenter = null;
+        break;
+      case HeaderImage.left:
+        newVendor.headerImageLeft = null;
+        break;
+      default:
+    }
+    setState(() => newVendor);
+    dirty = true;
   }
 
   void onDeleteVendor() async {
@@ -433,22 +449,5 @@ class _VendorPageState extends State<VendorPage> {
         Navigator.pop<bool>(context, true);
       }
     }
-  }
-
-  void onClearImage(HeaderImage image) {
-    switch (image) {
-      case HeaderImage.right:
-        newVendor.headerImageRight = null;
-        break;
-      case HeaderImage.center:
-        newVendor.headerImageCenter = null;
-        break;
-      case HeaderImage.left:
-        newVendor.headerImageLeft = null;
-        break;
-      default:
-    }
-    setState(() => newVendor);
-    dirty = true;
   }
 }

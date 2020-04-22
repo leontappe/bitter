@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../drafts/draft_popup_menu.dart';
 import '../models/draft.dart';
 import '../providers/inherited_database.dart';
-import '../providers/mysql_provider.dart';
+import '../providers/database_provider.dart';
 import '../repositories/customer_repository.dart';
 import '../repositories/draft_repository.dart';
 import '../repositories/vendor_repository.dart';
@@ -15,9 +15,9 @@ class DraftsListPage extends StatefulWidget {
 }
 
 class _DraftsListPageState extends State<DraftsListPage> {
-  DraftRepository<MySqlProvider> draftRepo;
-  CustomerRepository<MySqlProvider> customerRepo;
-  VendorRepository<MySqlProvider> vendorRepo;
+  DraftRepository<DatabaseProvider> draftRepo;
+  CustomerRepository<DatabaseProvider> customerRepo;
+  VendorRepository<DatabaseProvider> vendorRepo;
 
   List<Draft> drafts = [];
   List<Customer> customers = [];
@@ -95,9 +95,9 @@ class _DraftsListPageState extends State<DraftsListPage> {
   }
 
   Future<void> initDb() async {
-    draftRepo = DraftRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
-    customerRepo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    draftRepo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     await draftRepo.setUp();
     await vendorRepo.setUp();
     await customerRepo.setUp();

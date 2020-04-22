@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import '../providers/inherited_database.dart';
-import '../providers/mysql_provider.dart';
+import '../providers/database_provider.dart';
 import '../repositories/bill_repository.dart';
 import '../repositories/customer_repository.dart';
 import '../repositories/draft_repository.dart';
@@ -60,10 +60,10 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
   }
 
   Future<void> initDb() async {
-    repo = DraftRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
-    customerRepo = CustomerRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
-    billRepo = BillRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    repo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    billRepo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
 
     await billRepo.setUp();
 

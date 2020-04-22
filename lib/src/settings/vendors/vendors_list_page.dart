@@ -1,8 +1,8 @@
+import 'package:bitter/src/providers/database_provider.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/vendor.dart';
 import '../../providers/inherited_database.dart';
-import '../../providers/mysql_provider.dart';
 import '../../repositories/vendor_repository.dart';
 import 'vendor_page.dart';
 
@@ -49,7 +49,8 @@ class _VendorsPageState extends State<VendorsPage> {
   }
 
   Future<void> initDb() async {
-    repo = VendorRepository(InheritedDatabase.of<MySqlProvider>(context).provider);
+    repo = VendorRepository<DatabaseProvider>(
+        InheritedDatabase.of<DatabaseProvider>(context).provider);
     await repo.setUp();
     await onGetVendors();
   }
