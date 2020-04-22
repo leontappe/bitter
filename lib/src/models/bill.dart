@@ -86,9 +86,9 @@ class Bill {
         'vendor': json.encode(vendor.toMapLong),
         'customer': json.encode(customer.toMapLong),
         'items': json.encode(items.map((e) => e.toMap).toList()),
-        'created': created.toUtc(),
-        'service_date': serviceDate.toUtc(),
-        'due_date': dueDate.toUtc(),
+        'created': created.toUtc().toIso8601String(),
+        'service_date': serviceDate.toUtc().toIso8601String(),
+        'due_date': dueDate.toUtc().toIso8601String(),
         if (note != null) 'note': note,
       };
 

@@ -86,9 +86,9 @@ class BillRepository<T extends DatabaseProvider> {
         'LONGTEXT',
         'TEXT',
         'TEXT',
-        'DATETIME',
-        'DATETIME',
-        'DATETIME',
+        'TEXT',
+        'TEXT',
+        'TEXT',
         'TEXT'
       ],
       'id',
