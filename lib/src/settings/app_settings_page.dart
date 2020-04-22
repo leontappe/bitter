@@ -203,6 +203,8 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
       await repo.setMySqlSettings(settings);
       await repo.setUsername(username);
       if (repo.getDbEngine() != null && repo.getDbEngine() != dbEngine) {
+        await repo.insert('bills_filter', null);
+        await repo.insert('drafts_filter', null);
         await showDialog<void>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
