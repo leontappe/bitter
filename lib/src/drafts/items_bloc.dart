@@ -41,20 +41,22 @@ class ItemsBloc extends Bloc<ItemsEvent, ItemsState> {
   @override
   Stream<ItemsState> mapEventToState(ItemsEvent event) async* {
     if (event is AddItem) {
-      event.item.id ??= sha256
+      event.item.uid ??= sha256
           .convert(utf8.encode(
               '${event.item.title}${DateTime.now().toString()}${Random().nextInt(1024).toString()}'))
           .toString();
       _items.add(event.item);
     } else if (event is RemoveItem) {
-      _items.removeWhere((Item item) => item.id == event.id);
+      _items.removeWhere((Item item) => item.uid == event.uid);
     } else if (event is UpdateItem) {
-      _items[_items.indexWhere((Item item) => item.id == event.item.id)] = event.item;
+      _items[_items.indexWhere((Item item) => item.uid == event.item.uid)] = event.item;
     } else if (event is BulkAdd) {
       for (var item in event.items) {
         add(AddItem(item));
       }
     }
+
+    print(_items);
 
     yield ItemsState(_items);
   }
@@ -80,12 +82,12 @@ class ItemsState {
 }
 
 class RemoveItem extends ItemsEvent {
-  final String id;
+  final String uid;
 
-  RemoveItem(this.id);
+  RemoveItem(this.uid);
 
   @override
-  String toString() => '[RemoveItem $id]';
+  String toString() => '[RemoveItem $uid]';
 }
 
 class UpdateItem extends ItemsEvent {

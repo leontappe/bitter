@@ -103,7 +103,7 @@ class Vendor {
       );
 
   @override
-  int get hashCode => name.hashCode;
+  int get hashCode => id.hashCode;
 
   Map<String, dynamic> get toMap => <String, dynamic>{
         ...toMapShort,

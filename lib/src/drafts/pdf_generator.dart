@@ -38,7 +38,7 @@ class PdfGenerator {
     final items = bill.items;
 
     for (var i = 0; i < items.length; i++) {
-      items[i].id = '${i + 1}';
+      items[i].uid = '${i + 1}';
     }
 
     bill.serviceDate ??= DateTime.now();
@@ -149,7 +149,7 @@ class PdfGenerator {
                 PaddedHeaderText('Bruttopreis')
               ]),
               ...items.map((Item i) => TableRow(children: <Widget>[
-                    PaddedText(i.id.toString(), ttfSans),
+                    PaddedText(i.uid, ttfSans),
                     PaddedText(
                         (i.description != null) ? '${i.title} - ${i.description}' : '${i.title}',
                         ttfSans),

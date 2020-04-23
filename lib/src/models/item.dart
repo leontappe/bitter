@@ -1,7 +1,8 @@
 import 'package:meta/meta.dart';
 
 class Item {
-  String id;
+  int id;
+  String uid;
 
   String title;
   int price;
@@ -10,6 +11,7 @@ class Item {
   String description;
 
   Item({
+    this.uid,
     this.id,
     @required this.title,
     @required this.price,
@@ -20,6 +22,15 @@ class Item {
 
   factory Item.empty() => Item(title: null, price: null, tax: null);
 
+  factory Item.fromDbMap(Map map) => Item(
+        id: map['id'] as int,
+        title: map['title'].toString(),
+        price: map['price'] as int,
+        tax: map['tax'] as int,
+        quantity: map['quantity'] as int,
+        description: map['description'].toString(),
+      );
+
   factory Item.fromMap(Map map) => Item(
         title: map['title'] as String,
         price: map['price'] as int,
@@ -29,7 +40,7 @@ class Item {
       );
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => uid.hashCode;
 
   int get sum => price * quantity;
 
@@ -43,8 +54,11 @@ class Item {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is Item && runtimeType == other.runtimeType && id == other.id;
+      identical(this, other) ||
+      other is Item &&
+          runtimeType == other.runtimeType &&
+          ((uid != null) ? uid == other.uid : id == other.id);
 
   @override
-  String toString() => '[Item $id $toMap]';
+  String toString() => '[Item $id $uid $toMap]';
 }

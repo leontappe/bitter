@@ -16,7 +16,7 @@ class ItemEditorTile extends StatelessWidget {
   });
 
   @override
-  Key get key => Key(item.id);
+  Key get key => Key(item.uid);
 
   @override
   Widget build(BuildContext context) {

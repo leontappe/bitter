@@ -222,7 +222,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                             item: e,
                             defaultTax: draft.tax,
                             itemChanged: onUpdateItem,
-                            itemDeleted: (Item e) => onRemoveItem(e.id),
+                            itemDeleted: (Item e) => onRemoveItem(e.uid),
                           )),
                     ]);
                   }
