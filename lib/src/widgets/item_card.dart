@@ -17,8 +17,8 @@ class ItemCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Artikelnummer ' + item.itemId.toString(), style: Theme.of(context).textTheme.headline5),
             Text(item.title, style: Theme.of(context).textTheme.headline5),
+            Text('Artikel ' + item.itemId.toString(), style: Theme.of(context).textTheme.headline6),
           ],
         ),
       ),

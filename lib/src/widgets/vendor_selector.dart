@@ -7,9 +7,14 @@ import '../repositories/vendor_repository.dart';
 class VendorSelector extends StatefulWidget {
   final int initialValue;
   final Function(Vendor) onChanged;
+  final bool disabled;
 
-  const VendorSelector({Key key, @required this.onChanged, @required this.initialValue})
-      : super(key: key);
+  const VendorSelector({
+    Key key,
+    @required this.onChanged,
+    @required this.initialValue,
+    this.disabled = false,
+  }) : super(key: key);
 
   @override
   _VendorSelectorState createState() => _VendorSelectorState();
@@ -24,13 +29,15 @@ class _VendorSelectorState extends State<VendorSelector> {
   @override
   Widget build(BuildContext context) {
     return DropdownButton<int>(
-      hint: Text('Verkäufer auswählen'),
+      hint: Text((widget.disabled) ? _vendor?.name ?? '' : 'Verkäufer auswählen'),
       isExpanded: true,
       value: _vendor?.id,
-      onChanged: (int value) {
-        setState(() => _vendor = _vendors.singleWhere((Vendor v) => v.id == value));
-        widget.onChanged(_vendor);
-      },
+      onChanged: (widget.disabled)
+          ? null
+          : (int value) {
+              setState(() => _vendor = _vendors.singleWhere((Vendor v) => v.id == value));
+              widget.onChanged(_vendor);
+            },
       items: <DropdownMenuItem<int>>[
         ..._vendors
             .map<DropdownMenuItem<int>>(

@@ -35,7 +35,7 @@ class _ItemPageState extends State<ItemPage> {
                   icon: Icon(Icons.arrow_back_ios),
                   onPressed: () => onPopRoute(context),
                 )),
-        title: Text((widget.item != null) ? widget.item.title : 'Artikel erstellen'),
+        title: Text((widget.item != null) ? 'Artikel bearbeiten' : 'Artikel erstellen'),
         actions: [
           IconButton(icon: Icon(Icons.save), onPressed: onSaveItem),
           if (widget.item != null)
@@ -44,7 +44,7 @@ class _ItemPageState extends State<ItemPage> {
       ),
       body: ListView(
         children: <Widget>[
-          if (widget.item != null) ItemCard(item: widget.item),
+          if (widget.item != null) ItemCard(item: item),
           Padding(
             padding: EdgeInsets.fromLTRB(16.0, (widget.item != null) ? 16.0 : 8.0, 16.0, 8.0),
             child: Form(
@@ -52,6 +52,7 @@ class _ItemPageState extends State<ItemPage> {
               child: Column(
                 children: <Widget>[
                   VendorSelector(
+                    disabled: widget.item != null,
                     onChanged: (Vendor v) {
                       setState(() {
                         item.vendor = v.id;
@@ -80,42 +81,63 @@ class _ItemPageState extends State<ItemPage> {
                       dirty = true;
                     },
                   ),
-                  TextFormField(
-                    initialValue: (item.price != null)
-                        ? (item.price.toDouble() / 100.0).toStringAsFixed(2)
-                        : '',
-                    validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                    keyboardType: TextInputType.numberWithOptions(),
-                    onChanged: (String input) {
-                      setState(() =>
-                          item.price = (double.parse(input.replaceAll(',', '.')) * 100).toInt());
-                      _formKey.currentState.validate();
-                    },
-                    decoration: InputDecoration(suffixText: '€', hintText: 'Preis'),
+                  ListTile(
+                    title: Text('Preis', style: Theme.of(context).textTheme.headline6),
+                    trailing: Container(
+                      width: 94.0,
+                      height: 64.0,
+                      child: TextFormField(
+                        initialValue: (item.price != null)
+                            ? (item.price.toDouble() / 100.0).toStringAsFixed(2)
+                            : '',
+                        validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                        keyboardType: TextInputType.numberWithOptions(),
+                        onChanged: (String input) {
+                          setState(() => item.price =
+                              (double.parse(input.replaceAll(',', '.')) * 100).toInt());
+                          _formKey.currentState.validate();
+                        },
+                        decoration: InputDecoration(suffixText: '€'),
+                      ),
+                    ),
                   ),
-                  TextFormField(
-                    maxLines: 1,
-                    controller: TextEditingController(text: item.tax.toString()),
-                    keyboardType: TextInputType.numberWithOptions(),
-                    decoration: InputDecoration(labelText: 'Umsatzsteuer', suffixText: '%'),
-                    validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                    onChanged: (String input) {
-                      item.tax = int.parse(input);
-                      _formKey.currentState.validate();
-                      dirty = true;
-                    },
+                  ListTile(
+                    title: Text('Umsatzsteuer', style: Theme.of(context).textTheme.headline6),
+                    trailing: Container(
+                      width: 94.0,
+                      height: 64.0,
+                      child: TextFormField(
+                        maxLines: 1,
+                        controller: TextEditingController(text: item.tax.toString()),
+                        keyboardType: TextInputType.numberWithOptions(),
+                        decoration: InputDecoration(suffixText: '%'),
+                        validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                        onChanged: (String input) {
+                          item.tax = int.parse(input);
+                          _formKey.currentState.validate();
+                          dirty = true;
+                        },
+                      ),
+                    ),
                   ),
-                  TextFormField(
-                    maxLines: 1,
-                    initialValue: item.quantity?.toString() ?? '1',
-                    keyboardType: TextInputType.numberWithOptions(),
-                    decoration: InputDecoration(labelText: 'Standardmenge', suffixText: 'x'),
-                    validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                    onChanged: (String input) {
-                      item.quantity = int.parse(input);
-                      _formKey.currentState.validate();
-                      dirty = true;
-                    },
+                  ListTile(
+                    title: Text('Standardmenge', style: Theme.of(context).textTheme.headline6),
+                    trailing: Container(
+                      width: 94.0,
+                      height: 64.0,
+                      child: TextFormField(
+                        maxLines: 1,
+                        initialValue: item.quantity?.toString() ?? '1',
+                        keyboardType: TextInputType.numberWithOptions(),
+                        decoration: InputDecoration(suffixText: 'x'),
+                        validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                        onChanged: (String input) {
+                          item.quantity = int.parse(input);
+                          _formKey.currentState.validate();
+                          dirty = true;
+                        },
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -186,10 +208,11 @@ class _ItemPageState extends State<ItemPage> {
       if (widget.item != null) {
         await repo.update(item);
         dirty = false;
+        setState(() => item);
       } else {
         await repo.insert(item);
         dirty = false;
-        await onPopRoute(context);
+        await Navigator.pop<bool>(context, true);
       }
       return true;
     }
