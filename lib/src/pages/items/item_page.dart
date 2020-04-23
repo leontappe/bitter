@@ -14,10 +14,10 @@ class ItemPage extends StatefulWidget {
   ItemPage({this.item});
 
   @override
-  _BillPageState createState() => _BillPageState();
+  _ItemPageState createState() => _ItemPageState();
 }
 
-class _BillPageState extends State<ItemPage> {
+class _ItemPageState extends State<ItemPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   ItemRepository repo;
 
@@ -38,6 +38,8 @@ class _BillPageState extends State<ItemPage> {
         title: Text((widget.item != null) ? widget.item.title : 'Artikel erstellen'),
         actions: [
           IconButton(icon: Icon(Icons.save), onPressed: onSaveItem),
+          if (widget.item != null)
+            IconButton(icon: Icon(Icons.delete), onPressed: () => onDeleteItem(widget.item.id)),
         ],
       ),
       body: ListView(
@@ -51,7 +53,10 @@ class _BillPageState extends State<ItemPage> {
                 children: <Widget>[
                   VendorSelector(
                     onChanged: (Vendor v) {
-                      item.vendor = v.id;
+                      setState(() {
+                        item.vendor = v.id;
+                        item.tax = v.defaultTax;
+                      });
                     },
                     initialValue: item.vendor,
                   ),
@@ -70,24 +75,27 @@ class _BillPageState extends State<ItemPage> {
                     initialValue: item.description ?? '',
                     maxLines: 1,
                     decoration: InputDecoration(labelText: 'Beschreibung'),
-                    validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                     onChanged: (String input) {
                       item.description = input;
-                      _formKey.currentState.validate();
                       dirty = true;
                     },
                   ),
                   TextFormField(
-                    initialValue: item?.price?.toString() ?? '',
+                    initialValue: (item.price != null)
+                        ? (item.price.toDouble() / 100.0).toStringAsFixed(2)
+                        : '',
+                    validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                    keyboardType: TextInputType.numberWithOptions(),
                     onChanged: (String input) {
                       setState(() =>
                           item.price = (double.parse(input.replaceAll(',', '.')) * 100).toInt());
+                      _formKey.currentState.validate();
                     },
                     decoration: InputDecoration(suffixText: '€', hintText: 'Preis'),
                   ),
                   TextFormField(
                     maxLines: 1,
-                    initialValue: item.tax?.toString() ?? '19',
+                    controller: TextEditingController(text: item.tax.toString()),
                     keyboardType: TextInputType.numberWithOptions(),
                     decoration: InputDecoration(labelText: 'Umsatzsteuer', suffixText: '%'),
                     validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
@@ -101,7 +109,7 @@ class _BillPageState extends State<ItemPage> {
                     maxLines: 1,
                     initialValue: item.quantity?.toString() ?? '1',
                     keyboardType: TextInputType.numberWithOptions(),
-                    decoration: InputDecoration(labelText: 'Menge', suffixText: 'x'),
+                    decoration: InputDecoration(labelText: 'Standardmenge', suffixText: 'x'),
                     validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                     onChanged: (String input) {
                       item.quantity = int.parse(input);
@@ -186,5 +194,10 @@ class _BillPageState extends State<ItemPage> {
       return true;
     }
     return false;
+  }
+
+  Future<void> onDeleteItem(int id) async {
+    await repo.delete(id);
+    await Navigator.pop(context, true);
   }
 }

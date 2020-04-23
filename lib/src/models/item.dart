@@ -20,12 +20,12 @@ class Item {
     this.itemId,
     @required this.title,
     @required this.price,
-    @required this.tax,
+    this.tax = 19,
     this.quantity = 1,
     this.description,
   });
 
-  factory Item.empty() => Item(title: null, price: null, tax: null);
+  factory Item.empty() => Item(title: null, price: null);
 
   factory Item.fromDbMap(Map map) => Item(
         id: map['id'] as int,
@@ -35,7 +35,7 @@ class Item {
         price: map['price'] as int,
         tax: map['tax'] as int,
         quantity: map['quantity'] as int,
-        description: map['description'].toString(),
+        description: (map['description'] != null) ? map['description'].toString() : null,
       );
 
   factory Item.fromMap(Map map) => Item(

@@ -69,7 +69,7 @@ class _BillsListPageState extends State<ItemsListPage> {
               onPressed: onToggleSearch,
             ),
             IconButton(
-              tooltip: 'Neue Rechnung erstellen',
+              tooltip: 'Neuen Artikel erstellen',
               icon: Icon(Icons.note_add),
               onPressed: onPushItemPage,
             ),
@@ -82,13 +82,18 @@ class _BillsListPageState extends State<ItemsListPage> {
             ...items.reversed.map(
               (Item i) => ListTile(
                 leading: Text(vendors.singleWhere((Vendor v) => v.id == i.vendor).billPrefix +
-                    ' A' +
+                    '\nA' +
                     i.itemId.toString()),
                 title: Text(i.title),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [Text('Beschreibung: ${i.description}'), Text('Steuer: ${i.tax} %')],
+                  children: [
+                    if (i.description != null) Text('Beschreibung: ${i.description}'),
+                    Text('Steuer: ${i.tax} %'),
+                  ],
                 ),
+                trailing: Text('${(i.price / 100.0).toStringAsFixed(2)} €',
+                    style: Theme.of(context).textTheme.subtitle1),
                 onTap: () => onPushItemPage(item: i),
               ),
             ),
