@@ -7,8 +7,8 @@ import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
 import '../../repositories/settings_repository.dart';
 import '../../repositories/vendor_repository.dart';
-import 'draft_popup_menu.dart';
 import 'draft_creator.dart';
+import 'draft_popup_menu.dart';
 
 class DraftsListPage extends StatefulWidget {
   @override
@@ -57,7 +57,7 @@ class _DraftsListPageState extends State<DraftsListPage> {
         actions: <Widget>[
           if (!searchEnabled) ...[
             DropdownButton<int>(
-              value: filterVendor,
+              value: filterVendor ?? -1,
               dropdownColor: Colors.grey[800],
               iconEnabledColor: Colors.white70,
               style:
@@ -66,7 +66,7 @@ class _DraftsListPageState extends State<DraftsListPage> {
               items: <DropdownMenuItem<int>>[
                 DropdownMenuItem(child: Text('Filter zurücksetzen'), value: -1),
                 ...filterVendors
-                    .map((Vendor v) => DropdownMenuItem(value: v.id, child: Text(v.name)))
+                    .map((Vendor v) => DropdownMenuItem(value: v.id, child: Text(v.name))),
               ],
               onChanged: onFilter,
             ),
@@ -129,7 +129,13 @@ class _DraftsListPageState extends State<DraftsListPage> {
     customers = await customerRepo.select();
     vendors = await vendorRepo.select();
 
-    filterVendor = await settings.select<int>('drafts_filter');
+    final filter = await settings.select<int>('drafts_filter');
+    if (drafts.where((Draft d) => d.vendor == filter).isEmpty) {
+      filterVendor = null;
+    } else {
+      filterVendor = filter;
+    }
+
     await onGetDrafts();
   }
 

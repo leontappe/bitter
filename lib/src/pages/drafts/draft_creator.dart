@@ -12,6 +12,7 @@ import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
 import '../../repositories/settings_repository.dart';
 import '../../repositories/vendor_repository.dart';
+import '../../widgets/vendor_selector.dart';
 import 'draft_popup_menu.dart';
 import 'item_creator_tile.dart';
 import 'item_editor_tile.dart';
@@ -31,7 +32,6 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
 
   DraftRepository repo;
   CustomerRepository customerRepo;
-  VendorRepository vendorRepo;
   SettingsRepository settingsRepo;
 
   ItemsBloc itemsBloc;
@@ -40,11 +40,11 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
 
   Draft draft;
   bool dirty;
+  bool changed;
 
   bool customerIsset;
   bool vendorIsset;
   List<Customer> _customers;
-  List<Vendor> _vendors;
   Vendor _vendor;
 
   @override
@@ -107,30 +107,13 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
               ListTile(
                 title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
                 trailing: (vendorIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
-                subtitle: DropdownButton<int>(
-                  hint: Text('Verkäufer auswählen'),
-                  isExpanded: true,
-                  value: draft.vendor,
-                  onChanged: (int value) {
-                    _vendor = _vendors.singleWhere((Vendor v) => v.id == value);
-                    setState(() {
-                      draft.vendor = value;
-                      if (_vendor.defaultDueDays != null) {
-                        draft.dueDays = _vendor.defaultDueDays;
-                      }
-                      if (_vendor.defaultTax != null) {
-                        draft.tax = _vendor.defaultTax;
-                      }
-                    });
+                subtitle: VendorSelector(
+                  initialValue: draft?.vendor,
+                  onChanged: (Vendor v) {
+                    draft.vendor = v.id;
                     dirty = true;
                     validateDropdowns();
                   },
-                  items: <DropdownMenuItem<int>>[
-                    ..._vendors
-                        .map<DropdownMenuItem<int>>((Vendor v) =>
-                            DropdownMenuItem<int>(value: v.id, child: Text('${v.name}')))
-                        .toList()
-                  ],
                 ),
               ),
               ListTile(
@@ -246,15 +229,12 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   Future<void> initDb() async {
     repo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     settingsRepo = SettingsRepository();
 
     await settingsRepo.setUp();
 
     editor = await settingsRepo.getUsername();
-
     _customers = await customerRepo.select();
-    _vendors = await vendorRepo.select();
 
     setState(() => _customers);
   }
@@ -272,8 +252,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
     }
 
     _customers = [];
-    _vendors = [];
     dirty = false;
+    changed = false;
 
     super.initState();
   }
@@ -318,7 +298,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
           return;
       }
     } else {
-      Navigator.pop<bool>(context, false);
+      Navigator.pop<bool>(context, changed);
     }
   }
 
@@ -350,6 +330,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
       if (widget.draft == null) {
         Navigator.pop<bool>(context, true);
       }
+      changed = true;
       return true;
     }
     return false;
