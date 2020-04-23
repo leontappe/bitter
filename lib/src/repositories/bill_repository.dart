@@ -1,6 +1,5 @@
-import 'package:bitter/src/drafts/items_bloc.dart';
-
 import '../models/bill.dart';
+import '../models/item.dart';
 import '../providers/database_provider.dart';
 import 'settings_repository.dart';
 
@@ -44,10 +43,6 @@ class BillRepository<T extends DatabaseProvider> {
 
   Future<Bill> selectSingle(int id) async {
     return Bill.fromMap(await db.selectSingle(tableName, id));
-  }
-
-  Future<void> update(Bill bill) async {
-    await db.update(tableName, bill.id, bill.toMap);
   }
 
   Future<void> setUp() async {
@@ -111,5 +106,9 @@ class BillRepository<T extends DatabaseProvider> {
         true
       ],
     );
+  }
+
+  Future<void> update(Bill bill) async {
+    await db.update(tableName, bill.id, bill.toMap);
   }
 }

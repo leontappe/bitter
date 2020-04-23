@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../providers/inherited_database.dart';
-import '../providers/database_provider.dart';
-import '../repositories/customer_repository.dart';
-import '../widgets/customer_card.dart';
+import '../../providers/inherited_database.dart';
+import '../../providers/database_provider.dart';
+import '../../repositories/customer_repository.dart';
+import '../../widgets/customer_card.dart';
 
 class CustomerPage extends StatefulWidget {
   final int id;

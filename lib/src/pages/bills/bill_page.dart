@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../models/bill.dart';
-import '../providers/inherited_database.dart';
-import '../providers/database_provider.dart';
-import '../repositories/bill_repository.dart';
-import '../widgets/customer_card.dart';
-import '../widgets/items_card.dart';
-import '../widgets/vendor_card.dart';
+import '../../models/bill.dart';
+import '../../providers/database_provider.dart';
+import '../../providers/inherited_database.dart';
+import '../../repositories/bill_repository.dart';
+import '../../widgets/customer_card.dart';
+import '../../widgets/items_card.dart';
+import '../../widgets/vendor_card.dart';
 import 'save_bill_button.dart';
 
 class BillPage extends StatefulWidget {

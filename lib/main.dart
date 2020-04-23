@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'src/bills/bills_list_page.dart';
-import 'src/customers/customers_list_page.dart';
-import 'src/drafts/drafts_list_page.dart';
+import 'src/pages/bills/bills_list_page.dart';
+import 'src/pages/customers/customers_list_page.dart';
+import 'src/pages/drafts/drafts_list_page.dart';
 import 'src/homepage.dart';
 import 'src/providers/database_provider.dart';
 import 'src/providers/inherited_database.dart';
 import 'src/providers/mysql_provider.dart';
 import 'src/providers/sqlite_provider.dart';
 import 'src/repositories/settings_repository.dart';
-import 'src/settings/app_settings_page.dart';
-import 'src/settings/settings_page.dart';
-import 'src/settings/vendors/vendors_list_page.dart';
+import 'src/pages/settings/app_settings_page.dart';
+import 'src/pages/settings/settings_page.dart';
+import 'src/pages/settings/vendors/vendors_list_page.dart';
 
 void main() => runApp(Bitter());
 

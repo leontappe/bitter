@@ -1,14 +1,14 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:bitter/src/providers/database_provider.dart';
 import 'package:file_chooser/file_chooser.dart';
 import 'package:flutter/material.dart';
 
-import '../../models/vendor.dart';
-import '../../providers/inherited_database.dart';
-import '../../repositories/vendor_repository.dart';
-import '../../widgets/vendor_card.dart';
+import '../../../models/vendor.dart';
+import '../../../providers/database_provider.dart';
+import '../../../providers/inherited_database.dart';
+import '../../../repositories/vendor_repository.dart';
+import '../../../widgets/vendor_card.dart';
 
 class VendorPage extends StatefulWidget {
   final int id;

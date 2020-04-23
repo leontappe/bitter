@@ -4,11 +4,11 @@ import 'package:image/image.dart' as img;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
-import '../../fonts/LiberationSans.dart';
-import '../models/customer.dart';
-import '../models/draft.dart';
-import '../models/item.dart';
-import '../models/vendor.dart';
+import '../../../fonts/LiberationSans.dart';
+import '../../models/customer.dart';
+import '../../models/draft.dart';
+import '../../models/item.dart';
+import '../../models/vendor.dart';
 
 class PaddedHeaderText extends Padding {
   PaddedHeaderText(String text)

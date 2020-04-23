@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../drafts/draft_popup_menu.dart';
-import '../models/draft.dart';
-import '../providers/database_provider.dart';
-import '../providers/inherited_database.dart';
-import '../repositories/customer_repository.dart';
-import '../repositories/draft_repository.dart';
-import '../repositories/settings_repository.dart';
-import '../repositories/vendor_repository.dart';
+import '../../models/draft.dart';
+import '../../providers/database_provider.dart';
+import '../../providers/inherited_database.dart';
+import '../../repositories/customer_repository.dart';
+import '../../repositories/draft_repository.dart';
+import '../../repositories/settings_repository.dart';
+import '../../repositories/vendor_repository.dart';
+import 'draft_popup_menu.dart';
 import 'draft_creator.dart';
 
 class DraftsListPage extends StatefulWidget {

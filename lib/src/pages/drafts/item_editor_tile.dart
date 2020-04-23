@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/item.dart';
+import '../../models/item.dart';
 
 class ItemEditorTile extends StatelessWidget {
   final Item item;

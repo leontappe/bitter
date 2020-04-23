@@ -1,18 +1,18 @@
 import 'dart:async';
 
-import 'package:bitter/src/drafts/draft_popup_menu.dart';
-import 'package:bitter/src/repositories/settings_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../models/draft.dart';
-import '../models/item.dart';
-import '../models/vendor.dart';
-import '../providers/inherited_database.dart';
-import '../providers/database_provider.dart';
-import '../repositories/customer_repository.dart';
-import '../repositories/draft_repository.dart';
-import '../repositories/vendor_repository.dart';
+import '../../models/draft.dart';
+import '../../models/item.dart';
+import '../../models/vendor.dart';
+import '../../providers/database_provider.dart';
+import '../../providers/inherited_database.dart';
+import '../../repositories/customer_repository.dart';
+import '../../repositories/draft_repository.dart';
+import '../../repositories/settings_repository.dart';
+import '../../repositories/vendor_repository.dart';
+import 'draft_popup_menu.dart';
 import 'item_creator_tile.dart';
 import 'item_editor_tile.dart';
 import 'items_bloc.dart';

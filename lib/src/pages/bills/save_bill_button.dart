@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../models/bill.dart';
+import '../../models/bill.dart';
 
 class SaveBillButton extends StatelessWidget {
   final Bill bill;

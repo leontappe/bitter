@@ -4,9 +4,9 @@ import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:crypto/crypto.dart';
 
-import '../models/item.dart';
+import '../../models/item.dart';
 
-export '../models/item.dart';
+export '../../models/item.dart';
 
 class AddItem extends ItemsEvent {
   final Item item;
@@ -55,8 +55,6 @@ class ItemsBloc extends Bloc<ItemsEvent, ItemsState> {
         add(AddItem(item));
       }
     }
-
-    print(_items);
 
     yield ItemsState(_items);
   }
