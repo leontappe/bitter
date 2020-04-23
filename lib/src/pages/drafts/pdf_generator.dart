@@ -182,7 +182,7 @@ class PdfGenerator {
                   ),
                   Paragraph(
                     text:
-                        'Davon Umsatzsteuer: ${((bill.sum * (bill.tax / 100.0)) / 100.0).toStringAsFixed(2).replaceAll('.', ',')} EUR',
+                        'Davon Umsatzsteuer: ${_calculateTaxes(bill.items, bill.tax).toStringAsFixed(2).replaceAll('.', ',')} EUR',
                     style: TextStyle(fontSize: fontsize),
                     margin: EdgeInsets.all(0.0),
                   )
@@ -228,6 +228,14 @@ class PdfGenerator {
         centerHeader: centerHeader,
         rightHeader: rightHeader,
       ).save();
+
+  double _calculateTaxes(List<Item> items, int tax) {
+    var tax = 0.0;
+    for (var item in items) {
+      tax += ((item.price * item.quantity) * ((item.tax ?? tax) / 100.0));
+    }
+    return tax.round() / 100.0;
+  }
 
   Widget _createHeaderFromImages(PdfDocument doc,
       {Uint8List left, Uint8List center, Uint8List right}) {
