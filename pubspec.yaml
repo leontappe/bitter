@@ -2,7 +2,7 @@ name: bitter
 authors:
   - Leon Tappe <ltappe@mail.upb.de>
 description: A billing app with interchangeable database, customer management and PDF output
-version: 0.0.1+1
+version: 0.1.0+1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -18,8 +18,8 @@ dependencies:
   pdf: ^1.5.0
   image: ^2.1.4
   meta: ^1.1.8
-  bloc: ^3.0.0
-  flutter_bloc: ^3.2.0
+  bloc: ^4.0.0
+  flutter_bloc: ^4.0.0
   crypto: ^2.1.4
   path_provider: ^1.6.5
   path_provider_macos: ^0.0.4
