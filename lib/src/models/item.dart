@@ -9,18 +9,16 @@ class Item {
   int quantity;
   String description;
 
-  int get sum => price * quantity;
-
   Item({
     this.id,
     @required this.title,
     @required this.price,
-    this.tax = 0,
+    @required this.tax,
     this.quantity = 1,
     this.description,
   });
 
-  factory Item.empty() => Item(title: null, price: null);
+  factory Item.empty() => Item(title: null, price: null, tax: null);
 
   factory Item.fromMap(Map map) => Item(
         title: map['title'] as String,
@@ -30,6 +28,11 @@ class Item {
         description: map['description'] as String,
       );
 
+  @override
+  int get hashCode => id.hashCode;
+
+  int get sum => price * quantity;
+
   Map<String, dynamic> get toMap => <String, dynamic>{
         'title': title,
         'price': price,
@@ -37,6 +40,10 @@ class Item {
         'quantity': quantity,
         'description': description,
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Item && runtimeType == other.runtimeType && id == other.id;
 
   @override
   String toString() => '[Item $id $toMap]';

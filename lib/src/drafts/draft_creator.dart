@@ -213,18 +213,20 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
               Text('Artikel', style: Theme.of(context).textTheme.headline6),
               BlocBuilder<ItemsBloc, ItemsState>(
                 bloc: itemsBloc,
-                builder: (BuildContext context, ItemsState state) => Column(
-                  children: <Widget>[
-                    if (state.items.isEmpty)
-                      ListTile(title: Text('Es wurden noch keine Artikel hinzugefügt')),
-                    ...state.items.map<ItemEditorTile>((Item e) => ItemEditorTile(
-                          item: e,
-                          defaultTax: draft.tax,
-                          itemChanged: onUpdateItem,
-                          itemDeleted: (Item e) => onRemoveItem(e.id),
-                        )),
-                  ],
-                ),
+                builder: (BuildContext context, ItemsState state) {
+                  if (state.items.isEmpty) {
+                    return ListTile(title: Text('Es wurden noch keine Artikel hinzugefügt'));
+                  } else {
+                    return Column(children: <Widget>[
+                      ...state.items.map<ItemEditorTile>((Item e) => ItemEditorTile(
+                            item: e,
+                            defaultTax: draft.tax,
+                            itemChanged: onUpdateItem,
+                            itemDeleted: (Item e) => onRemoveItem(e.id),
+                          )),
+                    ]);
+                  }
+                },
               ),
               Divider(),
               ItemCreatorTile(defaultTax: draft.tax, itemAdded: onAddItem),

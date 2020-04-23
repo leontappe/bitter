@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/item.dart';
 
-class ItemEditorTile extends StatefulWidget {
+class ItemEditorTile extends StatelessWidget {
   final Item item;
   final int defaultTax;
   final Function(Item) itemChanged;
@@ -16,37 +16,35 @@ class ItemEditorTile extends StatefulWidget {
   });
 
   @override
-  _ItemEditorTileState createState() => _ItemEditorTileState();
-}
+  Key get key => Key(item.id);
 
-class _ItemEditorTileState extends State<ItemEditorTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: Container(
         width: 50.0,
         child: TextFormField(
-          initialValue: widget.item.quantity?.toString() ?? '1',
+          initialValue: item.quantity?.toString() ?? '1',
           onChanged: (String input) {
-            setState(() => widget.item.quantity = int.parse(input));
-            widget.itemChanged(widget.item);
+            item.quantity = int.parse(input);
+            itemChanged(item);
           },
           decoration: InputDecoration(suffixText: 'x', hintText: 'Menge'),
         ),
       ),
       title: TextFormField(
-        initialValue: widget.item.title ?? '',
+        initialValue: item.title ?? '',
         onChanged: (String input) {
-          setState(() => widget.item.title = input);
-          widget.itemChanged(widget.item);
+          item.title = input;
+          itemChanged(item);
         },
         decoration: InputDecoration(hintText: 'Artikelbezeichnung'),
       ),
       subtitle: TextFormField(
-        initialValue: widget.item.description ?? '',
+        initialValue: item.description ?? '',
         onChanged: (String input) {
-          setState(() => widget.item.description = input);
-          widget.itemChanged(widget.item);
+          item.description = input;
+          itemChanged(item);
         },
         decoration: InputDecoration(hintText: 'Beschreibung (optional)'),
       ),
@@ -58,10 +56,10 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
             padding: EdgeInsets.all(8.0),
             width: 80.0,
             child: TextFormField(
-              initialValue: widget.defaultTax.toString() ?? '19',
+              initialValue: defaultTax.toString() ?? '19',
               onChanged: (String input) {
-                setState(() => widget.item.tax = int.tryParse(input) ?? widget.defaultTax);
-                widget.itemChanged(widget.item);
+                item.tax = int.tryParse(input) ?? defaultTax;
+                itemChanged(item);
               },
               decoration: InputDecoration(suffixText: '%', hintText: 'Steuer'),
             ),
@@ -70,13 +68,11 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
             padding: EdgeInsets.all(8.0),
             width: 80.0,
             child: TextFormField(
-              initialValue: (widget.item.price != null)
-                  ? (widget.item.price.toDouble() / 100.0).toStringAsFixed(2)
-                  : '',
+              initialValue:
+                  (item.price != null) ? (item.price.toDouble() / 100.0).toStringAsFixed(2) : '',
               onChanged: (String input) {
-                setState(() =>
-                    widget.item.price = (double.parse(input.replaceAll(',', '.')) * 100).toInt());
-                widget.itemChanged(widget.item);
+                item.price = (double.parse(input.replaceAll(',', '.')) * 100).toInt();
+                itemChanged(item);
               },
               decoration: InputDecoration(suffixText: '€', hintText: 'Preis'),
             ),
@@ -84,7 +80,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
           IconButton(
             tooltip: 'Artikel löschen',
             icon: Icon(Icons.delete),
-            onPressed: () => widget.itemDeleted(widget.item),
+            onPressed: () => itemDeleted(item),
           )
         ],
       ),
