@@ -49,7 +49,11 @@ class _VendorSelectorState extends State<VendorSelector> {
   Future<void> initDb() async {
     repo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
 
-    _vendor = await repo.selectSingle(widget.initialValue);
+    await repo.setUp();
+
+    if (widget.initialValue != null) {
+      _vendor = await repo.selectSingle(widget.initialValue);
+    }
     _vendors = await repo.select();
 
     setState(() => _vendors);

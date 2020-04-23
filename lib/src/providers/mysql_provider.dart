@@ -71,9 +71,13 @@ class MySqlProvider extends DatabaseProvider {
 
   @override
   Future<Map> selectSingle(String table, int id) async {
-    return (await conn.query('SELECT * FROM $table WHERE id = ?;', <dynamic>[id]))
-        .map<Map>((Row e) => e.fields)
-        .single;
+    final result = (await conn.query('SELECT * FROM $table WHERE id = ?;', <dynamic>[id]))
+        .map<Map>((Row e) => e.fields);
+
+    if (result.isNotEmpty) {
+      return result.single;
+    }
+    return null;
   }
 
   @override

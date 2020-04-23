@@ -143,5 +143,5 @@ class Vendor {
       other is Vendor && runtimeType == other.runtimeType && id == other.id;
 
   @override
-  String toString() => '[Vendor $id $toMap]';
+  String toString() => '[Vendor $id $toMapShort]';
 }

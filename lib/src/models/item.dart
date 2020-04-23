@@ -4,6 +4,9 @@ class Item {
   int id;
   String uid;
 
+  int vendor;
+  int itemId;
+
   String title;
   int price;
   int tax;
@@ -13,6 +16,8 @@ class Item {
   Item({
     this.uid,
     this.id,
+    this.vendor,
+    this.itemId,
     @required this.title,
     @required this.price,
     @required this.tax,
@@ -24,6 +29,8 @@ class Item {
 
   factory Item.fromDbMap(Map map) => Item(
         id: map['id'] as int,
+        vendor: map['vendor'] as int,
+        itemId: map['item_id'] as int,
         title: map['title'].toString(),
         price: map['price'] as int,
         tax: map['tax'] as int,
@@ -45,11 +52,13 @@ class Item {
   int get sum => price * quantity;
 
   Map<String, dynamic> get toMap => <String, dynamic>{
+        'item_id': itemId,
         'title': title,
+        'description': description,
         'price': price,
         'tax': tax,
         'quantity': quantity,
-        'description': description,
+        'vendor': vendor,
       };
 
   @override

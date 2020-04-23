@@ -1,27 +1,22 @@
 import 'package:flutter/material.dart';
 
+import 'src/homepage.dart';
 import 'src/pages/bills/bills_list_page.dart';
 import 'src/pages/customers/customers_list_page.dart';
 import 'src/pages/drafts/drafts_list_page.dart';
-import 'src/homepage.dart';
+import 'src/pages/items/items_list_page.dart';
+import 'src/pages/settings/app_settings_page.dart';
+import 'src/pages/settings/settings_page.dart';
+import 'src/pages/settings/vendors/vendors_list_page.dart';
 import 'src/providers/database_provider.dart';
 import 'src/providers/inherited_database.dart';
 import 'src/providers/mysql_provider.dart';
 import 'src/providers/sqlite_provider.dart';
 import 'src/repositories/settings_repository.dart';
-import 'src/pages/settings/app_settings_page.dart';
-import 'src/pages/settings/settings_page.dart';
-import 'src/pages/settings/vendors/vendors_list_page.dart';
 
 void main() => runApp(Bitter());
 
 class Bitter extends StatelessWidget {
-  Future<DbEngine> initDb() async {
-    final settings = SettingsRepository();
-    await settings.setUp();
-    return settings.getDbEngine();
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DbEngine>(
@@ -38,13 +33,14 @@ class Bitter extends StatelessWidget {
               ),
               initialRoute: '/home',
               routes: <String, Widget Function(BuildContext)>{
-                '/home': (BuildContext context) => Homepage(),
-                '/customers': (BuildContext context) => CustomersListPage(),
                 '/bills': (BuildContext context) => BillsListPage(),
+                '/customers': (BuildContext context) => CustomersListPage(),
                 '/drafts': (BuildContext context) => DraftsListPage(),
+                '/home': (BuildContext context) => Homepage(),
+                '/items': (BuildContext context) => ItemsListPage(),
                 '/settings': (BuildContext context) => SettingsPage(),
-                '/settings/vendors': (BuildContext context) => VendorsPage(),
                 '/settings/app': (BuildContext context) => AppSettingsPage(),
+                '/settings/vendors': (BuildContext context) => VendorsPage(),
               },
             ),
           );
@@ -53,5 +49,11 @@ class Bitter extends StatelessWidget {
         }
       },
     );
+  }
+
+  Future<DbEngine> initDb() async {
+    final settings = SettingsRepository();
+    await settings.setUp();
+    return settings.getDbEngine();
   }
 }
