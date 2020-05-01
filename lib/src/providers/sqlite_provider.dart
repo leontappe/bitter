@@ -49,7 +49,12 @@ class SqliteProvider extends DatabaseProvider {
 
   @override
   Future<void> open(String path, {String host, int port, String user, String password}) async {
-    final dbPath = (await getApplicationDocumentsDirectory()).path + '/bitter/bitter.db';
+    String dbPath;
+    if (Platform.isWindows) {
+      dbPath = (await getApplicationDocumentsDirectory()).path + '/bitter/config/bitter.db';
+    } else {
+      dbPath = (await getApplicationDocumentsDirectory()).path + '/bitter/bitter.db';
+    }
 
     if (Platform.isLinux || Platform.isWindows) {
       sqfliteFfiInit();
