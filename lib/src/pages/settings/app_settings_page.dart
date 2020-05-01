@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../../models/mysql_settings.dart';
@@ -60,28 +62,29 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
             ),
           ),
           ListTile(title: Text('Datenbank', style: Theme.of(context).textTheme.headline6)),
-          Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
-            child: DropdownButton<DbEngine>(
-              value: dbEngine,
-              items: <DropdownMenuItem<DbEngine>>[
-                DropdownMenuItem<DbEngine>(
-                  child: Text('SQLite'),
-                  value: DbEngine.sqlite,
-                ),
-                DropdownMenuItem<DbEngine>(
-                  child: Text('MySQL'),
-                  value: DbEngine.mysql,
-                ),
-              ],
-              onChanged: (DbEngine engine) {
-                setState(() {
-                  dbEngine = engine;
-                });
-                dirty = true;
-              },
+          if (!Platform.isWindows)
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
+              child: DropdownButton<DbEngine>(
+                value: dbEngine,
+                items: <DropdownMenuItem<DbEngine>>[
+                  DropdownMenuItem<DbEngine>(
+                    child: Text('SQLite'),
+                    value: DbEngine.sqlite,
+                  ),
+                  DropdownMenuItem<DbEngine>(
+                    child: Text('MySQL'),
+                    value: DbEngine.mysql,
+                  ),
+                ],
+                onChanged: (DbEngine engine) {
+                  setState(() {
+                    dbEngine = engine;
+                  });
+                  dirty = true;
+                },
+              ),
             ),
-          ),
           if (dbEngine == DbEngine.mysql)
             Padding(
               padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
@@ -165,7 +168,11 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
     await repo.setUp();
     settings = await repo.getMySqlSettings();
     username = await repo.getUsername() ?? '';
-    dbEngine = await repo.getDbEngine() ?? DbEngine.sqlite;
+    if (!Platform.isWindows) {
+      dbEngine = await repo.getDbEngine() ?? DbEngine.sqlite;
+    } else {
+      await repo.setDbEngine(dbEngine);
+    }
     setState(() => settings);
   }
 
@@ -174,7 +181,11 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
     super.initState();
     settings = MySqlSettings.standard();
     dirty = false;
-    dbEngine = DbEngine.sqlite;
+    if (Platform.isWindows) {
+      dbEngine = DbEngine.mysql;
+    } else {
+      dbEngine = DbEngine.sqlite;
+    }
   }
 
   void onPopRoute(BuildContext context) async {
