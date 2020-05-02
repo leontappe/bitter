@@ -1,4 +1,4 @@
-image: ubuntu:latest
+image: astait/flutter_linux_build:master
 
 stages:
   - build
@@ -11,12 +11,6 @@ build:
     - schedules
     - web
   script:
-    - apt update
-    - apt install -y clang pkg-config build-essential curl git unzip xz-utils zip libglu1-mesa libxcursor1 libxinerama1 libxrandr2 rsync libgtk-3-dev
-    - git clone -b master https://github.com/flutter/flutter.git
-    - export PATH="$PATH:`pwd`/flutter/bin"
-    - flutter config --enable-linux-desktop
-    - flutter upgrade
     - flutter pub get
     - flutter build linux
   artifacts:
