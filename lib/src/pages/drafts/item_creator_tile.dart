@@ -1,5 +1,9 @@
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:bitter/src/providers/database_provider.dart';
+import 'package:bitter/src/providers/inherited_database.dart';
 import 'package:flutter/material.dart';
 
+import '../../repositories/item_repository.dart';
 import '../../models/item.dart';
 
 class ItemCreatorTile extends StatefulWidget {
@@ -16,9 +20,11 @@ class ItemCreatorTile extends StatefulWidget {
 }
 
 class _ItemCreatorTileState extends State<ItemCreatorTile> {
-  Item _item;
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  ItemRepository repo;
+
+  List<Item> _items = [];
+  Item _item;
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +41,28 @@ class _ItemCreatorTileState extends State<ItemCreatorTile> {
             decoration: InputDecoration(suffixText: 'x', hintText: 'Menge'),
           ),
         ),
-        title: TextFormField(
+        title: AutoCompleteTextField<Item>(
+          key: GlobalKey<AutoCompleteTextFieldState<Item>>(),
+          textCapitalization: TextCapitalization.sentences,
+          itemSubmitted: (Item item) {
+            print(item);
+            setState(() {
+              _item = item;
+            });
+          },
+          suggestions: _items,
+          itemBuilder: (BuildContext context, Item item) => Text(item.title),
+          itemSorter: (Item a, Item b) => a.id > b.id ? -1 : 1, //TODO: meaningful sorting
+          itemFilter: (Item item, String query) =>
+              item.title.toLowerCase().contains(query.toLowerCase()),
+        ),
+        /*TextFormField(
+          enableSuggestions: true,
           onChanged: (String input) {
             setState(() => _item.title = input);
           },
           decoration: InputDecoration(hintText: 'Artikelbezeichnung'),
-        ),
+        ),*/
         subtitle: TextFormField(
           onChanged: (String input) {
             setState(() => _item.description = input);
@@ -83,6 +105,21 @@ class _ItemCreatorTileState extends State<ItemCreatorTile> {
         ),
       ),
     );
+  }
+
+  Future<void> initDb() async {
+    repo = ItemRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    await repo.setUp();
+
+    _items = await repo.select();
+
+    setState(() => _items);
+  }
+
+  @override
+  void didChangeDependencies() {
+    initDb();
+    super.didChangeDependencies();
   }
 
   @override

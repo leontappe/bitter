@@ -33,6 +33,7 @@ dependencies:
       url: git://github.com/leontappe/flutter-desktop-embedding.git
       path: plugins/file_chooser
     #path: ../file_chooser
+  autocomplete_textfield: ^1.7.3
 
 dev_dependencies:
   flutter_test:
