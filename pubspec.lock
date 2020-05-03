@@ -159,14 +159,14 @@ packages:
       name: moor
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.4.2"
+    version: "3.0.0"
   moor_ffi:
     dependency: transitive
     description:
       name: moor_ffi
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.0"
+    version: "0.5.0"
   mysql1:
     dependency: "direct main"
     description:

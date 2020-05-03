@@ -15,4 +15,4 @@ build:
     - flutter build linux
   artifacts:
     paths:
-    - build/
+    - build/linux/release
