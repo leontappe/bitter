@@ -2,6 +2,11 @@ PODS:
   - file_chooser (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - FMDB (2.7.5):
+    - FMDB/standard (= 2.7.5)
+  - FMDB/standard (2.7.5)
+  - moor_ffi (0.0.1):
+    - Flutter
   - package_info (0.0.1):
     - Flutter
   - path_provider (0.0.1):
@@ -10,20 +15,31 @@ PODS:
     - Flutter
   - path_provider_macos (0.0.1):
     - Flutter
+  - sqflite (0.0.1):
+    - Flutter
+    - FMDB (~> 2.7.2)
 
 DEPENDENCIES:
   - file_chooser (from `.symlinks/plugins/file_chooser/ios`)
   - Flutter (from `Flutter`)
+  - moor_ffi (from `.symlinks/plugins/moor_ffi/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - path_provider_fde (from `.symlinks/plugins/path_provider_fde/ios`)
   - path_provider_macos (from `.symlinks/plugins/path_provider_macos/ios`)
+  - sqflite (from `.symlinks/plugins/sqflite/ios`)
+
+SPEC REPOS:
+  trunk:
+    - FMDB
 
 EXTERNAL SOURCES:
   file_chooser:
     :path: ".symlinks/plugins/file_chooser/ios"
   Flutter:
     :path: Flutter
+  moor_ffi:
+    :path: ".symlinks/plugins/moor_ffi/ios"
   package_info:
     :path: ".symlinks/plugins/package_info/ios"
   path_provider:
@@ -32,14 +48,19 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_fde/ios"
   path_provider_macos:
     :path: ".symlinks/plugins/path_provider_macos/ios"
+  sqflite:
+    :path: ".symlinks/plugins/sqflite/ios"
 
 SPEC CHECKSUMS:
   file_chooser: 98943893422baaed80ca2415390aec58f01ea192
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  package_info: 48b108e75b8802c2d5e126f208ef540561c98aef
-  path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
+  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  moor_ffi: d66c9470c18e9cb333423bbcb493c105c6c774c6
+  package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
+  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   path_provider_fde: 71febf5c9c8ddf45466632da27cbf38324ce81bf
   path_provider_macos: f760a3c5b04357c380e2fddb6f9db6f3015897e0
+  sqflite: 4001a31ff81d210346b500c55b17f4d6c7589dd0
 
 PODFILE CHECKSUM: 1b66dae606f75376c5f2135a8290850eeb09ae83
 

@@ -212,7 +212,9 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                 },
               ),
               Divider(),
-              ItemCreatorTile(defaultTax: draft.tax, itemAdded: onAddItem),
+              if (draft.vendor != null)
+                ItemCreatorTile(
+                    defaultTax: draft.tax, vendorId: draft.vendor, itemAdded: onAddItem),
             ],
           ),
         ),
@@ -246,6 +248,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
     if (widget.draft != null) {
       draft = widget.draft;
       itemsBloc.onBulkAdd(draft.items);
+      print(draft.items);
     } else {
       draft = Draft.empty();
       draft.tax = 19;

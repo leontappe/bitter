@@ -3,15 +3,17 @@ import 'package:bitter/src/providers/database_provider.dart';
 import 'package:bitter/src/providers/inherited_database.dart';
 import 'package:flutter/material.dart';
 
-import '../../repositories/item_repository.dart';
 import '../../models/item.dart';
+import '../../repositories/item_repository.dart';
 
 class ItemCreatorTile extends StatefulWidget {
   final int defaultTax;
+  final int vendorId;
   final Function(Item) itemAdded;
 
   ItemCreatorTile({
     @required this.defaultTax,
+    @required this.vendorId,
     @required this.itemAdded,
   });
 
@@ -31,30 +33,30 @@ class _ItemCreatorTileState extends State<ItemCreatorTile> {
     return Form(
       key: _formKey,
       child: ListTile(
+        key: Key(widget.vendorId.toString() + DateTime.now().toString()),
         leading: Container(
           width: 50.0,
           child: TextFormField(
-            initialValue: '1',
+            controller: TextEditingController(text: _item.quantity.toString()),
             onChanged: (String input) {
-              setState(() => _item.quantity = int.parse(input));
+              _item.quantity = int.parse(input);
             },
             decoration: InputDecoration(suffixText: 'x', hintText: 'Menge'),
           ),
         ),
         title: AutoCompleteTextField<Item>(
+          controller: TextEditingController(text: _item.title),
           key: GlobalKey<AutoCompleteTextFieldState<Item>>(),
           textCapitalization: TextCapitalization.sentences,
-          itemSubmitted: (Item item) {
-            print(item);
-            setState(() {
-              _item = item;
-            });
+          textChanged: (String input) {
+            _item.title = input;
           },
+          itemSubmitted: _onItemSubmitted,
           suggestions: _items,
-          itemBuilder: (BuildContext context, Item item) => Text(item.title),
+          itemBuilder: (BuildContext context, Item item) => ListTile(title: Text(item.title)),
           itemSorter: (Item a, Item b) => a.id > b.id ? -1 : 1, //TODO: meaningful sorting
           itemFilter: (Item item, String query) =>
-              item.title.toLowerCase().contains(query.toLowerCase()),
+              item.title.toLowerCase().startsWith(query.toLowerCase()),
         ),
         /*TextFormField(
           enableSuggestions: true,
@@ -64,8 +66,9 @@ class _ItemCreatorTileState extends State<ItemCreatorTile> {
           decoration: InputDecoration(hintText: 'Artikelbezeichnung'),
         ),*/
         subtitle: TextFormField(
+          controller: TextEditingController(text: _item.description),
           onChanged: (String input) {
-            setState(() => _item.description = input);
+            _item.description = input;
           },
           decoration: InputDecoration(hintText: 'Beschreibung (optional)'),
         ),
@@ -77,9 +80,9 @@ class _ItemCreatorTileState extends State<ItemCreatorTile> {
               padding: EdgeInsets.all(8.0),
               width: 80.0,
               child: TextFormField(
-                initialValue: widget.defaultTax.toString() ?? '',
+                controller: TextEditingController(text: widget.defaultTax.toString()),
                 onChanged: (String input) {
-                  setState(() => _item.tax = int.tryParse(input) ?? widget.defaultTax);
+                  _item.tax = int.tryParse(input) ?? widget.defaultTax;
                 },
                 decoration: InputDecoration(suffixText: '%', hintText: 'Steuer'),
               ),
@@ -88,9 +91,10 @@ class _ItemCreatorTileState extends State<ItemCreatorTile> {
               padding: EdgeInsets.all(8.0),
               width: 80.0,
               child: TextFormField(
+                controller: TextEditingController(
+                    text: (_item.price != null) ? (_item.price / 100.0).toStringAsFixed(2) : null),
                 onChanged: (String input) {
-                  setState(
-                      () => _item.price = (double.parse(input.replaceAll(',', '.')) * 100).toInt());
+                  _item.price = (double.parse(input.replaceAll(',', '.')) * 100).toInt();
                 },
                 decoration: InputDecoration(suffixText: '€', hintText: 'Preis'),
               ),
@@ -107,19 +111,22 @@ class _ItemCreatorTileState extends State<ItemCreatorTile> {
     );
   }
 
-  Future<void> initDb() async {
-    repo = ItemRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    await repo.setUp();
-
-    _items = await repo.select();
-
-    setState(() => _items);
-  }
-
   @override
   void didChangeDependencies() {
     initDb();
     super.didChangeDependencies();
+  }
+
+  Future<void> initDb() async {
+    repo = ItemRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    await repo.setUp();
+
+    if (widget.vendorId != null) {
+      _items = (await repo.select()).where((Item item) => item.vendor == widget.vendorId).toList();
+    } else {
+      _items = await repo.select();
+    }
+    if (mounted) setState(() => _items);
   }
 
   @override
@@ -130,7 +137,13 @@ class _ItemCreatorTileState extends State<ItemCreatorTile> {
 
   void _onItemAdded() {
     widget.itemAdded(_item);
-    _item = Item.empty();
+    setState(() => _item = Item.empty());
     _formKey.currentState.reset();
+  }
+
+  void _onItemSubmitted(Item item) {
+    setState(() {
+      _item = item;
+    });
   }
 }
