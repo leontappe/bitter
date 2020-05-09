@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bitter/src/repositories/item_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -33,6 +34,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   DraftRepository repo;
   CustomerRepository customerRepo;
   SettingsRepository settingsRepo;
+  ItemRepository itemRepo;
 
   ItemsBloc itemsBloc;
 
@@ -206,6 +208,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                             defaultTax: draft.tax,
                             itemChanged: onUpdateItem,
                             itemDeleted: (Item e) => onRemoveItem(e.uid),
+                            itemSaved: onSaveItem,
                           )),
                     ]);
                   }
@@ -231,8 +234,10 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   Future<void> initDb() async {
     repo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    itemRepo = ItemRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     settingsRepo = SettingsRepository();
 
+    await itemRepo.setUp();
     await settingsRepo.setUp();
 
     editor = await settingsRepo.getUsername();
@@ -248,7 +253,6 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
     if (widget.draft != null) {
       draft = widget.draft;
       itemsBloc.onBulkAdd(draft.items);
-      print(draft.items);
     } else {
       draft = Draft.empty();
       draft.tax = 19;
@@ -337,6 +341,10 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
       return true;
     }
     return false;
+  }
+
+  Future<void> onSaveItem(Item item) async {
+    await itemRepo.insert(item);
   }
 
   void onUpdateItem(Item item) {

@@ -132,12 +132,16 @@ class _ItemCreatorTileState extends State<ItemCreatorTile> {
   @override
   void initState() {
     _item = Item.empty();
+    _item.vendor = widget.vendorId;
     super.initState();
   }
 
   void _onItemAdded() {
     widget.itemAdded(_item);
-    setState(() => _item = Item.empty());
+    setState(() {
+      _item = Item.empty();
+      _item.vendor = widget.vendorId;
+    });
     _formKey.currentState.reset();
   }
 

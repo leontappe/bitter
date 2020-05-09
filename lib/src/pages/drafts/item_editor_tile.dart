@@ -2,17 +2,21 @@ import 'package:flutter/material.dart';
 
 import '../../models/item.dart';
 
+enum EditorTileAction { delete, save }
+
 class ItemEditorTile extends StatelessWidget {
   final Item item;
   final int defaultTax;
   final Function(Item) itemChanged;
   final Function(Item) itemDeleted;
+  final Function(Item) itemSaved;
 
   ItemEditorTile({
     @required this.item,
     @required this.defaultTax,
     @required this.itemChanged,
     @required this.itemDeleted,
+    @required this.itemSaved,
   });
 
   @override
@@ -77,11 +81,38 @@ class ItemEditorTile extends StatelessWidget {
               decoration: InputDecoration(suffixText: '€', hintText: 'Preis'),
             ),
           ),
-          IconButton(
-            tooltip: 'Artikel löschen',
-            icon: Icon(Icons.delete),
-            onPressed: () => itemDeleted(item),
-          )
+          PopupMenuButton<EditorTileAction>(
+            onSelected: (EditorTileAction action) {
+              switch (action) {
+                case EditorTileAction.delete:
+                  itemDeleted(item);
+                  break;
+                case EditorTileAction.save:
+                  itemSaved(item);
+                  break;
+                default:
+                  return;
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<EditorTileAction>>[
+              PopupMenuItem<EditorTileAction>(
+                value: EditorTileAction.delete,
+                child: Row(children: <Widget>[
+                  Icon(Icons.delete),
+                  Text(' Artikel Löschen',
+                      style: TextStyle(color: Theme.of(context).iconTheme.color))
+                ]),
+              ),
+              PopupMenuItem<EditorTileAction>(
+                value: EditorTileAction.save,
+                child: Row(children: <Widget>[
+                  Icon(Icons.save),
+                  Text(' Artikel speichern',
+                      style: TextStyle(color: Theme.of(context).iconTheme.color))
+                ]),
+              ),
+            ],
+          ),
         ],
       ),
     );
