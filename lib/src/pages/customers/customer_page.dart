@@ -271,9 +271,9 @@ class _CustomerPageState extends State<CustomerPage> {
               title: Text('Soll dieser Kunde wirlich gelöscht werden?'),
               actions: <Widget>[
                 MaterialButton(
-                    onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
+                    onPressed: () => Navigator.pop(context, 0), child: Text('Behalten')),
                 MaterialButton(
-                    onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
+                    onPressed: () => Navigator.pop(context, 1), child: Text('Löschen')),
               ],
             ));
     if (result == 1) {
