@@ -19,7 +19,9 @@ class VendorCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(vendor.name, style: Theme.of(context).textTheme.headline5),
-            Text('Ansprechpartner: ${vendor.contact}'),
+            if (vendor.manager != null) Text('Management: ${vendor.manager}'),
+            if (vendor.contact != null)
+              Text('Ansprechpartner: ${vendor.contact}'),
             Text('Adresse: ${vendor.address}'),
             Text('Postleitzahl: ${vendor.zipCode}'),
             Text('Stadt: ${vendor.city}'),
@@ -28,6 +30,7 @@ class VendorCard extends StatelessWidget {
             Text('Bank: ${vendor.bank}'),
             Text('Steuernummer: ${vendor.taxNr}'),
             Text('Umsatzsteuernummer: ${vendor.vatNr}'),
+            Text('E-Mail: ${vendor.email}'),
             if (vendor.website != null) Text('Website: ${vendor.website}'),
             Text('Adresszeile für Briefkopf: ${vendor.fullAddress}'),
             Text('Prefix für Rechnungsnummern: ${vendor.billPrefix}'),

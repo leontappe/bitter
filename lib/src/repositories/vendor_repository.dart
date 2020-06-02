@@ -21,12 +21,12 @@ class VendorRepository<T extends DatabaseProvider> {
   }
 
   Future<List<Vendor>> select({String searchQuery}) async {
-    final results =
-        List<Vendor>.from((await db.select(tableName)).map<Vendor>((Map e) => Vendor.fromMap(e)));
+    final results = List<Vendor>.from(
+        (await db.select(tableName)).map<Vendor>((Map e) => Vendor.fromMap(e)));
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
-      return List.from(
-          results.where((Vendor v) => (v.name).toLowerCase().contains(searchQuery.toLowerCase())));
+      return List.from(results.where((Vendor v) =>
+          (v.name).toLowerCase().contains(searchQuery.toLowerCase())));
     } else {
       return results;
     }
@@ -53,6 +53,7 @@ class VendorRepository<T extends DatabaseProvider> {
       [
         'id',
         'name',
+        'manager',
         'contact',
         'address',
         'zip_code',
@@ -62,6 +63,7 @@ class VendorRepository<T extends DatabaseProvider> {
         'bank',
         'tax_nr',
         'vat_nr',
+        'email',
         'website',
         'full_address',
         'bill_prefix',
@@ -77,7 +79,9 @@ class VendorRepository<T extends DatabaseProvider> {
         'TEXT',
         'TEXT',
         'TEXT',
+        'TEXT',
         'INTEGER',
+        'TEXT',
         'TEXT',
         'TEXT',
         'TEXT',
@@ -98,6 +102,8 @@ class VendorRepository<T extends DatabaseProvider> {
       nullable: <bool>[
         true,
         false,
+        true,
+        true,
         false,
         false,
         false,
