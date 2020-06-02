@@ -64,8 +64,7 @@ class Bill {
         sum: int.parse(map['sum'].toString()),
         editor: map['editor'].toString(),
         vendor: Vendor.fromMap(json.decode(map['vendor'].toString()) as Map),
-        customer:
-            Customer.fromMap(json.decode(map['customer'].toString()) as Map),
+        customer: Customer.fromMap(json.decode(map['customer'].toString()) as Map),
         items: ((json.decode(map['items'].toString()) as List)
             .map<Item>((dynamic map) => Item.fromMap(map as Map))).toList(),
         userMessage: map['user_message']?.toString(),

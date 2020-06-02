@@ -104,9 +104,8 @@ class Vendor {
         headerImageLeft: (map['header_image_left'] != null)
             ? base64.decode(map['header_image_left'].toString())
             : null,
-        userMessageLabel: (map['user_message_label'] != null)
-            ? map['user_message_label'].toString()
-            : null,
+        userMessageLabel:
+            (map['user_message_label'] != null) ? map['user_message_label'].toString() : null,
       );
 
   @override
@@ -114,13 +113,10 @@ class Vendor {
 
   Map<String, dynamic> get toMap => <String, dynamic>{
         ...toMapShort,
-        'header_image_right':
-            (headerImageRight != null) ? base64.encode(headerImageRight) : null,
-        'header_image_center': (headerImageCenter != null)
-            ? base64.encode(headerImageCenter)
-            : null,
-        'header_image_left':
-            (headerImageLeft != null) ? base64.encode(headerImageLeft) : null,
+        'header_image_right': (headerImageRight != null) ? base64.encode(headerImageRight) : null,
+        'header_image_center':
+            (headerImageCenter != null) ? base64.encode(headerImageCenter) : null,
+        'header_image_left': (headerImageLeft != null) ? base64.encode(headerImageLeft) : null,
         'user_message_label': userMessageLabel,
       };
 

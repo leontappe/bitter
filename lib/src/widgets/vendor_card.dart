@@ -20,8 +20,7 @@ class VendorCard extends StatelessWidget {
           children: <Widget>[
             Text(vendor.name, style: Theme.of(context).textTheme.headline5),
             if (vendor.manager != null) Text('Management: ${vendor.manager}'),
-            if (vendor.contact != null)
-              Text('Ansprechpartner: ${vendor.contact}'),
+            if (vendor.contact != null) Text('Ansprechpartner: ${vendor.contact}'),
             Text('Adresse: ${vendor.address}'),
             Text('Postleitzahl: ${vendor.zipCode}'),
             Text('Stadt: ${vendor.city}'),

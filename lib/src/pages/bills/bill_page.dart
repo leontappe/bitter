@@ -48,16 +48,15 @@ class _BillPageState extends State<BillPage> {
               child: ListView(
                 children: <Widget>[
                   ListTile(
-                    title: Text(bill.billNr,
-                        style: Theme.of(context).textTheme.headline6),
-                    subtitle: Text(
-                        'Erstellt am ${bill.created.toLocal().toString().split('.').first}'),
+                    title: Text(bill.billNr, style: Theme.of(context).textTheme.headline6),
+                    subtitle:
+                        Text('Erstellt am ${bill.created.toLocal().toString().split('.').first}'),
                     trailing: Text('von ${bill.editor}'),
                   ),
                   if (bill.userMessage != null)
                     ListTile(
-                      title: Text(bill.vendor.userMessageLabel ??
-                          'Benutzerdefinierter Rechnungskommentar'),
+                      title: Text(
+                          bill.vendor.userMessageLabel ?? 'Benutzerdefinierter Rechnungskommentar'),
                       subtitle: Text(bill.userMessage),
                     ),
                   ListTile(
@@ -67,13 +66,9 @@ class _BillPageState extends State<BillPage> {
                       hint: Text('${bill?.status ?? BillStatus.unpaid}'),
                       value: bill?.status ?? BillStatus.unpaid,
                       items: [
-                        DropdownMenuItem(
-                            value: BillStatus.unpaid, child: Text('Unbezahlt')),
-                        DropdownMenuItem(
-                            value: BillStatus.paid, child: Text('Bezahlt')),
-                        DropdownMenuItem(
-                            value: BillStatus.cancelled,
-                            child: Text('Storniert')),
+                        DropdownMenuItem(value: BillStatus.unpaid, child: Text('Unbezahlt')),
+                        DropdownMenuItem(value: BillStatus.paid, child: Text('Bezahlt')),
+                        DropdownMenuItem(value: BillStatus.cancelled, child: Text('Storniert')),
                       ],
                       onChanged: (BillStatus v) {
                         setState(() => bill.status = v);
@@ -104,18 +99,15 @@ class _BillPageState extends State<BillPage> {
                     ),
                   ),
                   ListTile(
-                    title: Text('Verkäufer',
-                        style: Theme.of(context).textTheme.headline6),
+                    title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
                     subtitle: VendorCard(vendor: bill.vendor),
                   ),
                   ListTile(
-                    title: Text('Kunde',
-                        style: Theme.of(context).textTheme.headline6),
+                    title: Text('Kunde', style: Theme.of(context).textTheme.headline6),
                     subtitle: CustomerCard(customer: bill.customer),
                   ),
                   ListTile(
-                    title: Text('Artikel',
-                        style: Theme.of(context).textTheme.headline6),
+                    title: Text('Artikel', style: Theme.of(context).textTheme.headline6),
                     subtitle: ItemsCard(items: bill.items, sum: bill.sum),
                   ),
                 ],
@@ -132,8 +124,7 @@ class _BillPageState extends State<BillPage> {
   }
 
   Future<void> initDb() async {
-    repo = BillRepository(
-        InheritedDatabase.of<DatabaseProvider>(context).provider);
+    repo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
 
     bill = await repo.selectSingle(widget.id);
 
@@ -149,14 +140,11 @@ class _BillPageState extends State<BillPage> {
                     'Wenn du ohne Speichern fortfährst gehen alle hier eingebenen Daten verloren. Vor dem Verlassen abspeichern?'),
                 actions: <Widget>[
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, -1),
-                      child: Text('Abbrechen')),
+                      onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, 0),
-                      child: Text('Verwerfen')),
+                      onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, 1),
-                      child: Text('Speichern')),
+                      onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
                 ],
               ));
       switch (result) {
