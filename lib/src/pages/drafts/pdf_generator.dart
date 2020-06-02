@@ -367,7 +367,6 @@ class PdfGenerator {
                   style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
               Text(vendor.website ?? '',
                   style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
-              Text(vendor.email, style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
             ],
           ),
         ],
