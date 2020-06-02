@@ -159,11 +159,7 @@ class PdfGenerator {
                         (i.description != null) ? '${i.title} - ${i.description}' : '${i.title}',
                         ttfSans),
                     PaddedText(i.quantity.toString(), ttfSans),
-                    PaddedText(
-                        (i.tax == 0)
-                            ? '${bill.tax.toStringAsFixed(0)}%'
-                            : '${i.tax.toStringAsFixed(0)} %',
-                        ttfSans),
+                    PaddedText('${i.tax.toStringAsFixed(0)} %', ttfSans),
                     PaddedText(
                         (i.price / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' €', ttfSans),
                     PaddedText(
