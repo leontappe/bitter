@@ -21,6 +21,7 @@ class Bill {
   final Vendor vendor;
   final Customer customer;
   final List<Item> items;
+  final String userMessage;
 
   BillStatus status;
   String note;
@@ -35,6 +36,7 @@ class Bill {
     @required this.vendor,
     @required this.customer,
     @required this.items,
+    this.userMessage,
     @required this.created,
     @required this.serviceDate,
     @required this.dueDate,
@@ -62,9 +64,11 @@ class Bill {
         sum: int.parse(map['sum'].toString()),
         editor: map['editor'].toString(),
         vendor: Vendor.fromMap(json.decode(map['vendor'].toString()) as Map),
-        customer: Customer.fromMap(json.decode(map['customer'].toString()) as Map),
+        customer:
+            Customer.fromMap(json.decode(map['customer'].toString()) as Map),
         items: ((json.decode(map['items'].toString()) as List)
             .map<Item>((dynamic map) => Item.fromMap(map as Map))).toList(),
+        userMessage: map['user_message']?.toString(),
         created: DateTime.parse(map['created'].toString()).toLocal(),
         serviceDate: DateTime.parse(map['service_date'].toString()).toLocal(),
         dueDate: DateTime.parse(map['due_date'].toString()).toLocal(),
@@ -84,6 +88,7 @@ class Bill {
         'vendor': json.encode(vendor.toMapLong),
         'customer': json.encode(customer.toMapLong),
         'items': json.encode(items.map((e) => e.toMap).toList()),
+        'user_message': userMessage,
         'created': created.toUtc().toString(),
         'service_date': serviceDate.toUtc().toString(),
         'due_date': dueDate.toUtc().toString(),

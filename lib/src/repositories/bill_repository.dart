@@ -18,7 +18,8 @@ class BillRepository<T extends DatabaseProvider> {
   }
 
   Future<List<Bill>> select({String searchQuery, int vendorFilter}) async {
-    var results = (await db.select(tableName)).map<Bill>((Map e) => Bill.fromMap(e));
+    var results =
+        (await db.select(tableName)).map<Bill>((Map e) => Bill.fromMap(e));
     if (searchQuery != null && searchQuery.isNotEmpty) {
       results = results.where((Bill d) => (d.billNr
               .toLowerCase()
@@ -30,13 +31,14 @@ class BillRepository<T extends DatabaseProvider> {
               .toLowerCase()
               .contains(searchQuery.toLowerCase()) ||
           d.items
-              .where((Item i) =>
-                  '${i.title} ${i.description}'.toLowerCase().contains(searchQuery.toLowerCase()))
+              .where((Item i) => '${i.title} ${i.description}'
+                  .toLowerCase()
+                  .contains(searchQuery.toLowerCase()))
               .isNotEmpty));
     }
     if (vendorFilter != null) {
-      results =
-          results.where((Bill b) => ((vendorFilter != null) ? b.vendor.id == vendorFilter : true));
+      results = results.where((Bill b) =>
+          ((vendorFilter != null) ? b.vendor.id == vendorFilter : true));
     }
     return List<Bill>.from(results);
   }
@@ -69,6 +71,7 @@ class BillRepository<T extends DatabaseProvider> {
         'vendor',
         'customer',
         'items',
+        'user_message',
         'created',
         'service_date',
         'due_date',
@@ -87,6 +90,7 @@ class BillRepository<T extends DatabaseProvider> {
         'TEXT',
         'TEXT',
         'TEXT',
+        'TEXT',
         'TEXT'
       ],
       'id',
@@ -100,6 +104,7 @@ class BillRepository<T extends DatabaseProvider> {
         false,
         false,
         false,
+        true,
         false,
         false,
         false,
