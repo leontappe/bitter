@@ -127,6 +127,7 @@ class Vendor {
 
   Map<String, dynamic> get toMapShort => <String, dynamic>{
         'name': name,
+        'manager': manager,
         'contact': contact,
         'address': address,
         'zip_code': zipCode,
@@ -136,6 +137,7 @@ class Vendor {
         'bank': bank,
         'tax_nr': taxNr,
         'vat_nr': vatNr,
+        'email': email,
         'website': website,
         'full_address': fullAddress,
         'bill_prefix': billPrefix,

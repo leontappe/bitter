@@ -83,13 +83,20 @@ class _VendorPageState extends State<VendorPage> {
                       },
                     ),
                     TextFormField(
+                      initialValue: newVendor.manager,
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'Organisation'),
+                      onChanged: (String input) {
+                        newVendor.manager = input;
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
                       initialValue: newVendor.contact,
                       maxLines: 1,
                       decoration: InputDecoration(labelText: 'Ansprechpartner'),
-                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                       onChanged: (String input) {
                         newVendor.contact = input;
-                        _formKey.currentState.validate();
                         dirty = true;
                       },
                     ),
@@ -193,6 +200,17 @@ class _VendorPageState extends State<VendorPage> {
                       validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                       onChanged: (String input) {
                         newVendor.vatNr = input;
+                        _formKey.currentState.validate();
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
+                      initialValue: newVendor.email,
+                      maxLines: 1,
+                      decoration: InputDecoration(labelText: 'E-Mail'),
+                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      onChanged: (String input) {
+                        newVendor.email = input;
                         _formKey.currentState.validate();
                         dirty = true;
                       },
