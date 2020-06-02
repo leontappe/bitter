@@ -99,7 +99,7 @@ class PdfGenerator {
             children: <Widget>[
               Spacer(),
               Padding(
-                padding: EdgeInsets.only(top: 16.0, bottom: 64.0),
+                padding: EdgeInsets.only(top: 16.0, bottom: 60.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
@@ -321,16 +321,18 @@ class PdfGenerator {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Paragraph(
                   text: 'Geschäftsinhaber:',
                   style: TextStyle(fontSize: fontSize, font: ttfSans, color: color),
                   margin: EdgeInsets.only(bottom: 8.0)),
-              Text(vendor.manager,
-                  style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
-              Text(vendor.name, style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
+              if (vendor.manager == null || vendor.manager.isEmpty)
+                Text(vendor.name, style: TextStyle(fontSize: fontSize, font: ttfSans, color: color))
+              else
+                Text(vendor.manager,
+                    style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
               Text(vendor.address,
                   style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
               Text('${vendor.zipCode} ${vendor.city}',
@@ -338,7 +340,7 @@ class PdfGenerator {
             ],
           ),
           Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Paragraph(
@@ -349,11 +351,12 @@ class PdfGenerator {
                   style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
               Text('BIC: ${vendor.bic}',
                   style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
-              Text(vendor.bank, style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
+              Text('Bank: ${vendor.bank}',
+                  style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
             ],
           ),
           Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Paragraph(
