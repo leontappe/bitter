@@ -138,6 +138,7 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
       created: DateTime.now(),
       serviceDate: draft.serviceDate ?? DateTime.now(),
       dueDate: DateTime.now().add(Duration(days: draft.dueDays)),
+      userMessage: draft.userMessage,
     ));
 
     if ((await billRepo.select()).length > bills.length) {
