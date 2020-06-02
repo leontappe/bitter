@@ -15,7 +15,6 @@ import '../../repositories/settings_repository.dart';
 import '../../repositories/vendor_repository.dart';
 import '../../widgets/vendor_selector.dart';
 import 'draft_popup_menu.dart';
-import 'item_creator_tile.dart';
 import 'item_editor_tile.dart';
 import 'items_bloc.dart';
 
@@ -44,8 +43,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   bool dirty;
   bool changed;
 
-  bool customerIsset;
-  bool vendorIsset;
+  bool customerIsset = false;
+  bool vendorIsset = false;
   List<Customer> _customers;
   Vendor _vendor;
 
@@ -113,12 +112,13 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   initialValue: draft?.vendor,
                   onChanged: (Vendor v) {
                     draft.vendor = v.id;
+                    _vendor = v;
                     dirty = true;
                     validateDropdowns();
                   },
                 ),
               ),
-              ListTile(
+              /*ListTile(
                 title: Text('Standard-Steuersatz', style: Theme.of(context).textTheme.headline6),
                 trailing: Container(
                   width: 80.0,
@@ -136,7 +136,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                     },
                   ),
                 ),
-              ),
+              ),*/
               ListTile(
                 title: Text('Lieferdatum/Leistungsdatum:',
                     style: Theme.of(context).textTheme.headline6),
@@ -147,18 +147,20 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                     child: Text((draft.serviceDate != null)
                         ? draft.serviceDate.toString().split(' ').first
                         : 'Am Rechnungsdatum'),
-                    onPressed: () async {
-                      draft.serviceDate = await showDatePicker(
-                        context: context,
-                        initialDate: draft.serviceDate ?? DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(DateTime.now().year + 20),
-                        cancelText: 'Löschen',
-                        confirmText: 'Übernehmen',
-                      );
-                      setState(() => draft);
-                      dirty = true;
-                    },
+                    onPressed: (vendorIsset)
+                        ? () async {
+                            draft.serviceDate = await showDatePicker(
+                              context: context,
+                              initialDate: draft.serviceDate ?? DateTime.now(),
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime(DateTime.now().year + 20),
+                              cancelText: 'Löschen',
+                              confirmText: 'Übernehmen',
+                            );
+                            setState(() => draft);
+                            dirty = true;
+                          }
+                        : null,
                   ),
                 ),
               ),
@@ -168,6 +170,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   width: 80.0,
                   height: 64.0,
                   child: TextFormField(
+                    enabled: vendorIsset,
                     controller: TextEditingController(text: draft.dueDays?.toString() ?? '14'),
                     maxLines: 1,
                     keyboardType: TextInputType.numberWithOptions(),
@@ -199,9 +202,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
               BlocBuilder<ItemsBloc, ItemsState>(
                 bloc: itemsBloc,
                 builder: (BuildContext context, ItemsState state) {
-                  if (state.items.isEmpty) {
-                    return ListTile(title: Text('Es wurden noch keine Artikel hinzugefügt'));
-                  } else {
+                  if (state.items.isNotEmpty) {
                     return Column(children: <Widget>[
                       ...state.items.map<ItemEditorTile>((Item e) => ItemEditorTile(
                             item: e,
@@ -212,12 +213,19 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                           )),
                     ]);
                   }
+                  return Container(width: 0.0, height: 0.0);
                 },
               ),
-              Divider(),
-              if (draft.vendor != null)
-                ItemCreatorTile(
-                    defaultTax: draft.tax, vendorId: draft.vendor, itemAdded: onAddItem),
+              Padding(
+                padding: EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 16.0),
+                child: RaisedButton(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.add, size: 32.0),
+                  onPressed: (vendorIsset)
+                      ? () => onAddItem(Item(price: null, title: '', tax: _vendor.defaultTax))
+                      : null,
+                ),
+              ),
             ],
           ),
         ),
@@ -253,6 +261,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
     if (widget.draft != null) {
       draft = widget.draft;
       itemsBloc.onBulkAdd(draft.items);
+      vendorIsset = draft.vendor != null;
+      customerIsset = draft.customer != null;
     } else {
       draft = Draft.empty();
       draft.tax = 19;
