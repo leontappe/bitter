@@ -154,7 +154,9 @@ class _HomepageState extends State<Homepage> {
   }
 
   void initPackageInfo() async {
-    packageInfo = await PackageInfo.fromPlatform();
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)) {
+      packageInfo = await PackageInfo.fromPlatform();
+    }
   }
 
   @override
@@ -166,7 +168,7 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     super.initState();
-    if (!kIsWeb) if (Platform.isAndroid || Platform.isIOS) initPackageInfo();
+    initPackageInfo();
     PathProviderPlatform.instance = BitterPlatformPathProvider();
   }
 }
