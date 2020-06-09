@@ -5,13 +5,13 @@ import 'package:pdf/widgets.dart';
 
 import 'example_data.dart';
 
-void main() {
+void main() async {
   final pdf = PdfGenerator();
   Document doc;
 
   final logo = File('test/logo.png');
 
-  doc = pdf.createDocumentFromBill(
+  doc = await pdf.createDocumentFromBill(
     'RE1',
     exampleBill,
     exampleCustomer,

@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:image/image.dart' as img;
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
@@ -25,8 +27,16 @@ class PaddedText extends Padding {
 class PdfGenerator {
   Font ttfSans;
 
-  Document createDocumentFromBill(String billNr, Draft bill, Customer customer, Vendor vendor,
-      {Uint8List leftHeader, Uint8List centerHeader, Uint8List rightHeader}) {
+  Future<Document> createDocumentFromBill(
+    String billNr,
+    Draft bill,
+    Customer customer,
+    Vendor vendor, {
+    Uint8List leftHeader,
+    Uint8List centerHeader,
+    Uint8List rightHeader,
+  }) async {
+    await initializeDateFormatting('de_DE');
     final sansData = ByteData(liberationSans.length);
     for (var i = 0; i < liberationSans.length; i++) {
       sansData.setUint8(i, liberationSans[i]);
@@ -47,7 +57,6 @@ class PdfGenerator {
       MultiPage(
         pageFormat: PdfPageFormat.a4,
         orientation: PageOrientation.portrait,
-        //crossAxisAlignment: CrossAxisAlignment.start,
         header: (Context context) => _createHeaderFromImages(doc.document,
             left: leftHeader, center: centerHeader, right: rightHeader),
         footer: (Context context) => _pageCountFooter(context, vendor),
@@ -119,8 +128,7 @@ class PdfGenerator {
                       margin: EdgeInsets.all(0.0),
                     ),
                     Paragraph(
-                      text:
-                          'Datum: ${DateTime.now().day}.${DateTime.now().month}.${DateTime.now().year}',
+                      text: 'Datum: ${_formatDate(DateTime.now())}',
                       style: TextStyle(fontSize: fontsize),
                       margin: EdgeInsets.all(0.0),
                     ),
@@ -199,12 +207,11 @@ class PdfGenerator {
                   (bill.userMessage ?? ''),
               style: TextStyle(font: ttfSans)),
           Paragraph(
-              text:
-                  'Lieferdatum/Leistungsdatum: ${bill.serviceDate.day}.${bill.serviceDate.month}.${bill.serviceDate.year}',
+              text: 'Lieferdatum/Leistungsdatum: ${_formatDate(bill.serviceDate)}',
               style: TextStyle(font: ttfSans)),
           Paragraph(
               text:
-                  'Bezahlbar ohne Abzug bis: ${bill.serviceDate.add(Duration(days: bill.dueDays)).day}.${bill.serviceDate.add(Duration(days: bill.dueDays)).month}.${bill.serviceDate.add(Duration(days: bill.dueDays)).year}',
+                  'Bezahlbar ohne Abzug bis: ${_formatDate(bill.serviceDate.add(Duration(days: bill.dueDays)))}',
               style: TextStyle(font: ttfSans)),
         ],
       ),
@@ -212,7 +219,7 @@ class PdfGenerator {
     return doc;
   }
 
-  List<int> getBytesFromBill(
+  Future<List<int>> getBytesFromBill(
     String billNr,
     Draft bill,
     Customer customer,
@@ -220,8 +227,8 @@ class PdfGenerator {
     Uint8List leftHeader,
     Uint8List centerHeader,
     Uint8List rightHeader,
-  }) =>
-      createDocumentFromBill(
+  }) async =>
+      (await createDocumentFromBill(
         billNr,
         bill,
         customer,
@@ -229,7 +236,8 @@ class PdfGenerator {
         leftHeader: leftHeader,
         centerHeader: centerHeader,
         rightHeader: rightHeader,
-      ).save();
+      ))
+          .save();
 
   double _calculateTaxes(List<Item> items, int tax) {
     var tax = 0.0;
@@ -298,6 +306,10 @@ class PdfGenerator {
           Container(width: 0.0, height: 0.0),
       ],
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return DateFormat('dd.MM.yyyy', 'de_DE').format(date);
   }
 
   Widget _pageCountFooter(Context context, Vendor vendor) {

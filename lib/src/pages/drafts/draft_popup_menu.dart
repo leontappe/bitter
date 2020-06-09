@@ -114,7 +114,7 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
 
     final billNrString = '${vendor.billPrefix}-$billNr';
 
-    final doc = pdfGen.getBytesFromBill(
+    final doc = await pdfGen.getBytesFromBill(
       billNrString,
       draft,
       customer,

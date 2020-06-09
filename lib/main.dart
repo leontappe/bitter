@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'src/homepage.dart';
 import 'src/pages/bills/bills_list_page.dart';
@@ -14,7 +15,10 @@ import 'src/providers/mysql_provider.dart';
 import 'src/providers/sqlite_provider.dart';
 import 'src/repositories/settings_repository.dart';
 
-void main() => runApp(Bitter());
+void main() {
+  Intl.defaultLocale = 'de_DE';
+  runApp(Bitter());
+}
 
 class Bitter extends StatelessWidget {
   @override
