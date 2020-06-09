@@ -43,18 +43,22 @@ class ItemsCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(i.title),
-                              if (i.description != null && i.description.isNotEmpty)
-                                Text(i.description),
-                            ],
+                          Flexible(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(i.title),
+                                if (i.description != null && i.description.isNotEmpty)
+                                  Text(i.description),
+                              ],
+                            ),
                           ),
-                          Text('${i.quantity}x'),
-                          Text('${i.tax}%'),
-                          Text((i.price / 100.0).toStringAsFixed(2) + '€'),
-                          Text((i.sum / 100.0).toStringAsFixed(2) + '€'),
+                          Flexible(child: Text('${i.quantity}x')),
+                          Flexible(child: Text('${i.tax}%')),
+                          Flexible(child: Text((i.price / 100.0).toStringAsFixed(2) + '€')),
+                          Flexible(child: Text((i.sum / 100.0).toStringAsFixed(2) + '€')),
                         ],
                       ),
                       Divider(),
