@@ -137,6 +137,7 @@ class PdfGenerator {
           Table(
             columnWidths: <int, TableColumnWidth>{
               0: FixedColumnWidth(20.0),
+              1: FixedColumnWidth(150.0),
               2: FixedColumnWidth(32.0),
               3: FixedColumnWidth(24.0),
               4: FixedColumnWidth(50.0),
