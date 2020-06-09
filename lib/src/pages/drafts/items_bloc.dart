@@ -51,6 +51,7 @@ class ItemsBloc extends Bloc<ItemsEvent, ItemsState> {
     } else if (event is UpdateItem) {
       _items[_items.indexWhere((Item item) => item.uid == event.item.uid)] = event.item;
     } else if (event is BulkAdd) {
+      _items = <Item>[];
       for (var item in event.items) {
         add(AddItem(item));
       }

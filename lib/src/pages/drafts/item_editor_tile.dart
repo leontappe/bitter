@@ -60,7 +60,7 @@ class ItemEditorTile extends StatelessWidget {
             padding: EdgeInsets.all(8.0),
             width: 80.0,
             child: TextFormField(
-              initialValue: defaultTax.toString() ?? '19',
+              initialValue: item.tax?.toString() ?? defaultTax.toString() ?? '19',
               onChanged: (String input) {
                 item.tax = int.tryParse(input) ?? defaultTax;
                 itemChanged(item);

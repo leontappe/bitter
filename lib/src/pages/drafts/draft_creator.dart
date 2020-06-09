@@ -34,6 +34,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   CustomerRepository customerRepo;
   SettingsRepository settingsRepo;
   ItemRepository itemRepo;
+  VendorRepository vendorRepo;
 
   ItemsBloc itemsBloc;
 
@@ -113,30 +114,13 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   onChanged: (Vendor v) {
                     draft.vendor = v.id;
                     _vendor = v;
+                    draft.tax = _vendor.defaultTax;
+                    draft.dueDays = _vendor.defaultDueDays;
                     dirty = true;
                     validateDropdowns();
                   },
                 ),
               ),
-              /*ListTile(
-                title: Text('Standard-Steuersatz', style: Theme.of(context).textTheme.headline6),
-                trailing: Container(
-                  width: 80.0,
-                  height: 64.0,
-                  child: TextFormField(
-                    controller: TextEditingController(text: draft.tax.toString() ?? '19'),
-                    maxLines: 1,
-                    keyboardType: TextInputType.numberWithOptions(),
-                    decoration: InputDecoration(hintText: '19', suffixText: '%'),
-                    validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                    onChanged: (String input) {
-                      setState(() => draft.tax = int.parse(input));
-                      _formKey.currentState.validate();
-                      dirty = true;
-                    },
-                  ),
-                ),
-              ),*/
               ListTile(
                 title: Text('Lieferdatum/Leistungsdatum:',
                     style: Theme.of(context).textTheme.headline6),
@@ -202,7 +186,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
               BlocBuilder<ItemsBloc, ItemsState>(
                 bloc: itemsBloc,
                 builder: (BuildContext context, ItemsState state) {
-                  if (state.items.isNotEmpty) {
+                  if (state.items != null) {
                     return Column(children: <Widget>[
                       ...state.items.map<ItemEditorTile>((Item e) => ItemEditorTile(
                             item: e,
@@ -222,7 +206,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   padding: EdgeInsets.all(8.0),
                   child: Icon(Icons.add, size: 32.0),
                   onPressed: (vendorIsset)
-                      ? () => onAddItem(Item(price: null, title: '', tax: _vendor.defaultTax))
+                      ? () => onAddItem(Item(price: null, title: '', tax: _vendor.defaultTax ?? 19))
                       : null,
                 ),
               ),
@@ -243,13 +227,18 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
     repo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     itemRepo = ItemRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     settingsRepo = SettingsRepository();
 
     await itemRepo.setUp();
     await settingsRepo.setUp();
+    await vendorRepo.setUp();
 
     editor = await settingsRepo.getUsername();
     _customers = await customerRepo.select();
+    if (vendorIsset) {
+      _vendor = await vendorRepo.selectSingle(draft.vendor);
+    }
 
     setState(() => _customers);
   }
@@ -265,7 +254,6 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
       customerIsset = draft.customer != null;
     } else {
       draft = Draft.empty();
-      draft.tax = 19;
     }
 
     _customers = [];
@@ -334,7 +322,6 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
         }
       }
 
-      draft.dueDays ??= 14;
       draft.editor = editor;
 
       if (widget.draft != null) {
