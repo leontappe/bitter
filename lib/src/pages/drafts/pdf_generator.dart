@@ -263,49 +263,51 @@ class PdfGenerator {
       centerImg = img.decodeImage(center);
     }
 
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        if (left != null)
-          Container(
-            height: 48.0,
-            child: Image(
-              PdfImage(doc,
-                  image: leftImg.data.buffer.asUint8List(),
-                  height: leftImg.height,
-                  width: leftImg.width),
-            ),
-          )
-        else
-          Container(width: 0.0, height: 0.0),
-        if (center != null)
-          Container(
-            height: 48.0,
-            child: Image(
-              PdfImage(doc,
-                  image: centerImg.data.buffer.asUint8List(),
-                  height: centerImg.height,
-                  width: centerImg.width),
-            ),
-          )
-        else
-          Container(width: 0.0, height: 0.0),
-        if (right != null)
-          Container(
-            height: 48.0,
-            child: Image(
-              PdfImage(doc,
-                  image: rightImg.data.buffer.asUint8List(),
-                  height: rightImg.height,
-                  width: rightImg.width),
-            ),
-          )
-        else
-          Container(width: 0.0, height: 0.0),
-      ],
-    );
+    return Padding(
+        padding: EdgeInsets.only(bottom: 4.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            if (left != null)
+              Container(
+                height: 48.0,
+                child: Image(
+                  PdfImage(doc,
+                      image: leftImg.data.buffer.asUint8List(),
+                      height: leftImg.height,
+                      width: leftImg.width),
+                ),
+              )
+            else
+              Container(width: 0.0, height: 0.0),
+            if (center != null)
+              Container(
+                height: 48.0,
+                child: Image(
+                  PdfImage(doc,
+                      image: centerImg.data.buffer.asUint8List(),
+                      height: centerImg.height,
+                      width: centerImg.width),
+                ),
+              )
+            else
+              Container(width: 0.0, height: 0.0),
+            if (right != null)
+              Container(
+                height: 48.0,
+                child: Image(
+                  PdfImage(doc,
+                      image: rightImg.data.buffer.asUint8List(),
+                      height: rightImg.height,
+                      width: rightImg.width),
+                ),
+              )
+            else
+              Container(width: 0.0, height: 0.0),
+          ],
+        ));
   }
 
   String _formatDate(DateTime date) {
