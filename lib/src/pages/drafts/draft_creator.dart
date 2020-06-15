@@ -341,6 +341,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   }
 
   Future<void> onSaveItem(Item item) async {
+    item.quantity = 1;
     await itemRepo.insert(item);
   }
 
