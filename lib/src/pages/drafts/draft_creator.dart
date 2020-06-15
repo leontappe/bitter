@@ -206,7 +206,11 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   padding: EdgeInsets.all(8.0),
                   child: Icon(Icons.add, size: 32.0),
                   onPressed: (vendorIsset)
-                      ? () => onAddItem(Item(price: null, title: '', tax: _vendor.defaultTax ?? 19))
+                      ? () => onAddItem(Item(
+                          price: null,
+                          title: '',
+                          tax: _vendor.defaultTax ?? 19,
+                          vendor: _vendor.id))
                       : null,
                 ),
               ),
@@ -249,6 +253,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
 
     if (widget.draft != null) {
       draft = widget.draft;
+      draft.items.forEach((Item i) => i.vendor = draft.vendor);
       itemsBloc.onBulkAdd(draft.items);
       vendorIsset = draft.vendor != null;
       customerIsset = draft.customer != null;
@@ -320,6 +325,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
         if (draft.items[i].tax == null) {
           draft.items[i].tax = draft.tax;
         }
+        draft.items[i].vendor = _vendor.id;
       }
 
       draft.editor = editor;
