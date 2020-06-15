@@ -1,12 +1,13 @@
-import 'package:bitter/src/models/vendor.dart';
-import 'package:bitter/src/widgets/item_card.dart';
-import 'package:bitter/src/widgets/vendor_selector.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/item.dart';
+import '../../models/vendor.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
+import '../../util.dart';
+import '../../widgets/item_card.dart';
+import '../../widgets/vendor_selector.dart';
 
 class ItemPage extends StatefulWidget {
   final Item item;
@@ -93,8 +94,8 @@ class _ItemPageState extends State<ItemPage> {
                         validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                         keyboardType: TextInputType.numberWithOptions(),
                         onChanged: (String input) {
-                          setState(() => item.price =
-                              (double.parse(input.replaceAll(',', '.')) * 100).toInt());
+                          setState(() => item.price = parseFloat(input));
+                          dirty = true;
                           _formKey.currentState.validate();
                         },
                         decoration: InputDecoration(suffixText: '€'),

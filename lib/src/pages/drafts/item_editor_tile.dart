@@ -5,6 +5,7 @@ import '../../models/item.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
+import '../../util.dart';
 
 enum EditorTileAction { delete, save }
 
@@ -99,12 +100,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
               controller: TextEditingController(
                   text: (_item.price != null) ? (_item.price / 100.0).toStringAsFixed(2) : null),
               onChanged: (String input) {
-                final split = input.replaceAll(',', '.').split('.');
-                _item.price = (int.parse(split.first) * 100) +
-                    ((split.length > 1)
-                        ? int.parse(
-                            (split.last.length > 1) ? split.last.substring(0, 2) : split.last + '0')
-                        : 0);
+                _item.price = parseFloat(input);
                 widget.itemChanged(_item, false);
               },
               onFieldSubmitted: (String input) => widget.itemChanged(_item, true),
