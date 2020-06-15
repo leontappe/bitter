@@ -351,8 +351,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
     await itemRepo.insert(item);
   }
 
-  void onUpdateItem(Item item) {
-    itemsBloc.onUpdateItem(item);
+  void onUpdateItem(Item item, bool updateState) {
+    if (updateState) itemsBloc.onUpdateItem(item);
     dirty = true;
   }
 
