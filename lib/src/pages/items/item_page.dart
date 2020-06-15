@@ -164,6 +164,23 @@ class _ItemPageState extends State<ItemPage> {
     setState(() => item);
   }
 
+  Future<void> onDeleteItem(int id) async {
+    var result = await showDialog<int>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text('Soll dieser Artikel wirlich gelöscht werden?'),
+        actions: <Widget>[
+          MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Behalten')),
+          MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Löschen')),
+        ],
+      ),
+    );
+    if (result == 1) {
+      await repo.delete(id);
+      await Navigator.pop(context, true);
+    }
+  }
+
   Future<void> onPopRoute(BuildContext context) async {
     if (dirty) {
       var result = await showDialog<int>(
@@ -217,10 +234,5 @@ class _ItemPageState extends State<ItemPage> {
       return true;
     }
     return false;
-  }
-
-  Future<void> onDeleteItem(int id) async {
-    await repo.delete(id);
-    await Navigator.pop(context, true);
   }
 }
