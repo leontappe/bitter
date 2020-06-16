@@ -35,6 +35,8 @@ dependencies:
       path: plugins/file_chooser
     #path: ../file_chooser
   autocomplete_textfield: ^1.7.3
+  csv: ^4.0.3
+  archive: ^2.0.13
 
 dev_dependencies:
   flutter_test:

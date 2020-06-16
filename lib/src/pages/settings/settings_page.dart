@@ -19,6 +19,11 @@ class SettingsPage extends StatelessWidget {
           subtitle: Text('Einstellen der Datenbankverbindung und der Bearbeiter*in'),
           onTap: () => Navigator.pushNamed(context, '/settings/app'),
         ),
+        ListTile(
+          title: Text('Backup und Wiederherstellung', style: Theme.of(context).textTheme.headline6),
+          subtitle: Text('Export und Sicherung der Datenbank'),
+          onTap: () => Navigator.pushNamed(context, '/settings/backup'),
+        ),
       ]),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
 import 'src/homepage.dart';
@@ -7,6 +8,7 @@ import 'src/pages/customers/customers_list_page.dart';
 import 'src/pages/drafts/drafts_list_page.dart';
 import 'src/pages/items/items_list_page.dart';
 import 'src/pages/settings/app_settings_page.dart';
+import 'src/pages/settings/backup_page.dart';
 import 'src/pages/settings/settings_page.dart';
 import 'src/pages/settings/vendors/vendors_list_page.dart';
 import 'src/providers/database_provider.dart';
@@ -15,8 +17,9 @@ import 'src/providers/mysql_provider.dart';
 import 'src/providers/sqlite_provider.dart';
 import 'src/repositories/settings_repository.dart';
 
-void main() {
+void main() async {
   Intl.defaultLocale = 'de_DE';
+  await initializeDateFormatting(Intl.defaultLocale);
   runApp(Bitter());
 }
 
@@ -45,6 +48,7 @@ class Bitter extends StatelessWidget {
                 '/settings': (BuildContext context) => SettingsPage(),
                 '/settings/app': (BuildContext context) => AppSettingsPage(),
                 '/settings/vendors': (BuildContext context) => VendorsPage(),
+                '/settings/backup': (BuildContext context) => BackupPage(),
               },
             ),
           );

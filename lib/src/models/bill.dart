@@ -75,8 +75,8 @@ class Bill {
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
-        'file': base64.encode(file),
         ...toMapShort,
+        'file': base64.encode(file),
       };
 
   Map<String, dynamic> get toMapShort => <String, dynamic>{
