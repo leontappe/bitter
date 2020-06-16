@@ -30,7 +30,7 @@ class ItemRepository<T extends DatabaseProvider> {
     var results = (await db.select(tableName)).map<Item>((Map e) => Item.fromDbMap(e));
     if (searchQuery != null && searchQuery.isNotEmpty) {
       results = results.where((Item i) {
-        return i.title.toString().contains(searchQuery);
+        return i.title.toLowerCase().contains(searchQuery.toLowerCase());
       });
     }
     if (vendorFilter != null) {
