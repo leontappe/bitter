@@ -34,7 +34,7 @@ class _VendorsPageState extends State<VendorsPage> {
         child: ListView(
           semanticChildCount: vendors.length,
           children: <Widget>[
-            ...vendors.map((Vendor v) =>
+            ...vendors.reversed.map((Vendor v) =>
                 ListTile(title: Text(v.name), onTap: () => onPushVendorPage(context, v.id))),
           ],
         ),

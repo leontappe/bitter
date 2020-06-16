@@ -86,7 +86,7 @@ class _DraftsListPageState extends State<DraftsListPage> {
       body: RefreshIndicator(
         child: ListView(
           children: [
-            ...drafts.map((Draft d) => ListTile(
+            ...drafts.reversed.map((Draft d) => ListTile(
                   title: Text('Entwurf ${d.id}'),
                   subtitle: Text((vendors.isNotEmpty && customers.isNotEmpty)
                       ? 'Bearbeiter*in: ${d.editor}, ${vendors.where((Vendor v) => v.id == d.vendor).isEmpty ? '' : vendors.singleWhere((Vendor v) => v.id == d.vendor).name} - Kunde*in: ${customers.where((Customer c) => c.id == d.customer).isEmpty ? '' : customers.singleWhere((Customer c) => c.id == d.customer).name} ${customers.where((Customer c) => c.id == d.customer).isEmpty ? '' : customers.singleWhere((Customer c) => c.id == d.customer).surname}'

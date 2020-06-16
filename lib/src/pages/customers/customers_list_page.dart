@@ -62,7 +62,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
           semanticChildCount: customers.length,
           children: <Widget>[
             ...List.from(
-              customers.map<ListTile>((Customer c) => ListTile(
+              customers.reversed.map<ListTile>((Customer c) => ListTile(
                     title: Text((c.company == null || c.company.isEmpty)
                         ? '${c.name} ${c.surname}'
                         : '${c.company} ${c.organizationUnit ?? ''}'),
