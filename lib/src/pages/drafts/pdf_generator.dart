@@ -242,10 +242,10 @@ class PdfGenerator {
   double _calculateTaxes(List<Item> items, int tax) {
     var tax = 0.0;
     for (var item in items) {
-      tax += ((item.price * item.quantity) -
-          ((item.price * item.quantity) / (1.0 + ((item.tax ?? tax) / 100.0))));
+      tax += (((item.price * item.quantity) -
+          ((item.price * item.quantity) / (1.0 + ((item.tax ?? tax) / 100.0))))).round();
     }
-    return tax.round() / 100.0;
+    return tax / 100.0;
   }
 
   Widget _createHeaderFromImages(PdfDocument doc,
