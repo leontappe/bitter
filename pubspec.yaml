@@ -19,8 +19,8 @@ dependencies:
   pdf: ^1.9.0
   image: ^2.1.13
   meta: ^1.1.8
-  bloc: ^4.0.0
-  flutter_bloc: ^4.0.1
+  bloc: ^6.0.2
+  flutter_bloc: ^6.0.1
   crypto: ^2.1.5
   path_provider: ^1.6.11
   path_provider_macos: ^0.0.4+3

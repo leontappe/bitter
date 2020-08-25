@@ -29,12 +29,9 @@ class BulkAdd extends ItemsEvent {
 class ItemsBloc extends Bloc<ItemsEvent, ItemsState> {
   List<Item> _items;
 
-  ItemsBloc() {
+  ItemsBloc() : super(ItemsState(const <Item>[])) {
     _items = <Item>[];
   }
-
-  @override
-  ItemsState get initialState => ItemsState(const <Item>[]);
 
   List<Item> get items => _items;
 
