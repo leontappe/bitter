@@ -276,7 +276,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
 
   Future<void> onPopRoute(BuildContext context) async {
     if (dirty) {
-      var result = await showDialog<int>(
+      final result = await showDialog<int>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
                 title: Text(
@@ -348,8 +348,22 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   }
 
   Future<void> onSaveItem(Item item) async {
-    item.quantity = 1;
-    await itemRepo.insert(item);
+    final result = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: Text(
+                  'Willst du \'${item.title}\' wirklich zur Artikel Datenbank hinzufügen? Danach kannst du den Artikel über die Auto-Vervolständigung im Namensfeld aufrufen'),
+              actions: <Widget>[
+                MaterialButton(
+                    onPressed: () => Navigator.pop(context, false), child: Text('Abbrechen')),
+                MaterialButton(
+                    onPressed: () => Navigator.pop(context, true), child: Text('Artikel sichern')),
+              ],
+            ));
+    if (result) {
+      item.quantity = 1;
+      await itemRepo.insert(item);
+    }
   }
 
   void onUpdateItem(Item item, bool updateState) {

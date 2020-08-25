@@ -126,15 +126,15 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
                 value: EditorTileAction.delete,
                 child: Row(children: <Widget>[
                   Icon(Icons.delete),
-                  Text(' Artikel Löschen',
+                  Text(' Artikel entfernen',
                       style: TextStyle(color: Theme.of(context).iconTheme.color))
                 ]),
               ),
               PopupMenuItem<EditorTileAction>(
                 value: EditorTileAction.save,
                 child: Row(children: <Widget>[
-                  Icon(Icons.save),
-                  Text(' Artikel speichern',
+                  Icon(Icons.archive),
+                  Text(' Unter Artikel sichern',
                       style: TextStyle(color: Theme.of(context).iconTheme.color))
                 ]),
               ),
