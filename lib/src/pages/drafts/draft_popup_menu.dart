@@ -12,7 +12,9 @@ import 'pdf_generator.dart';
 
 class DraftPopupMenu extends StatefulWidget {
   final int id;
-  final Function(bool) onCompleted;
+
+  /// first bool returns if something changed, second one if the page should redirect to bills
+  final Function(bool, bool) onCompleted;
 
   const DraftPopupMenu({Key key, this.id, this.onCompleted}) : super(key: key);
 
@@ -39,7 +41,7 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
   Widget build(BuildContext context) {
     return PopupMenuButton<DraftPopupSelection>(
       onSelected: onSelected,
-      onCanceled: () => (widget.onCompleted != null) ? widget.onCompleted(false) : null,
+      onCanceled: () => (widget.onCompleted != null) ? widget.onCompleted(false, false) : null,
       itemBuilder: (BuildContext context) => <PopupMenuEntry<DraftPopupSelection>>[
         const PopupMenuItem<DraftPopupSelection>(
           value: DraftPopupSelection.createBill,
@@ -79,14 +81,15 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
   Future<void> onSelected(DraftPopupSelection value) async {
     switch (value) {
       case DraftPopupSelection.createBill:
-        (widget.onCompleted != null) ? widget.onCompleted(await _createBill(widget.id)) : null;
+        final billResult = await _createBill(widget.id);
+        (widget.onCompleted != null) ? widget.onCompleted(billResult, billResult) : null;
         break;
       case DraftPopupSelection.delete:
         await repo.delete(widget.id);
-        (widget.onCompleted != null) ? widget.onCompleted(true) : null;
+        (widget.onCompleted != null) ? widget.onCompleted(true, false) : null;
         break;
       default:
-        (widget.onCompleted != null) ? widget.onCompleted(false) : null;
+        (widget.onCompleted != null) ? widget.onCompleted(false, false) : null;
         break;
     }
   }
