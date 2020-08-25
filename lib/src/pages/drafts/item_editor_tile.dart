@@ -108,6 +108,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
             ),
           ),
           PopupMenuButton<EditorTileAction>(
+            tooltip: 'Menü zeigen',
             onSelected: (EditorTileAction action) {
               switch (action) {
                 case EditorTileAction.delete:

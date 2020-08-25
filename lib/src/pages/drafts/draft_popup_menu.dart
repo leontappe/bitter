@@ -40,6 +40,7 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<DraftPopupSelection>(
+      tooltip: 'Menü zeigen',
       onSelected: onSelected,
       onCanceled: () => (widget.onCompleted != null) ? widget.onCompleted(false, false) : null,
       itemBuilder: (BuildContext context) => <PopupMenuEntry<DraftPopupSelection>>[
