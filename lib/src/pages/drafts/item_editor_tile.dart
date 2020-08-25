@@ -80,7 +80,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.all(8.0),
+            padding: EdgeInsets.only(left: 4.0, right: 4.0),
             width: 80.0,
             child: TextFormField(
               controller: TextEditingController(
@@ -94,7 +94,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
             ),
           ),
           Container(
-            padding: EdgeInsets.all(8.0),
+            padding: EdgeInsets.only(left: 4.0, right: 4.0),
             width: 80.0,
             child: TextFormField(
               controller: TextEditingController(
