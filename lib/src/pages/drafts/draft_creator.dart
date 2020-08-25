@@ -72,7 +72,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
               id: draft.id,
               onCompleted: (bool changed, bool redirect) => redirect
                   ? Navigator.popAndPushNamed(context, '/bills', result: changed)
-                  : Navigator.pop(context, changed),
+                  : changed ? Navigator.pop(context, changed) : null,
             )
         ],
       ),
