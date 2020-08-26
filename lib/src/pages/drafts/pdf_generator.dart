@@ -118,7 +118,7 @@ class PdfGenerator {
               Padding(
                 padding: EdgeInsets.only(top: 16.0, bottom: 60.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Paragraph(
                       text: 'Kundennummer: ${bill.customer}',
