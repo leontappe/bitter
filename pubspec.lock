@@ -125,7 +125,7 @@ packages:
     description:
       path: "plugins/file_chooser"
       ref: HEAD
-      resolved-ref: e97fab8260b17b90104e85ac78c61c124753eb93
+      resolved-ref: "66e4b058971cb6c92c653f0d89c6a5c4aadb6539"
       url: "git://github.com/google/flutter-desktop-embedding.git"
     source: git
     version: "0.2.0"
@@ -140,7 +140,7 @@ packages:
       name: flutter_bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.1"
+    version: "6.0.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -228,7 +228,7 @@ packages:
     description:
       path: "plugins/flutter_plugins/path_provider_fde"
       ref: HEAD
-      resolved-ref: e97fab8260b17b90104e85ac78c61c124753eb93
+      resolved-ref: "66e4b058971cb6c92c653f0d89c6a5c4aadb6539"
       url: "git://github.com/google/flutter-desktop-embedding.git"
     source: git
     version: "0.0.1"
