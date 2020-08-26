@@ -137,7 +137,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                             draft.serviceDate = await showDatePicker(
                               context: context,
                               initialDate: draft.serviceDate ?? DateTime.now(),
-                              firstDate: DateTime.now(),
+                              firstDate: DateTime(DateTime.now().year - 20),
                               lastDate: DateTime(DateTime.now().year + 20),
                               cancelText: 'Löschen',
                               confirmText: 'Übernehmen',
