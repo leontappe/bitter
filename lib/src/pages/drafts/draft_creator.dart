@@ -352,7 +352,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
         context: context,
         builder: (BuildContext context) => AlertDialog(
               title: Text(
-                  'Willst du \'${item.title}\' wirklich zur Artikel Datenbank hinzufügen? Danach kannst du den Artikel über die Auto-Vervolständigung im Namensfeld aufrufen'),
+                  'Willst du \'${item.title}\' wirklich zur Artikeldatenbank hinzufügen? Danach kannst du den Artikel über die Auto-Vervollständigung im Namensfeld aufrufen.'),
               actions: <Widget>[
                 MaterialButton(
                     onPressed: () => Navigator.pop(context, false), child: Text('Abbrechen')),
