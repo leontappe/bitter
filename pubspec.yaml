@@ -2,7 +2,7 @@ name: bitter
 authors:
   - Leon Tappe <ltappe@mail.upb.de>
 description: A billing app with interchangeable database, customer management and PDF output
-version: 0.3.4
+version: 0.3.5
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
