@@ -61,7 +61,11 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
         },
         itemSubmitted: _onItemSubmitted,
         suggestions: _items,
-        itemBuilder: (BuildContext context, Item item) => ListTile(title: Text(item.title)),
+        itemBuilder: (BuildContext context, Item item) => ListTile(
+          title: Text(item.title),
+          subtitle: (item.description != null) ? Text(item.description) : null,
+          trailing: Text((item.price / 100.0).toStringAsFixed(2) + '€'),
+        ),
         itemSorter: (Item a, Item b) => a.id > b.id ? -1 : 1, //TODO: meaningful sorting
         itemFilter: (Item item, String query) =>
             item.title.toLowerCase().startsWith(query.toLowerCase()),
