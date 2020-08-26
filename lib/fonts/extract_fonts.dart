@@ -1,9 +1,9 @@
 import 'dart:io';
 
 void main() async {
-  final liberationSans = File('LiberationSans-Regular.ttf');
+  final liberationSans = File('LiberationSans-Bold.ttf');
 
-  final sansOut = File('LiberationSans.dart')..createSync();
+  final sansOut = File('LiberationSansBold.dart')..createSync();
 
   var sink = sansOut.openWrite();
 
@@ -14,4 +14,18 @@ void main() async {
 
   await sink.flush();
   await sink.close();
+
+  final liberationSansBold = File('LiberationSans-Bold.ttf');
+
+  final sansBoldOut = File('LiberationSansBold.dart')..createSync();
+
+  final boldSink = sansBoldOut.openWrite();
+
+  boldSink.write('const List<int> liberationSansBold = ');
+  final List<int> sansBoldBytes = await liberationSansBold.readAsBytes();
+  boldSink.write(sansBoldBytes);
+  boldSink.write(';');
+
+  await boldSink.flush();
+  await boldSink.close();
 }

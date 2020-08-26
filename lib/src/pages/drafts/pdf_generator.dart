@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
 import '../../../fonts/LiberationSans.dart';
+import '../../../fonts/LiberationSansBold.dart';
 import '../../models/customer.dart';
 import '../../models/draft.dart';
 import '../../models/item.dart';
@@ -26,6 +27,7 @@ class PaddedText extends Padding {
 
 class PdfGenerator {
   Font ttfSans;
+  Font ttfSansBold;
 
   Future<Document> createDocumentFromBill(
     String billNr,
@@ -42,6 +44,12 @@ class PdfGenerator {
       sansData.setUint8(i, liberationSans[i]);
     }
     ttfSans = Font.ttf(sansData);
+
+    final sansBoldData = ByteData(liberationSansBold.length);
+    for (var i = 0; i < liberationSansBold.length; i++) {
+      sansBoldData.setUint8(i, liberationSansBold[i]);
+    }
+    ttfSansBold = Font.ttf(sansBoldData);
 
     final fontsize = 10.0;
     final doc = Document();
@@ -144,7 +152,7 @@ class PdfGenerator {
               style: TextStyle(font: ttfSans)),
           Table(
             columnWidths: <int, TableColumnWidth>{
-              0: FixedColumnWidth(20.0),
+              0: FixedColumnWidth(22.0),
               1: FixedColumnWidth(150.0),
               2: FixedColumnWidth(32.0),
               3: FixedColumnWidth(24.0),
@@ -158,7 +166,7 @@ class PdfGenerator {
                 PaddedHeaderText('Pos.'),
                 PaddedHeaderText('Artikel'),
                 PaddedHeaderText('Menge'),
-                PaddedHeaderText('Ust.'),
+                PaddedHeaderText('USt.'),
                 PaddedHeaderText('Einzelpreis'),
                 PaddedHeaderText('Bruttopreis')
               ]),
@@ -186,14 +194,15 @@ class PdfGenerator {
                 children: <Widget>[
                   Paragraph(
                     text:
-                        'Gesamtbetrag: ${(bill.sum / 100.0).toStringAsFixed(2).replaceAll('.', ',')} EUR',
-                    style: TextStyle(fontSize: fontsize, fontWeight: FontWeight.bold),
+                        'Gesamtbetrag: ${(bill.sum / 100.0).toStringAsFixed(2).replaceAll('.', ',')} €',
+                    style:
+                        TextStyle(fontSize: fontsize + 1.0, fontWeight: FontWeight.bold, font: ttfSansBold),
                     margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
                   ),
                   Paragraph(
                     text:
-                        'Davon Umsatzsteuer: ${_calculateTaxes(bill.items, bill.tax).toStringAsFixed(2).replaceAll('.', ',')} EUR',
-                    style: TextStyle(fontSize: fontsize),
+                        'Davon Umsatzsteuer: ${_calculateTaxes(bill.items, bill.tax).toStringAsFixed(2).replaceAll('.', ',')} €',
+                    style: TextStyle(fontSize: fontsize, font: ttfSans),
                     margin: EdgeInsets.all(0.0),
                   )
                 ],
@@ -211,7 +220,7 @@ class PdfGenerator {
               style: TextStyle(font: ttfSans)),
           Paragraph(
               text:
-                  'Bezahlbar ohne Abzug bis: ${_formatDate(bill.serviceDate.add(Duration(days: bill.dueDays)))}',
+                  'Bezahlbar ohne Abzug bis zum ${_formatDate(bill.serviceDate.add(Duration(days: bill.dueDays)))}.',
               style: TextStyle(font: ttfSans)),
         ],
       ),
@@ -243,7 +252,8 @@ class PdfGenerator {
     var tax = 0.0;
     for (var item in items) {
       tax += (((item.price * item.quantity) -
-          ((item.price * item.quantity) / (1.0 + ((item.tax ?? tax) / 100.0))))).round();
+              ((item.price * item.quantity) / (1.0 + ((item.tax ?? tax) / 100.0)))))
+          .round();
     }
     return tax / 100.0;
   }
@@ -379,7 +389,7 @@ class PdfGenerator {
                   text: 'Steuer-Nr.: ${vendor.taxNr}',
                   style: TextStyle(fontSize: fontSize, font: ttfSans, color: color),
                   margin: EdgeInsets.only(top: 17.0)),
-              Text('USt.-Ident.-Nr.: ${vendor.vatNr}',
+              Text('USt.-ID: ${vendor.vatNr}',
                   style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
               Text(vendor.website ?? '',
                   style: TextStyle(fontSize: fontSize, font: ttfSans, color: color)),
