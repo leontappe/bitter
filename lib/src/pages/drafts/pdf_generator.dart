@@ -195,8 +195,8 @@ class PdfGenerator {
                   Paragraph(
                     text:
                         'Gesamtbetrag: ${(bill.sum / 100.0).toStringAsFixed(2).replaceAll('.', ',')} €',
-                    style:
-                        TextStyle(fontSize: fontsize + 1.0, fontWeight: FontWeight.bold, font: ttfSansBold),
+                    style: TextStyle(
+                        fontSize: fontsize + 1.0, fontWeight: FontWeight.bold, font: ttfSansBold),
                     margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
                   ),
                   Paragraph(
@@ -220,7 +220,7 @@ class PdfGenerator {
               style: TextStyle(font: ttfSans)),
           Paragraph(
               text:
-                  'Bezahlbar ohne Abzug bis zum ${_formatDate(bill.serviceDate.add(Duration(days: bill.dueDays)))}.',
+                  'Bezahlbar ohne Abzug bis zum ${_formatDate(DateTime.now().add(Duration(days: bill.dueDays)))}.',
               style: TextStyle(font: ttfSans)),
         ],
       ),
