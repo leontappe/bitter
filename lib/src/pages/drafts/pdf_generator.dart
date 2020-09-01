@@ -125,11 +125,12 @@ class PdfGenerator {
                       style: TextStyle(fontSize: fontsize),
                       margin: EdgeInsets.all(0.0),
                     ),
-                    Paragraph(
-                      text: 'Ansprechpartner*in: ${vendor.contact}',
-                      style: TextStyle(fontSize: fontsize),
-                      margin: EdgeInsets.all(0.0),
-                    ),
+                    if (vendor.contact != null && vendor.contact.isNotEmpty)
+                      Paragraph(
+                        text: 'Ansprechpartner*in: ${vendor.contact}',
+                        style: TextStyle(fontSize: fontsize),
+                        margin: EdgeInsets.all(0.0),
+                      ),
                     Paragraph(
                       text: 'E-Mail: ${vendor.email}',
                       style: TextStyle(fontSize: fontsize),
