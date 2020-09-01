@@ -158,7 +158,7 @@ class PdfGenerator {
               2: FixedColumnWidth(32.0),
               3: FixedColumnWidth(24.0),
               4: FixedColumnWidth(50.0),
-              5: FixedColumnWidth(50.0),
+              5: FixedColumnWidth(55.0),
             },
             tableWidth: TableWidth.max,
             border: TableBorder(),
@@ -168,8 +168,8 @@ class PdfGenerator {
                 PaddedHeaderText('Artikel'),
                 PaddedHeaderText('Menge'),
                 PaddedHeaderText('USt.'),
-                PaddedHeaderText('Einzelpreis'),
-                PaddedHeaderText('Bruttopreis')
+                PaddedHeaderText('Einzelpreis\nBrutto'),
+                PaddedHeaderText('Gesamtpreis\nBrutto')
               ]),
               ...items.map((Item i) => TableRow(children: <Widget>[
                     PaddedText(i.uid, ttfSans),
@@ -202,10 +202,10 @@ class PdfGenerator {
                   ),
                   Paragraph(
                     text:
-                        'Davon Umsatzsteuer: ${_calculateTaxes(bill.items, bill.tax).toStringAsFixed(2).replaceAll('.', ',')} €',
+                        'Der Gesamtbetrag setzt sich aus ${((bill.sum - _calculateTaxes(bill.items, bill.tax)) / 100.0).toStringAsFixed(2).replaceAll('.', ',')} € netto zzgl. ${(_calculateTaxes(bill.items, bill.tax) / 100.0).toStringAsFixed(2).replaceAll('.', ',')} € Umsatzsteuer zusammen.',
                     style: TextStyle(fontSize: fontsize, font: ttfSans),
                     margin: EdgeInsets.all(0.0),
-                  )
+                  ),
                 ],
               ),
             ],
@@ -250,14 +250,14 @@ class PdfGenerator {
       ))
           .save();
 
-  double _calculateTaxes(List<Item> items, int tax) {
-    var tax = 0.0;
+  int _calculateTaxes(List<Item> items, int tax) {
+    var tax = 0;
     for (var item in items) {
       tax += (((item.price * item.quantity) -
-              ((item.price * item.quantity) / (1.0 + ((item.tax ?? tax) / 100.0)))))
+              ((item.price * item.quantity) / (1 + ((item.tax ?? tax) / 100)))))
           .round();
     }
-    return tax / 100.0;
+    return tax;
   }
 
   Widget _createHeaderFromImages(PdfDocument doc,
