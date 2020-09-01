@@ -203,7 +203,7 @@ class PdfGenerator {
                   Paragraph(
                     text:
                         'Der Gesamtbetrag setzt sich aus ${((bill.sum - _calculateTaxes(bill.items, bill.tax)) / 100.0).toStringAsFixed(2).replaceAll('.', ',')} € netto zzgl. ${(_calculateTaxes(bill.items, bill.tax) / 100.0).toStringAsFixed(2).replaceAll('.', ',')} € Umsatzsteuer zusammen.',
-                    style: TextStyle(fontSize: fontsize, font: ttfSans),
+                    style: TextStyle(fontSize: fontsize + 1.0, font: ttfSans),
                     margin: EdgeInsets.all(0.0),
                   ),
                 ],
