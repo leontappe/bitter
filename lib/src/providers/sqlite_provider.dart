@@ -14,6 +14,13 @@ class SqliteProvider extends DatabaseProvider {
   Future<void> createTable(
       String table, List<String> columns, List<String> types, String primaryKey,
       {List<bool> nullable}) async {
+    // replace LONGTEXT with TEXT for SqLite
+    for (var i = 0; i < types.length; i++) {
+      if (types[i] == 'LONGTEXT') {
+        types[i] = 'TEXT';
+      }
+    }
+
     var cols = '';
     var i = 0;
     for (var item in columns) {
