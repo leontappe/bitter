@@ -29,6 +29,7 @@ class Vendor {
 
   int defaultDueDays;
   int defaultTax;
+  String defaultComment;
 
   List<int> headerImageRight;
   List<int> headerImageCenter;
@@ -55,6 +56,7 @@ class Vendor {
     @required this.billPrefix,
     this.defaultDueDays,
     this.defaultTax,
+    this.defaultComment,
     this.headerImageRight,
     this.headerImageCenter,
     this.headerImageLeft,
@@ -95,6 +97,7 @@ class Vendor {
         billPrefix: map['bill_prefix'].toString(),
         defaultDueDays: map['default_due_days'] as int,
         defaultTax: map['default_tax'] as int,
+        defaultComment: map['default_comment']?.toString(),
         headerImageRight: (map['header_image_right'] != null)
             ? base64.decode(map['header_image_right'].toString())
             : null,
@@ -143,6 +146,7 @@ class Vendor {
         'bill_prefix': billPrefix,
         'default_due_days': defaultDueDays,
         'default_tax': defaultTax,
+        'default_comment': defaultComment,
       };
 
   @override

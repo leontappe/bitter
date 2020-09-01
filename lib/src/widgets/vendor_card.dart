@@ -35,6 +35,8 @@ class VendorCard extends StatelessWidget {
             Text('Prefix für Rechnungsnummern: ${vendor.billPrefix}'),
             Text('Standard Zahlungsfrist: ${vendor.defaultDueDays} Tage'),
             Text('Standard Umsatzsteuer: ${vendor.defaultTax} %'),
+            if (vendor.defaultComment != null)
+              Text('Standard Rechnungskommentar: ${vendor.defaultComment}'),
             Text(
                 'Kopfzeilenbilder:\n\tRechts: ${vendor.headerImageRight != null ? 'Vorhanden' : 'Nicht vorhanden'}\n\tMitte: ${vendor.headerImageCenter != null ? 'Vorhanden' : 'Nicht vorhanden'}\n\tLinks: ${vendor.headerImageLeft != null ? 'Vorhanden' : 'Nicht vorhanden'}'),
             Text(

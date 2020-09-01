@@ -273,6 +273,16 @@ class _VendorPageState extends State<VendorPage> {
                       },
                     ),
                     TextFormField(
+                      initialValue: newVendor.defaultComment,
+                      maxLines: 1,
+                      decoration: InputDecoration(
+                          labelText: 'Standard Rechnungskommentar'),
+                      onChanged: (String input) {
+                        newVendor.defaultComment = input;
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
                       initialValue: newVendor.userMessageLabel,
                       maxLines: 1,
                       decoration: InputDecoration(

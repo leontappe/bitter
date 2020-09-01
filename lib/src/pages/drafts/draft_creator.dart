@@ -190,10 +190,11 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                 trailing: Container(
                   width: 256.0,
                   child: TextFormField(
+                    controller:
+                        TextEditingController(text: draft.comment ?? _vendor?.defaultComment ?? ''),
                     maxLines: 2,
-                    initialValue: draft.userMessage,
                     onChanged: (String input) {
-                      setState(() => draft.userMessage = input);
+                      draft.comment = input;
                       dirty = true;
                     },
                   ),
@@ -346,6 +347,10 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
       }
 
       draft.editor = editor;
+
+      if (_vendor.defaultComment != null && _vendor.defaultComment.isNotEmpty && (draft.comment?.isEmpty ?? true)) {
+        draft.comment = _vendor.defaultComment;
+      }
 
       if (widget.draft != null) {
         await repo.update(draft);
