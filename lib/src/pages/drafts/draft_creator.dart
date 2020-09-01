@@ -169,12 +169,28 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   ),
                 ),
               ),
+              if (_vendor?.userMessageLabel != null && _vendor.userMessageLabel.isNotEmpty)
+                ListTile(
+                  title: Text(
+                      '${_vendor?.userMessageLabel}:' ?? 'Benutzerdefinierter Rechnungskommentar:',
+                      style: Theme.of(context).textTheme.headline6),
+                  trailing: Container(
+                    width: 256.0,
+                    child: TextFormField(
+                      initialValue: draft.userMessage,
+                      onChanged: (String input) {
+                        setState(() => draft.userMessage = input);
+                        dirty = true;
+                      },
+                    ),
+                  ),
+                ),
               ListTile(
-                title: Text(_vendor?.userMessageLabel ?? 'Benutzerdefinierter Rechnungskommentar:',
-                    style: Theme.of(context).textTheme.headline6),
+                title: Text('Rechnungskommentar:', style: Theme.of(context).textTheme.headline6),
                 trailing: Container(
-                  width: 196.0,
+                  width: 256.0,
                   child: TextFormField(
+                    maxLines: 2,
                     initialValue: draft.userMessage,
                     onChanged: (String input) {
                       setState(() => draft.userMessage = input);

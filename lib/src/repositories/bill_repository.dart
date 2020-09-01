@@ -70,6 +70,7 @@ class BillRepository<T extends DatabaseProvider> {
         'customer',
         'items',
         'user_message',
+        'comment',
         'created',
         'service_date',
         'due_date',
@@ -89,6 +90,7 @@ class BillRepository<T extends DatabaseProvider> {
         'TEXT',
         'TEXT',
         'TEXT',
+        'TEXT',
         'TEXT'
       ],
       'id',
@@ -102,6 +104,7 @@ class BillRepository<T extends DatabaseProvider> {
         false,
         false,
         false,
+        true,
         true,
         false,
         false,

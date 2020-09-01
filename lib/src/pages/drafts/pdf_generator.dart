@@ -215,6 +215,7 @@ class PdfGenerator {
                       : '') +
                   (bill.userMessage ?? ''),
               style: TextStyle(font: ttfSans)),
+          Paragraph(text: bill.comment ?? '', style: TextStyle(font: ttfSans)),
           Paragraph(
               text: 'Lieferdatum/Leistungsdatum: ${_formatDate(bill.serviceDate)}',
               style: TextStyle(font: ttfSans)),

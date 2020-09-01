@@ -59,6 +59,8 @@ class _BillPageState extends State<BillPage> {
                               'Benutzerdefinierter Rechnungskommentar') +
                           ': ${bill.userMessage}'),
                     ),
+                  if (bill.comment != null)
+                    ListTile(title: Text('Rechnungskommentar: ${bill.comment}')),
                   ListTile(
                     title: DropdownButton<BillStatus>(
                       style: Theme.of(context).textTheme.headline6,

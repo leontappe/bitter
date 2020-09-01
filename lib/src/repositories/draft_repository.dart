@@ -90,11 +90,23 @@ class DraftRepository<T extends DatabaseProvider> {
         'tax',
         'service_date',
         'due_days',
-        'user_message'
+        'user_message',
+        'comment',
       ],
-      ['INTEGER', 'TEXT', 'INTEGER', 'INTEGER', 'TEXT', 'INTEGER', 'DATETIME', 'INTEGER', 'TEXT'],
+      [
+        'INTEGER',
+        'TEXT',
+        'INTEGER',
+        'INTEGER',
+        'TEXT',
+        'INTEGER',
+        'DATETIME',
+        'INTEGER',
+        'TEXT',
+        'TEXT'
+      ],
       'id',
-      nullable: <bool>[true, false, false, false, false, false, true, false, true],
+      nullable: <bool>[true, false, false, false, false, false, true, false, true, true],
     );
   }
 

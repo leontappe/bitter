@@ -22,6 +22,7 @@ class Bill {
   final Customer customer;
   final List<Item> items;
   final String userMessage;
+  final String comment;
 
   BillStatus status;
   String note;
@@ -37,6 +38,7 @@ class Bill {
     @required this.customer,
     @required this.items,
     this.userMessage,
+    this.comment,
     @required this.created,
     @required this.serviceDate,
     @required this.dueDate,
@@ -68,6 +70,7 @@ class Bill {
         items: ((json.decode(map['items'].toString()) as List)
             .map<Item>((dynamic map) => Item.fromMap(map as Map))).toList(),
         userMessage: map['user_message']?.toString(),
+        comment: map['comment']?.toString(),
         created: DateTime.parse(map['created'].toString()).toLocal(),
         serviceDate: DateTime.parse(map['service_date'].toString()).toLocal(),
         dueDate: DateTime.parse(map['due_date'].toString()).toLocal(),
@@ -88,6 +91,7 @@ class Bill {
         'customer': json.encode(customer.toMapLong),
         'items': json.encode(items.map((e) => e.toMap).toList()),
         'user_message': userMessage,
+        'comment': comment,
         'created': created.toUtc().toString(),
         'service_date': serviceDate.toUtc().toString(),
         'due_date': dueDate.toUtc().toString(),

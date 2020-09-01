@@ -17,6 +17,7 @@ class Draft {
   int dueDays;
 
   String userMessage;
+  String comment;
 
   Draft({
     this.id,
@@ -28,6 +29,7 @@ class Draft {
     @required this.serviceDate,
     @required this.dueDays,
     this.userMessage,
+    this.comment,
   });
 
   factory Draft.empty() => Draft(
@@ -53,6 +55,7 @@ class Draft {
             : null,
         dueDays: int.parse(map['due_days'].toString()),
         userMessage: (map['user_message'] != null) ? map['user_message'].toString() : null,
+        comment: map['comment']?.toString(),
       );
 
   int get sum {
@@ -72,6 +75,7 @@ class Draft {
         if (serviceDate != null) 'service_date': serviceDate.toUtc(),
         'due_days': dueDays,
         'user_message': userMessage,
+        'comment': comment,
       };
 
   @override
