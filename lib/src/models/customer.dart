@@ -17,6 +17,11 @@ class Customer {
   String mobile;
   String email;
 
+  String get fullName => '$name $surname';
+  String get fullCompany => (company != null)
+      ? '$company${(organizationUnit != null && organizationUnit.isNotEmpty) ? ' ' + organizationUnit : ''} - $name $surname'
+      : null;
+
   Customer({
     this.id,
     this.company,

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:bitter/src/repositories/item_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,6 +49,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
   bool vendorIsset = false;
   List<Customer> _customers;
   Vendor _vendor;
+  Customer _customer;
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +87,35 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
               ListTile(
                 title: Text('Kunde', style: Theme.of(context).textTheme.headline6),
                 trailing: (customerIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
+                subtitle: AutoCompleteTextField<Customer>(
+                  key: GlobalKey<AutoCompleteTextFieldState<Customer>>(),
+                  controller:
+                      TextEditingController(text: _customer?.fullCompany ?? _customer?.fullName ?? ''),
+                  itemSubmitted: (Customer c) {
+                    setState(() {
+                      draft.customer = c.id;
+                      _customer = c;
+                    });
+                    dirty = true;
+                    validateDropdowns();
+                  },
+                  suggestions: _customers,
+                  itemBuilder: (BuildContext context, Customer c) => ListTile(
+                    title: Text((c.company != null) ? c.company : '${c.name} ${c.surname}'),
+                    subtitle: (c.company != null) ? Text('${c.name} ${c.surname}') : null,
+                  ),
+                  itemSorter: (Customer a, Customer b) => a.id - b.id,
+                  itemFilter: (Customer c, String filter) {
+                    if (filter == null || filter.isEmpty) return true;
+                    filter = filter.toLowerCase();
+                    return (c.fullName ?? '').toLowerCase().contains(filter) ||
+                        (c.company ?? '').toLowerCase().contains(filter);
+                  },
+                ),
+              ),
+              /*ListTile(
+                title: Text('Kunde', style: Theme.of(context).textTheme.headline6),
+                trailing: (customerIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
                 subtitle: DropdownButton<int>(
                   hint: Text('Kunden auswählen'),
                   isExpanded: true,
@@ -106,7 +137,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                         .toList()
                   ],
                 ),
-              ),
+              ),*/
               ListTile(
                 title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
                 trailing: (vendorIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
@@ -261,6 +292,9 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
     if (vendorIsset) {
       _vendor = await vendorRepo.selectSingle(draft.vendor);
     }
+    if (customerIsset) {
+      _customer = await customerRepo.selectSingle(draft.customer);
+    }
 
     setState(() => _customers);
   }
@@ -348,7 +382,9 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
 
       draft.editor = editor;
 
-      if (_vendor.defaultComment != null && _vendor.defaultComment.isNotEmpty && (draft.comment?.isEmpty ?? true)) {
+      if (_vendor.defaultComment != null &&
+          _vendor.defaultComment.isNotEmpty &&
+          (draft.comment?.isEmpty ?? true)) {
         draft.comment = _vendor.defaultComment;
       }
 
