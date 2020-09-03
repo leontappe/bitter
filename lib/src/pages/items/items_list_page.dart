@@ -79,7 +79,7 @@ class _BillsListPageState extends State<ItemsListPage> {
       body: RefreshIndicator(
         child: ListView(
           children: <Widget>[
-            ...items.reversed.map(
+            ...items.map(
               (Item i) => ListTile(
                 leading: Text(vendors.singleWhere((Vendor v) => v.id == i.vendor).billPrefix +
                     '\nA' +
@@ -145,8 +145,13 @@ class _BillsListPageState extends State<ItemsListPage> {
         }
       }
     }
+    _sortItems();
     setState(() => items);
     return;
+  }
+
+  void _sortItems() {
+    items.sort((Item a, Item b) => a.title.compareTo(b.title));
   }
 
   Future<void> onPushItemPage({Item item}) async {

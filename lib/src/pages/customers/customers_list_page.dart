@@ -62,7 +62,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
           semanticChildCount: customers.length,
           children: <Widget>[
             ...List.from(
-              customers.reversed.map<ListTile>((Customer c) => ListTile(
+              customers.map<ListTile>((Customer c) => ListTile(
                     title: Text((c.company == null || c.company.isEmpty)
                         ? '${c.name} ${c.surname}'
                         : '${c.company} ${c.organizationUnit ?? ''}'),
@@ -91,9 +91,15 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
 
   Future<void> onGetCustomers() async {
     customers = await repo.select();
+    _sortCustomers();
     setState(() {
       return customers;
     });
+  }
+
+  void _sortCustomers() {
+    customers
+        .sort((Customer a, Customer b) => (a.company ?? a.name).compareTo(b.company ?? b.name));
   }
 
   Future<void> onPushCustomerPage(BuildContext context, int id) async {
@@ -116,6 +122,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
 
   Future<void> onSearchChanged(String value) async {
     customers = await repo.select(searchQuery: value);
+    _sortCustomers();
     setState(() {
       return customers;
     });
