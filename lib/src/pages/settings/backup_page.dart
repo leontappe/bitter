@@ -112,13 +112,13 @@ class _BackupPageState extends State<BackupPage> {
                       onPressed: onOpenArchiveChooser,
                       child: Text('Archiv zur Wiederherstellung wählen')),
                   if (archivePath != null) Text(' Aktuelle Auswahl: $archivePath'),
-                  Divider(),
+                  Divider(height: 16.0),
                   CheckboxListTile(
                     title: Text('Vorhandene Daten vor dem Wiederherstellen löschen?'),
                     value: overwriteRestore,
                     onChanged: (bool input) => setState(() => overwriteRestore = input),
                   ),
-                  Divider(),
+                  Divider(height: 16.0),
                   Text('Datensätze zur Wiederherstellung wählen',
                       style: Theme.of(context).textTheme.headline6),
                   CheckboxListTile(
@@ -271,25 +271,35 @@ class _BackupPageState extends State<BackupPage> {
 
     const csvConverter = ListToCsvConverter();
 
-    final billCsv = <List<dynamic>>[bills.first.toMap.keys.toList()];
-    billCsv.addAll(bills.map<List<dynamic>>((e) => e.toMap.values.toList()));
-    await File('${csvDir.path}/bills.csv').writeAsString(csvConverter.convert(billCsv));
+    if (bills.isNotEmpty) {
+      final billCsv = <List<dynamic>>[bills.first.toMap.keys.toList()];
+      billCsv.addAll(bills.map<List<dynamic>>((e) => e.toMap.values.toList()));
+      await File('${csvDir.path}/bills.csv').writeAsString(csvConverter.convert(billCsv));
+    }
 
-    final customerCsv = <List<dynamic>>[customers.first.toMap.keys.toList()];
-    customerCsv.addAll(customers.map<List<dynamic>>((e) => e.toMap.values.toList()));
-    await File('${csvDir.path}/customers.csv').writeAsString(csvConverter.convert(customerCsv));
+    if (customers.isNotEmpty) {
+      final customerCsv = <List<dynamic>>[customers.first.toMap.keys.toList()];
+      customerCsv.addAll(customers.map<List<dynamic>>((e) => e.toMap.values.toList()));
+      await File('${csvDir.path}/customers.csv').writeAsString(csvConverter.convert(customerCsv));
+    }
 
-    final draftCsv = <List<dynamic>>[drafts.first.toMap.keys.toList()];
-    draftCsv.addAll(drafts.map<List<dynamic>>((e) => e.toMap.values.toList()));
-    await File('${csvDir.path}/drafts.csv').writeAsString(csvConverter.convert(draftCsv));
+    if (drafts.isNotEmpty) {
+      final draftCsv = <List<dynamic>>[drafts.first.toMap.keys.toList()];
+      draftCsv.addAll(drafts.map<List<dynamic>>((e) => e.toMap.values.toList()));
+      await File('${csvDir.path}/drafts.csv').writeAsString(csvConverter.convert(draftCsv));
+    }
 
-    final itemCsv = <List<dynamic>>[items.first.toMap.keys.toList()];
-    itemCsv.addAll(items.map<List<dynamic>>((e) => e.toMap.values.toList()));
-    await File('${csvDir.path}/items.csv').writeAsString(csvConverter.convert(itemCsv));
+    if (items.isNotEmpty) {
+      final itemCsv = <List<dynamic>>[items.first.toMap.keys.toList()];
+      itemCsv.addAll(items.map<List<dynamic>>((e) => e.toMap.values.toList()));
+      await File('${csvDir.path}/items.csv').writeAsString(csvConverter.convert(itemCsv));
+    }
 
-    final vendorCsv = <List<dynamic>>[vendors.first.toMap.keys.toList()];
-    vendorCsv.addAll(vendors.map<List<dynamic>>((e) => e.toMap.values.toList()));
-    await File('${csvDir.path}/vendors.csv').writeAsString(csvConverter.convert(vendorCsv));
+    if (vendors.isNotEmpty) {
+      final vendorCsv = <List<dynamic>>[vendors.first.toMap.keys.toList()];
+      vendorCsv.addAll(vendors.map<List<dynamic>>((e) => e.toMap.values.toList()));
+      await File('${csvDir.path}/vendors.csv').writeAsString(csvConverter.convert(vendorCsv));
+    }
 
     // write a zip file with collected data
     final encoder = ZipFileEncoder();
