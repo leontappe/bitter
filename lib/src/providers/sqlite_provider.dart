@@ -46,7 +46,7 @@ class SqliteProvider extends DatabaseProvider {
 
   @override
   Future<void> dropTable(String table) {
-    return conn.execute('DROP TABLE ?;', <dynamic>[table]);
+    return conn.execute('DROP TABLE $table;');
   }
 
   @override
