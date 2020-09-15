@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:archive/archive_io.dart';
 import 'package:bitter/src/providers/database_provider.dart';
@@ -344,5 +346,96 @@ class _BackupPageState extends State<BackupPage> {
     setState(() => restores.add(Operation(DateTime.now())));
 
     // TODO: load and unzip file, then parse objects for all selected tables and insert them via corresponding repos
+
+    final db = InheritedDatabase.of<DatabaseProvider>(context).provider;
+    final converter = CsvToListConverter();
+
+    final byteContent = await File(archivePath).readAsBytes();
+    final archive = ZipDecoder().decodeBytes(byteContent);
+
+    archive.forEach((ArchiveFile file) async {
+      if (recoveryChoice.customers && file.name.contains('customers')) {
+        if (overwriteRestore) {
+          await customerRepo.setUp();
+          await db.dropTable('customers');
+          await customerRepo.setUp();
+        }
+        final csvList = converter.convert(utf8.decode(file.content as Uint8List));
+        final headers = csvList.first.map<String>((dynamic e) => e.toString());
+        var mappedList = <Map<String, dynamic>>[];
+        for (var i = 1; i < csvList.length; i++) {
+          final map = Map<String, dynamic>.fromIterables(headers, csvList[i]);
+          map.removeWhere((String key, dynamic value) => (value == null || value == 'null'));
+          mappedList.add(map);
+        }
+        final customers = mappedList.map((Map e) => Customer.fromMap(e));
+        customers.forEach((Customer c) => customerRepo.insert(c));
+      } else if (recoveryChoice.vendors && file.name.contains('vendors')) {
+        if (overwriteRestore) {
+          await vendorRepo.setUp();
+          await db.dropTable('vendors');
+          await vendorRepo.setUp();
+        }
+        final csvList = converter.convert(utf8.decode(file.content as Uint8List));
+        final headers = csvList.first.map<String>((dynamic e) => e.toString());
+        var mappedList = <Map<String, dynamic>>[];
+        for (var i = 1; i < csvList.length; i++) {
+          final map = Map<String, dynamic>.fromIterables(headers, csvList[i]);
+          map.removeWhere((String key, dynamic value) => (value == null || value == 'null'));
+          mappedList.add(map);
+        }
+        final vendors = mappedList.map((Map e) => Vendor.fromMap(e));
+        vendors.forEach((Vendor v) => vendorRepo.insert(v));
+      } else if (recoveryChoice.items && file.name.contains('items')) {
+        if (overwriteRestore) {
+          await itemRepo.setUp();
+          await db.dropTable('items');
+          await itemRepo.setUp();
+        }
+        final csvList = converter.convert(utf8.decode(file.content as Uint8List));
+        final headers = csvList.first.map<String>((dynamic e) => e.toString());
+        var mappedList = <Map<String, dynamic>>[];
+        for (var i = 1; i < csvList.length; i++) {
+          final map = Map<String, dynamic>.fromIterables(headers, csvList[i]);
+          map.removeWhere((String key, dynamic value) => (value == null || value == 'null'));
+          mappedList.add(map);
+        }
+        final items = mappedList.map((Map e) => Item.fromDbMap(e));
+        items.forEach((Item i) => itemRepo.insert(i));
+      } else if (recoveryChoice.drafts && file.name.contains('drafts')) {
+        if (overwriteRestore) {
+          await draftRepo.setUp();
+          await db.dropTable('drafts');
+          await draftRepo.setUp();
+        }
+        final csvList = converter.convert(utf8.decode(file.content as Uint8List));
+        final headers = csvList.first.map<String>((dynamic e) => e.toString());
+        var mappedList = <Map<String, dynamic>>[];
+        for (var i = 1; i < csvList.length; i++) {
+          final map = Map<String, dynamic>.fromIterables(headers, csvList[i]);
+          map.removeWhere((String key, dynamic value) => (value == null || value == 'null'));
+          mappedList.add(map);
+        }
+        final drafts = mappedList.map((Map e) => Draft.fromMap(e));
+        drafts.forEach((Draft d) => draftRepo.insert(d));
+      } else if (recoveryChoice.bills && file.name.contains('bills')) {
+        if (overwriteRestore) {
+          await billRepo.setUp();
+          await db.dropTable('bills');
+          await billRepo.setUp();
+        }
+        final csvList = converter.convert(utf8.decode(file.content as Uint8List));
+        final headers = csvList.first.map<String>((dynamic e) => e.toString());
+        var mappedList = <Map<String, dynamic>>[];
+        for (var i = 1; i < csvList.length; i++) {
+          final map = Map<String, dynamic>.fromIterables(headers, csvList[i]);
+          map.removeWhere((String key, dynamic value) => (value == null || value == 'null'));
+          mappedList.add(map);
+        }
+        final bills = mappedList.map((Map e) => Bill.fromMap(e));
+        bills.forEach((Bill b) => billRepo.insert(b));
+      }
+    });
+    setState(() => restores.first.finish(result: 'Wiederherstellung abgeschlossen'));
   }
 }
