@@ -42,15 +42,62 @@ class Operation {
 }
 
 class RecoveryChoice {
-  bool bills = false;
-  bool customers = false;
-  bool drafts = false;
-  bool items = false;
-  bool vendors = false;
+  bool _all = false;
+  bool _bills = false;
+  bool _customers = false;
+  bool _drafts = false;
+  bool _items = false;
+  bool _vendors = false;
 
   RecoveryChoice();
 
-  bool get isset => bills || customers || drafts || items || vendors;
+  bool get all => _all;
+  set all(bool a) {
+    _bills = a;
+    _customers = a;
+    _drafts = a;
+    _items = a;
+    _vendors = a;
+    _all = a;
+  }
+
+  bool get bills => _bills;
+  set bills(bool a) {
+    if (!a) _all = false;
+    _bills = a;
+    if (everything) _all = true;
+  }
+
+  bool get customers => _customers;
+  set customers(bool a) {
+    if (!a) _all = false;
+    _customers = a;
+    if (everything) _all = true;
+  }
+
+  bool get drafts => _drafts;
+  set drafts(bool a) {
+    if (!a) _all = false;
+    _drafts = a;
+    if (everything) _all = true;
+  }
+
+  bool get everything => _bills && _customers && _drafts && _items && _vendors;
+  bool get isset => _bills || _customers || _drafts || _items || _vendors;
+
+  bool get items => _items;
+  set items(bool a) {
+    if (!a) _all = false;
+    _items = a;
+    if (everything) _all = true;
+  }
+
+  bool get vendors => _vendors;
+  set vendors(bool a) {
+    if (!a) _all = false;
+    _vendors = a;
+    if (everything) _all = true;
+  }
 }
 
 class _BackupPageState extends State<BackupPage> {
@@ -123,6 +170,11 @@ class _BackupPageState extends State<BackupPage> {
                   Divider(height: 16.0),
                   Text('Datensätze zur Wiederherstellung wählen',
                       style: Theme.of(context).textTheme.headline6),
+                  CheckboxListTile(
+                    value: recoveryChoice.all,
+                    onChanged: (bool input) => setState(() => recoveryChoice.all = input),
+                    title: Text('Alle'),
+                  ),
                   CheckboxListTile(
                     value: recoveryChoice.bills,
                     onChanged: (bool input) => setState(() => recoveryChoice.bills = input),
