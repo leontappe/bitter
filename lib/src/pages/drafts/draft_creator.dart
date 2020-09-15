@@ -74,7 +74,9 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
               id: draft.id,
               onCompleted: (bool changed, bool redirect) => redirect
                   ? Navigator.popAndPushNamed(context, '/bills', result: changed)
-                  : changed ? Navigator.pop(context, changed) : null,
+                  : changed
+                      ? Navigator.pop(context, changed)
+                      : null,
             )
         ],
       ),
@@ -89,8 +91,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                 trailing: (customerIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
                 subtitle: AutoCompleteTextField<Customer>(
                   key: GlobalKey<AutoCompleteTextFieldState<Customer>>(),
-                  controller:
-                      TextEditingController(text: _customer?.fullCompany ?? _customer?.fullName ?? ''),
+                  controller: TextEditingController(
+                      text: _customer?.fullCompany ?? _customer?.fullName ?? ''),
                   itemSubmitted: (Customer c) {
                     setState(() {
                       draft.customer = c.id;
@@ -290,10 +292,22 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
     editor = await settingsRepo.getUsername();
     _customers = await customerRepo.select();
     if (vendorIsset) {
-      _vendor = await vendorRepo.selectSingle(draft.vendor);
+      try {
+        _vendor = await vendorRepo.selectSingle(draft.vendor);
+      } catch (e) {
+        print(e);
+        setState(() => draft.vendor = null);
+        await onSaveDraft();
+      }
     }
     if (customerIsset) {
-      _customer = await customerRepo.selectSingle(draft.customer);
+      try {
+        _customer = await customerRepo.selectSingle(draft.customer);
+      } catch (e) {
+        print(e);
+        setState(() => draft.customer = null);
+        await onSaveDraft();
+      }
     }
 
     setState(() => _customers);

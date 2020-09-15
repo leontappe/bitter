@@ -155,7 +155,11 @@ class _DraftsListPageState extends State<DraftsListPage> {
     if (filterVendor == null) {
       for (var draft in drafts) {
         if (filterVendors.where((Vendor v) => v.id == draft.vendor).isEmpty) {
-          filterVendors.add(await vendorRepo.selectSingle(draft.vendor));
+          try {
+            filterVendors.add(await vendorRepo.selectSingle(draft.vendor));
+          } catch (e) {
+            print(e);
+          }
         }
       }
     }

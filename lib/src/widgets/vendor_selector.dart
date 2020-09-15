@@ -58,10 +58,15 @@ class _VendorSelectorState extends State<VendorSelector> {
 
     await repo.setUp();
 
-    if (widget.initialValue != null) {
-      _vendor = await repo.selectSingle(widget.initialValue);
-    }
     _vendors = await repo.select();
+
+    if (widget.initialValue != null) {
+      try {
+        _vendor = await repo.selectSingle(widget.initialValue);
+      } catch (e) {
+        print(e);
+      }
+    }
 
     setState(() => _vendors);
   }
