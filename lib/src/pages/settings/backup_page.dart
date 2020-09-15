@@ -17,6 +17,11 @@ import '../../repositories/draft_repository.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/vendor_repository.dart';
 
+class BackupPage extends StatefulWidget {
+  @override
+  _BackupPageState createState() => _BackupPageState();
+}
+
 class Operation {
   final DateTime started;
   DateTime finished;
@@ -26,14 +31,14 @@ class Operation {
 
   Operation(this.started);
 
-  @override
-  String toString() => '[Operation - started:$started. finished:$finished, success:$success]';
-
   void finish({bool success = true, String result}) {
     this.result = result;
     finished = DateTime.now();
     this.success = success;
   }
+
+  @override
+  String toString() => '[Operation - started:$started. finished:$finished, success:$success]';
 }
 
 class RecoveryChoice {
@@ -46,11 +51,6 @@ class RecoveryChoice {
   RecoveryChoice();
 
   bool get isset => bills || customers || drafts || items || vendors;
-}
-
-class BackupPage extends StatefulWidget {
-  @override
-  _BackupPageState createState() => _BackupPageState();
 }
 
 class _BackupPageState extends State<BackupPage> {
@@ -348,7 +348,6 @@ class _BackupPageState extends State<BackupPage> {
     // TODO: load and unzip file, then parse objects for all selected tables and insert them via corresponding repos
 
     final db = InheritedDatabase.of<DatabaseProvider>(context).provider;
-    final converter = CsvToListConverter();
 
     final byteContent = await File(archivePath).readAsBytes();
     final archive = ZipDecoder().decodeBytes(byteContent);
@@ -360,82 +359,60 @@ class _BackupPageState extends State<BackupPage> {
           await db.dropTable('customers');
           await customerRepo.setUp();
         }
-        final csvList = converter.convert(utf8.decode(file.content as Uint8List));
-        final headers = csvList.first.map<String>((dynamic e) => e.toString());
-        var mappedList = <Map<String, dynamic>>[];
-        for (var i = 1; i < csvList.length; i++) {
-          final map = Map<String, dynamic>.fromIterables(headers, csvList[i]);
-          map.removeWhere((String key, dynamic value) => (value == null || value == 'null'));
-          mappedList.add(map);
-        }
-        final customers = mappedList.map((Map e) => Customer.fromMap(e));
-        customers.forEach((Customer c) => customerRepo.insert(c));
+        _mapFileContent(file.content as Uint8List)
+            .map((Map e) => Customer.fromMap(e))
+            .forEach((Customer c) => customerRepo.insert(c));
       } else if (recoveryChoice.vendors && file.name.contains('vendors')) {
         if (overwriteRestore) {
           await vendorRepo.setUp();
           await db.dropTable('vendors');
           await vendorRepo.setUp();
         }
-        final csvList = converter.convert(utf8.decode(file.content as Uint8List));
-        final headers = csvList.first.map<String>((dynamic e) => e.toString());
-        var mappedList = <Map<String, dynamic>>[];
-        for (var i = 1; i < csvList.length; i++) {
-          final map = Map<String, dynamic>.fromIterables(headers, csvList[i]);
-          map.removeWhere((String key, dynamic value) => (value == null || value == 'null'));
-          mappedList.add(map);
-        }
-        final vendors = mappedList.map((Map e) => Vendor.fromMap(e));
-        vendors.forEach((Vendor v) => vendorRepo.insert(v));
+        _mapFileContent(file.content as Uint8List)
+            .map((Map e) => Vendor.fromMap(e))
+            .forEach((Vendor v) => vendorRepo.insert(v));
       } else if (recoveryChoice.items && file.name.contains('items')) {
         if (overwriteRestore) {
           await itemRepo.setUp();
           await db.dropTable('items');
           await itemRepo.setUp();
         }
-        final csvList = converter.convert(utf8.decode(file.content as Uint8List));
-        final headers = csvList.first.map<String>((dynamic e) => e.toString());
-        var mappedList = <Map<String, dynamic>>[];
-        for (var i = 1; i < csvList.length; i++) {
-          final map = Map<String, dynamic>.fromIterables(headers, csvList[i]);
-          map.removeWhere((String key, dynamic value) => (value == null || value == 'null'));
-          mappedList.add(map);
-        }
-        final items = mappedList.map((Map e) => Item.fromDbMap(e));
-        items.forEach((Item i) => itemRepo.insert(i));
+        _mapFileContent(file.content as Uint8List)
+            .map((Map e) => Item.fromDbMap(e))
+            .forEach((Item i) => itemRepo.insert(i));
       } else if (recoveryChoice.drafts && file.name.contains('drafts')) {
         if (overwriteRestore) {
           await draftRepo.setUp();
           await db.dropTable('drafts');
           await draftRepo.setUp();
         }
-        final csvList = converter.convert(utf8.decode(file.content as Uint8List));
-        final headers = csvList.first.map<String>((dynamic e) => e.toString());
-        var mappedList = <Map<String, dynamic>>[];
-        for (var i = 1; i < csvList.length; i++) {
-          final map = Map<String, dynamic>.fromIterables(headers, csvList[i]);
-          map.removeWhere((String key, dynamic value) => (value == null || value == 'null'));
-          mappedList.add(map);
-        }
-        final drafts = mappedList.map((Map e) => Draft.fromMap(e));
-        drafts.forEach((Draft d) => draftRepo.insert(d));
+        _mapFileContent(file.content as Uint8List)
+            .map((Map e) => Draft.fromMap(e))
+            .forEach((Draft d) => draftRepo.insert(d));
       } else if (recoveryChoice.bills && file.name.contains('bills')) {
         if (overwriteRestore) {
           await billRepo.setUp();
           await db.dropTable('bills');
           await billRepo.setUp();
         }
-        final csvList = converter.convert(utf8.decode(file.content as Uint8List));
-        final headers = csvList.first.map<String>((dynamic e) => e.toString());
-        var mappedList = <Map<String, dynamic>>[];
-        for (var i = 1; i < csvList.length; i++) {
-          final map = Map<String, dynamic>.fromIterables(headers, csvList[i]);
-          map.removeWhere((String key, dynamic value) => (value == null || value == 'null'));
-          mappedList.add(map);
-        }
-        final bills = mappedList.map((Map e) => Bill.fromMap(e));
-        bills.forEach((Bill b) => billRepo.insert(b));
+        _mapFileContent(file.content as Uint8List)
+            .map((Map e) => Bill.fromMap(e))
+            .forEach((Bill b) => billRepo.insert(b));
       }
     });
     setState(() => restores.first.finish(result: 'Wiederherstellung abgeschlossen'));
+  }
+
+  List<Map<String, dynamic>> _mapFileContent(Uint8List file) {
+    final converter = CsvToListConverter();
+    final csvList = converter.convert(utf8.decode(file));
+    final headers = csvList.first.map<String>((dynamic e) => e.toString());
+    final mappedList = <Map<String, dynamic>>[];
+    for (var i = 1; i < csvList.length; i++) {
+      final map = Map<String, dynamic>.fromIterables(headers, csvList[i]);
+      map.removeWhere((String key, dynamic value) => (value == null || value == 'null'));
+      mappedList.add(map);
+    }
+    return mappedList;
   }
 }
