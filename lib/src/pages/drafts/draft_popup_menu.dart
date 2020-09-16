@@ -2,13 +2,13 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
-import '../../providers/inherited_database.dart';
+import '../../pdf/pdf_generator.dart';
 import '../../providers/database_provider.dart';
+import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
 import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
 import '../../repositories/vendor_repository.dart';
-import 'pdf_generator.dart';
 
 class DraftPopupMenu extends StatefulWidget {
   final int id;
