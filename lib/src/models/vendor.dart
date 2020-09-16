@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bitter/src/models/reminder.dart';
 import 'package:meta/meta.dart';
 
 enum HeaderImage {
@@ -31,6 +32,10 @@ class Vendor {
   int defaultTax;
   String defaultComment;
 
+  int reminderFee;
+  int reminderDeadline;
+  Map<ReminderIteration, String> reminderTexts;
+
   List<int> headerImageRight;
   List<int> headerImageCenter;
   List<int> headerImageLeft;
@@ -57,6 +62,9 @@ class Vendor {
     this.defaultDueDays,
     this.defaultTax,
     this.defaultComment,
+    this.reminderFee,
+    this.reminderDeadline,
+    this.reminderTexts = const <ReminderIteration, String>{},
     this.headerImageRight,
     this.headerImageCenter,
     this.headerImageLeft,
@@ -75,6 +83,8 @@ class Vendor {
         billPrefix: null,
         defaultDueDays: 14,
         defaultTax: 19,
+        reminderFee: 0,
+        reminderDeadline: 14,
         email: null,
       );
 
@@ -98,6 +108,29 @@ class Vendor {
         defaultDueDays: map['default_due_days'] as int,
         defaultTax: map['default_tax'] as int,
         defaultComment: map['default_comment']?.toString(),
+        reminderFee: map['reminder_fee'] as int,
+        reminderDeadline: map['reminder_deadline'] as int,
+        reminderTexts: (map['reminder_texts'] != null)
+            ? (json.decode(map['reminder_texts'] as String) as Map)
+                .map<ReminderIteration, String>((dynamic key, dynamic value) {
+                ReminderIteration iter;
+                switch (key as int) {
+                  case 0:
+                    iter = ReminderIteration.first;
+                    break;
+                  case 1:
+                    iter = ReminderIteration.second;
+                    break;
+                  case 2:
+                    iter = ReminderIteration.third;
+                    break;
+                  default:
+                    print('unknown reminder iteration');
+                }
+                if (iter == null) return null;
+                return MapEntry(iter, value as String);
+              })
+            : null,
         headerImageRight: (map['header_image_right'] != null)
             ? base64.decode(map['header_image_right'].toString())
             : null,
@@ -147,6 +180,9 @@ class Vendor {
         'default_due_days': defaultDueDays,
         'default_tax': defaultTax,
         'default_comment': defaultComment,
+        'reminder_fee': reminderFee,
+        'reminder_deadline': reminderDeadline,
+        'reminder_texts': json.encode(reminderTexts),
       };
 
   @override

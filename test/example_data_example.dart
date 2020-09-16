@@ -2,6 +2,7 @@ import 'package:bitter/src/models/bill.dart';
 import 'package:bitter/src/models/customer.dart';
 import 'package:bitter/src/models/draft.dart';
 import 'package:bitter/src/models/item.dart';
+import 'package:bitter/src/models/reminder.dart';
 import 'package:bitter/src/models/vendor.dart';
 
 Bill exampleBill = Bill(
@@ -43,6 +44,16 @@ Draft exampleDraft = Draft(
   dueDays: 14,
 );
 
+Reminder exampleReminder = Reminder(
+    iteration: ReminderIteration.first,
+    deadline: DateTime.now().add(Duration(days: exampleVendor.reminderDeadline)),
+    fee: 10,
+    text: '''Der Doktor, würdig wie er war, nimmt in Empfang sein Honorar.
+So stellte Wilhelm Busch einst dar, wie würdig dieser Doktor war.
+Wir wollen auch so taktvoll sein und nicht nach unserem Gelde schrein.
+Drum bitten wir Sie sehr diskret, nun zu bezahlen, WENN es GEHT.
+''');
+
 Vendor exampleVendor = Vendor(
   name: 'My Company',
   address: 'Example Road 3',
@@ -58,4 +69,5 @@ Vendor exampleVendor = Vendor(
   billPrefix: 'R',
   email: 'info@example.com',
   defaultDueDays: 14,
+  reminderDeadline: 14,
 );
