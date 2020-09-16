@@ -8,6 +8,7 @@ import '../models/customer.dart';
 import '../models/draft.dart';
 import '../models/item.dart';
 import '../models/vendor.dart';
+import '../util.dart';
 import 'common_methods.dart';
 import 'common_widgets.dart';
 
@@ -25,7 +26,7 @@ class PdfGenerator {
 
     final ttfSans = getTtfSans();
     final ttfSansBold = getTtfSansBold();
-    
+
     final fontsize = 10.0;
     final doc = Document();
     final items = bill.items;

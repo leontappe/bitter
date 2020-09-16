@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:intl/intl.dart';
 import 'package:pdf/widgets.dart';
 
 import '../../fonts/LiberationSans.dart';
@@ -15,10 +14,6 @@ int calculateTaxes(List<Item> items, int tax) {
         .round();
   }
   return tax;
-}
-
-String formatDate(DateTime date) {
-  return DateFormat('dd.MM.yyyy', 'de_DE').format(date);
 }
 
 Font getTtfSans() {
