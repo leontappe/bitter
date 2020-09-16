@@ -13,7 +13,7 @@ void main() async {
 
   doc = await pdf.createDocumentFromBill(
     'RE1',
-    exampleBill,
+    exampleDraft,
     exampleCustomer,
     exampleVendor,
     rightHeader: logo.readAsBytesSync(),
