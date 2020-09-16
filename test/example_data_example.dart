@@ -57,4 +57,5 @@ Vendor exampleVendor = Vendor(
   fullAddress: 'My Company Example Road 3 12345 Town',
   billPrefix: 'R',
   email: 'info@example.com',
+  defaultDueDays: 14,
 );
