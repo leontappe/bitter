@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
-import 'package:bitter/src/repositories/item_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,6 +11,7 @@ import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
+import '../../repositories/item_repository.dart';
 import '../../repositories/settings_repository.dart';
 import '../../repositories/vendor_repository.dart';
 import '../../widgets/vendor_selector.dart';

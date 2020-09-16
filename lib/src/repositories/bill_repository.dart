@@ -74,7 +74,8 @@ class BillRepository<T extends DatabaseProvider> {
         'created',
         'service_date',
         'due_date',
-        'note'
+        'note',
+        'reminders',
       ],
       [
         'INTEGER',
@@ -91,7 +92,8 @@ class BillRepository<T extends DatabaseProvider> {
         'TEXT',
         'TEXT',
         'TEXT',
-        'TEXT'
+        'TEXT',
+        'TEXT',
       ],
       'id',
       nullable: <bool>[
@@ -109,7 +111,8 @@ class BillRepository<T extends DatabaseProvider> {
         false,
         false,
         false,
-        true
+        true,
+        true,
       ],
     );
   }

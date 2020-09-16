@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 
 import 'customer.dart';
 import 'item.dart';
+import 'reminder.dart';
 import 'vendor.dart';
 
 class Bill {
@@ -27,6 +28,8 @@ class Bill {
   BillStatus status;
   String note;
 
+  List<Reminder> reminders;
+
   Bill({
     this.id,
     this.status = BillStatus.unpaid,
@@ -43,6 +46,7 @@ class Bill {
     @required this.serviceDate,
     @required this.dueDate,
     this.note,
+    this.reminders = const <Reminder>[],
   });
 
   factory Bill.empty() => Bill(
@@ -75,6 +79,10 @@ class Bill {
         serviceDate: DateTime.parse(map['service_date'].toString()).toLocal(),
         dueDate: DateTime.parse(map['due_date'].toString()).toLocal(),
         note: (map['note'] != null) ? map['note'].toString() : null,
+        reminders: (map['reminders'] != null)
+            ? List.from((json.decode(map['reminders'] as String) as List)
+                .map<Reminder>((dynamic map) => Reminder.fromMap(map as Map)))
+            : <Reminder>[],
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
@@ -96,6 +104,7 @@ class Bill {
         'service_date': serviceDate.toUtc().toString(),
         'due_date': dueDate.toUtc().toString(),
         if (note != null) 'note': note,
+        'reminders': json.encode(reminders.map((e) => e.toMap).toList())
       };
 
   @override

@@ -1,9 +1,17 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:bitter/src/models/reminder.dart';
+import 'package:bitter/src/pdf/reminder_generator.dart';
+import 'package:bitter/src/repositories/vendor_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../models/bill.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
+import '../../util.dart';
 import '../../widgets/customer_card.dart';
 import '../../widgets/items_card.dart';
 import '../../widgets/vendor_card.dart';
@@ -21,8 +29,11 @@ class BillPage extends StatefulWidget {
 class _BillPageState extends State<BillPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   BillRepository repo;
+  VendorRepository<DatabaseProvider> vendorRepo;
 
   Bill bill;
+
+  Vendor vendor;
 
   bool dirty = false;
 
@@ -89,6 +100,44 @@ class _BillPageState extends State<BillPage> {
                       ],
                     ),
                   ),
+                  if (bill.reminders != null && bill.reminders.isNotEmpty)
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: bill.reminders
+                          .map<Widget>((Reminder r) => Flexible(
+                              child: Card(
+                                  clipBehavior: Clip.antiAlias,
+                                  margin: EdgeInsets.all(8.0),
+                                  child: InkWell(
+                                    onTap: () => _onGenerateReminder(r, skipSaving: true),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text('${r.iteration.index + 1}. Mahnung',
+                                              style: Theme.of(context).textTheme.headline5),
+                                          Text('Frist: ${formatDate(r.deadline)}'),
+                                          Text('Mahngebühr: ${r.fee.toStringAsFixed(2)}€'),
+                                        ],
+                                      ),
+                                    ),
+                                  ))))
+                          .toList(),
+                    ),
+                  if (((bill?.status ?? BillStatus.unpaid) == BillStatus.unpaid &&
+                          DateTime.now().isAfter(bill.dueDate)) &&
+                      bill.reminders.length < 3)
+                    ListTile(
+                        title: RaisedButton(
+                      child: Text(
+                          '${(bill.reminders.isNotEmpty) ? bill.reminders.last.iteration.index + 2 : '1'}. Mahnung erstellen'),
+                      onPressed: () => _onShowReminderDialog(iterationFromInt(
+                          (bill.reminders.isNotEmpty)
+                              ? bill.reminders.last.iteration.index + 1
+                              : 0)),
+                    )),
                   Padding(
                     padding: EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 8.0),
                     child: TextFormField(
@@ -127,8 +176,12 @@ class _BillPageState extends State<BillPage> {
 
   Future<void> initDb() async {
     repo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+
+    await vendorRepo.setUp();
 
     bill = await repo.selectSingle(widget.id);
+    vendor = await vendorRepo.selectSingle(bill.vendor.id);
 
     setState(() => bill);
   }
@@ -179,5 +232,84 @@ class _BillPageState extends State<BillPage> {
       return true;
     }
     return false;
+  }
+
+  void _onShowReminderDialog(ReminderIteration iteration) async {
+    final reminder = Reminder(
+      iteration: iteration,
+      text: vendor.reminderTexts[iteration],
+      fee: vendor.reminderFee,
+      deadline: DateTime.now().add(Duration(days: vendor.reminderDeadline)),
+    );
+
+    final result = await showDialog<Reminder>(
+      context: context,
+      builder: (BuildContext context) => SimpleDialog(
+        contentPadding: EdgeInsets.all(16.0),
+        title: Text('${iteration.index + 1}. Mahnung erstellen'),
+        children: [
+          TextFormField(
+            decoration: InputDecoration(labelText: 'Mahngebühr', suffixText: '€'),
+            keyboardType: TextInputType.number,
+            initialValue: reminder.fee.toString(),
+            onChanged: (String input) => reminder.fee = int.parse(input),
+          ),
+          TextFormField(
+            decoration: InputDecoration(labelText: 'Frist', suffixText: 'Tage'),
+            keyboardType: TextInputType.number,
+            initialValue: vendor.reminderDeadline.toString(),
+            onChanged: (String input) =>
+                reminder.deadline = DateTime.now().add(Duration(days: int.parse(input))),
+          ),
+          TextFormField(
+            keyboardType: TextInputType.multiline,
+            decoration: InputDecoration(labelText: 'Mahnungstext'),
+            maxLines: 3,
+            initialValue: reminder.text,
+            onChanged: (String input) => reminder.text = input,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              MaterialButton(
+                  onPressed: () => Navigator.of(context).pop(null), child: Text('Abbrechen')),
+              MaterialButton(
+                  onPressed: () => Navigator.of(context).pop(reminder),
+                  child: Text('Mahnung erstellen')),
+            ],
+          )
+        ],
+      ),
+    );
+    if (result == null) return;
+    _onGenerateReminder(result);
+  }
+
+  void _onGenerateReminder(Reminder reminder, {bool skipSaving = false}) async {
+    if (!skipSaving) {
+      setState(() => bill.reminders.add(reminder));
+      dirty = true;
+    }
+
+    final pdfData = await ReminderGenerator().getBytesFromBill(
+      bill,
+      await vendorRepo.selectSingle(bill.vendor.id),
+      reminder,
+      leftHeader: bill.vendor.headerImageLeft as Uint8List,
+      centerHeader: bill.vendor.headerImageCenter as Uint8List,
+      rightHeader: bill.vendor.headerImageRight as Uint8List,
+    );
+
+    String downloadsPath;
+    if (Platform.isWindows) {
+      downloadsPath = (await getApplicationDocumentsDirectory()).path;
+    } else {
+      downloadsPath = (await getDownloadsDirectory()).path;
+    }
+    final file =
+        File('${downloadsPath}/bitter/Mahnung${reminder.iteration.index + 1}_${bill.billNr}.pdf');
+    await file.create(recursive: true);
+    await file.writeAsBytes(pdfData);
   }
 }

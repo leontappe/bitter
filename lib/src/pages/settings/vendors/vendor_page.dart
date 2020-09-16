@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:bitter/src/models/reminder.dart';
 import 'package:file_chooser/file_chooser.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -273,10 +274,9 @@ class _VendorPageState extends State<VendorPage> {
                       },
                     ),
                     TextFormField(
+                      maxLines: 3,
                       initialValue: newVendor.defaultComment,
-                      maxLines: 1,
-                      decoration: InputDecoration(
-                          labelText: 'Standard Rechnungskommentar'),
+                      decoration: InputDecoration(labelText: 'Standard Rechnungskommentar'),
                       onChanged: (String input) {
                         newVendor.defaultComment = input;
                         dirty = true;
@@ -289,6 +289,55 @@ class _VendorPageState extends State<VendorPage> {
                           labelText: 'Label für benutzerdefinierten Rechnungskommentar'),
                       onChanged: (String input) {
                         newVendor.userMessageLabel = input;
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
+                      maxLines: 1,
+                      initialValue: newVendor.reminderFee?.toString() ?? '0',
+                      keyboardType: TextInputType.numberWithOptions(),
+                      decoration:
+                          InputDecoration(labelText: 'Standard Mahngebühr', suffixText: '€'),
+                      onChanged: (String input) {
+                        newVendor.reminderFee = int.parse(input);
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
+                      maxLines: 1,
+                      initialValue: newVendor.reminderDeadline?.toString() ?? '14',
+                      keyboardType: TextInputType.numberWithOptions(),
+                      decoration: InputDecoration(
+                          labelText: 'Standardfrist für Mahnungen', suffixText: 'Tage'),
+                      onChanged: (String input) {
+                        newVendor.reminderDeadline = int.parse(input);
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
+                      maxLines: 3,
+                      initialValue: newVendor.reminderTexts[ReminderIteration.first] ?? '',
+                      decoration: InputDecoration(labelText: 'Standardtext für erste Mahnung'),
+                      onChanged: (String input) {
+                        newVendor.reminderTexts[ReminderIteration.first] = input;
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
+                      maxLines: 3,
+                      initialValue: newVendor.reminderTexts[ReminderIteration.second] ?? '',
+                      decoration: InputDecoration(labelText: 'Standardtext für zweite Mahnung'),
+                      onChanged: (String input) {
+                        newVendor.reminderTexts[ReminderIteration.second] = input;
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
+                      maxLines: 3,
+                      initialValue: newVendor.reminderTexts[ReminderIteration.third] ?? '',
+                      decoration: InputDecoration(labelText: 'Standardtext für dritte Mahnung'),
+                      onChanged: (String input) {
+                        newVendor.reminderTexts[ReminderIteration.third] = input;
                         dirty = true;
                       },
                     ),

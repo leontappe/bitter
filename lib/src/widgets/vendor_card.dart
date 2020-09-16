@@ -37,6 +37,15 @@ class VendorCard extends StatelessWidget {
             Text('Standard Umsatzsteuer: ${vendor.defaultTax} %'),
             if (vendor.defaultComment != null)
               Text('Standard Rechnungskommentar: ${vendor.defaultComment}'),
+            if (vendor.reminderFee != null) Text('Standard Mahngebühr: ${vendor.reminderFee}€'),
+            if (vendor.reminderDeadline != null)
+              Text('Standardfrist für Mahnungen: ${vendor.reminderDeadline} Tage'),
+            if (vendor.reminderTexts != null)
+              ...vendor.reminderTexts
+                  .map((key, value) => (value.isNotEmpty)
+                      ? MapEntry(key, Text('Text für ${key.index + 1}. Mahnung: $value'))
+                      : MapEntry(key, Container(width: 0, height: 0)))
+                  .values,
             Text(
                 'Kopfzeilenbilder:\n\tRechts: ${vendor.headerImageRight != null ? 'Vorhanden' : 'Nicht vorhanden'}\n\tMitte: ${vendor.headerImageCenter != null ? 'Vorhanden' : 'Nicht vorhanden'}\n\tLinks: ${vendor.headerImageLeft != null ? 'Vorhanden' : 'Nicht vorhanden'}'),
             Text(

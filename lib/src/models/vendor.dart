@@ -109,12 +109,15 @@ class Vendor {
         defaultTax: map['default_tax'] as int,
         defaultComment: map['default_comment']?.toString(),
         reminderFee: map['reminder_fee'] as int,
-        reminderDeadline: map['reminder_deadline'] as int,
+        reminderDeadline: (map['reminder_deadline'] != null)
+            ? int.parse(map['reminder_deadline'].toString())
+            : null,
         reminderTexts: (map['reminder_texts'] != null)
-            ? (json.decode(map['reminder_texts'] as String) as Map)
+            ? ((json.decode(map['reminder_texts'] as String) as Map) ?? <dynamic, dynamic>{})
                 .map<ReminderIteration, String>((dynamic key, dynamic value) {
                 ReminderIteration iter;
-                switch (key as int) {
+                final numkey = int.parse(key as String);
+                switch (numkey) {
                   case 0:
                     iter = ReminderIteration.first;
                     break;
@@ -130,7 +133,7 @@ class Vendor {
                 if (iter == null) return null;
                 return MapEntry(iter, value as String);
               })
-            : null,
+            : <ReminderIteration, String>{},
         headerImageRight: (map['header_image_right'] != null)
             ? base64.decode(map['header_image_right'].toString())
             : null,
@@ -182,7 +185,8 @@ class Vendor {
         'default_comment': defaultComment,
         'reminder_fee': reminderFee,
         'reminder_deadline': reminderDeadline,
-        'reminder_texts': json.encode(reminderTexts),
+        'reminder_texts': json.encode(reminderTexts.map<String, String>(
+            (ReminderIteration key, String value) => MapEntry(key.index.toString(), value))),
       };
 
   @override
