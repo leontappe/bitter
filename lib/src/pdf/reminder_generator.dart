@@ -169,6 +169,9 @@ class ReminderGenerator {
             ],
           ),
           Paragraph(
+              text: 'Ursprünglich fällig am ${formatDate(bill.dueDate)}.',
+              style: TextStyle(font: ttfSans)),
+          Paragraph(
               text: 'Zahlbar bis ${formatDate(reminder.deadline)}.',
               style: TextStyle(font: ttfSans)),
         ],
