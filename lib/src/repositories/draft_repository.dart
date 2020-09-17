@@ -100,7 +100,7 @@ class DraftRepository<T extends DatabaseProvider> {
         'INTEGER',
         'TEXT',
         'INTEGER',
-        'DATETIME',
+        'TEXT',
         'INTEGER',
         'TEXT',
         'TEXT'

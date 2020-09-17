@@ -14,6 +14,7 @@ import '../../repositories/draft_repository.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/settings_repository.dart';
 import '../../repositories/vendor_repository.dart';
+import '../../util.dart';
 import '../../widgets/vendor_selector.dart';
 import 'draft_popup_menu.dart';
 import 'item_editor_tile.dart';
@@ -163,7 +164,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   height: 64.0,
                   child: MaterialButton(
                     child: Text((draft.serviceDate != null)
-                        ? draft.serviceDate.toString().split(' ').first
+                        ? formatDate(draft.serviceDate)
                         : 'Am Rechnungsdatum'),
                     onPressed: (vendorIsset)
                         ? () async {

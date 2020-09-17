@@ -170,9 +170,7 @@ class _DraftsListPageState extends State<DraftsListPage> {
   Future<void> onPushDraftCreator({Draft draft}) async {
     final updated = await Navigator.push<bool>(context,
         MaterialPageRoute<bool>(builder: (BuildContext context) => DraftCreatorPage(draft: draft)));
-    if (updated) {
-      await onGetDrafts();
-    }
+    if (updated) await onGetDrafts();
   }
 
   Future<void> onSearchChanged(String value) async {

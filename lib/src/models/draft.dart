@@ -51,7 +51,7 @@ class Draft {
             .map<Item>((dynamic map) => Item.fromMap(map as Map))).toList(),
         tax: map['tax'] as int,
         serviceDate: (map['service_date'] != null)
-            ? DateTime.parse(map['service_date'].toString()).toLocal()
+            ? DateTime.parse(map['service_date'] as String).toLocal()
             : null,
         dueDays: int.parse(map['due_days'].toString()),
         userMessage: (map['user_message'] != null) ? map['user_message'].toString() : null,
@@ -72,7 +72,7 @@ class Draft {
         'vendor': vendor,
         'items': json.encode(items.map((e) => e.toMap).toList()),
         'tax': tax,
-        if (serviceDate != null) 'service_date': serviceDate.toUtc(),
+        'service_date': serviceDate?.toUtc()?.toString(),
         'due_days': dueDays,
         'user_message': userMessage,
         'comment': comment,
