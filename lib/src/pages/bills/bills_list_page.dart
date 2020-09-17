@@ -5,6 +5,7 @@ import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
 import '../../repositories/settings_repository.dart';
+import '../../util.dart';
 import 'bill_page.dart';
 import 'save_bill_button.dart';
 
@@ -88,7 +89,7 @@ class _BillsListPageState extends State<BillsListPage> {
                   children: [
                     Text(
                         'Bearbeiter*in: ${b.editor}, ${b.vendor.name} - Kunde*in: ${b.customer.name} ${b.customer.surname}'),
-                    Text('Rechnungsdatum: ${b.created.day}.${b.created.month}.${b.created.year}')
+                    Text('Rechnungsdatum: ${formatDate(b.created)}')
                   ],
                 ),
                 trailing: SaveBillButton(bill: b),

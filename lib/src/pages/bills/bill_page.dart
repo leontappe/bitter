@@ -60,8 +60,7 @@ class _BillPageState extends State<BillPage> {
                 children: <Widget>[
                   ListTile(
                     title: Text(bill.billNr, style: Theme.of(context).textTheme.headline6),
-                    subtitle:
-                        Text('Erstellt am ${bill.created.toLocal().toString().split('.').first}'),
+                    subtitle: Text('Erstellt am ${formatDateTime(bill.created)}'),
                     trailing: Text('von ${bill.editor}'),
                   ),
                   if (bill.userMessage != null)
@@ -92,11 +91,8 @@ class _BillPageState extends State<BillPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (bill != null)
-                          Text(
-                              'Lieferdatum/Leistungsdatum: ${bill.serviceDate.day}.${bill.serviceDate.month}.${bill.serviceDate.year}'),
-                        if (bill != null)
-                          Text(
-                              'Zahlungsziel: ${bill.dueDate.day}.${bill.dueDate.month}.${bill.dueDate.year}'),
+                          Text('Lieferdatum/Leistungsdatum: ${formatDate(bill.serviceDate)}'),
+                        if (bill != null) Text('Zahlungsziel: ${formatDate(bill.dueDate)}'),
                       ],
                     ),
                   ),
