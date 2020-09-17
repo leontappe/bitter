@@ -118,6 +118,8 @@ class _BillPageState extends State<BillPage> {
                                         children: <Widget>[
                                           Text('${r.iteration.index + 1}. Mahnung',
                                               style: Theme.of(context).textTheme.headline5),
+                                          if (r.title != null && r.title.isNotEmpty)
+                                            Text('Titel: ${r.title}'),
                                           Text('Frist: ${formatDate(r.deadline)}'),
                                           Text('Mahngebühr: ${r.fee.toStringAsFixed(2)}€'),
                                         ],
@@ -237,9 +239,10 @@ class _BillPageState extends State<BillPage> {
   void _onShowReminderDialog(ReminderIteration iteration) async {
     final reminder = Reminder(
       iteration: iteration,
-      text: vendor.reminderTexts[iteration],
-      fee: vendor.reminderFee,
-      deadline: DateTime.now().add(Duration(days: vendor.reminderDeadline)),
+      title: vendor.reminderTitles[iteration] ?? '',
+      text: vendor.reminderTexts[iteration] ?? '',
+      fee: vendor.reminderFee ?? 5,
+      deadline: DateTime.now().add(Duration(days: vendor.reminderDeadline ?? 14)),
     );
 
     final result = await showDialog<Reminder>(
@@ -257,9 +260,14 @@ class _BillPageState extends State<BillPage> {
           TextFormField(
             decoration: InputDecoration(labelText: 'Frist', suffixText: 'Tage'),
             keyboardType: TextInputType.number,
-            initialValue: vendor.reminderDeadline.toString(),
+            initialValue: (vendor.reminderDeadline ?? 14).toString(),
             onChanged: (String input) =>
                 reminder.deadline = DateTime.now().add(Duration(days: int.parse(input))),
+          ),
+          TextFormField(
+            decoration: InputDecoration(labelText: 'Mahnungstitel'),
+            initialValue: reminder.title,
+            onChanged: (String input) => reminder.title = input,
           ),
           TextFormField(
             keyboardType: TextInputType.multiline,
@@ -307,8 +315,8 @@ class _BillPageState extends State<BillPage> {
     } else {
       downloadsPath = (await getDownloadsDirectory()).path;
     }
-    final file =
-        File('${downloadsPath}/bitter/Mahnung${reminder.iteration.index + 1}_${bill.billNr}.pdf');
+    final file = File(
+        '${downloadsPath}/bitter/${reminder.title.replaceAll(' ', '_').replaceAll('.', ' ')}_${bill.billNr}.pdf');
     await file.create(recursive: true);
     await file.writeAsBytes(pdfData);
   }
