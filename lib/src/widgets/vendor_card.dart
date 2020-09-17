@@ -40,6 +40,12 @@ class VendorCard extends StatelessWidget {
             if (vendor.reminderFee != null) Text('Standard Mahngebühr: ${vendor.reminderFee}€'),
             if (vendor.reminderDeadline != null)
               Text('Standardfrist für Mahnungen: ${vendor.reminderDeadline} Tage'),
+            if (vendor.reminderTitles != null)
+              ...vendor.reminderTitles
+                  .map((key, value) => (value.isNotEmpty)
+                      ? MapEntry(key, Text('Titel für ${key.index + 1}. Mahnung: $value'))
+                      : MapEntry(key, Container(width: 0, height: 0)))
+                  .values,
             if (vendor.reminderTexts != null)
               ...vendor.reminderTexts
                   .map((key, value) => (value.isNotEmpty)

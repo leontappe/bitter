@@ -315,6 +315,30 @@ class _VendorPageState extends State<VendorPage> {
                       },
                     ),
                     TextFormField(
+                      initialValue: newVendor.reminderTitles[ReminderIteration.first] ?? '',
+                      decoration: InputDecoration(labelText: 'Standardtitel für erste Mahnung'),
+                      onChanged: (String input) {
+                        newVendor.reminderTitles[ReminderIteration.first] = input;
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
+                      initialValue: newVendor.reminderTitles[ReminderIteration.second] ?? '',
+                      decoration: InputDecoration(labelText: 'Standardtitel für zweite Mahnung'),
+                      onChanged: (String input) {
+                        newVendor.reminderTitles[ReminderIteration.second] = input;
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
+                      initialValue: newVendor.reminderTitles[ReminderIteration.third] ?? '',
+                      decoration: InputDecoration(labelText: 'Standardtitel für dritte Mahnung'),
+                      onChanged: (String input) {
+                        newVendor.reminderTitles[ReminderIteration.third] = input;
+                        dirty = true;
+                      },
+                    ),
+                    TextFormField(
                       maxLines: 3,
                       initialValue: newVendor.reminderTexts[ReminderIteration.first] ?? '',
                       decoration: InputDecoration(labelText: 'Standardtext für erste Mahnung'),
