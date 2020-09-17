@@ -125,8 +125,8 @@ packages:
     description:
       path: "plugins/file_chooser"
       ref: HEAD
-      resolved-ref: dc5bad31ae93dd5d82e235e38d5c21b6a47445ab
-      url: "git://github.com/google/flutter-desktop-embedding.git"
+      resolved-ref: "1f596c1a41d7f4c16e5539ad6fa039e6c5d2c1c7"
+      url: "git://github.com/leontappe/flutter-desktop-embedding.git"
     source: git
     version: "0.2.0"
   flutter:
@@ -228,8 +228,8 @@ packages:
     description:
       path: "plugins/flutter_plugins/path_provider_fde"
       ref: HEAD
-      resolved-ref: dc5bad31ae93dd5d82e235e38d5c21b6a47445ab
-      url: "git://github.com/google/flutter-desktop-embedding.git"
+      resolved-ref: "1f596c1a41d7f4c16e5539ad6fa039e6c5d2c1c7"
+      url: "git://github.com/leontappe/flutter-desktop-embedding.git"
     source: git
     version: "0.0.1"
   path_provider_linux:

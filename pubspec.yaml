@@ -26,12 +26,12 @@ dependencies:
   path_provider_macos: ^0.0.4+4
   path_provider_fde:
     git:
-      url: git://github.com/google/flutter-desktop-embedding.git
+      url: git://github.com/leontappe/flutter-desktop-embedding.git
       path: plugins/flutter_plugins/path_provider_fde
     #path: ../path_provider_fde
   file_chooser:
     git:
-      url: git://github.com/google/flutter-desktop-embedding.git
+      url: git://github.com/leontappe/flutter-desktop-embedding.git
       path: plugins/file_chooser
     #path: ../file_chooser
   autocomplete_textfield: ^1.7.3
