@@ -111,11 +111,9 @@ class Vendor {
         defaultTax: map['default_tax'] as int,
         defaultComment: map['default_comment']?.toString(),
         reminderFee: (map['reminder_fee'] as int) ?? 5,
-        reminderDeadline: (map['reminder_deadline'] != null)
-            ? int.parse(map['reminder_deadline'].toString())
-            : 14,
+        reminderDeadline: (map['reminder_deadline'] != null) ? map['reminder_deadline'] as int : 14,
         reminderTexts: (map['reminder_texts'] != null)
-            ? ((json.decode(map['reminder_texts'] as String) as Map) ?? <dynamic, dynamic>{})
+            ? ((json.decode(map['reminder_texts'].toString()) as Map) ?? <dynamic, dynamic>{})
                 .map<ReminderIteration, String>((dynamic key, dynamic value) {
                 ReminderIteration iter;
                 final numkey = int.parse(key as String);
@@ -137,7 +135,7 @@ class Vendor {
               })
             : <ReminderIteration, String>{},
         reminderTitles: (map['reminder_titles'] != null)
-            ? ((json.decode(map['reminder_titles'] as String) as Map) ?? <dynamic, dynamic>{})
+            ? ((json.decode(map['reminder_titles'].toString()) as Map) ?? <dynamic, dynamic>{})
                 .map<ReminderIteration, String>((dynamic key, dynamic value) {
                 ReminderIteration iter;
                 final numkey = int.parse(key as String);

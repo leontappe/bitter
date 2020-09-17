@@ -100,7 +100,7 @@ class VendorRepository<T extends DatabaseProvider> {
         'INTEGER',
         'TEXT',
         'INTEGER',
-        'TEXT',
+        'INTEGER',
         'TEXT',
         'TEXT',
         'LONGTEXT',

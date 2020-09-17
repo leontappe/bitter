@@ -80,7 +80,7 @@ class Bill {
         dueDate: DateTime.parse(map['due_date'].toString()).toLocal(),
         note: (map['note'] != null) ? map['note'].toString() : null,
         reminders: (map['reminders'] != null)
-            ? List.from((json.decode(map['reminders'] as String) as List)
+            ? List.from((json.decode(map['reminders'].toString()) as List)
                 .map<Reminder>((dynamic map) => Reminder.fromMap(map as Map)))
             : <Reminder>[],
       );
