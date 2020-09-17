@@ -5,7 +5,6 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
 import '../models/bill.dart';
-import '../models/item.dart';
 import '../models/reminder.dart';
 import '../models/vendor.dart';
 import '../util.dart';
@@ -121,50 +120,36 @@ class ReminderGenerator {
           ),
           Header(
               level: 1,
-              text:
-                  '${reminder.iteration == ReminderIteration.second ? 'Zweite ' : reminder.iteration == ReminderIteration.third ? 'Dritte ' : ''}Mahnung für ${bill.billNr}',
+              text: (reminder.title != null && reminder.title.isNotEmpty)
+                  ? reminder.title
+                  : '${reminder.iteration == ReminderIteration.second ? 'Zweite ' : reminder.iteration == ReminderIteration.third ? 'Dritte ' : 'Erste '}Mahnung',
               textStyle: TextStyle(font: ttfSans)),
           Paragraph(text: 'Sehr geehrte Damen und Herren,', style: TextStyle(font: ttfSans)),
           Paragraph(text: reminder.text, style: TextStyle(font: ttfSans)),
           Table(
             columnWidths: <int, TableColumnWidth>{
-              0: FixedColumnWidth(22.0),
-              1: FixedColumnWidth(150.0),
-              2: FixedColumnWidth(32.0),
-              3: FixedColumnWidth(24.0),
-              4: FixedColumnWidth(50.0),
-              5: FixedColumnWidth(55.0),
+              0: FixedColumnWidth(150.0),
+              1: FixedColumnWidth(33.0),
+              2: FixedColumnWidth(50.0),
             },
             tableWidth: TableWidth.max,
             border: TableBorder(),
             children: <TableRow>[
               TableRow(children: <Widget>[
-                PaddedHeaderText('Pos.'),
-                PaddedHeaderText('Artikel'),
-                PaddedHeaderText('Menge'),
-                PaddedHeaderText('USt.'),
-                PaddedHeaderText('Einzelpreis\nBrutto'),
-                PaddedHeaderText('Gesamtpreis\nBrutto')
+                PaddedHeaderText('Position'),
+                PaddedHeaderText('Mahnstufe'),
+                PaddedHeaderText('Betrag'),
               ]),
-              ...items.map((Item i) => TableRow(children: <Widget>[
-                    PaddedText(i.uid, ttfSans),
-                    PaddedText(
-                        (i.description != null) ? '${i.title} - ${i.description}' : '${i.title}',
-                        ttfSans),
-                    PaddedText(i.quantity.toString(), ttfSans),
-                    PaddedText('${i.tax.toStringAsFixed(0)} %', ttfSans),
-                    PaddedText(
-                        (i.price / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' €', ttfSans),
-                    PaddedText(
-                        (i.sum / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' €', ttfSans),
-                  ])),
+              TableRow(children: <Widget>[
+                PaddedText('Rechnung ${bill.billNr} vom ${formatDate(bill.created)}', ttfSans),
+                PaddedText('${reminder.iteration.index + 1}', ttfSans),
+                PaddedText(
+                    (bill.sum / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' €', ttfSans),
+              ]),
               if (reminder.fee != 0)
                 TableRow(children: <Widget>[
-                  PaddedText('${items.length + 1}', ttfSans),
                   PaddedText('Mahngebühr', ttfSans),
-                  PaddedText('1', ttfSans),
-                  PaddedText('0%', ttfSans),
-                  PaddedText(reminder.fee.toStringAsFixed(2).replaceAll('.', ',') + ' €', ttfSans),
+                  PaddedText('', ttfSans),
                   PaddedText(reminder.fee.toStringAsFixed(2).replaceAll('.', ',') + ' €', ttfSans),
                 ]),
             ],
@@ -174,33 +159,15 @@ class ReminderGenerator {
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Paragraph(
-                    text:
-                        'Gesamtbetrag: ${((bill.sum / 100.0) + reminder.fee).toStringAsFixed(2).replaceAll('.', ',')} €',
-                    style: TextStyle(
-                        fontSize: fontsize + 1.0, fontWeight: FontWeight.bold, font: ttfSansBold),
-                    margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                  ),
-                  Paragraph(
-                    text:
-                        'Der Gesamtbetrag setzt sich aus ${(((bill.sum - calculateTaxes(bill.items, vendor.defaultTax)) / 100.0) + reminder.fee).toStringAsFixed(2).replaceAll('.', ',')} € netto zzgl. ${(calculateTaxes(bill.items, vendor.defaultTax) / 100.0).toStringAsFixed(2).replaceAll('.', ',')} € Umsatzsteuer zusammen.',
-                    style: TextStyle(fontSize: fontsize + 1.0, font: ttfSans),
-                    margin: EdgeInsets.all(0.0),
-                  ),
-                ],
+              Paragraph(
+                text:
+                    'Gesamtbetrag: ${((bill.sum / 100.0) + reminder.fee).toStringAsFixed(2).replaceAll('.', ',')} €',
+                style: TextStyle(
+                    fontSize: fontsize + 1.0, fontWeight: FontWeight.bold, font: ttfSansBold),
+                margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
               ),
             ],
           ),
-          Paragraph(
-              text: ((vendor.userMessageLabel != null && bill.userMessage != null)
-                      ? '${vendor.userMessageLabel}: '
-                      : '') +
-                  (bill.userMessage ?? ''),
-              style: TextStyle(font: ttfSans)),
-          Paragraph(text: bill.comment ?? '', style: TextStyle(font: ttfSans)),
           Paragraph(
               text: 'Zahlbar bis ${formatDate(reminder.deadline)}.',
               style: TextStyle(font: ttfSans)),
