@@ -8,6 +8,7 @@ import 'package:path_provider_platform_interface/path_provider_platform_interfac
 import '../../repositories/settings_repository.dart';
 import '../../bitter_platform_path_provider.dart';
 import '../../widgets/navigation_card.dart';
+import '../../widgets/settings_list.dart';
 import 'bills_navigation_card.dart';
 import 'drafts_navigation_card.dart';
 
@@ -61,7 +62,9 @@ class _HomepageState extends State<Homepage> {
             '/settings',
             children: <Widget>[
               Text('Einstellungen',
-                  style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)
+                  style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis),
+              Divider(),
+              SettingsList(context),
             ],
           ),
         ],
