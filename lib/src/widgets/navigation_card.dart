@@ -10,6 +10,7 @@ class NavigationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 0.7,
       margin: EdgeInsets.all(8.0),
       child: InkWell(
         splashColor: Colors.blue.withAlpha(30),

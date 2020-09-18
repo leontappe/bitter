@@ -37,7 +37,10 @@ class Bitter extends StatelessWidget {
               title: 'bitter',
               theme: ThemeData(
                 primarySwatch: Colors.blueGrey,
-                textTheme: TextTheme(headline3: TextStyle(color: Colors.grey[700])),
+                textTheme: TextTheme(
+                  headline3: TextStyle(color: Colors.grey[700]),
+                  headline4: TextStyle(color: Colors.grey[700]),
+                ),
               ),
               initialRoute: '/home',
               routes: <String, Widget Function(BuildContext)>{

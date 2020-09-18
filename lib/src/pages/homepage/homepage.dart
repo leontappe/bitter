@@ -9,6 +9,7 @@ import '../../repositories/settings_repository.dart';
 import '../../bitter_platform_path_provider.dart';
 import '../../widgets/navigation_card.dart';
 import 'bills_navigation_card.dart';
+import 'drafts_navigation_card.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -37,11 +38,7 @@ class _HomepageState extends State<Homepage> {
       ),
       body: ListView(
         children: <Widget>[
-          NavigationCard(
-            context,
-            '/drafts',
-            children: <Widget>[Text('Entwürfe', style: Theme.of(context).textTheme.headline3)],
-          ),
+          DraftsNavigationCard(),
           BillsNavigationCard(),
           NavigationCard(
             context,
