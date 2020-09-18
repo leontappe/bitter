@@ -33,7 +33,9 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Entwürfe', style: Theme.of(context).textTheme.headline3),
+            Flexible(
+                child: Text('Entwürfe',
+                    style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [

@@ -30,11 +30,16 @@ class DraftShortcut extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text('Entwurf ${draft.id}',
-                      style: Theme.of(context).textTheme.subtitle1, textScaleFactor: 1.1),
-                  if (vendor != null) Text(vendor.name),
-                  if (customer != null) Text(customer.fullCompany ?? customer.fullName),
-                  Text('${draft.items.length} Artikel'),
-                  Text('${(draft.sum / 100.0).toStringAsFixed(2)} €'),
+                      style: Theme.of(context).textTheme.subtitle1,
+                      textScaleFactor: 1.1,
+                      overflow: TextOverflow.ellipsis),
+                  if (vendor != null) Text(vendor.name, overflow: TextOverflow.ellipsis),
+                  if (customer != null)
+                    Text(customer.fullCompany ?? customer.fullName,
+                        overflow: TextOverflow.ellipsis),
+                  Text('${draft.items.length} Artikel', overflow: TextOverflow.ellipsis),
+                  Text('${(draft.sum / 100.0).toStringAsFixed(2)} €',
+                      overflow: TextOverflow.ellipsis),
                 ],
               ),
             )));

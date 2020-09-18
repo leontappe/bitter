@@ -25,7 +25,9 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Rechnungen', style: Theme.of(context).textTheme.headline3),
+            Flexible(
+                child: Text('Rechnungen',
+                    style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)),
             IconButton(
                 tooltip: 'Aktualisieren',
                 icon: Icon(Icons.refresh, color: Colors.grey[800]),

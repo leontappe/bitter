@@ -39,7 +39,7 @@ class Bitter extends StatelessWidget {
                 primarySwatch: Colors.blueGrey,
                 textTheme: TextTheme(
                   headline3: TextStyle(color: Colors.grey[700]),
-                  headline4: TextStyle(color: Colors.grey[700]),
+                  headline4: TextStyle(color: Colors.grey[700], fontSize: 26.0),
                 ),
               ),
               initialRoute: '/home',

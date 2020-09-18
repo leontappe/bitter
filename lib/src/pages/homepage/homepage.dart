@@ -43,17 +43,26 @@ class _HomepageState extends State<Homepage> {
           NavigationCard(
             context,
             '/customers',
-            children: <Widget>[Text('Kunden', style: Theme.of(context).textTheme.headline3)],
+            children: <Widget>[
+              Text('Kunden',
+                  style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)
+            ],
           ),
           NavigationCard(
             context,
             '/items',
-            children: <Widget>[Text('Artikel', style: Theme.of(context).textTheme.headline3)],
+            children: <Widget>[
+              Text('Artikel',
+                  style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)
+            ],
           ),
           NavigationCard(
             context,
             '/settings',
-            children: <Widget>[Text('Einstellungen', style: Theme.of(context).textTheme.headline3)],
+            children: <Widget>[
+              Text('Einstellungen',
+                  style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)
+            ],
           ),
         ],
       ),
