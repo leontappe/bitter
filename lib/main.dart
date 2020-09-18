@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
-import 'src/homepage.dart';
+import 'src/pages/homepage/homepage.dart';
 import 'src/pages/bills/bills_list_page.dart';
 import 'src/pages/customers/customers_list_page.dart';
 import 'src/pages/drafts/drafts_list_page.dart';
