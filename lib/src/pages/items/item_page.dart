@@ -33,7 +33,7 @@ class _ItemPageState extends State<ItemPage> {
         leading: Builder(
             builder: (BuildContext context) => IconButton(
                   tooltip: 'Zurück',
-                  icon: Icon(Icons.arrow_back_ios),
+                  icon: Icon(widget.item != null ? Icons.arrow_back_ios : Icons.cancel),
                   onPressed: () => onPopRoute(context),
                 )),
         title: Text((widget.item != null) ? 'Artikel bearbeiten' : 'Artikel erstellen'),
