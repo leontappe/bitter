@@ -27,11 +27,22 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Entwürfe', style: Theme.of(context).textTheme.headline3),
-            IconButton(
-                tooltip: 'Neuen Entwurf erstellen',
-                icon: Icon(Icons.note_add, color: Colors.grey[700]),
-                onPressed: () => Navigator.push<bool>(context,
-                    MaterialPageRoute<bool>(builder: (BuildContext context) => DraftCreatorPage())))
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                    tooltip: 'Neuen Entwurf erstellen',
+                    icon: Icon(Icons.note_add, color: Colors.grey[700]),
+                    onPressed: () => Navigator.push<bool>(
+                        context,
+                        MaterialPageRoute<bool>(
+                            builder: (BuildContext context) => DraftCreatorPage()))),
+                IconButton(
+                    tooltip: 'Aktualisieren',
+                    icon: Icon(Icons.refresh, color: Colors.grey[800]),
+                    onPressed: () => onRefresh()),
+              ],
+            )
           ],
         ),
         Divider(),

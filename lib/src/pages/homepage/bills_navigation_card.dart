@@ -22,7 +22,16 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
       context,
       '/bills',
       children: <Widget>[
-        Text('Rechnungen', style: Theme.of(context).textTheme.headline3),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Rechnungen', style: Theme.of(context).textTheme.headline3),
+            IconButton(
+                tooltip: 'Aktualisieren',
+                icon: Icon(Icons.refresh, color: Colors.grey[800]),
+                onPressed: () => onGetBills())
+          ],
+        ),
         Divider(),
         Text('Neu', style: Theme.of(context).textTheme.headline4),
         Text(
