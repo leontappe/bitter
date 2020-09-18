@@ -81,6 +81,7 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
 
   Future<void> onRefresh() async {
     _items = await _itemRepo.select();
+    _items.sort((Item a, Item b) => b.id.compareTo(a.id));
     setState(() => _items);
   }
 }
