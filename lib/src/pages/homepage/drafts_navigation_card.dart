@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../models/draft.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
+import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
+import '../../repositories/vendor_repository.dart';
 import '../../widgets/draft_shortcut.dart';
 import '../../widgets/navigation_card.dart';
 import '../drafts/draft_creator.dart';
@@ -15,7 +17,12 @@ class DraftsNavigationCard extends StatefulWidget {
 
 class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
   DraftRepository _billRepo;
+  CustomerRepository _customerRepo;
+  VendorRepository _vendorRepo;
+
   List<Draft> _drafts = [];
+  List<Vendor> _vendors;
+  List<Customer> _customers;
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +59,12 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            ..._drafts.take(4).map<Widget>(
-                  (Draft d) => Expanded(child: DraftShortcut(context, draft: d)),
-                ),
+            ..._drafts.take(4).map<Widget>((Draft d) => Expanded(
+                  child: DraftShortcut(context,
+                      draft: d,
+                      vendor: _vendors?.singleWhere((Vendor v) => v.id == d.vendor),
+                      customer: _customers?.singleWhere((Customer c) => c.id == d.customer)),
+                )),
             if (_drafts.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0)),
             for (var i = 0; i < (4 - _drafts.length); i++) Spacer(),
@@ -72,15 +82,21 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
 
   Future<void> initDb() async {
     _billRepo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    await _billRepo.setUp();
+    _customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    _vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
 
-    await onGetDrafts();
+    await _billRepo.setUp();
+    await _customerRepo.setUp();
+    await _vendorRepo.setUp();
+
+    await onRefresh();
   }
 
-  Future<void> onGetDrafts() async {
+  Future<void> onRefresh() async {
+    _customers = await _customerRepo.select();
+    _vendors = await _vendorRepo.select();
     _drafts = await _billRepo.select();
     _drafts.sort((Draft a, Draft b) => b.id.compareTo(a.id));
     setState(() => _drafts);
-    return;
   }
 }

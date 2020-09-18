@@ -26,6 +26,7 @@ class BillShortcut extends StatelessWidget {
                       style: Theme.of(context).textTheme.subtitle1, textScaleFactor: 1.1),
                   Text(bill.vendor.name),
                   Text(bill.customer.fullCompany ?? bill.customer.fullName),
+                  Text('${bill.items.length} Artikel'),
                   Text((bill.sum / 100.0).toStringAsFixed(2) + ' €'),
                 ],
               ),
