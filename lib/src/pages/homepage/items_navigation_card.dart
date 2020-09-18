@@ -1,12 +1,11 @@
-
 import 'package:flutter/material.dart';
 
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
-import '../../widgets/shortcuts/item_shortcut.dart';
 import '../../widgets/navigation_card.dart';
-import '../customers/customer_page.dart';
+import '../../widgets/shortcuts/item_shortcut.dart';
+import '../items/item_page.dart';
 
 class ItemsNavigationCard extends StatefulWidget {
   @override
@@ -37,10 +36,8 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
                     tooltip: 'Neuen Artikel erstellen',
                     icon: Icon(Icons.add, color: Colors.grey[700]),
                     onPressed: () async {
-                      await Navigator.push<bool>(
-                          context,
-                          MaterialPageRoute<bool>(
-                              builder: (BuildContext context) => CustomerPage()));
+                      await Navigator.push<bool>(context,
+                          MaterialPageRoute<bool>(builder: (BuildContext context) => ItemPage()));
                       await onRefresh();
                     }),
                 IconButton(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'base_shortcut.dart';
 import '../../models/item.dart';
-import '../../pages/customers/customer_page.dart';
+import '../../pages/items/item_page.dart';
+import 'base_shortcut.dart';
 
 class ItemShortcut extends StatelessWidget {
   final BuildContext context;
@@ -15,7 +15,7 @@ class ItemShortcut extends StatelessWidget {
     return BaseShortcut(
       context,
       onTap: () => Navigator.push<bool>(
-          context, MaterialPageRoute(builder: (BuildContext context) => CustomerPage(id: item.id))),
+          context, MaterialPageRoute(builder: (BuildContext context) => ItemPage(item: item))),
       children: <Widget>[
         Text(item.title,
             style: Theme.of(context).textTheme.subtitle1,
