@@ -70,7 +70,7 @@ class _BillsListPageState extends State<ItemsListPage> {
             ),
             IconButton(
               tooltip: 'Neuen Artikel erstellen',
-              icon: Icon(Icons.note_add),
+              icon: Icon(Icons.add),
               onPressed: onPushItemPage,
             ),
           ],

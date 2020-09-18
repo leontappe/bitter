@@ -1,39 +1,40 @@
+
 import 'package:flutter/material.dart';
 
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
-import '../../repositories/customer_repository.dart';
-import '../../widgets/customer_shortcut.dart';
+import '../../repositories/item_repository.dart';
+import '../../widgets/item_shortcut.dart';
 import '../../widgets/navigation_card.dart';
 import '../customers/customer_page.dart';
 
-class CustomersNavigationCard extends StatefulWidget {
+class ItemsNavigationCard extends StatefulWidget {
   @override
-  _CustomersNavigationCardState createState() => _CustomersNavigationCardState();
+  _ItemsNavigationCardState createState() => _ItemsNavigationCardState();
 }
 
-class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
-  CustomerRepository _customerRepo;
+class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
+  ItemRepository _itemRepo;
 
-  List<Customer> _customers = [];
+  List<Item> _items = [];
 
   @override
   Widget build(BuildContext context) {
     return NavigationCard(
       context,
-      '/customers',
+      '/items',
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
-                child: Text('Kunden',
+                child: Text('Artikel',
                     style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                    tooltip: 'Neuen Kunden erstellen',
+                    tooltip: 'Neuen Artikel erstellen',
                     icon: Icon(Icons.add, color: Colors.grey[700]),
                     onPressed: () async {
                       await Navigator.push<bool>(
@@ -57,12 +58,12 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            ..._customers.take(4).map<Widget>((Customer c) => Expanded(
-                  child: CustomerShortcut(context, customer: c),
+            ..._items.take(4).map<Widget>((Item i) => Expanded(
+                  child: ItemShortcut(context, item: i),
                 )),
-            if (_customers.length > 4)
+            if (_items.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0)),
-            for (var i = 0; i < (4 - _customers.length); i++) Spacer(),
+            for (var i = 0; i < (4 - _items.length); i++) Spacer(),
           ],
         )),
       ],
@@ -76,13 +77,13 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
   }
 
   Future<void> initDb() async {
-    _customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    await _customerRepo.setUp();
+    _itemRepo = ItemRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    await _itemRepo.setUp();
     await onRefresh();
   }
 
   Future<void> onRefresh() async {
-    _customers = await _customerRepo.select();
-    setState(() => _customers);
+    _items = await _itemRepo.select();
+    setState(() => _items);
   }
 }

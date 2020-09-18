@@ -12,6 +12,7 @@ import '../../widgets/settings_list.dart';
 import 'bills_navigation_card.dart';
 import 'customers_navigation_card.dart';
 import 'drafts_navigation_card.dart';
+import 'items_navigation_card.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -43,14 +44,7 @@ class _HomepageState extends State<Homepage> {
           DraftsNavigationCard(),
           BillsNavigationCard(),
           CustomersNavigationCard(),
-          NavigationCard(
-            context,
-            '/items',
-            children: <Widget>[
-              Text('Artikel',
-                  style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)
-            ],
-          ),
+          ItemsNavigationCard(),
           NavigationCard(
             context,
             '/settings',
