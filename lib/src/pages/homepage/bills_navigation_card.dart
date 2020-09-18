@@ -4,7 +4,7 @@ import '../../models/bill.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
-import '../../widgets/bill_shortcut.dart';
+import '../../widgets/shortcuts/bill_shortcut.dart';
 import '../../widgets/navigation_card.dart';
 
 class BillsNavigationCard extends StatefulWidget {

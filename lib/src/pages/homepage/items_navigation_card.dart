@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
-import '../../widgets/item_shortcut.dart';
+import '../../widgets/shortcuts/item_shortcut.dart';
 import '../../widgets/navigation_card.dart';
 import '../customers/customer_page.dart';
 

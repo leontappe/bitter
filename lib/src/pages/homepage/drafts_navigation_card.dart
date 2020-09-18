@@ -6,7 +6,7 @@ import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
 import '../../repositories/vendor_repository.dart';
-import '../../widgets/draft_shortcut.dart';
+import '../../widgets/shortcuts/draft_shortcut.dart';
 import '../../widgets/navigation_card.dart';
 import '../drafts/draft_creator.dart';
 

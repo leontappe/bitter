@@ -1,0 +1,26 @@
+import 'package:flutter/material.dart';
+
+class BaseShortcut extends StatelessWidget {
+  final BuildContext context;
+  final List<Widget> children;
+  final Function() onTap;
+
+  const BaseShortcut(this.context, {Key key, @required this.children, this.onTap})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        elevation: 0.0,
+        color: Theme.of(context).splashColor,
+        child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: children,
+              ),
+            )));
+  }
+}
