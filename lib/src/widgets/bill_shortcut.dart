@@ -12,6 +12,8 @@ class BillShortcut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+        elevation: 0.0,
+        color: Theme.of(context).splashColor,
         child: InkWell(
             onTap: () => Navigator.push<bool>(context,
                 MaterialPageRoute(builder: (BuildContext context) => BillPage(id: bill.id))),
