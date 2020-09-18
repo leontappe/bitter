@@ -21,7 +21,7 @@ class ItemShortcut extends StatelessWidget {
             style: Theme.of(context).textTheme.subtitle1,
             textScaleFactor: 1.1,
             overflow: TextOverflow.ellipsis),
-        Text(item.description, overflow: TextOverflow.ellipsis),
+        Text(item.description ?? '', overflow: TextOverflow.ellipsis),
         Text('${(item.price / 100.0).toStringAsFixed(2)} €', overflow: TextOverflow.ellipsis),
       ],
     );
