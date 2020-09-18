@@ -397,7 +397,7 @@ class _BackupPageState extends State<BackupPage> {
 
     setState(() => restores.add(Operation(DateTime.now())));
 
-    // TODO: load and unzip file, then parse objects for all selected tables and insert them via corresponding repos
+    // load and unzip file, then parse objects for all selected tables and insert them via corresponding repos
 
     final db = InheritedDatabase.of<DatabaseProvider>(context).provider;
 
