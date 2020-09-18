@@ -23,8 +23,11 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
       '/bills',
       children: <Widget>[
         Text('Rechnungen', style: Theme.of(context).textTheme.headline3),
-        Divider(height: 24.0),
+        Divider(),
         Text('Neu', style: Theme.of(context).textTheme.headline4),
+        Text(
+            'In den letzten 7 Tagen wurden ${_bills.where((Bill b) => b.created.isAfter(DateTime.now().subtract(Duration(days: 7)))).length} Rechnungen erstellt',
+            style: TextStyle(color: Colors.grey[800])),
         Flexible(
             child: Row(
           mainAxisSize: MainAxisSize.max,
@@ -39,6 +42,10 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
         )),
         Divider(height: 24.0),
         Text('Überfällig', style: Theme.of(context).textTheme.headline4),
+        Text(
+          ' Es gibt gerade ${_bills.where((Bill b) => ((b.reminders == null || b.reminders.isEmpty) && DateTime.now().isAfter(b.dueDate)) || (b.reminders != null && b.reminders.isNotEmpty && DateTime.now().isAfter(b.reminders.last.deadline))).length} überfällige Rechnungen oder zugehörige Mahnungen',
+          style: TextStyle(color: Colors.grey[800]),
+        ),
         Flexible(
             child: Row(
           mainAxisSize: MainAxisSize.max,
