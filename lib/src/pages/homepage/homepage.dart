@@ -10,6 +10,7 @@ import '../../bitter_platform_path_provider.dart';
 import '../../widgets/navigation_card.dart';
 import '../../widgets/settings_list.dart';
 import 'bills_navigation_card.dart';
+import 'customers_navigation_card.dart';
 import 'drafts_navigation_card.dart';
 
 class Homepage extends StatefulWidget {
@@ -41,14 +42,7 @@ class _HomepageState extends State<Homepage> {
         children: <Widget>[
           DraftsNavigationCard(),
           BillsNavigationCard(),
-          NavigationCard(
-            context,
-            '/customers',
-            children: <Widget>[
-              Text('Kunden',
-                  style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)
-            ],
-          ),
+          CustomersNavigationCard(),
           NavigationCard(
             context,
             '/items',

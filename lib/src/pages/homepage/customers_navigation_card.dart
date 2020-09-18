@@ -1,52 +1,45 @@
 import 'package:flutter/material.dart';
 
-import '../../models/draft.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
-import '../../repositories/draft_repository.dart';
-import '../../repositories/vendor_repository.dart';
-import '../../widgets/draft_shortcut.dart';
+import '../../widgets/customer_shortcut.dart';
 import '../../widgets/navigation_card.dart';
-import '../drafts/draft_creator.dart';
+import '../customers/customer_page.dart';
 
-class DraftsNavigationCard extends StatefulWidget {
+class CustomersNavigationCard extends StatefulWidget {
   @override
-  _DraftsNavigationCardState createState() => _DraftsNavigationCardState();
+  _CustomersNavigationCardState createState() => _CustomersNavigationCardState();
 }
 
-class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
-  DraftRepository _billRepo;
+class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
   CustomerRepository _customerRepo;
-  VendorRepository _vendorRepo;
 
-  List<Draft> _drafts = [];
-  List<Vendor> _vendors;
-  List<Customer> _customers;
+  List<Customer> _customers = [];
 
   @override
   Widget build(BuildContext context) {
     return NavigationCard(
       context,
-      '/drafts',
+      '/customers',
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
-                child: Text('Entwürfe',
+                child: Text('Kunden',
                     style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                    tooltip: 'Neuen Entwurf erstellen',
+                    tooltip: 'Neuen Kunden erstellen',
                     icon: Icon(Icons.note_add, color: Colors.grey[700]),
                     onPressed: () async {
                       await Navigator.push<bool>(
                           context,
                           MaterialPageRoute<bool>(
-                              builder: (BuildContext context) => DraftCreatorPage()));
+                              builder: (BuildContext context) => CustomerPage()));
                       await onRefresh();
                     }),
                 IconButton(
@@ -64,15 +57,12 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            ..._drafts.take(4).map<Widget>((Draft d) => Expanded(
-                  child: DraftShortcut(context,
-                      draft: d,
-                      vendor: _vendors?.singleWhere((Vendor v) => v.id == d.vendor),
-                      customer: _customers?.singleWhere((Customer c) => c.id == d.customer)),
+            ..._customers.take(4).map<Widget>((Customer c) => Expanded(
+                  child: CustomerShortcut(context, customer: c),
                 )),
-            if (_drafts.length > 4)
+            if (_customers.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0)),
-            for (var i = 0; i < (4 - _drafts.length); i++) Spacer(),
+            for (var i = 0; i < (4 - _customers.length); i++) Spacer(),
           ],
         )),
       ],
@@ -86,22 +76,13 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
   }
 
   Future<void> initDb() async {
-    _billRepo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     _customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    _vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-
-    await _billRepo.setUp();
     await _customerRepo.setUp();
-    await _vendorRepo.setUp();
-
     await onRefresh();
   }
 
   Future<void> onRefresh() async {
     _customers = await _customerRepo.select();
-    _vendors = await _vendorRepo.select();
-    _drafts = await _billRepo.select();
-    _drafts.sort((Draft a, Draft b) => b.id.compareTo(a.id));
-    setState(() => _drafts);
+    setState(() => _customers);
   }
 }
