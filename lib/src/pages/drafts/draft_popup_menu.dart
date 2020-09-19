@@ -169,7 +169,7 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
                 TextButton(onPressed: () => Navigator.pop(context, true), child: Text('Ja')),
               ],
             ));
-    if (result) await repo.delete(widget.id);
-    return result;
+    if (result ?? false) await repo.delete(widget.id);
+    return result ?? false;
   }
 }
