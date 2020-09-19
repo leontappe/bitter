@@ -49,7 +49,7 @@ class Item {
   @override
   int get hashCode => uid.hashCode;
 
-  int get sum => price ?? 0 * quantity ?? 0;
+  int get sum => (price ?? 0) * (quantity ?? 0);
 
   Map<String, dynamic> get toMap => <String, dynamic>{
         'item_id': itemId,
