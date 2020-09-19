@@ -50,7 +50,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
         Divider(),
         Text('Neu', style: Theme.of(context).textTheme.headline4),
         Text(
-            'In den letzten 7 Tagen wurden ${_bills.where((Bill b) => b.created.isAfter(DateTime.now().subtract(Duration(days: 7)))).length} Rechnungen erstellt',
+            ' In den letzten 7 Tagen wurden ${_bills.where((Bill b) => b.created.isAfter(DateTime.now().subtract(Duration(days: 7)))).length} Rechnungen erstellt.',
             style: TextStyle(color: Colors.grey[800])),
         Flexible(
             child: Row(
@@ -61,14 +61,18 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
                   (Bill b) => Expanded(child: BillShortcut(context, bill: b)),
                 ),
             if (_bills.length > 4)
-              Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0)),
+              Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
+            else
+              Container(width: 48.0, height: 48.0),
+            for (var i = 0; i < (4 - _bills.length); i++) Spacer(),
           ],
         )),
         Divider(height: 24.0),
         Text('Überfällig', style: Theme.of(context).textTheme.headline4),
         Text(
-          ' Es gibt gerade ${_overdueBills.length} überfällige Rechnungen oder zugehörige Mahnungen',
+          ' Es gibt gerade ${_overdueBills.length} überfällige Rechnungen oder zugehörige Mahnungen.',
           style: TextStyle(color: Colors.grey[800]),
+          overflow: TextOverflow.ellipsis,
         ),
         Flexible(
             child: Row(
@@ -79,7 +83,10 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
                   (Bill b) => Expanded(child: BillShortcut(context, bill: b)),
                 ),
             if (_overdueBills.length > 4)
-              Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0)),
+              Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
+            else
+              Container(width: 48.0, height: 48.0),
+            for (var i = 0; i < (4 - _overdueBills.length); i++) Spacer(),
           ],
         )),
       ],

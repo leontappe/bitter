@@ -54,6 +54,11 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
         ),
         Divider(),
         Text('Neu', style: Theme.of(context).textTheme.headline4),
+        Text(
+          ' Zurzeit sind ${_items.length} Artikel vorhanden.',
+          style: TextStyle(color: Colors.grey[800]),
+          overflow: TextOverflow.ellipsis,
+        ),
         Flexible(
             child: Row(
           mainAxisSize: MainAxisSize.max,
@@ -63,7 +68,9 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
                   child: ItemShortcut(context, item: i),
                 )),
             if (_items.length > 4)
-              Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0)),
+              Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
+            else
+              Container(width: 48.0, height: 48.0),
             for (var i = 0; i < (4 - _items.length); i++) Spacer(),
           ],
         )),

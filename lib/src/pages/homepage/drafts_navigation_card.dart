@@ -63,6 +63,11 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
         ),
         Divider(),
         Text('Neu', style: Theme.of(context).textTheme.headline4),
+        Text(
+          ' Zurzeit sind ${_drafts.length} Entwürfe vorhanden.',
+          style: TextStyle(color: Colors.grey[800]),
+          overflow: TextOverflow.ellipsis,
+        ),
         Flexible(
             child: Row(
           mainAxisSize: MainAxisSize.max,
@@ -75,7 +80,9 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
                       customer: _customers?.singleWhere((Customer c) => c.id == d.customer)),
                 )),
             if (_drafts.length > 4)
-              Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0)),
+              Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
+            else
+              Container(width: 48.0, height: 48.0),
             for (var i = 0; i < (4 - _drafts.length); i++) Spacer(),
           ],
         )),
