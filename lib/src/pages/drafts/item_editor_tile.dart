@@ -40,18 +40,6 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Container(
-        width: 50.0,
-        child: TextFormField(
-          initialValue: _item.quantity?.toString() ?? '1',
-          onChanged: (String input) {
-            _item.quantity = int.parse(input);
-            widget.itemChanged(_item, false);
-          },
-          onFieldSubmitted: (String input) => widget.itemChanged(_item, true),
-          decoration: InputDecoration(suffixText: 'x', hintText: 'Menge'),
-        ),
-      ),
       title: AutoCompleteTextField<Item>(
         controller: TextEditingController(text: _item.title ?? ''),
         key: GlobalKey<AutoCompleteTextFieldState<Item>>(),
@@ -79,72 +67,88 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
         onFieldSubmitted: (String input) => widget.itemChanged(_item, true),
         decoration: InputDecoration(hintText: 'Beschreibung (optional)'),
       ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(left: 4.0, right: 4.0),
-            width: 80.0,
-            child: TextFormField(
-              controller: TextEditingController(
-                  text: _item.tax?.toString() ?? widget.defaultTax.toString() ?? '19'),
-              onChanged: (String input) {
-                _item.tax = int.tryParse(input) ?? widget.defaultTax;
-                widget.itemChanged(_item, false);
-              },
-              onFieldSubmitted: (String input) => widget.itemChanged(_item, true),
-              decoration: InputDecoration(suffixText: '%', hintText: 'Steuer'),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 4.0, right: 4.0),
-            width: 80.0,
-            child: TextFormField(
-              controller: TextEditingController(
-                  text: (_item.price != null) ? (_item.price / 100.0).toStringAsFixed(2) : null),
-              onChanged: (String input) {
-                _item.price = parseFloat(input);
-                widget.itemChanged(_item, false);
-              },
-              onFieldSubmitted: (String input) => widget.itemChanged(_item, true),
-              decoration: InputDecoration(suffixText: '€', hintText: 'Preis'),
-            ),
-          ),
-          PopupMenuButton<EditorTileAction>(
-            tooltip: 'Menü zeigen',
-            onSelected: (EditorTileAction action) {
-              switch (action) {
-                case EditorTileAction.delete:
-                  widget.itemDeleted(_item);
-                  break;
-                case EditorTileAction.save:
-                  widget.itemSaved(_item);
-                  break;
-                default:
-                  return;
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<EditorTileAction>>[
-              PopupMenuItem<EditorTileAction>(
-                value: EditorTileAction.delete,
-                child: Row(children: <Widget>[
-                  Icon(Icons.delete),
-                  Text(' Artikel entfernen',
-                      style: TextStyle(color: Theme.of(context).iconTheme.color))
-                ]),
+      trailing: Container(
+        height: 64.0,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(left: 4.0, right: 4.0),
+              width: 50.0,
+              child: TextFormField(
+                controller: TextEditingController(text: _item.quantity?.toString() ?? '1'),
+                onChanged: (String input) {
+                  _item.quantity = int.parse(input);
+                  widget.itemChanged(_item, false);
+                },
+                onFieldSubmitted: (String input) => widget.itemChanged(_item, true),
+                decoration: InputDecoration(suffixText: 'x', hintText: 'Menge'),
               ),
-              PopupMenuItem<EditorTileAction>(
-                value: EditorTileAction.save,
-                child: Row(children: <Widget>[
-                  Icon(Icons.archive),
-                  Text(' Unter Artikel sichern',
-                      style: TextStyle(color: Theme.of(context).iconTheme.color))
-                ]),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 4.0, right: 4.0),
+              width: 50.0,
+              child: TextFormField(
+                controller: TextEditingController(
+                    text: _item.tax?.toString() ?? widget.defaultTax.toString() ?? '19'),
+                onChanged: (String input) {
+                  _item.tax = int.tryParse(input) ?? widget.defaultTax;
+                  widget.itemChanged(_item, false);
+                },
+                onFieldSubmitted: (String input) => widget.itemChanged(_item, true),
+                decoration: InputDecoration(suffixText: '%', hintText: 'Steuer'),
               ),
-            ],
-          ),
-        ],
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 4.0, right: 4.0),
+              width: 80.0,
+              child: TextFormField(
+                controller: TextEditingController(
+                    text: (_item.price != null) ? (_item.price / 100.0).toStringAsFixed(2) : null),
+                onChanged: (String input) {
+                  _item.price = parseFloat(input);
+                  widget.itemChanged(_item, false);
+                },
+                onFieldSubmitted: (String input) => widget.itemChanged(_item, true),
+                decoration: InputDecoration(suffixText: '€', hintText: 'Preis'),
+              ),
+            ),
+            PopupMenuButton<EditorTileAction>(
+              tooltip: 'Menü zeigen',
+              onSelected: (EditorTileAction action) {
+                switch (action) {
+                  case EditorTileAction.delete:
+                    widget.itemDeleted(_item);
+                    break;
+                  case EditorTileAction.save:
+                    widget.itemSaved(_item);
+                    break;
+                  default:
+                    return;
+                }
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<EditorTileAction>>[
+                PopupMenuItem<EditorTileAction>(
+                  value: EditorTileAction.delete,
+                  child: Row(children: <Widget>[
+                    Icon(Icons.delete),
+                    Text(' Artikel entfernen',
+                        style: TextStyle(color: Theme.of(context).iconTheme.color))
+                  ]),
+                ),
+                PopupMenuItem<EditorTileAction>(
+                  value: EditorTileAction.save,
+                  child: Row(children: <Widget>[
+                    Icon(Icons.archive),
+                    Text(' Unter Artikel sichern',
+                        style: TextStyle(color: Theme.of(context).iconTheme.color))
+                  ]),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
