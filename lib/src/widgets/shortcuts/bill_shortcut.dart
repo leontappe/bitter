@@ -7,8 +7,10 @@ import 'base_shortcut.dart';
 class BillShortcut extends StatelessWidget {
   final BuildContext context;
   final Bill bill;
+  final bool showVendor;
 
-  const BillShortcut(this.context, {Key key, @required this.bill}) : super(key: key);
+  const BillShortcut(this.context, {Key key, @required this.bill, this.showVendor = true})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class BillShortcut extends StatelessWidget {
             style: Theme.of(context).textTheme.subtitle1,
             textScaleFactor: 1.1,
             overflow: TextOverflow.ellipsis),
-        Text(bill.vendor.name, overflow: TextOverflow.ellipsis),
+        if (showVendor) Text(bill.vendor.name, overflow: TextOverflow.ellipsis),
         Text(bill.customer.fullCompany ?? bill.customer.fullName, overflow: TextOverflow.ellipsis),
         Text('${bill.items.length} Artikel', overflow: TextOverflow.ellipsis),
         Text((bill.sum / 100.0).toStringAsFixed(2) + ' €', overflow: TextOverflow.ellipsis),

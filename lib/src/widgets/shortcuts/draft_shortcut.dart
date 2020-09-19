@@ -11,8 +11,10 @@ class DraftShortcut extends StatelessWidget {
   final Draft draft;
   final Customer customer;
   final Vendor vendor;
+  final bool showVendor;
 
-  const DraftShortcut(this.context, {Key key, @required this.draft, this.customer, this.vendor})
+  const DraftShortcut(this.context,
+      {Key key, @required this.draft, this.customer, this.vendor, this.showVendor = true})
       : super(key: key);
 
   @override
@@ -26,7 +28,7 @@ class DraftShortcut extends StatelessWidget {
             style: Theme.of(context).textTheme.subtitle1,
             textScaleFactor: 1.1,
             overflow: TextOverflow.ellipsis),
-        if (vendor != null) Text(vendor.name, overflow: TextOverflow.ellipsis),
+        if (showVendor && vendor != null) Text(vendor.name, overflow: TextOverflow.ellipsis),
         if (customer != null)
           Text(customer.fullCompany ?? customer.fullName, overflow: TextOverflow.ellipsis),
         Text('${draft.items.length} Artikel', overflow: TextOverflow.ellipsis),

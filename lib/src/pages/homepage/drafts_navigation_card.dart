@@ -77,7 +77,8 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
                   child: DraftShortcut(context,
                       draft: d,
                       vendor: _vendors?.singleWhere((Vendor v) => v.id == d.vendor),
-                      customer: _customers?.singleWhere((Customer c) => c.id == d.customer)),
+                      customer: _customers?.singleWhere((Customer c) => c.id == d.customer),
+                      showVendor: widget.filter == null),
                 )),
             if (_drafts.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))

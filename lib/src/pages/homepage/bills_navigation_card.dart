@@ -58,7 +58,8 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             ..._bills.take(4).map<Widget>(
-                  (Bill b) => Expanded(child: BillShortcut(context, bill: b)),
+                  (Bill b) => Expanded(
+                      child: BillShortcut(context, bill: b, showVendor: widget.filter == null)),
                 ),
             if (_bills.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
@@ -80,7 +81,8 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             ..._overdueBills.take(4).map<Widget>(
-                  (Bill b) => Expanded(child: BillShortcut(context, bill: b)),
+                  (Bill b) => Expanded(
+                      child: BillShortcut(context, bill: b, showVendor: widget.filter == null)),
                 ),
             if (_overdueBills.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
