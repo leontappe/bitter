@@ -4,8 +4,8 @@ import '../../models/bill.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
-import '../../widgets/shortcuts/bill_shortcut.dart';
 import '../../widgets/navigation_card.dart';
+import '../../widgets/shortcuts/bill_shortcut.dart';
 
 class BillsNavigationCard extends StatefulWidget {
   @override
@@ -15,6 +15,15 @@ class BillsNavigationCard extends StatefulWidget {
 class _BillsNavigationCardState extends State<BillsNavigationCard> {
   BillRepository _billRepo;
   List<Bill> _bills = [];
+
+  List<Bill> get _overdueBills => _bills
+      .where((Bill b) =>
+          (((b.reminders == null || b.reminders.isEmpty) && DateTime.now().isAfter(b.dueDate)) ||
+              (b.reminders != null &&
+                  b.reminders.isNotEmpty &&
+                  DateTime.now().isAfter(b.reminders.last.deadline))) &&
+          b.status == BillStatus.unpaid)
+      .toList();
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +63,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
         Divider(height: 24.0),
         Text('Überfällig', style: Theme.of(context).textTheme.headline4),
         Text(
-          ' Es gibt gerade ${_bills.where((Bill b) => (((b.reminders == null || b.reminders.isEmpty) && DateTime.now().isAfter(b.dueDate)) || (b.reminders != null && b.reminders.isNotEmpty && DateTime.now().isAfter(b.reminders.last.deadline))) && b.status == BillStatus.unpaid).length} überfällige Rechnungen oder zugehörige Mahnungen',
+          ' Es gibt gerade ${_overdueBills.length} überfällige Rechnungen oder zugehörige Mahnungen',
           style: TextStyle(color: Colors.grey[800]),
         ),
         Flexible(
@@ -62,19 +71,10 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            ..._bills
-                .where((Bill b) =>
-                    (((b.reminders == null || b.reminders.isEmpty) &&
-                            DateTime.now().isAfter(b.dueDate)) ||
-                        (b.reminders != null &&
-                            b.reminders.isNotEmpty &&
-                            DateTime.now().isAfter(b.reminders.last.deadline))) &&
-                    b.status == BillStatus.unpaid)
-                .take(4)
-                .map<Widget>(
+            ..._overdueBills.take(4).map<Widget>(
                   (Bill b) => Expanded(child: BillShortcut(context, bill: b)),
                 ),
-            if (_bills.length > 4)
+            if (_overdueBills.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0)),
           ],
         )),
