@@ -88,7 +88,7 @@ class _BillsListPageState extends State<BillsListPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                        'Bearbeiter*in: ${b.editor}, ${b.vendor.name} - Kunde*in: ${b.customer.name} ${b.customer.surname}'),
+                        'Bearbeiter*in: ${b.editor}, ${b.vendor.name} - Kunde*in: ${b.customer.fullCompany ?? b.customer.fullName}'),
                     Text('Rechnungsdatum: ${formatDate(b.created)}')
                   ],
                 ),
@@ -141,7 +141,7 @@ class _BillsListPageState extends State<BillsListPage> {
         }
       }
     }
-    setState(() => bills);
+    if (mounted) setState(() => bills);
     return;
   }
 
