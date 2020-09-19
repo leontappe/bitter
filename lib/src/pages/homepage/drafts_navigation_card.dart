@@ -102,6 +102,6 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
     _vendors = await _vendorRepo.select();
     _drafts = await _billRepo.select();
     _drafts.sort((Draft a, Draft b) => b.id.compareTo(a.id));
-    setState(() => _drafts);
+    if (mounted) setState(() => _drafts);
   }
 }

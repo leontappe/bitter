@@ -97,7 +97,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
   Future<void> onGetBills() async {
     _bills = await _billRepo.select();
     _bills.sort((Bill a, Bill b) => b.created.compareTo(a.created));
-    setState(() => _bills);
+    if (mounted) setState(() => _bills);
     return;
   }
 }

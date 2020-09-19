@@ -84,6 +84,6 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
   Future<void> onRefresh() async {
     _customers = await _customerRepo.select();
     _customers.sort((Customer a, Customer b) => b.id.compareTo(a.id));
-    setState(() => _customers);
+    if (mounted) setState(() => _customers);
   }
 }
