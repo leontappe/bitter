@@ -162,7 +162,7 @@ class _ItemPageState extends State<ItemPage> {
       item = widget.item;
     }
 
-    setState(() => item);
+    if (mounted) setState(() => item);
   }
 
   Future<void> onDeleteItem(int id) async {

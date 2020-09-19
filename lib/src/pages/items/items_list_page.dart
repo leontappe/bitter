@@ -146,8 +146,7 @@ class _BillsListPageState extends State<ItemsListPage> {
       }
     }
     _sortItems();
-    setState(() => items);
-    return;
+    if (mounted) setState(() => items);
   }
 
   void _sortItems() {

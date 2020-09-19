@@ -104,7 +104,9 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   },
                   suggestions: _customers,
                   itemBuilder: (BuildContext context, Customer c) => ListTile(
-                    title: Text((c.company != null) ? c.company : '${c.name} ${c.surname}'),
+                    title: Text((c.company != null)
+                        ? '${c.company}${c.organizationUnit != null ? ' ' + c.organizationUnit : ''}'
+                        : '${c.name} ${c.surname}'),
                     subtitle: (c.company != null) ? Text('${c.name} ${c.surname}') : null,
                   ),
                   itemSorter: (Customer a, Customer b) => a.id - b.id,
@@ -112,7 +114,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                     if (filter == null || filter.isEmpty) return true;
                     filter = filter.toLowerCase();
                     return (c.fullName ?? '').toLowerCase().contains(filter) ||
-                        (c.company ?? '').toLowerCase().contains(filter);
+                        (c.fullCompany ?? '').toLowerCase().contains(filter);
                   },
                 ),
               ),
@@ -311,7 +313,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
       }
     }
 
-    setState(() => _customers);
+    if (mounted) setState(() => _customers);
   }
 
   @override

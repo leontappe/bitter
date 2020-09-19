@@ -438,9 +438,7 @@ class _VendorPageState extends State<VendorPage> {
     } else {
       vendor = newVendor;
     }
-    setState(() {
-      return vendor;
-    });
+    if (mounted) setState(() => vendor);
   }
 
   void onClearImage(HeaderImage image) {

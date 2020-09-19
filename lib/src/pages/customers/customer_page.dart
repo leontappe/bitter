@@ -119,8 +119,11 @@ class _CustomerPageState extends State<CustomerPage> {
                           DropdownMenuItem(value: 2, child: Text('divers')),
                         ],
                         onChanged: (int v) {
-                          newCustomer.gender =
-                              v == 0 ? Gender.male : v == 1 ? Gender.female : Gender.diverse;
+                          newCustomer.gender = v == 0
+                              ? Gender.male
+                              : v == 1
+                                  ? Gender.female
+                                  : Gender.diverse;
                           setState(() => dropdownValue = v);
                           dirty = true;
                           changed = true;
@@ -315,9 +318,7 @@ class _CustomerPageState extends State<CustomerPage> {
       if (widget.id != null) {
         await repo.update(newCustomer);
         customer = await repo.selectSingle(widget.id);
-        setState(() {
-          return customer;
-        });
+        setState(() => customer);
       } else {
         await repo.insert(newCustomer);
         Navigator.pop<bool>(context, true);

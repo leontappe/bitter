@@ -68,7 +68,7 @@ class _VendorSelectorState extends State<VendorSelector> {
       }
     }
 
-    setState(() => _vendors);
+    if (mounted) setState(() => _vendors);
   }
 
   @override

@@ -92,9 +92,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
   Future<void> onGetCustomers() async {
     customers = await repo.select();
     _sortCustomers();
-    setState(() {
-      return customers;
-    });
+    if (mounted) setState(() => customers);
   }
 
   void _sortCustomers() {
@@ -123,9 +121,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
   Future<void> onSearchChanged(String value) async {
     customers = await repo.select(searchQuery: value);
     _sortCustomers();
-    setState(() {
-      return customers;
-    });
+    if (mounted) setState(() => customers);
   }
 
   void onToggleSearch() async {

@@ -57,7 +57,7 @@ class _VendorsPageState extends State<VendorsPage> {
 
   Future<void> onGetVendors() async {
     vendors = await repo.select();
-    setState(() => vendors);
+    if (mounted) setState(() => vendors);
   }
 
   void onPushVendorAddPage() async {

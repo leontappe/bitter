@@ -173,7 +173,7 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
     } else {
       await repo.setDbEngine(dbEngine);
     }
-    setState(() => settings);
+    if (mounted) setState(() => settings);
   }
 
   @override

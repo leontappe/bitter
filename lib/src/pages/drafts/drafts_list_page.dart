@@ -164,7 +164,7 @@ class _DraftsListPageState extends State<DraftsListPage> {
       }
     }
 
-    setState(() => drafts);
+    if (mounted) setState(() => drafts);
   }
 
   Future<void> onPushDraftCreator({Draft draft}) async {

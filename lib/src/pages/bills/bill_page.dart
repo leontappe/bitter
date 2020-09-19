@@ -184,7 +184,7 @@ class _BillPageState extends State<BillPage> {
     bill = await repo.selectSingle(widget.id);
     vendor = await vendorRepo.selectSingle(bill.vendor.id);
 
-    setState(() => bill);
+    if (mounted) setState(() => bill);
   }
 
   Future<void> onPopRoute(BuildContext context) async {
