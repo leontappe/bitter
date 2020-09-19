@@ -54,7 +54,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
         Divider(height: 24.0),
         Text('Überfällig', style: Theme.of(context).textTheme.headline4),
         Text(
-          ' Es gibt gerade ${_bills.where((Bill b) => ((b.reminders == null || b.reminders.isEmpty) && DateTime.now().isAfter(b.dueDate)) || (b.reminders != null && b.reminders.isNotEmpty && DateTime.now().isAfter(b.reminders.last.deadline))).length} überfällige Rechnungen oder zugehörige Mahnungen',
+          ' Es gibt gerade ${_bills.where((Bill b) => (((b.reminders == null || b.reminders.isEmpty) && DateTime.now().isAfter(b.dueDate)) || (b.reminders != null && b.reminders.isNotEmpty && DateTime.now().isAfter(b.reminders.last.deadline))) && b.status == BillStatus.unpaid).length} überfällige Rechnungen oder zugehörige Mahnungen',
           style: TextStyle(color: Colors.grey[800]),
         ),
         Flexible(
@@ -64,11 +64,12 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
           children: [
             ..._bills
                 .where((Bill b) =>
-                    ((b.reminders == null || b.reminders.isEmpty) &&
-                        DateTime.now().isAfter(b.dueDate)) ||
-                    (b.reminders != null &&
-                        b.reminders.isNotEmpty &&
-                        DateTime.now().isAfter(b.reminders.last.deadline)))
+                    (((b.reminders == null || b.reminders.isEmpty) &&
+                            DateTime.now().isAfter(b.dueDate)) ||
+                        (b.reminders != null &&
+                            b.reminders.isNotEmpty &&
+                            DateTime.now().isAfter(b.reminders.last.deadline))) &&
+                    b.status == BillStatus.unpaid)
                 .take(4)
                 .map<Widget>(
                   (Bill b) => Expanded(child: BillShortcut(context, bill: b)),
