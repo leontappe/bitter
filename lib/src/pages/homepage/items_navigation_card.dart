@@ -8,6 +8,10 @@ import '../../widgets/shortcuts/item_shortcut.dart';
 import '../items/item_page.dart';
 
 class ItemsNavigationCard extends StatefulWidget {
+  final int filter;
+
+  ItemsNavigationCard({this.filter = -1}) : super(key: Key(filter.toString()));
+
   @override
   _ItemsNavigationCardState createState() => _ItemsNavigationCardState();
 }
@@ -81,6 +85,9 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
 
   Future<void> onRefresh() async {
     _items = await _itemRepo.select();
+    if (widget.filter != null && widget.filter > 0) {
+      _items.removeWhere((Item i) => i.vendor != widget.filter);
+    }
     _items.sort((Item a, Item b) => b.id.compareTo(a.id));
     if (mounted) setState(() => _items);
   }

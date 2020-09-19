@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:bitter/src/providers/database_provider.dart';
+import 'package:bitter/src/providers/inherited_database.dart';
+import 'package:bitter/src/repositories/vendor_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
@@ -22,12 +25,43 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   PackageInfo packageInfo;
 
+  SettingsRepository settings;
+  VendorRepository<DatabaseProvider> vendorRepo;
+  List<Vendor> _vendors;
+  List<Vendor> filterVendors = [];
+  int filterVendor;
+
+  Future<void> onFilter(int value) async {
+    setState(() {
+      if (value >= 0) {
+        filterVendor = value;
+      } else {
+        filterVendor = null;
+      }
+    });
+    await settings.insert('homepage_filter', filterVendor);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('bitter Rechnungen'),
         actions: <Widget>[
+          Flexible(
+              child: DropdownButton<int>(
+            value: filterVendor ?? -1,
+            dropdownColor: Colors.grey[800],
+            iconEnabledColor: Colors.white70,
+            style: TextStyle(color: Colors.white, decorationColor: Colors.white70, fontSize: 14.0),
+            hint: Text('Nach Verkäufer filtern', style: TextStyle(color: Colors.white)),
+            items: <DropdownMenuItem<int>>[
+              DropdownMenuItem(child: Text('Filter zurücksetzen'), value: -1),
+              ...filterVendors
+                  .map((Vendor v) => DropdownMenuItem(value: v.id, child: Text(v.name))),
+            ],
+            onChanged: onFilter,
+          )),
           IconButton(
               tooltip: 'Informationen über die App anzeigen',
               icon: Icon(Icons.info),
@@ -41,10 +75,10 @@ class _HomepageState extends State<Homepage> {
       ),
       body: ListView(
         children: <Widget>[
-          DraftsNavigationCard(),
-          BillsNavigationCard(),
+          DraftsNavigationCard(filter: filterVendor),
+          BillsNavigationCard(filter: filterVendor),
           CustomersNavigationCard(),
-          ItemsNavigationCard(),
+          ItemsNavigationCard(filter: filterVendor),
           NavigationCard(
             context,
             '/settings',
@@ -61,7 +95,7 @@ class _HomepageState extends State<Homepage> {
   }
 
   Future<void> initDb() async {
-    final settings = SettingsRepository();
+    settings = SettingsRepository();
     await settings.setUp();
     if (!await settings.hasDbEngine() || !await settings.hasUsername()) {
       await showDialog<dynamic>(
@@ -79,7 +113,16 @@ class _HomepageState extends State<Homepage> {
           ],
         ),
       );
+      return;
     }
+
+    vendorRepo = VendorRepository<DatabaseProvider>(
+        InheritedDatabase.of<DatabaseProvider>(context).provider);
+    await vendorRepo.setUp();
+    _vendors = await vendorRepo.select();
+
+    filterVendor = await settings.select<int>('homepage_filter');
+    setState(() => filterVendors = _vendors);
   }
 
   void initPackageInfo() async {

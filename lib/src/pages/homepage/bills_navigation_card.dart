@@ -8,6 +8,10 @@ import '../../widgets/navigation_card.dart';
 import '../../widgets/shortcuts/bill_shortcut.dart';
 
 class BillsNavigationCard extends StatefulWidget {
+  final int filter;
+
+  BillsNavigationCard({this.filter = -1}) : super(key: Key(filter.toString()));
+
   @override
   _BillsNavigationCardState createState() => _BillsNavigationCardState();
 }
@@ -91,14 +95,15 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
   Future<void> initDb() async {
     _billRepo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     await _billRepo.setUp();
-
     await onGetBills();
   }
 
   Future<void> onGetBills() async {
     _bills = await _billRepo.select();
+    if (widget.filter != null && widget.filter > 0) {
+      _bills.removeWhere((Bill b) => b.vendor.id != widget.filter);
+    }
     _bills.sort((Bill a, Bill b) => b.created.compareTo(a.created));
     if (mounted) setState(() => _bills);
-    return;
   }
 }

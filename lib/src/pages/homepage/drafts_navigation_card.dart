@@ -11,6 +11,10 @@ import '../../widgets/navigation_card.dart';
 import '../drafts/draft_creator.dart';
 
 class DraftsNavigationCard extends StatefulWidget {
+  final int filter;
+
+  DraftsNavigationCard({this.filter}) : super(key: Key(filter.toString()));
+
   @override
   _DraftsNavigationCardState createState() => _DraftsNavigationCardState();
 }
@@ -101,6 +105,9 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
     _customers = await _customerRepo.select();
     _vendors = await _vendorRepo.select();
     _drafts = await _billRepo.select();
+    if (widget.filter != null && widget.filter > 0) {
+      _drafts.removeWhere((Draft d) => d.vendor != widget.filter);
+    }
     _drafts.sort((Draft a, Draft b) => b.id.compareTo(a.id));
     if (mounted) setState(() => _drafts);
   }
