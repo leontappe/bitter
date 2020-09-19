@@ -81,7 +81,7 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
                 )),
             if (_drafts.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
-            else
+            else if (_drafts.isNotEmpty)
               Container(width: 48.0, height: 48.0),
             for (var i = 0; i < (4 - _drafts.length); i++) Spacer(),
           ],

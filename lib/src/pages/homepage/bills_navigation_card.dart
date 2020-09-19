@@ -62,7 +62,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
                 ),
             if (_bills.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
-            else
+            else if (_bills.isNotEmpty)
               Container(width: 48.0, height: 48.0),
             for (var i = 0; i < (4 - _bills.length); i++) Spacer(),
           ],
@@ -84,7 +84,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
                 ),
             if (_overdueBills.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
-            else
+            else if (_overdueBills.isNotEmpty)
               Container(width: 48.0, height: 48.0),
             for (var i = 0; i < (4 - _overdueBills.length); i++) Spacer(),
           ],

@@ -69,7 +69,7 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
                 )),
             if (_items.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
-            else
+            else if (_items.isNotEmpty)
               Container(width: 48.0, height: 48.0),
             for (var i = 0; i < (4 - _items.length); i++) Spacer(),
           ],

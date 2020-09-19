@@ -67,7 +67,7 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
                 )),
             if (_customers.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
-            else
+            else if (_customers.isNotEmpty)
               Container(width: 48.0, height: 48.0),
             for (var i = 0; i < (4 - _customers.length); i++) Spacer(),
           ],
