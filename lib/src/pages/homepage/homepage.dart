@@ -29,7 +29,7 @@ class _HomepageState extends State<Homepage> {
   VendorRepository<DatabaseProvider> vendorRepo;
   List<Vendor> _vendors;
   List<Vendor> filterVendors = [];
-  int filterVendor;
+  int filterVendor = -1;
 
   Future<void> onFilter(int value) async {
     setState(() {

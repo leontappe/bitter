@@ -10,7 +10,7 @@ import '../items/item_page.dart';
 class ItemsNavigationCard extends StatefulWidget {
   final int filter;
 
-  ItemsNavigationCard({this.filter = -1}) : super(key: Key(filter.toString()));
+  ItemsNavigationCard({this.filter}) : super(key: Key(filter.toString()));
 
   @override
   _ItemsNavigationCardState createState() => _ItemsNavigationCardState();
