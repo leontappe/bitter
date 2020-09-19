@@ -98,6 +98,8 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
   Future<bool> _createBill(int id) async {
     draft = await repo.selectSingle(id);
 
+    if (draft == null) return false;
+
     if (draft.items.isEmpty) {
       Scaffold.of(context).showSnackBar(const SnackBar(
           content: Text('Dieser Entwurf enthält keine Artikel'), duration: Duration(seconds: 3)));
