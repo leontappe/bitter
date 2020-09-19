@@ -86,8 +86,8 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
         (widget.onCompleted != null) ? widget.onCompleted(billResult, billResult) : null;
         break;
       case DraftPopupSelection.delete:
-        await repo.delete(widget.id);
-        (widget.onCompleted != null) ? widget.onCompleted(true, false) : null;
+        final result = await _deleteDraft();
+        (widget.onCompleted != null) ? widget.onCompleted(result, false) : null;
         break;
       default:
         (widget.onCompleted != null) ? widget.onCompleted(false, false) : null;
@@ -157,5 +157,19 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
       ));
       return false;
     }
+  }
+
+  Future<bool> _deleteDraft() async {
+    final result = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: Text('Möchtest du diesen Entwurf wirklich löschen?'),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(context, false), child: Text('Nein')),
+                TextButton(onPressed: () => Navigator.pop(context, true), child: Text('Ja')),
+              ],
+            ));
+    if (result) await repo.delete(widget.id);
+    return result;
   }
 }
