@@ -1,4 +1,4 @@
-image: astait/flutter_linux_build:latest
+image: astait/flutter_linux_build:master
 
 stages:
   - build
