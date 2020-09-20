@@ -58,7 +58,7 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
         Divider(),
         Text('Neu', style: Theme.of(context).textTheme.headline4),
         Text(
-          ' Zurzeit sind ${_items.length} Artikel vorhanden.',
+          ' Zurzeit ${_items.length == 1 ? 'ist' : 'sind'} ${_items.length} Artikel vorhanden.',
           style: TextStyle(color: Colors.grey[800]),
           overflow: TextOverflow.ellipsis,
         ),

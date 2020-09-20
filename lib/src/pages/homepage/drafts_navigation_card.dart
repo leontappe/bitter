@@ -64,7 +64,7 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
         Divider(),
         Text('Neu', style: Theme.of(context).textTheme.headline4),
         Text(
-          ' Zurzeit sind ${_drafts.length} Entwürfe vorhanden.',
+          ' Zurzeit ${_drafts.length == 1 ? 'ist' : 'sind'} ${_drafts.length} ${_drafts.length == 1 ? 'Entwurf' : 'Entwürfe'} vorhanden.',
           style: TextStyle(color: Colors.grey[800]),
           overflow: TextOverflow.ellipsis,
         ),

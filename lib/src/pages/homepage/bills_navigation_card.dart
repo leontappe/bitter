@@ -50,7 +50,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
         Divider(),
         Text('Neu', style: Theme.of(context).textTheme.headline4),
         Text(
-            ' In den letzten 7 Tagen wurden ${_bills.where((Bill b) => b.created.isAfter(DateTime.now().subtract(Duration(days: 7)))).length} Rechnungen erstellt.',
+            ' In den letzten 7 Tagen wurde${_bills.length == 1 ? '' : 'n'} ${_bills.where((Bill b) => b.created.isAfter(DateTime.now().subtract(Duration(days: 7)))).length} Rechnung${_bills.length == 1 ? '' : 'en'} erstellt.',
             style: TextStyle(color: Colors.grey[800])),
         Flexible(
             child: Row(
@@ -71,7 +71,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
         Divider(height: 24.0),
         Text('Überfällig', style: Theme.of(context).textTheme.headline4),
         Text(
-          ' Es gibt gerade ${_overdueBills.length} überfällige Rechnungen oder zugehörige Mahnungen.',
+          ' Es gibt gerade ${_overdueBills.length} überfällige Rechnung${_overdueBills.length == 1 ? '' : 'en'} oder zugehörige Mahnung${_overdueBills.length == 1 ? '' : 'en'}.',
           style: TextStyle(color: Colors.grey[800]),
           overflow: TextOverflow.ellipsis,
         ),
