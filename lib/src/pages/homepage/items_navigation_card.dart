@@ -1,3 +1,4 @@
+import 'package:bitter/src/repositories/vendor_repository.dart';
 import 'package:flutter/material.dart';
 
 import '../../providers/database_provider.dart';
@@ -18,8 +19,10 @@ class ItemsNavigationCard extends StatefulWidget {
 
 class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
   ItemRepository _itemRepo;
+  VendorRepository _vendorRepo;
 
   List<Item> _items = [];
+  List<Vendor> _vendors;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +68,10 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             ..._items.take(4).map<Widget>((Item i) => Expanded(
-                  child: ItemShortcut(context, item: i),
+                  child: ItemShortcut(context,
+                      item: i,
+                      vendor: _vendors?.singleWhere((Vendor v) => v.id == i.vendor),
+                      showVendor: widget.filter == null),
                 )),
             if (_items.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
@@ -86,8 +92,12 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
 
   Future<void> initDb() async {
     _itemRepo = ItemRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    _vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     await _itemRepo.setUp();
+    await _vendorRepo.setUp();
     await onRefresh();
+    _vendors = await _vendorRepo.select();
+    if (mounted) setState(() => _vendors);
   }
 
   Future<void> onRefresh() async {
