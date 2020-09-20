@@ -20,6 +20,8 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
   BillRepository _billRepo;
   List<Bill> _bills = [];
 
+  bool busy = false;
+
   List<Bill> get _overdueBills => _bills
       .where((Bill b) =>
           (((b.reminders == null || b.reminders.isEmpty) && DateTime.now().isAfter(b.dueDate)) ||
@@ -57,6 +59,9 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            if (busy)
+              Container(
+                  height: (widget.filter != null && widget.filter > 0) ? 93.0 : 109.0, width: 0.0),
             ..._bills.take(4).map<Widget>(
                   (Bill b) => Expanded(
                       child: BillShortcut(context, bill: b, showVendor: widget.filter == null)),
@@ -80,6 +85,9 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            if (busy)
+              Container(
+                  height: (widget.filter != null && widget.filter > 0) ? 93.0 : 109.0, width: 0.0),
             ..._overdueBills.take(4).map<Widget>(
                   (Bill b) => Expanded(
                       child: BillShortcut(context, bill: b, showVendor: widget.filter == null)),
@@ -102,6 +110,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
   }
 
   Future<void> initDb() async {
+    if (mounted) setState(() => busy = true);
     _billRepo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     await _billRepo.setUp();
     await onGetBills();
@@ -113,6 +122,6 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
       _bills.removeWhere((Bill b) => b.vendor.id != widget.filter);
     }
     _bills.sort((Bill a, Bill b) => b.created.compareTo(a.created));
-    if (mounted) setState(() => _bills);
+    if (mounted) setState(() => busy = false);
   }
 }

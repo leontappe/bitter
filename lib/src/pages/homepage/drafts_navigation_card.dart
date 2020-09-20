@@ -28,6 +28,8 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
   List<Vendor> _vendors;
   List<Customer> _customers;
 
+  bool busy = false;
+
   @override
   Widget build(BuildContext context) {
     return NavigationCard(
@@ -73,6 +75,9 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            if (busy)
+              Container(
+                  height: (widget.filter != null && widget.filter > 0) ? 93.0 : 109.0, width: 0.0),
             ..._drafts.take(4).map<Widget>((Draft d) => Expanded(
                   child: DraftShortcut(context,
                       draft: d,
@@ -98,6 +103,7 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
   }
 
   Future<void> initDb() async {
+    if (mounted) setState(() => busy = true);
     _billRepo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     _customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     _vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
@@ -117,6 +123,6 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
       _drafts.removeWhere((Draft d) => d.vendor != widget.filter);
     }
     _drafts.sort((Draft a, Draft b) => b.id.compareTo(a.id));
-    if (mounted) setState(() => _drafts);
+    if (mounted) setState(() => busy = false);
   }
 }

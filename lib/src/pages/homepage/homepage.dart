@@ -115,14 +115,16 @@ class _HomepageState extends State<Homepage> {
       );
       return;
     }
-
-    vendorRepo = VendorRepository<DatabaseProvider>(
-        InheritedDatabase.of<DatabaseProvider>(context).provider);
-    await vendorRepo.setUp();
-    _vendors = await vendorRepo.select();
+    
+    if (mounted) {
+      vendorRepo = VendorRepository<DatabaseProvider>(
+          InheritedDatabase.of<DatabaseProvider>(context).provider);
+      await vendorRepo.setUp();
+      _vendors = await vendorRepo.select();
+    }
 
     filterVendor = await settings.select<int>('homepage_filter');
-    setState(() => filterVendors = _vendors);
+    if (mounted) setState(() => filterVendors = _vendors);
   }
 
   void initPackageInfo() async {

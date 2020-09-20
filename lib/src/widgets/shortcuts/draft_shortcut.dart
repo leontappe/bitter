@@ -28,9 +28,11 @@ class DraftShortcut extends StatelessWidget {
             style: Theme.of(context).textTheme.subtitle1,
             textScaleFactor: 1.1,
             overflow: TextOverflow.ellipsis),
-        if (showVendor && vendor != null) Text(vendor.name, overflow: TextOverflow.ellipsis),
+        Text(vendor?.name ?? '', overflow: TextOverflow.ellipsis),
         if (customer != null)
-          Text(customer.fullCompany ?? customer.fullName, overflow: TextOverflow.ellipsis),
+          Text(customer.fullCompany ?? customer.fullName, overflow: TextOverflow.ellipsis)
+        else
+          Text(''),
         Text('${draft.items.length} Artikel', overflow: TextOverflow.ellipsis),
         Text('${(draft.sum / 100.0).toStringAsFixed(2)} €', overflow: TextOverflow.ellipsis),
       ],

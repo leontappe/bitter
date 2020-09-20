@@ -24,6 +24,8 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
   List<Item> _items = [];
   List<Vendor> _vendors;
 
+  bool busy = false;
+
   @override
   Widget build(BuildContext context) {
     return NavigationCard(
@@ -67,6 +69,9 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            if (busy)
+              Container(
+                  height: (widget.filter != null && widget.filter > 0) ? 77.0 : 93.0, width: 0.0),
             ..._items.take(4).map<Widget>((Item i) => Expanded(
                   child: ItemShortcut(context,
                       item: i,
@@ -91,6 +96,7 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
   }
 
   Future<void> initDb() async {
+    if (mounted) setState(() => busy = true);
     _itemRepo = ItemRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     _vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     await _itemRepo.setUp();
@@ -106,6 +112,6 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
       _items.removeWhere((Item i) => i.vendor != widget.filter);
     }
     _items.sort((Item a, Item b) => b.id.compareTo(a.id));
-    if (mounted) setState(() => _items);
+    if (mounted) setState(() => busy = false);
   }
 }

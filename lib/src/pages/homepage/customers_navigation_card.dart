@@ -17,6 +17,8 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
 
   List<Customer> _customers = [];
 
+  bool busy = false;
+
   @override
   Widget build(BuildContext context) {
     return NavigationCard(
@@ -62,6 +64,7 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            if (busy) Container(height: 77.0, width: 0.0),
             ..._customers.take(4).map<Widget>((Customer c) => Expanded(
                   child: CustomerShortcut(context, customer: c),
                 )),
@@ -83,6 +86,7 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
   }
 
   Future<void> initDb() async {
+    if (mounted) setState(() => busy = true);
     _customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     await _customerRepo.setUp();
     await onRefresh();
@@ -91,6 +95,6 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
   Future<void> onRefresh() async {
     _customers = await _customerRepo.select();
     _customers.sort((Customer a, Customer b) => b.id.compareTo(a.id));
-    if (mounted) setState(() => _customers);
+    if (mounted) setState(() => busy = false);
   }
 }
