@@ -222,7 +222,7 @@ class _BillPageState extends State<BillPage> {
           return;
       }
     } else {
-      Navigator.pop<bool>(context, false);
+      Navigator.pop<bool>(context, true);
     }
   }
 
