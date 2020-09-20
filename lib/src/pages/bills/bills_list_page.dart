@@ -26,6 +26,8 @@ class _BillsListPageState extends State<BillsListPage> {
 
   bool _groupedMode = true;
 
+  bool busy = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,64 +79,69 @@ class _BillsListPageState extends State<BillsListPage> {
         ],
       ),
       body: RefreshIndicator(
-        child: ListView(
-          children: <Widget>[
-            if (_groupedMode)
-              Column(
-                children: [
-                  ListTile(title: Text('Überfällig', style: Theme.of(context).textTheme.headline4)),
-                  ...bills
-                      .where((Bill b) =>
-                          (((b.reminders == null || b.reminders.isEmpty) &&
-                                  DateTime.now().isAfter(b.dueDate)) ||
-                              (b.reminders != null &&
-                                  b.reminders.isNotEmpty &&
-                                  DateTime.now().isAfter(b.reminders.last.deadline))) &&
-                          b.status == BillStatus.unpaid)
-                      .map(
-                        (Bill b) => BillListTile(
-                          bill: b,
-                          onTap: () => onPushBillPage(b.id),
-                        ),
+        child: (busy)
+            ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
+            : ListView(
+                children: <Widget>[
+                  if (_groupedMode)
+                    Column(
+                      children: [
+                        ListTile(
+                            title:
+                                Text('Überfällig', style: Theme.of(context).textTheme.headline4)),
+                        ...bills
+                            .where((Bill b) =>
+                                (((b.reminders == null || b.reminders.isEmpty) &&
+                                        DateTime.now().isAfter(b.dueDate)) ||
+                                    (b.reminders != null &&
+                                        b.reminders.isNotEmpty &&
+                                        DateTime.now().isAfter(b.reminders.last.deadline))) &&
+                                b.status == BillStatus.unpaid)
+                            .map(
+                              (Bill b) => BillListTile(
+                                bill: b,
+                                onTap: () => onPushBillPage(b.id),
+                              ),
+                            ),
+                        Divider(),
+                        ListTile(
+                            title: Text('Laufend', style: Theme.of(context).textTheme.headline4)),
+                        ...bills
+                            .where((Bill b) =>
+                                b.status == BillStatus.unpaid &&
+                                (DateTime.now().isBefore(b.dueDate) ||
+                                    (b.reminders.isNotEmpty &&
+                                        DateTime.now().isBefore(b.reminders.last.deadline))))
+                            .map(
+                              (Bill b) => BillListTile(
+                                bill: b,
+                                onTap: () => onPushBillPage(b.id),
+                              ),
+                            ),
+                        Divider(),
+                        ListTile(
+                            title: Text('Abgeschlossen oder storniert',
+                                style: Theme.of(context).textTheme.headline4)),
+                        ...bills
+                            .where((Bill b) =>
+                                b.status == BillStatus.paid || b.status == BillStatus.cancelled)
+                            .map(
+                              (Bill b) => BillListTile(
+                                bill: b,
+                                onTap: () => onPushBillPage(b.id),
+                              ),
+                            ),
+                      ],
+                    )
+                  else
+                    ...bills.map(
+                      (Bill b) => BillListTile(
+                        bill: b,
+                        onTap: () => onPushBillPage(b.id),
                       ),
-                  Divider(),
-                  ListTile(title: Text('Laufend', style: Theme.of(context).textTheme.headline4)),
-                  ...bills
-                      .where((Bill b) =>
-                          b.status == BillStatus.unpaid &&
-                          (DateTime.now().isBefore(b.dueDate) ||
-                              (b.reminders.isNotEmpty &&
-                                  DateTime.now().isBefore(b.reminders.last.deadline))))
-                      .map(
-                        (Bill b) => BillListTile(
-                          bill: b,
-                          onTap: () => onPushBillPage(b.id),
-                        ),
-                      ),
-                  Divider(),
-                  ListTile(
-                      title: Text('Abgeschlossen oder storniert',
-                          style: Theme.of(context).textTheme.headline4)),
-                  ...bills
-                      .where((Bill b) =>
-                          b.status == BillStatus.paid || b.status == BillStatus.cancelled)
-                      .map(
-                        (Bill b) => BillListTile(
-                          bill: b,
-                          onTap: () => onPushBillPage(b.id),
-                        ),
-                      ),
+                    ),
                 ],
-              )
-            else
-              ...bills.map(
-                (Bill b) => BillListTile(
-                  bill: b,
-                  onTap: () => onPushBillPage(b.id),
-                ),
               ),
-          ],
-        ),
         onRefresh: () async => await onGetBills(),
       ),
     );
@@ -170,6 +177,7 @@ class _BillsListPageState extends State<BillsListPage> {
   }
 
   Future<void> onGetBills() async {
+    if (mounted) setState(() => busy = true);
     bills = await billRepo.select(searchQuery: searchQuery, vendorFilter: filterVendor);
     if (filterVendor == null) {
       for (var bill in bills) {
@@ -179,7 +187,7 @@ class _BillsListPageState extends State<BillsListPage> {
       }
     }
     bills.sort((Bill a, Bill b) => b.created.compareTo(a.created));
-    if (mounted) setState(() => bills);
+    if (mounted) setState(() => busy = false);
     return;
   }
 

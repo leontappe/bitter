@@ -19,6 +19,8 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
 
   bool searchEnabled = false;
 
+  bool busy = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,20 +60,22 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
         ],
       ),
       body: RefreshIndicator(
-        child: ListView(
-          semanticChildCount: customers.length,
-          children: <Widget>[
-            ...List.from(
-              customers.map<ListTile>((Customer c) => ListTile(
-                    title: Text((c.company == null || c.company.isEmpty)
-                        ? '${c.name} ${c.surname}'
-                        : '${c.company} ${c.organizationUnit ?? ''}'),
-                    subtitle: Text('${c.address}, ${c.zipCode} ${c.city}'),
-                    onTap: () => onPushCustomerPage(context, c.id),
-                  )),
-            )
-          ],
-        ),
+        child: (busy)
+            ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
+            : ListView(
+                semanticChildCount: customers.length,
+                children: <Widget>[
+                  ...List.from(
+                    customers.map<ListTile>((Customer c) => ListTile(
+                          title: Text((c.company == null || c.company.isEmpty)
+                              ? '${c.name} ${c.surname}'
+                              : '${c.company} ${c.organizationUnit ?? ''}'),
+                          subtitle: Text('${c.address}, ${c.zipCode} ${c.city}'),
+                          onTap: () => onPushCustomerPage(context, c.id),
+                        )),
+                  )
+                ],
+              ),
         onRefresh: onGetCustomers,
       ),
     );
@@ -90,9 +94,10 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
   }
 
   Future<void> onGetCustomers() async {
+    if (mounted) setState(() => busy = true);
     customers = await repo.select();
     _sortCustomers();
-    if (mounted) setState(() => customers);
+    if (mounted) setState(() => busy = false);
   }
 
   void _sortCustomers() {

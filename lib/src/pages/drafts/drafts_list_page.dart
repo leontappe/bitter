@@ -31,6 +31,8 @@ class _DraftsListPageState extends State<DraftsListPage> {
 
   bool searchEnabled = false;
 
+  bool busy = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,25 +86,27 @@ class _DraftsListPageState extends State<DraftsListPage> {
         ],
       ),
       body: RefreshIndicator(
-        child: ListView(
-          children: [
-            ...drafts.reversed.map((Draft d) => ListTile(
-                  title: Text('Entwurf ${d.id}'),
-                  subtitle: Text((vendors.isNotEmpty && customers.isNotEmpty)
-                      ? 'Bearbeiter*in: ${d.editor}, ${vendors.where((Vendor v) => v.id == d.vendor).isEmpty ? '' : vendors.singleWhere((Vendor v) => v.id == d.vendor).name} - Kunde*in: ${customers.where((Customer c) => c.id == d.customer).isEmpty ? '' : customers.singleWhere((Customer c) => c.id == d.customer).name} ${customers.where((Customer c) => c.id == d.customer).isEmpty ? '' : customers.singleWhere((Customer c) => c.id == d.customer).surname}'
-                      : 'Bearbeiter*in: ${d.editor}'),
-                  trailing: DraftPopupMenu(
-                      id: d.id,
-                      onCompleted: (bool changed, bool redirect) {
-                        if (changed) {
-                          onGetDrafts();
-                          if (redirect) Navigator.pushNamed(context, '/bills');
-                        }
-                      }),
-                  onTap: () => onPushDraftCreator(draft: d),
-                )),
-          ],
-        ),
+        child: (busy)
+            ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
+            : ListView(
+                children: [
+                  ...drafts.reversed.map((Draft d) => ListTile(
+                        title: Text('Entwurf ${d.id}'),
+                        subtitle: Text((vendors.isNotEmpty && customers.isNotEmpty)
+                            ? 'Bearbeiter*in: ${d.editor}, ${vendors.where((Vendor v) => v.id == d.vendor).isEmpty ? '' : vendors.singleWhere((Vendor v) => v.id == d.vendor).name} - Kunde*in: ${customers.where((Customer c) => c.id == d.customer).isEmpty ? '' : customers.singleWhere((Customer c) => c.id == d.customer).name} ${customers.where((Customer c) => c.id == d.customer).isEmpty ? '' : customers.singleWhere((Customer c) => c.id == d.customer).surname}'
+                            : 'Bearbeiter*in: ${d.editor}'),
+                        trailing: DraftPopupMenu(
+                            id: d.id,
+                            onCompleted: (bool changed, bool redirect) {
+                              if (changed) {
+                                onGetDrafts();
+                                if (redirect) Navigator.pushNamed(context, '/bills');
+                              }
+                            }),
+                        onTap: () => onPushDraftCreator(draft: d),
+                      )),
+                ],
+              ),
         onRefresh: () async => await onGetDrafts(),
       ),
     );
@@ -123,8 +127,6 @@ class _DraftsListPageState extends State<DraftsListPage> {
     await vendorRepo.setUp();
     await customerRepo.setUp();
     await settings.setUp();
-
-    await onGetDrafts();
 
     customers = await customerRepo.select();
     vendors = await vendorRepo.select();
@@ -150,6 +152,7 @@ class _DraftsListPageState extends State<DraftsListPage> {
   }
 
   Future<void> onGetDrafts() async {
+    if (mounted) setState(() => busy = true);
     drafts = await draftRepo.select(searchQuery: searchQuery, vendorFilter: filterVendor);
 
     if (filterVendor == null) {
@@ -164,7 +167,7 @@ class _DraftsListPageState extends State<DraftsListPage> {
       }
     }
 
-    if (mounted) setState(() => drafts);
+    if (mounted) setState(() => busy = false);
   }
 
   Future<void> onPushDraftCreator({Draft draft}) async {

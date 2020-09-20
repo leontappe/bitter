@@ -25,6 +25,8 @@ class _BillsListPageState extends State<ItemsListPage> {
   int filterVendor;
   String searchQuery;
 
+  bool busy = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,28 +79,30 @@ class _BillsListPageState extends State<ItemsListPage> {
         ],
       ),
       body: RefreshIndicator(
-        child: ListView(
-          children: <Widget>[
-            ...items.map(
-              (Item i) => ListTile(
-                leading: Text(vendors.singleWhere((Vendor v) => v.id == i.vendor).billPrefix +
-                    '\nA' +
-                    i.itemId.toString()),
-                title: Text(i.title),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (i.description != null) Text('Beschreibung: ${i.description}'),
-                    Text('Steuer: ${i.tax} %'),
-                  ],
-                ),
-                trailing: Text('${(i.price / 100.0).toStringAsFixed(2)} €',
-                    style: Theme.of(context).textTheme.subtitle1),
-                onTap: () => onPushItemPage(item: i),
+        child: (busy)
+            ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
+            : ListView(
+                children: <Widget>[
+                  ...items.map(
+                    (Item i) => ListTile(
+                      leading: Text(vendors.singleWhere((Vendor v) => v.id == i.vendor).billPrefix +
+                          '\nA' +
+                          i.itemId.toString()),
+                      title: Text(i.title),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (i.description != null) Text('Beschreibung: ${i.description}'),
+                          Text('Steuer: ${i.tax} %'),
+                        ],
+                      ),
+                      trailing: Text('${(i.price / 100.0).toStringAsFixed(2)} €',
+                          style: Theme.of(context).textTheme.subtitle1),
+                      onTap: () => onPushItemPage(item: i),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
         onRefresh: () => onGetItems(),
       ),
     );
@@ -136,6 +140,7 @@ class _BillsListPageState extends State<ItemsListPage> {
   }
 
   Future<void> onGetItems() async {
+    if (mounted) setState(() => busy = true);
     items = await repo.select(searchQuery: searchQuery, vendorFilter: filterVendor);
     if (filterVendor == null) {
       for (var item in items) {
@@ -146,7 +151,7 @@ class _BillsListPageState extends State<ItemsListPage> {
       }
     }
     _sortItems();
-    if (mounted) setState(() => items);
+    if (mounted) setState(() => busy = false);
   }
 
   void _sortItems() {

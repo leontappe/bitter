@@ -16,6 +16,8 @@ class _VendorsPageState extends State<VendorsPage> {
 
   List<Vendor> vendors = [];
 
+  bool busy = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,13 +33,15 @@ class _VendorsPageState extends State<VendorsPage> {
       ),
       body: RefreshIndicator(
         onRefresh: onGetVendors,
-        child: ListView(
-          semanticChildCount: vendors.length,
-          children: <Widget>[
-            ...vendors.reversed.map((Vendor v) =>
-                ListTile(title: Text(v.name), onTap: () => onPushVendorPage(context, v.id))),
-          ],
-        ),
+        child: (busy)
+            ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
+            : ListView(
+                semanticChildCount: vendors.length,
+                children: <Widget>[
+                  ...vendors.reversed.map((Vendor v) =>
+                      ListTile(title: Text(v.name), onTap: () => onPushVendorPage(context, v.id))),
+                ],
+              ),
       ),
     );
   }
@@ -56,8 +60,9 @@ class _VendorsPageState extends State<VendorsPage> {
   }
 
   Future<void> onGetVendors() async {
+    if (mounted) setState(() => busy = true);
     vendors = await repo.select();
-    if (mounted) setState(() => vendors);
+    if (mounted) setState(() => busy = false);
   }
 
   void onPushVendorAddPage() async {
