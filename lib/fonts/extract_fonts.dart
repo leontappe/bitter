@@ -1,9 +1,9 @@
 import 'dart:io';
 
 void main() async {
-  final liberationSans = File('LiberationSans-Bold.ttf');
+  final liberationSans = File('LiberationSans-Regular.ttf');
 
-  final sansOut = File('LiberationSansBold.dart')..createSync();
+  final sansOut = File('LiberationSans.dart')..createSync();
 
   var sink = sansOut.openWrite();
 
