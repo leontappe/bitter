@@ -111,7 +111,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    _billRepo = BillRepository(InheritedDatabase.of(context).provider);
+    _billRepo = BillRepository(InheritedDatabase.of(context));
     await _billRepo.setUp();
     await onGetBills();
   }

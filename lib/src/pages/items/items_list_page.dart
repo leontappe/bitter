@@ -116,8 +116,8 @@ class _BillsListPageState extends State<ItemsListPage> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    repo = ItemRepository(InheritedDatabase.of(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of(context).provider);
+    repo = ItemRepository(InheritedDatabase.of(context));
+    vendorRepo = VendorRepository(InheritedDatabase.of(context));
     settings = SettingsRepository();
     await repo.setUp();
     await vendorRepo.setUp();

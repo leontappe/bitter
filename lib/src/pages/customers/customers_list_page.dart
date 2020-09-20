@@ -89,7 +89,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    repo = CustomerRepository(InheritedDatabase.of(context).provider);
+    repo = CustomerRepository(InheritedDatabase.of(context));
     await repo.setUp();
     await onGetCustomers();
   }

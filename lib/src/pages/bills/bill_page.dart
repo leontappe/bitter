@@ -180,8 +180,8 @@ class _BillPageState extends State<BillPage> {
   }
 
   Future<void> initDb() async {
-    repo = BillRepository(InheritedDatabase.of(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of(context).provider);
+    repo = BillRepository(InheritedDatabase.of(context));
+    vendorRepo = VendorRepository(InheritedDatabase.of(context));
 
     if (mounted) setState(() => busy = true);
 

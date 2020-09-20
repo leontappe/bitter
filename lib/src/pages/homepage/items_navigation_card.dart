@@ -97,8 +97,8 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    _itemRepo = ItemRepository(InheritedDatabase.of(context).provider);
-    _vendorRepo = VendorRepository(InheritedDatabase.of(context).provider);
+    _itemRepo = ItemRepository(InheritedDatabase.of(context));
+    _vendorRepo = VendorRepository(InheritedDatabase.of(context));
     await _itemRepo.setUp();
     await _vendorRepo.setUp();
     await onRefresh();

@@ -87,7 +87,7 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    _customerRepo = CustomerRepository(InheritedDatabase.of(context).provider);
+    _customerRepo = CustomerRepository(InheritedDatabase.of(context));
     await _customerRepo.setUp();
     await onRefresh();
   }

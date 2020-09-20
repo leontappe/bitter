@@ -155,7 +155,7 @@ class _BillsListPageState extends State<BillsListPage> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    billRepo = BillRepository(InheritedDatabase.of(context).provider);
+    billRepo = BillRepository(InheritedDatabase.of(context));
     settings = SettingsRepository();
     await billRepo.setUp();
     await settings.setUp();

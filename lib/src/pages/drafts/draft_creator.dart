@@ -270,10 +270,10 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    repo = DraftRepository(InheritedDatabase.of(context).provider);
-    customerRepo = CustomerRepository(InheritedDatabase.of(context).provider);
-    itemRepo = ItemRepository(InheritedDatabase.of(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of(context).provider);
+    repo = DraftRepository(InheritedDatabase.of(context));
+    customerRepo = CustomerRepository(InheritedDatabase.of(context));
+    itemRepo = ItemRepository(InheritedDatabase.of(context));
+    vendorRepo = VendorRepository(InheritedDatabase.of(context));
     settingsRepo = SettingsRepository();
 
     await itemRepo.setUp();

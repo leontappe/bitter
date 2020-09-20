@@ -10,6 +10,6 @@ class InheritedDatabase extends InheritedWidget {
   @override
   bool updateShouldNotify(InheritedDatabase oldWidget) => false;
 
-  static InheritedDatabase of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<InheritedDatabase>();
+  static DatabaseProvider of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<InheritedDatabase>().provider;
 }

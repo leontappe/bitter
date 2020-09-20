@@ -245,7 +245,7 @@ class _CustomerPageState extends State<CustomerPage> {
 
   void initDb() async {
     if (mounted) setState(() => busy = true);
-    repo = CustomerRepository(InheritedDatabase.of(context).provider);
+    repo = CustomerRepository(InheritedDatabase.of(context));
     if (widget.id != null) {
       customer = await repo.selectSingle(widget.id);
       if (customer == null) {

@@ -163,7 +163,7 @@ class _ItemPageState extends State<ItemPage> {
   }
 
   Future<void> initDb() async {
-    repo = ItemRepository(InheritedDatabase.of(context).provider);
+    repo = ItemRepository(InheritedDatabase.of(context));
 
     if (widget.item != null) {
       if (mounted) setState(() => item = widget.item);

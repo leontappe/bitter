@@ -64,10 +64,10 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
   }
 
   Future<void> initDb() async {
-    repo = DraftRepository(InheritedDatabase.of(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of(context).provider);
-    customerRepo = CustomerRepository(InheritedDatabase.of(context).provider);
-    billRepo = BillRepository(InheritedDatabase.of(context).provider);
+    repo = DraftRepository(InheritedDatabase.of(context));
+    vendorRepo = VendorRepository(InheritedDatabase.of(context));
+    customerRepo = CustomerRepository(InheritedDatabase.of(context));
+    billRepo = BillRepository(InheritedDatabase.of(context));
 
     await billRepo.setUp();
 

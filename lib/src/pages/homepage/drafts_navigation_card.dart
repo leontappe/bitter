@@ -104,9 +104,9 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    _billRepo = DraftRepository(InheritedDatabase.of(context).provider);
-    _customerRepo = CustomerRepository(InheritedDatabase.of(context).provider);
-    _vendorRepo = VendorRepository(InheritedDatabase.of(context).provider);
+    _billRepo = DraftRepository(InheritedDatabase.of(context));
+    _customerRepo = CustomerRepository(InheritedDatabase.of(context));
+    _vendorRepo = VendorRepository(InheritedDatabase.of(context));
 
     await _billRepo.setUp();
     await _customerRepo.setUp();

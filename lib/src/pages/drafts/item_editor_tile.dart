@@ -160,7 +160,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
   }
 
   Future<void> initDb() async {
-    repo = ItemRepository(InheritedDatabase.of(context).provider);
+    repo = ItemRepository(InheritedDatabase.of(context));
     await repo.setUp();
 
     if (_item.vendor != null) {
