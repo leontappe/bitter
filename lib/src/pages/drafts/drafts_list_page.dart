@@ -124,6 +124,7 @@ class _DraftsListPageState extends State<DraftsListPage> {
   }
 
   Future<void> initDb() async {
+    if (mounted) setState(() => busy = true);
     draftRepo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
