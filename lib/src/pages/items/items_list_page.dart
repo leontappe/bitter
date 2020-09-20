@@ -1,11 +1,10 @@
-import 'package:bitter/src/repositories/vendor_repository.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/vendor.dart';
-
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/settings_repository.dart';
+import '../../repositories/vendor_repository.dart';
 import 'item_page.dart';
 
 class ItemsListPage extends StatefulWidget {
@@ -155,10 +154,6 @@ class _BillsListPageState extends State<ItemsListPage> {
     if (mounted) setState(() => busy = false);
   }
 
-  void _sortItems() {
-    items.sort((Item a, Item b) => a.title.compareTo(b.title));
-  }
-
   Future<void> onPushItemPage({Item item}) async {
     if (await Navigator.push<bool>(
         context, MaterialPageRoute(builder: (BuildContext context) => ItemPage(item: item)))) {
@@ -187,5 +182,9 @@ class _BillsListPageState extends State<ItemsListPage> {
     if (!searchEnabled) {
       await onGetItems();
     }
+  }
+
+  void _sortItems() {
+    items.sort((Item a, Item b) => a.title.compareTo(b.title));
   }
 }

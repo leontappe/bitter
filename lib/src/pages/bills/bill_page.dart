@@ -1,16 +1,15 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:bitter/src/models/reminder.dart';
-import 'package:bitter/src/pdf/reminder_generator.dart';
-import 'package:bitter/src/repositories/vendor_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../models/bill.dart';
-
+import '../../models/reminder.dart';
+import '../../pdf/reminder_generator.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
+import '../../repositories/vendor_repository.dart';
 import '../../util.dart';
 import '../../widgets/customer_card.dart';
 import '../../widgets/items_card.dart';
@@ -243,6 +242,38 @@ class _BillPageState extends State<BillPage> {
     return false;
   }
 
+  void _onGenerateReminder(Reminder reminder, {bool skipSaving = false}) async {
+    if (!skipSaving) {
+      setState(() => bill.reminders.add(reminder));
+      dirty = true;
+    }
+
+    final pdfData = await ReminderGenerator().getBytesFromBill(
+      bill,
+      await vendorRepo.selectSingle(bill.vendor.id),
+      reminder,
+      leftHeader: bill.vendor.headerImageLeft as Uint8List,
+      centerHeader: bill.vendor.headerImageCenter as Uint8List,
+      rightHeader: bill.vendor.headerImageRight as Uint8List,
+    );
+
+    String downloadsPath;
+    if (Platform.isWindows) {
+      downloadsPath = (await getApplicationDocumentsDirectory()).path;
+    } else {
+      downloadsPath = (await getDownloadsDirectory()).path;
+    }
+    final file = File(
+        '${downloadsPath}/bitter/${reminder.title.replaceAll(' ', '_').replaceAll('.', ' ')}_${bill.billNr}.pdf');
+    await file.create(recursive: true);
+    await file.writeAsBytes(pdfData);
+
+    await (_key.currentState as ScaffoldState).showSnackBar(SnackBar(
+      content: Text('Die Mahnung wurde erfolgreich unter ${file.path} abgespeichert.'),
+      duration: const Duration(seconds: 5),
+    ));
+  }
+
   void _onShowReminderDialog(ReminderIteration iteration) async {
     final reminder = Reminder(
       iteration: iteration,
@@ -299,37 +330,5 @@ class _BillPageState extends State<BillPage> {
     );
     if (result == null) return;
     _onGenerateReminder(result);
-  }
-
-  void _onGenerateReminder(Reminder reminder, {bool skipSaving = false}) async {
-    if (!skipSaving) {
-      setState(() => bill.reminders.add(reminder));
-      dirty = true;
-    }
-
-    final pdfData = await ReminderGenerator().getBytesFromBill(
-      bill,
-      await vendorRepo.selectSingle(bill.vendor.id),
-      reminder,
-      leftHeader: bill.vendor.headerImageLeft as Uint8List,
-      centerHeader: bill.vendor.headerImageCenter as Uint8List,
-      rightHeader: bill.vendor.headerImageRight as Uint8List,
-    );
-
-    String downloadsPath;
-    if (Platform.isWindows) {
-      downloadsPath = (await getApplicationDocumentsDirectory()).path;
-    } else {
-      downloadsPath = (await getDownloadsDirectory()).path;
-    }
-    final file = File(
-        '${downloadsPath}/bitter/${reminder.title.replaceAll(' ', '_').replaceAll('.', ' ')}_${bill.billNr}.pdf');
-    await file.create(recursive: true);
-    await file.writeAsBytes(pdfData);
-
-    await (_key.currentState as ScaffoldState).showSnackBar(SnackBar(
-      content: Text('Die Mahnung wurde erfolgreich unter ${file.path} abgespeichert.'),
-      duration: const Duration(seconds: 5),
-    ));
   }
 }

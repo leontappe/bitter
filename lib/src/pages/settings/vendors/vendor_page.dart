@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:bitter/src/models/reminder.dart';
 import 'package:file_chooser/file_chooser.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../models/reminder.dart';
 import '../../../models/vendor.dart';
 import '../../../providers/database_provider.dart';
 import '../../../providers/inherited_database.dart';

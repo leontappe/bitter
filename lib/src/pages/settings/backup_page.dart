@@ -3,14 +3,14 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:archive/archive_io.dart';
-import 'package:bitter/src/providers/database_provider.dart';
-import 'package:bitter/src/providers/inherited_database.dart';
 import 'package:csv/csv.dart';
 import 'package:file_chooser/file_chooser.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../providers/database_provider.dart';
+import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
 import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';

@@ -1,7 +1,8 @@
 import 'dart:convert';
 
-import 'package:bitter/src/models/reminder.dart';
 import 'package:meta/meta.dart';
+
+import 'reminder.dart';
 
 enum HeaderImage {
   right,
