@@ -97,10 +97,15 @@ class _DraftsListPageState extends State<DraftsListPage> {
                             : 'Bearbeiter*in: ${d.editor}'),
                         trailing: DraftPopupMenu(
                             id: d.id,
+                            onStarted: () => setState(() => busy = true),
                             onCompleted: (bool changed, bool redirect) {
+                              setState(() => busy = false);
                               if (changed) {
+                                if (redirect) {
+                                  Navigator.pushNamed(context, '/bills');
+                                  return;
+                                }
                                 onGetDrafts();
-                                if (redirect) Navigator.pushNamed(context, '/bills');
                               }
                             }),
                         onTap: () => onPushDraftCreator(draft: d),

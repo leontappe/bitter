@@ -75,11 +75,15 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
           if (widget.draft != null)
             DraftPopupMenu(
               id: draft.id,
-              onCompleted: (bool changed, bool redirect) => redirect
-                  ? Navigator.popAndPushNamed(context, '/bills', result: changed)
-                  : changed
-                      ? Navigator.pop(context, changed)
-                      : null,
+              onStarted: () => setState(() => busy = true),
+              onCompleted: (bool changed, bool redirect) {
+                setState(() => busy = false);
+                redirect
+                    ? Navigator.popAndPushNamed(context, '/bills', result: changed)
+                    : changed
+                        ? Navigator.pop(context, changed)
+                        : null;
+              },
             )
         ],
       ),

@@ -15,8 +15,9 @@ class DraftPopupMenu extends StatefulWidget {
 
   /// first bool returns if something changed, second one if the page should redirect to bills
   final Function(bool, bool) onCompleted;
+  final Function() onStarted;
 
-  const DraftPopupMenu({Key key, this.id, this.onCompleted}) : super(key: key);
+  const DraftPopupMenu({Key key, this.id, this.onCompleted, this.onStarted}) : super(key: key);
 
   @override
   _DraftPopupMenuState createState() => _DraftPopupMenuState();
@@ -80,6 +81,7 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
   }
 
   Future<void> onSelected(DraftPopupSelection value) async {
+    if (widget.onStarted != null) widget.onStarted;
     switch (value) {
       case DraftPopupSelection.createBill:
         final billResult = await _createBill(widget.id);
