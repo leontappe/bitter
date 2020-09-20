@@ -28,7 +28,7 @@ class DraftShortcut extends StatelessWidget {
             style: Theme.of(context).textTheme.subtitle1,
             textScaleFactor: 1.1,
             overflow: TextOverflow.ellipsis),
-        Text(vendor?.name ?? '', overflow: TextOverflow.ellipsis),
+        if (showVendor) Text(vendor?.name ?? '', overflow: TextOverflow.ellipsis),
         if (customer != null)
           Text(customer.fullCompany ?? customer.fullName, overflow: TextOverflow.ellipsis)
         else
