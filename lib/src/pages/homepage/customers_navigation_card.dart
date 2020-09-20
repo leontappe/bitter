@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../providers/database_provider.dart';
+
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
 import '../../widgets/shortcuts/customer_shortcut.dart';
@@ -87,7 +87,7 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    _customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    _customerRepo = CustomerRepository(InheritedDatabase.of(context).provider);
     await _customerRepo.setUp();
     await onRefresh();
   }

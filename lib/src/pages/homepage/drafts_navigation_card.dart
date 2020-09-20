@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/draft.dart';
-import '../../providers/database_provider.dart';
+
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
@@ -104,9 +104,9 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    _billRepo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    _customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    _vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    _billRepo = DraftRepository(InheritedDatabase.of(context).provider);
+    _customerRepo = CustomerRepository(InheritedDatabase.of(context).provider);
+    _vendorRepo = VendorRepository(InheritedDatabase.of(context).provider);
 
     await _billRepo.setUp();
     await _customerRepo.setUp();

@@ -229,11 +229,11 @@ class _BackupPageState extends State<BackupPage> {
   }
 
   Future<void> initDb() async {
-    billRepo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    draftRepo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    itemRepo = ItemRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    billRepo = BillRepository(InheritedDatabase.of(context).provider);
+    customerRepo = CustomerRepository(InheritedDatabase.of(context).provider);
+    draftRepo = DraftRepository(InheritedDatabase.of(context).provider);
+    itemRepo = ItemRepository(InheritedDatabase.of(context).provider);
+    vendorRepo = VendorRepository(InheritedDatabase.of(context).provider);
 
     await billRepo.setUp();
     await customerRepo.setUp();
@@ -399,7 +399,7 @@ class _BackupPageState extends State<BackupPage> {
 
     // load and unzip file, then parse objects for all selected tables and insert them via corresponding repos
 
-    final db = InheritedDatabase.of<DatabaseProvider>(context).provider;
+    final db = InheritedDatabase.of(context).provider;
 
     final byteContent = await File(archivePath).readAsBytes();
     final archive = ZipDecoder().decodeBytes(byteContent);

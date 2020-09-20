@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/vendor.dart';
-import '../../providers/database_provider.dart';
+
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
 import '../../repositories/settings_repository.dart';
@@ -14,7 +14,7 @@ class BillsListPage extends StatefulWidget {
 }
 
 class _BillsListPageState extends State<BillsListPage> {
-  BillRepository<DatabaseProvider> billRepo;
+  BillRepository billRepo;
   SettingsRepository settings;
 
   bool searchEnabled = false;
@@ -155,7 +155,7 @@ class _BillsListPageState extends State<BillsListPage> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    billRepo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    billRepo = BillRepository(InheritedDatabase.of(context).provider);
     settings = SettingsRepository();
     await billRepo.setUp();
     await settings.setUp();

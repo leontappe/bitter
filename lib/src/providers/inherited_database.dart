@@ -1,13 +1,15 @@
 import 'package:flutter/widgets.dart';
 
-class InheritedDatabase<T> extends InheritedWidget {
-  final T provider;
+import 'database_provider.dart';
+
+class InheritedDatabase extends InheritedWidget {
+  final DatabaseProvider provider;
 
   InheritedDatabase({this.provider, Widget child}) : super(child: child);
 
   @override
-  bool updateShouldNotify(InheritedWidget oldWidget) => false;
+  bool updateShouldNotify(InheritedDatabase oldWidget) => false;
 
-  static InheritedDatabase<T> of<T>(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<InheritedDatabase<T>>();
+  static InheritedDatabase of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<InheritedDatabase>();
 }

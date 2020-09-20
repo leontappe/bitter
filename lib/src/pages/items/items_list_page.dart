@@ -2,7 +2,7 @@ import 'package:bitter/src/repositories/vendor_repository.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/vendor.dart';
-import '../../providers/database_provider.dart';
+
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/settings_repository.dart';
@@ -14,8 +14,8 @@ class ItemsListPage extends StatefulWidget {
 }
 
 class _BillsListPageState extends State<ItemsListPage> {
-  ItemRepository<DatabaseProvider> repo;
-  VendorRepository<DatabaseProvider> vendorRepo;
+  ItemRepository repo;
+  VendorRepository vendorRepo;
   SettingsRepository settings;
 
   bool searchEnabled = false;
@@ -116,8 +116,8 @@ class _BillsListPageState extends State<ItemsListPage> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    repo = ItemRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    repo = ItemRepository(InheritedDatabase.of(context).provider);
+    vendorRepo = VendorRepository(InheritedDatabase.of(context).provider);
     settings = SettingsRepository();
     await repo.setUp();
     await vendorRepo.setUp();

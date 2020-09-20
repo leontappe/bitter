@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../providers/database_provider.dart';
 import '../providers/inherited_database.dart';
 import '../repositories/vendor_repository.dart';
 
@@ -54,7 +53,7 @@ class _VendorSelectorState extends State<VendorSelector> {
   }
 
   Future<void> initDb() async {
-    repo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    repo = VendorRepository(InheritedDatabase.of(context).provider);
 
     await repo.setUp();
 

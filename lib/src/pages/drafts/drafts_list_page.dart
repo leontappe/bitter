@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/draft.dart';
-import '../../providers/database_provider.dart';
+
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
@@ -16,9 +16,9 @@ class DraftsListPage extends StatefulWidget {
 }
 
 class _DraftsListPageState extends State<DraftsListPage> {
-  DraftRepository<DatabaseProvider> draftRepo;
-  CustomerRepository<DatabaseProvider> customerRepo;
-  VendorRepository<DatabaseProvider> vendorRepo;
+  DraftRepository draftRepo;
+  CustomerRepository customerRepo;
+  VendorRepository vendorRepo;
   SettingsRepository settings;
 
   List<Draft> drafts = [];
@@ -125,9 +125,9 @@ class _DraftsListPageState extends State<DraftsListPage> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    draftRepo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    draftRepo = DraftRepository(InheritedDatabase.of(context).provider);
+    vendorRepo = VendorRepository(InheritedDatabase.of(context).provider);
+    customerRepo = CustomerRepository(InheritedDatabase.of(context).provider);
     settings = SettingsRepository();
     await draftRepo.setUp();
     await vendorRepo.setUp();

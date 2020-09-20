@@ -2,7 +2,7 @@ import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/item.dart';
-import '../../providers/database_provider.dart';
+
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../util.dart';
@@ -160,7 +160,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
   }
 
   Future<void> initDb() async {
-    repo = ItemRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    repo = ItemRepository(InheritedDatabase.of(context).provider);
     await repo.setUp();
 
     if (_item.vendor != null) {

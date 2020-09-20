@@ -11,7 +11,6 @@ import 'src/pages/settings/app_settings_page.dart';
 import 'src/pages/settings/backup_page.dart';
 import 'src/pages/settings/settings_page.dart';
 import 'src/pages/settings/vendors/vendors_list_page.dart';
-import 'src/providers/database_provider.dart';
 import 'src/providers/inherited_database.dart';
 import 'src/providers/mysql_provider.dart';
 import 'src/providers/sqlite_provider.dart';
@@ -30,7 +29,7 @@ class Bitter extends StatelessWidget {
       future: initDb(),
       builder: (BuildContext context, AsyncSnapshot<DbEngine> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          return InheritedDatabase<DatabaseProvider>(
+          return InheritedDatabase(
             provider: (snapshot.data == DbEngine.mysql) ? MySqlProvider() : SqliteProvider(),
             child: MaterialApp(
               debugShowCheckedModeBanner: false,

@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import '../../pdf/pdf_generator.dart';
-import '../../providers/database_provider.dart';
+
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
 import '../../repositories/customer_repository.dart';
@@ -64,10 +64,10 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
   }
 
   Future<void> initDb() async {
-    repo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    billRepo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    repo = DraftRepository(InheritedDatabase.of(context).provider);
+    vendorRepo = VendorRepository(InheritedDatabase.of(context).provider);
+    customerRepo = CustomerRepository(InheritedDatabase.of(context).provider);
+    billRepo = BillRepository(InheritedDatabase.of(context).provider);
 
     await billRepo.setUp();
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../providers/inherited_database.dart';
-import '../../providers/database_provider.dart';
+
 import '../../repositories/customer_repository.dart';
 import '../../widgets/customer_card.dart';
 
@@ -245,7 +245,7 @@ class _CustomerPageState extends State<CustomerPage> {
 
   void initDb() async {
     if (mounted) setState(() => busy = true);
-    repo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    repo = CustomerRepository(InheritedDatabase.of(context).provider);
     if (widget.id != null) {
       customer = await repo.selectSingle(widget.id);
       if (customer == null) {

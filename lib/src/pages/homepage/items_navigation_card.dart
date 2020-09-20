@@ -1,7 +1,7 @@
 import 'package:bitter/src/repositories/vendor_repository.dart';
 import 'package:flutter/material.dart';
 
-import '../../providers/database_provider.dart';
+
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../widgets/navigation_card.dart';
@@ -97,8 +97,8 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    _itemRepo = ItemRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    _vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    _itemRepo = ItemRepository(InheritedDatabase.of(context).provider);
+    _vendorRepo = VendorRepository(InheritedDatabase.of(context).provider);
     await _itemRepo.setUp();
     await _vendorRepo.setUp();
     await onRefresh();

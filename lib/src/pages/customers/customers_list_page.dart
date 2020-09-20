@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../providers/database_provider.dart';
+
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
 import 'customer_page.dart';
@@ -89,7 +89,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    repo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    repo = CustomerRepository(InheritedDatabase.of(context).provider);
     await repo.setUp();
     await onGetCustomers();
   }

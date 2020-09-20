@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/item.dart';
 import '../../models/vendor.dart';
-import '../../providers/database_provider.dart';
+
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../util.dart';
@@ -163,7 +163,7 @@ class _ItemPageState extends State<ItemPage> {
   }
 
   Future<void> initDb() async {
-    repo = ItemRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    repo = ItemRepository(InheritedDatabase.of(context).provider);
 
     if (widget.item != null) {
       if (mounted) setState(() => item = widget.item);

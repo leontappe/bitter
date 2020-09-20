@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../models/draft.dart';
 import '../../models/item.dart';
 import '../../models/vendor.dart';
-import '../../providers/database_provider.dart';
+
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
@@ -270,10 +270,10 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    repo = DraftRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    customerRepo = CustomerRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    itemRepo = ItemRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    repo = DraftRepository(InheritedDatabase.of(context).provider);
+    customerRepo = CustomerRepository(InheritedDatabase.of(context).provider);
+    itemRepo = ItemRepository(InheritedDatabase.of(context).provider);
+    vendorRepo = VendorRepository(InheritedDatabase.of(context).provider);
     settingsRepo = SettingsRepository();
 
     await itemRepo.setUp();

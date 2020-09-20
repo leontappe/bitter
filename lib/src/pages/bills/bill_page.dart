@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../models/bill.dart';
-import '../../providers/database_provider.dart';
+
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
 import '../../util.dart';
@@ -30,7 +30,7 @@ class _BillPageState extends State<BillPage> {
   final _key = GlobalKey();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   BillRepository repo;
-  VendorRepository<DatabaseProvider> vendorRepo;
+  VendorRepository vendorRepo;
 
   Bill bill;
 
@@ -180,8 +180,8 @@ class _BillPageState extends State<BillPage> {
   }
 
   Future<void> initDb() async {
-    repo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
-    vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    repo = BillRepository(InheritedDatabase.of(context).provider);
+    vendorRepo = VendorRepository(InheritedDatabase.of(context).provider);
 
     if (mounted) setState(() => busy = true);
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/bill.dart';
-import '../../providers/database_provider.dart';
+
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
 import '../../widgets/navigation_card.dart';
@@ -111,7 +111,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    _billRepo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
+    _billRepo = BillRepository(InheritedDatabase.of(context).provider);
     await _billRepo.setUp();
     await onGetBills();
   }
