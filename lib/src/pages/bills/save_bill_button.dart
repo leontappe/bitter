@@ -15,11 +15,11 @@ class SaveBillButton extends StatelessWidget {
     return IconButton(
       tooltip: 'Rechnung abspeichern',
       icon: Icon(Icons.file_download),
-      onPressed: (bill != null) ? onSaveBill : null,
+      onPressed: (bill != null) ? () => onSaveBill(context) : null,
     );
   }
 
-  Future<void> onSaveBill() async {
+  Future<void> onSaveBill(BuildContext context) async {
     String downloadsPath;
     if (Platform.isWindows) {
       downloadsPath = (await getApplicationDocumentsDirectory()).path;
@@ -29,5 +29,9 @@ class SaveBillButton extends StatelessWidget {
     final file = File('${downloadsPath}/bitter/${bill.billNr}.pdf');
     await file.create(recursive: true);
     await file.writeAsBytes(bill.file);
+    await Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text('Die Rechnung wurde erfolgreich unter ${file.path} abgespeichert.'),
+      duration: const Duration(seconds: 5),
+    ));
   }
 }

@@ -27,6 +27,7 @@ class BillPage extends StatefulWidget {
 }
 
 class _BillPageState extends State<BillPage> {
+  final _key = GlobalKey();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   BillRepository repo;
   VendorRepository<DatabaseProvider> vendorRepo;
@@ -42,6 +43,7 @@ class _BillPageState extends State<BillPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _key,
       appBar: AppBar(
         leading: Builder(
             builder: (BuildContext context) => IconButton(
@@ -324,5 +326,10 @@ class _BillPageState extends State<BillPage> {
         '${downloadsPath}/bitter/${reminder.title.replaceAll(' ', '_').replaceAll('.', ' ')}_${bill.billNr}.pdf');
     await file.create(recursive: true);
     await file.writeAsBytes(pdfData);
+
+    await (_key.currentState as ScaffoldState).showSnackBar(SnackBar(
+      content: Text('Die Mahnung wurde erfolgreich unter ${file.path} abgespeichert.'),
+      duration: const Duration(seconds: 5),
+    ));
   }
 }
