@@ -15,7 +15,7 @@ class SaveBillButton extends StatelessWidget {
     return IconButton(
       tooltip: 'Rechnung abspeichern',
       icon: Icon(Icons.file_download),
-      onPressed: onSaveBill,
+      onPressed: (bill != null) ? onSaveBill : null,
     );
   }
 

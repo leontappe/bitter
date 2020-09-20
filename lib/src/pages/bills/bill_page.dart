@@ -37,24 +37,27 @@ class _BillPageState extends State<BillPage> {
 
   bool dirty = false;
 
+  bool busy = false;
+
   @override
   Widget build(BuildContext context) {
-    return (bill != null)
-        ? Scaffold(
-            appBar: AppBar(
-              leading: Builder(
-                  builder: (BuildContext context) => IconButton(
-                        tooltip: 'Zurück',
-                        icon: Icon(Icons.arrow_back_ios),
-                        onPressed: () => onPopRoute(context),
-                      )),
-              title: Text(bill.billNr),
-              actions: [
-                IconButton(icon: Icon(Icons.save), onPressed: onSaveBill),
-                SaveBillButton(bill: bill),
-              ],
-            ),
-            body: Form(
+    return Scaffold(
+      appBar: AppBar(
+        leading: Builder(
+            builder: (BuildContext context) => IconButton(
+                  tooltip: 'Zurück',
+                  icon: Icon(Icons.arrow_back_ios),
+                  onPressed: () => onPopRoute(context),
+                )),
+        title: Text(bill?.billNr ?? ''),
+        actions: [
+          IconButton(icon: Icon(Icons.save), onPressed: (!busy) ? onSaveBill : null),
+          SaveBillButton(bill: (!busy) ? bill : null),
+        ],
+      ),
+      body: (busy)
+          ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
+          : Form(
               key: _formKey,
               child: ListView(
                 children: <Widget>[
@@ -165,8 +168,7 @@ class _BillPageState extends State<BillPage> {
                 ],
               ),
             ),
-          )
-        : Container(width: 0.0, height: 0.0);
+    );
   }
 
   @override
@@ -179,12 +181,14 @@ class _BillPageState extends State<BillPage> {
     repo = BillRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
     vendorRepo = VendorRepository(InheritedDatabase.of<DatabaseProvider>(context).provider);
 
+    if (mounted) setState(() => busy = true);
+
     await vendorRepo.setUp();
 
     bill = await repo.selectSingle(widget.id);
     vendor = await vendorRepo.selectSingle(bill.vendor.id);
 
-    if (mounted) setState(() => bill);
+    if (mounted) setState(() => busy = false);
   }
 
   Future<void> onPopRoute(BuildContext context) async {
@@ -228,8 +232,10 @@ class _BillPageState extends State<BillPage> {
 
   Future<bool> onSaveBill() async {
     if (_formKey.currentState.validate()) {
+      if (mounted) setState(() => busy = true);
       await repo.update(bill);
       dirty = false;
+      if (mounted) setState(() => busy = false);
       return true;
     }
     return false;
