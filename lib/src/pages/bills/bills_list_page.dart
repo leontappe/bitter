@@ -5,9 +5,8 @@ import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
 import '../../repositories/settings_repository.dart';
-import '../../util.dart';
+import 'bill_list_tile.dart';
 import 'bill_page.dart';
-import 'save_bill_button.dart';
 
 class BillsListPage extends StatefulWidget {
   @override
@@ -24,6 +23,8 @@ class _BillsListPageState extends State<BillsListPage> {
   List<Vendor> vendors = [];
   int filterVendor;
   String searchQuery;
+
+  bool _groupedMode = true;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +65,10 @@ class _BillsListPageState extends State<BillsListPage> {
               onChanged: onFilter,
             ),
             IconButton(
+              icon: Icon(Icons.dehaze, color: _groupedMode ? null : Colors.green[200]),
+              onPressed: () => setState(() => _groupedMode = !_groupedMode),
+            ),
+            IconButton(
               tooltip: 'Suchleiste aktivieren',
               icon: Icon(Icons.search),
               onPressed: onToggleSearch,
@@ -74,28 +79,60 @@ class _BillsListPageState extends State<BillsListPage> {
       body: RefreshIndicator(
         child: ListView(
           children: <Widget>[
-            ...bills.reversed.map(
-              (Bill b) => ListTile(
-                leading: (b.status == BillStatus.unpaid && DateTime.now().isAfter(b.dueDate))
-                    ? Icon(Icons.euro_symbol, color: Colors.red)
-                    : (b.status == BillStatus.cancelled)
-                        ? Icon(Icons.cancel, color: Colors.red)
-                        : (b.status == BillStatus.paid)
-                            ? Icon(Icons.check, color: Colors.green)
-                            : Icon(Icons.euro_symbol, color: Colors.orange),
-                title: Text(b.billNr),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                        'Bearbeiter*in: ${b.editor}, ${b.vendor.name} - Kunde*in: ${b.customer.fullCompany ?? b.customer.fullName}'),
-                    Text('Rechnungsdatum: ${formatDate(b.created)}')
-                  ],
+            if (_groupedMode)
+              Column(
+                children: [
+                  ListTile(title: Text('Überfällig', style: Theme.of(context).textTheme.headline4)),
+                  ...bills
+                      .where((Bill b) =>
+                          (((b.reminders == null || b.reminders.isEmpty) &&
+                                  DateTime.now().isAfter(b.dueDate)) ||
+                              (b.reminders != null &&
+                                  b.reminders.isNotEmpty &&
+                                  DateTime.now().isAfter(b.reminders.last.deadline))) &&
+                          b.status == BillStatus.unpaid)
+                      .map(
+                        (Bill b) => BillListTile(
+                          bill: b,
+                          onTap: () => onPushBillPage(b.id),
+                        ),
+                      ),
+                  Divider(),
+                  ListTile(title: Text('Laufend', style: Theme.of(context).textTheme.headline4)),
+                  ...bills
+                      .where((Bill b) =>
+                          b.status == BillStatus.unpaid &&
+                          (DateTime.now().isBefore(b.dueDate) ||
+                              (b.reminders.isNotEmpty &&
+                                  DateTime.now().isBefore(b.reminders.last.deadline))))
+                      .map(
+                        (Bill b) => BillListTile(
+                          bill: b,
+                          onTap: () => onPushBillPage(b.id),
+                        ),
+                      ),
+                  Divider(),
+                  ListTile(
+                      title: Text('Abgeschlossen oder storniert',
+                          style: Theme.of(context).textTheme.headline4)),
+                  ...bills
+                      .where((Bill b) =>
+                          b.status == BillStatus.paid || b.status == BillStatus.cancelled)
+                      .map(
+                        (Bill b) => BillListTile(
+                          bill: b,
+                          onTap: () => onPushBillPage(b.id),
+                        ),
+                      ),
+                ],
+              )
+            else
+              ...bills.map(
+                (Bill b) => BillListTile(
+                  bill: b,
+                  onTap: () => onPushBillPage(b.id),
                 ),
-                trailing: SaveBillButton(bill: b),
-                onTap: () => onPushBillPage(b.id),
               ),
-            ),
           ],
         ),
         onRefresh: () async => await onGetBills(),
@@ -141,6 +178,7 @@ class _BillsListPageState extends State<BillsListPage> {
         }
       }
     }
+    bills.sort((Bill a, Bill b) => b.created.compareTo(a.created));
     if (mounted) setState(() => bills);
     return;
   }
