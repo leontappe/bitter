@@ -122,11 +122,8 @@ class _CustomerPageState extends State<CustomerPage> {
                               DropdownMenuItem(value: 2, child: Text('divers')),
                             ],
                             onChanged: (int v) {
-                              newCustomer.gender = v == 0
-                                  ? Gender.male
-                                  : v == 1
-                                      ? Gender.female
-                                      : Gender.diverse;
+                              newCustomer.gender =
+                                  v == 0 ? Gender.male : v == 1 ? Gender.female : Gender.diverse;
                               setState(() => dropdownValue = v);
                               dirty = true;
                               changed = true;

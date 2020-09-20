@@ -54,8 +54,7 @@ class _VendorsPageState extends State<VendorsPage> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    repo = VendorRepository<DatabaseProvider>(
-        InheritedDatabase.of(context));
+    repo = VendorRepository<DatabaseProvider>(InheritedDatabase.of(context));
     await repo.setUp();
     await onGetVendors();
   }

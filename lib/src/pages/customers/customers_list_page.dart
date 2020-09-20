@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
 import 'customer_page.dart';

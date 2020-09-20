@@ -1,7 +1,6 @@
 import 'package:bitter/src/repositories/vendor_repository.dart';
 import 'package:flutter/material.dart';
 
-
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../widgets/navigation_card.dart';

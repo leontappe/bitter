@@ -80,9 +80,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                 setState(() => busy = false);
                 redirect
                     ? Navigator.popAndPushNamed(context, '/bills', result: changed)
-                    : changed
-                        ? Navigator.pop(context, changed)
-                        : null;
+                    : changed ? Navigator.pop(context, changed) : null;
               },
             )
         ],

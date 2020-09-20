@@ -115,10 +115,9 @@ class _HomepageState extends State<Homepage> {
       );
       return;
     }
-    
+
     if (mounted) {
-      vendorRepo = VendorRepository<DatabaseProvider>(
-          InheritedDatabase.of(context));
+      vendorRepo = VendorRepository<DatabaseProvider>(InheritedDatabase.of(context));
       await vendorRepo.setUp();
       _vendors = await vendorRepo.select();
     }
