@@ -223,15 +223,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.6.16"
-  path_provider_fde:
-    dependency: "direct main"
-    description:
-      path: "plugins/flutter_plugins/path_provider_fde"
-      ref: HEAD
-      resolved-ref: "1f596c1a41d7f4c16e5539ad6fa039e6c5d2c1c7"
-      url: "git://github.com/leontappe/flutter-desktop-embedding.git"
-    source: git
-    version: "0.0.1"
   path_provider_linux:
     dependency: transitive
     description:
@@ -254,12 +245,12 @@ packages:
     source: hosted
     version: "1.0.3"
   path_provider_windows:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider_windows
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.2"
+    version: "0.0.3"
   pdf:
     dependency: "direct main"
     description:
