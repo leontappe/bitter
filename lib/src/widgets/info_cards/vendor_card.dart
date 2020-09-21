@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/vendor.dart';
+import '../../models/vendor.dart';
 
 class VendorCard extends StatelessWidget {
   final Vendor vendor;

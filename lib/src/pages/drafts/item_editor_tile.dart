@@ -75,7 +75,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
           children: <Widget>[
             Container(
               padding: EdgeInsets.only(left: 4.0, right: 4.0),
-              width: 50.0,
+              width: 60.0,
               child: TextFormField(
                 controller: TextEditingController(text: _item.quantity?.toString() ?? '1'),
                 onChanged: (String input) {

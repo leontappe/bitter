@@ -5,6 +5,7 @@ import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/settings_repository.dart';
 import '../../repositories/vendor_repository.dart';
+import '../../widgets/database_error_watcher.dart';
 import 'item_page.dart';
 
 class ItemsListPage extends StatefulWidget {
@@ -78,30 +79,33 @@ class _BillsListPageState extends State<ItemsListPage> {
         ],
       ),
       body: RefreshIndicator(
-        child: (busy)
-            ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
-            : ListView(
-                children: <Widget>[
-                  ...items.map(
-                    (Item i) => ListTile(
-                      leading: Text(vendors.singleWhere((Vendor v) => v.id == i.vendor).billPrefix +
-                          '\nA' +
-                          i.itemId.toString()),
-                      title: Text(i.title),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (i.description != null) Text('Beschreibung: ${i.description}'),
-                          Text('Steuer: ${i.tax} %'),
-                        ],
+        child: DatabaseErrorWatcher(
+          child: (busy)
+              ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
+              : ListView(
+                  children: <Widget>[
+                    ...items.map(
+                      (Item i) => ListTile(
+                        leading: Text(
+                            vendors.singleWhere((Vendor v) => v.id == i.vendor).billPrefix +
+                                '\nA' +
+                                i.itemId.toString()),
+                        title: Text(i.title),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (i.description != null) Text('Beschreibung: ${i.description}'),
+                            Text('Steuer: ${i.tax} %'),
+                          ],
+                        ),
+                        trailing: Text('${(i.price / 100.0).toStringAsFixed(2)} €',
+                            style: Theme.of(context).textTheme.subtitle1),
+                        onTap: () => onPushItemPage(item: i),
                       ),
-                      trailing: Text('${(i.price / 100.0).toStringAsFixed(2)} €',
-                          style: Theme.of(context).textTheme.subtitle1),
-                      onTap: () => onPushItemPage(item: i),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+        ),
         onRefresh: () => onGetItems(),
       ),
     );

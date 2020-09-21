@@ -1,9 +1,13 @@
+import '../models/database_error.dart';
+
 abstract class DatabaseProvider {
+  Stream<DatabaseError> get errors;
+
   Future<int> delete(String table, int id);
 
   Future<int> insert(String table, Map<String, dynamic> item);
 
-  Future<void> open(String path, {String host, int port, String user, String password});
+  Future<bool> open(String path, {String host, int port, String user, String password});
 
   Future<List<Map>> select(String table);
 

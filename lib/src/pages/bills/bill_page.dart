@@ -11,9 +11,10 @@ import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
 import '../../repositories/vendor_repository.dart';
 import '../../util.dart';
-import '../../widgets/customer_card.dart';
-import '../../widgets/items_card.dart';
-import '../../widgets/vendor_card.dart';
+import '../../widgets/database_error_watcher.dart';
+import '../../widgets/info_cards/customer_card.dart';
+import '../../widgets/info_cards/items_card.dart';
+import '../../widgets/info_cards/vendor_card.dart';
 import 'save_bill_button.dart';
 
 class BillPage extends StatefulWidget {
@@ -56,119 +57,121 @@ class _BillPageState extends State<BillPage> {
           SaveBillButton(bill: (!busy) ? bill : null),
         ],
       ),
-      body: (busy)
-          ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
-          : Form(
-              key: _formKey,
-              child: ListView(
-                children: <Widget>[
-                  ListTile(
-                    title: Text(bill.billNr, style: Theme.of(context).textTheme.headline6),
-                    subtitle: Text('Erstellt am ${formatDateTime(bill.created)}'),
-                    trailing: Text('von ${bill.editor}'),
+      body: DatabaseErrorWatcher(
+          child: (busy)
+              ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
+              : Form(
+                  key: _formKey,
+                  child: ListView(
+                    children: <Widget>[
+                      ListTile(
+                        title: Text(bill.billNr, style: Theme.of(context).textTheme.headline6),
+                        subtitle: Text('Erstellt am ${formatDateTime(bill.created)}'),
+                        trailing: Text('von ${bill.editor}'),
+                      ),
+                      if (bill.userMessage != null)
+                        ListTile(
+                          title: Text((bill.vendor.userMessageLabel ??
+                                  'Benutzerdefinierter Rechnungskommentar') +
+                              ': ${bill.userMessage}'),
+                        ),
+                      if (bill.comment != null)
+                        ListTile(title: Text('Rechnungskommentar: ${bill.comment}')),
+                      ListTile(
+                        title: DropdownButton<BillStatus>(
+                          style: Theme.of(context).textTheme.headline6,
+                          isExpanded: false,
+                          hint: Text('${bill?.status ?? BillStatus.unpaid}'),
+                          value: bill?.status ?? BillStatus.unpaid,
+                          items: [
+                            DropdownMenuItem(value: BillStatus.unpaid, child: Text('Unbezahlt')),
+                            DropdownMenuItem(value: BillStatus.paid, child: Text('Bezahlt')),
+                            DropdownMenuItem(value: BillStatus.cancelled, child: Text('Storniert')),
+                          ],
+                          onChanged: (BillStatus v) {
+                            setState(() => bill.status = v);
+                            dirty = true;
+                          },
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (bill != null)
+                              Text('Lieferdatum/Leistungsdatum: ${formatDate(bill.serviceDate)}'),
+                            if (bill != null) Text('Zahlungsziel: ${formatDate(bill.dueDate)}'),
+                          ],
+                        ),
+                      ),
+                      if (bill.reminders != null && bill.reminders.isNotEmpty)
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: bill.reminders
+                              .map<Widget>((Reminder r) => Flexible(
+                                  child: Card(
+                                      clipBehavior: Clip.antiAlias,
+                                      margin: EdgeInsets.all(8.0),
+                                      child: InkWell(
+                                        onTap: () => _onGenerateReminder(r, skipSaving: true),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text('${r.iteration.index + 1}. Mahnung',
+                                                  style: Theme.of(context).textTheme.headline5),
+                                              if (r.title != null && r.title.isNotEmpty)
+                                                Text('Titel: ${r.title}'),
+                                              Text('Frist: ${formatDate(r.deadline)}'),
+                                              Text('Mahngebühr: ${r.fee.toStringAsFixed(2)}€'),
+                                            ],
+                                          ),
+                                        ),
+                                      ))))
+                              .toList(),
+                        ),
+                      if (((bill?.status ?? BillStatus.unpaid) == BillStatus.unpaid &&
+                              DateTime.now().isAfter(bill.dueDate)) &&
+                          bill.reminders.length < 3)
+                        ListTile(
+                            title: RaisedButton(
+                          child: Text(
+                              '${(bill.reminders.isNotEmpty) ? bill.reminders.last.iteration.index + 2 : '1'}. Mahnung erstellen'),
+                          onPressed: (bill.reminders.isEmpty ||
+                                  (bill.reminders.isNotEmpty &&
+                                      DateTime.now().isAfter(bill.reminders.last.deadline)))
+                              ? () => _onShowReminderDialog(iterationFromInt(
+                                  (bill.reminders.isNotEmpty)
+                                      ? bill.reminders.last.iteration.index + 1
+                                      : 0))
+                              : null,
+                        )),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 8.0),
+                        child: TextFormField(
+                          decoration: InputDecoration(hintText: 'Notizen'),
+                          initialValue: bill?.note ?? '',
+                          onChanged: (String input) {
+                            setState(() => bill.note = input);
+                            dirty = true;
+                          },
+                        ),
+                      ),
+                      ListTile(
+                        title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
+                        subtitle: VendorCard(vendor: bill.vendor),
+                      ),
+                      ListTile(
+                        title: Text('Kunde', style: Theme.of(context).textTheme.headline6),
+                        subtitle: CustomerCard(customer: bill.customer),
+                      ),
+                      ListTile(
+                        title: Text('Artikel', style: Theme.of(context).textTheme.headline6),
+                        subtitle: ItemsCard(items: bill.items, sum: bill.sum),
+                      ),
+                    ],
                   ),
-                  if (bill.userMessage != null)
-                    ListTile(
-                      title: Text((bill.vendor.userMessageLabel ??
-                              'Benutzerdefinierter Rechnungskommentar') +
-                          ': ${bill.userMessage}'),
-                    ),
-                  if (bill.comment != null)
-                    ListTile(title: Text('Rechnungskommentar: ${bill.comment}')),
-                  ListTile(
-                    title: DropdownButton<BillStatus>(
-                      style: Theme.of(context).textTheme.headline6,
-                      isExpanded: false,
-                      hint: Text('${bill?.status ?? BillStatus.unpaid}'),
-                      value: bill?.status ?? BillStatus.unpaid,
-                      items: [
-                        DropdownMenuItem(value: BillStatus.unpaid, child: Text('Unbezahlt')),
-                        DropdownMenuItem(value: BillStatus.paid, child: Text('Bezahlt')),
-                        DropdownMenuItem(value: BillStatus.cancelled, child: Text('Storniert')),
-                      ],
-                      onChanged: (BillStatus v) {
-                        setState(() => bill.status = v);
-                        dirty = true;
-                      },
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (bill != null)
-                          Text('Lieferdatum/Leistungsdatum: ${formatDate(bill.serviceDate)}'),
-                        if (bill != null) Text('Zahlungsziel: ${formatDate(bill.dueDate)}'),
-                      ],
-                    ),
-                  ),
-                  if (bill.reminders != null && bill.reminders.isNotEmpty)
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: bill.reminders
-                          .map<Widget>((Reminder r) => Flexible(
-                              child: Card(
-                                  clipBehavior: Clip.antiAlias,
-                                  margin: EdgeInsets.all(8.0),
-                                  child: InkWell(
-                                    onTap: () => _onGenerateReminder(r, skipSaving: true),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text('${r.iteration.index + 1}. Mahnung',
-                                              style: Theme.of(context).textTheme.headline5),
-                                          if (r.title != null && r.title.isNotEmpty)
-                                            Text('Titel: ${r.title}'),
-                                          Text('Frist: ${formatDate(r.deadline)}'),
-                                          Text('Mahngebühr: ${r.fee.toStringAsFixed(2)}€'),
-                                        ],
-                                      ),
-                                    ),
-                                  ))))
-                          .toList(),
-                    ),
-                  if (((bill?.status ?? BillStatus.unpaid) == BillStatus.unpaid &&
-                          DateTime.now().isAfter(bill.dueDate)) &&
-                      bill.reminders.length < 3)
-                    ListTile(
-                        title: RaisedButton(
-                      child: Text(
-                          '${(bill.reminders.isNotEmpty) ? bill.reminders.last.iteration.index + 2 : '1'}. Mahnung erstellen'),
-                      onPressed: (bill.reminders.isEmpty ||
-                              (bill.reminders.isNotEmpty &&
-                                  DateTime.now().isAfter(bill.reminders.last.deadline)))
-                          ? () => _onShowReminderDialog(iterationFromInt((bill.reminders.isNotEmpty)
-                              ? bill.reminders.last.iteration.index + 1
-                              : 0))
-                          : null,
-                    )),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 8.0),
-                    child: TextFormField(
-                      decoration: InputDecoration(hintText: 'Notizen'),
-                      initialValue: bill?.note ?? '',
-                      onChanged: (String input) {
-                        setState(() => bill.note = input);
-                        dirty = true;
-                      },
-                    ),
-                  ),
-                  ListTile(
-                    title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
-                    subtitle: VendorCard(vendor: bill.vendor),
-                  ),
-                  ListTile(
-                    title: Text('Kunde', style: Theme.of(context).textTheme.headline6),
-                    subtitle: CustomerCard(customer: bill.customer),
-                  ),
-                  ListTile(
-                    title: Text('Artikel', style: Theme.of(context).textTheme.headline6),
-                    subtitle: ItemsCard(items: bill.items, sum: bill.sum),
-                  ),
-                ],
-              ),
-            ),
+                )),
     );
   }
 

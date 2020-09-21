@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/customer.dart';
+import '../../models/customer.dart';
 
 class CustomerCard extends StatelessWidget {
   final Customer customer;

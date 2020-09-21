@@ -87,8 +87,15 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
     _customerRepo = CustomerRepository(InheritedDatabase.of(context));
-    await _customerRepo.setUp();
-    await onRefresh();
+
+    try {
+      await _customerRepo.setUp();
+      await onRefresh();
+    } on NoSuchMethodError {
+      if (mounted) setState(() => busy = false);
+      print('db not availiable');
+      return;
+    }
   }
 
   Future<void> onRefresh() async {

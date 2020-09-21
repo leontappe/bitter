@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
@@ -5,10 +6,19 @@ import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import '../models/database_error.dart';
 import 'database_provider.dart';
 
 class SqliteProvider extends DatabaseProvider {
   Database conn;
+  StreamController<DatabaseError> _errors;
+
+  SqliteProvider() {
+    _errors = StreamController<DatabaseError>.broadcast();
+  }
+
+  @override
+  Stream<DatabaseError> get errors => _errors.stream;
 
   @override
   Future<void> createTable(
@@ -55,7 +65,7 @@ class SqliteProvider extends DatabaseProvider {
   }
 
   @override
-  Future<void> open(String path, {String host, int port, String user, String password}) async {
+  Future<bool> open(String path, {String host, int port, String user, String password}) async {
     String dbPath;
     if (Platform.isWindows) {
       dbPath = (await getApplicationDocumentsDirectory()).path + '/bitter/config/bitter.db';
@@ -70,6 +80,7 @@ class SqliteProvider extends DatabaseProvider {
     } else {
       conn = await openDatabase(dbPath);
     }
+    return conn != null && conn.isOpen;
   }
 
   @override

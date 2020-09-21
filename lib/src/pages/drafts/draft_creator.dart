@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../models/draft.dart';
 import '../../models/item.dart';
 import '../../models/vendor.dart';
-
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
@@ -15,6 +14,7 @@ import '../../repositories/item_repository.dart';
 import '../../repositories/settings_repository.dart';
 import '../../repositories/vendor_repository.dart';
 import '../../util.dart';
+import '../../widgets/database_error_watcher.dart';
 import '../../widgets/vendor_selector.dart';
 import 'draft_popup_menu.dart';
 import 'item_editor_tile.dart';
@@ -80,183 +80,188 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                 setState(() => busy = false);
                 redirect
                     ? Navigator.popAndPushNamed(context, '/bills', result: changed)
-                    : changed ? Navigator.pop(context, changed) : null;
+                    : changed
+                        ? Navigator.pop(context, changed)
+                        : null;
               },
             )
         ],
       ),
-      body: (busy)
-          ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
-          : Padding(
-              padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  children: <Widget>[
-                    ListTile(
-                      title: Text('Kunde', style: Theme.of(context).textTheme.headline6),
-                      trailing:
-                          (customerIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
-                      subtitle: AutoCompleteTextField<Customer>(
-                        key: GlobalKey<AutoCompleteTextFieldState<Customer>>(),
-                        controller: TextEditingController(
-                            text: _customer?.fullCompany ?? _customer?.fullName ?? ''),
-                        itemSubmitted: (Customer c) {
-                          setState(() {
-                            draft.customer = c.id;
-                            _customer = c;
-                          });
-                          dirty = true;
-                          validateDropdowns();
-                        },
-                        suggestions: _customers,
-                        itemBuilder: (BuildContext context, Customer c) => ListTile(
-                          title: Text((c.company != null)
-                              ? '${c.company}${c.organizationUnit != null ? ' ' + c.organizationUnit : ''}'
-                              : '${c.name} ${c.surname}'),
-                          subtitle: (c.company != null) ? Text('${c.name} ${c.surname}') : null,
-                        ),
-                        itemSorter: (Customer a, Customer b) => a.id - b.id,
-                        itemFilter: (Customer c, String filter) {
-                          if (filter == null || filter.isEmpty) return true;
-                          filter = filter.toLowerCase();
-                          return (c.fullName ?? '').toLowerCase().contains(filter) ||
-                              (c.fullCompany ?? '').toLowerCase().contains(filter);
-                        },
-                      ),
-                    ),
-                    ListTile(
-                      title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
-                      trailing: (vendorIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
-                      subtitle: VendorSelector(
-                        initialValue: draft?.vendor,
-                        onChanged: (Vendor v) {
-                          draft.vendor = v.id;
-                          _vendor = v;
-                          draft.tax = _vendor.defaultTax;
-                          draft.dueDays = _vendor.defaultDueDays;
-                          dirty = true;
-                          validateDropdowns();
-                        },
-                      ),
-                    ),
-                    ListTile(
-                      title: Text('Lieferdatum/Leistungsdatum:',
-                          style: Theme.of(context).textTheme.headline6),
-                      trailing: Container(
-                        width: 196.0,
-                        height: 64.0,
-                        child: MaterialButton(
-                          child: Text((draft.serviceDate != null)
-                              ? formatDate(draft.serviceDate)
-                              : 'Am Rechnungsdatum'),
-                          onPressed: (vendorIsset)
-                              ? () async {
-                                  draft.serviceDate = await showDatePicker(
-                                    context: context,
-                                    initialDate: draft.serviceDate ?? DateTime.now(),
-                                    firstDate: DateTime(DateTime.now().year - 20),
-                                    lastDate: DateTime(DateTime.now().year + 20),
-                                    cancelText: 'Löschen',
-                                    confirmText: 'Übernehmen',
-                                  );
-                                  setState(() => draft);
-                                  dirty = true;
-                                }
-                              : null,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      title: Text('Zahlungsziel:', style: Theme.of(context).textTheme.headline6),
-                      trailing: Container(
-                        width: 80.0,
-                        height: 64.0,
-                        child: TextFormField(
-                          enabled: vendorIsset,
-                          controller:
-                              TextEditingController(text: draft.dueDays?.toString() ?? '14'),
-                          maxLines: 1,
-                          keyboardType: TextInputType.numberWithOptions(),
-                          decoration: InputDecoration(hintText: '14', suffixText: 'Tage'),
-                          validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                          onChanged: (String input) {
-                            setState(() => draft.dueDays = int.parse(input));
-                            _formKey.currentState.validate();
+      body: DatabaseErrorWatcher(
+        child: (busy)
+            ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
+            : Padding(
+                padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    children: <Widget>[
+                      ListTile(
+                        title: Text('Kunde', style: Theme.of(context).textTheme.headline6),
+                        trailing:
+                            (customerIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
+                        subtitle: AutoCompleteTextField<Customer>(
+                          key: GlobalKey<AutoCompleteTextFieldState<Customer>>(),
+                          controller: TextEditingController(
+                              text: _customer?.fullCompany ?? _customer?.fullName ?? ''),
+                          itemSubmitted: (Customer c) {
+                            setState(() {
+                              draft.customer = c.id;
+                              _customer = c;
+                            });
                             dirty = true;
+                            validateDropdowns();
+                          },
+                          suggestions: _customers,
+                          itemBuilder: (BuildContext context, Customer c) => ListTile(
+                            title: Text((c.company != null)
+                                ? '${c.company}${c.organizationUnit != null ? ' ' + c.organizationUnit : ''}'
+                                : '${c.name} ${c.surname}'),
+                            subtitle: (c.company != null) ? Text('${c.name} ${c.surname}') : null,
+                          ),
+                          itemSorter: (Customer a, Customer b) => a.id - b.id,
+                          itemFilter: (Customer c, String filter) {
+                            if (filter == null || filter.isEmpty) return true;
+                            filter = filter.toLowerCase();
+                            return (c.fullName ?? '').toLowerCase().contains(filter) ||
+                                (c.fullCompany ?? '').toLowerCase().contains(filter);
                           },
                         ),
                       ),
-                    ),
-                    if (_vendor?.userMessageLabel != null && _vendor.userMessageLabel.isNotEmpty)
                       ListTile(
-                        title: Text(
-                            '${_vendor?.userMessageLabel}:' ??
-                                'Benutzerdefinierter Rechnungskommentar:',
+                        title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
+                        trailing:
+                            (vendorIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
+                        subtitle: VendorSelector(
+                          initialValue: draft?.vendor,
+                          onChanged: (Vendor v) {
+                            draft.vendor = v.id;
+                            _vendor = v;
+                            draft.tax = _vendor.defaultTax;
+                            draft.dueDays = _vendor.defaultDueDays;
+                            dirty = true;
+                            validateDropdowns();
+                          },
+                        ),
+                      ),
+                      ListTile(
+                        title: Text('Lieferdatum/Leistungsdatum:',
                             style: Theme.of(context).textTheme.headline6),
                         trailing: Container(
-                          width: 256.0,
+                          width: 196.0,
+                          height: 64.0,
+                          child: MaterialButton(
+                            child: Text((draft.serviceDate != null)
+                                ? formatDate(draft.serviceDate)
+                                : 'Am Rechnungsdatum'),
+                            onPressed: (vendorIsset)
+                                ? () async {
+                                    draft.serviceDate = await showDatePicker(
+                                      context: context,
+                                      initialDate: draft.serviceDate ?? DateTime.now(),
+                                      firstDate: DateTime(DateTime.now().year - 20),
+                                      lastDate: DateTime(DateTime.now().year + 20),
+                                      cancelText: 'Löschen',
+                                      confirmText: 'Übernehmen',
+                                    );
+                                    setState(() => draft);
+                                    dirty = true;
+                                  }
+                                : null,
+                          ),
+                        ),
+                      ),
+                      ListTile(
+                        title: Text('Zahlungsziel:', style: Theme.of(context).textTheme.headline6),
+                        trailing: Container(
+                          width: 80.0,
+                          height: 64.0,
                           child: TextFormField(
-                            initialValue: draft.userMessage,
+                            enabled: vendorIsset,
+                            controller:
+                                TextEditingController(text: draft.dueDays?.toString() ?? '14'),
+                            maxLines: 1,
+                            keyboardType: TextInputType.numberWithOptions(),
+                            decoration: InputDecoration(hintText: '14', suffixText: 'Tage'),
+                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
-                              setState(() => draft.userMessage = input);
+                              setState(() => draft.dueDays = int.parse(input));
+                              _formKey.currentState.validate();
                               dirty = true;
                             },
                           ),
                         ),
                       ),
-                    ListTile(
-                      title:
-                          Text('Rechnungskommentar:', style: Theme.of(context).textTheme.headline6),
-                      trailing: Container(
-                        width: 256.0,
-                        child: TextFormField(
-                          controller: TextEditingController(
-                              text: draft.comment ?? _vendor?.defaultComment ?? ''),
-                          maxLines: 2,
-                          onChanged: (String input) {
-                            draft.comment = input;
-                            dirty = true;
-                          },
+                      if (_vendor?.userMessageLabel != null && _vendor.userMessageLabel.isNotEmpty)
+                        ListTile(
+                          title: Text(
+                              '${_vendor?.userMessageLabel}:' ??
+                                  'Benutzerdefinierter Rechnungskommentar:',
+                              style: Theme.of(context).textTheme.headline6),
+                          trailing: Container(
+                            width: 256.0,
+                            child: TextFormField(
+                              initialValue: draft.userMessage,
+                              onChanged: (String input) {
+                                setState(() => draft.userMessage = input);
+                                dirty = true;
+                              },
+                            ),
+                          ),
+                        ),
+                      ListTile(
+                        title: Text('Rechnungskommentar:',
+                            style: Theme.of(context).textTheme.headline6),
+                        trailing: Container(
+                          width: 256.0,
+                          child: TextFormField(
+                            controller: TextEditingController(
+                                text: draft.comment ?? _vendor?.defaultComment ?? ''),
+                            maxLines: 2,
+                            onChanged: (String input) {
+                              draft.comment = input;
+                              dirty = true;
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                    Text('Artikel', style: Theme.of(context).textTheme.headline6),
-                    BlocBuilder<ItemsBloc, ItemsState>(
-                      cubit: itemsBloc,
-                      builder: (BuildContext context, ItemsState state) {
-                        if (state.items != null) {
-                          return Column(children: <Widget>[
-                            ...state.items.map<ItemEditorTile>((Item e) => ItemEditorTile(
-                                  item: e,
-                                  defaultTax: draft.tax,
-                                  itemChanged: onUpdateItem,
-                                  itemDeleted: (Item e) => onRemoveItem(e.uid),
-                                  itemSaved: onSaveItem,
-                                )),
-                          ]);
-                        }
-                        return Container(width: 0.0, height: 0.0);
-                      },
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 16.0),
-                      child: RaisedButton(
-                        padding: EdgeInsets.all(8.0),
-                        child: Icon(Icons.add, size: 32.0),
-                        onPressed: (vendorIsset)
-                            ? () => onAddItem(Item(
-                                price: null,
-                                title: '',
-                                tax: _vendor.defaultTax ?? 19,
-                                vendor: _vendor.id))
-                            : null,
+                      Text('Artikel', style: Theme.of(context).textTheme.headline6),
+                      BlocBuilder<ItemsBloc, ItemsState>(
+                        cubit: itemsBloc,
+                        builder: (BuildContext context, ItemsState state) {
+                          if (state.items != null) {
+                            return Column(children: <Widget>[
+                              ...state.items.map<ItemEditorTile>((Item e) => ItemEditorTile(
+                                    item: e,
+                                    defaultTax: draft.tax,
+                                    itemChanged: onUpdateItem,
+                                    itemDeleted: (Item e) => onRemoveItem(e.uid),
+                                    itemSaved: onSaveItem,
+                                  )),
+                            ]);
+                          }
+                          return Container(width: 0.0, height: 0.0);
+                        },
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 16.0),
+                        child: RaisedButton(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(Icons.add, size: 32.0),
+                          onPressed: (vendorIsset)
+                              ? () => onAddItem(Item(
+                                  price: null,
+                                  title: '',
+                                  tax: _vendor.defaultTax ?? 19,
+                                  vendor: _vendor.id))
+                              : null,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
+      ),
     );
   }
 
@@ -268,10 +273,14 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    repo = DraftRepository(InheritedDatabase.of(context));
-    customerRepo = CustomerRepository(InheritedDatabase.of(context));
-    itemRepo = ItemRepository(InheritedDatabase.of(context));
-    vendorRepo = VendorRepository(InheritedDatabase.of(context));
+
+    final db = InheritedDatabase.of(context);
+    db.errors.listen(print);
+
+    repo = DraftRepository(db);
+    customerRepo = CustomerRepository(db);
+    itemRepo = ItemRepository(db);
+    vendorRepo = VendorRepository(db);
     settingsRepo = SettingsRepository();
 
     await itemRepo.setUp();

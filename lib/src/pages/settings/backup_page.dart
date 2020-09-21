@@ -16,6 +16,7 @@ import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/vendor_repository.dart';
+import '../../widgets/database_error_watcher.dart';
 
 class BackupPage extends StatefulWidget {
   @override
@@ -121,103 +122,105 @@ class _BackupPageState extends State<BackupPage> {
       appBar: AppBar(
         title: Text('Backup und Wiederherstellung'),
       ),
-      body: ListView(
-        padding: EdgeInsets.all(8.0),
-        children: <Widget>[
-          Card(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(8.0, 8.0, 64.0, 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text('Backup/Export', style: Theme.of(context).textTheme.headline5),
-                  Row(
-                    children: [
-                      RaisedButton(
-                        onPressed: !busy ? onStartBackup : null,
-                        child: Text('Backup starten'),
-                      ),
-                      Spacer(),
-                      if (busy) CircularProgressIndicator(),
-                    ],
-                  ),
-                  ...backups.map<Widget>((Operation e) => Text(
-                      'Backup gestartet um ${DateFormat.Hms().format(e.started)}' +
-                          (e.finished != null
-                              ? ' und beendet um ${DateFormat.Hms().format(e.finished)} (${(e.finished.millisecondsSinceEpoch - e.started.millisecondsSinceEpoch) / 1000} Sekunden)\nAusgabe in: ${e.result}'
-                              : ''))),
-                ],
+      body: DatabaseErrorWatcher(
+        child: ListView(
+          padding: EdgeInsets.all(8.0),
+          children: <Widget>[
+            Card(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(8.0, 8.0, 64.0, 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text('Backup/Export', style: Theme.of(context).textTheme.headline5),
+                    Row(
+                      children: [
+                        RaisedButton(
+                          onPressed: !busy ? onStartBackup : null,
+                          child: Text('Backup starten'),
+                        ),
+                        Spacer(),
+                        if (busy) CircularProgressIndicator(),
+                      ],
+                    ),
+                    ...backups.map<Widget>((Operation e) => Text(
+                        'Backup gestartet um ${DateFormat.Hms().format(e.started)}' +
+                            (e.finished != null
+                                ? ' und beendet um ${DateFormat.Hms().format(e.finished)} (${(e.finished.millisecondsSinceEpoch - e.started.millisecondsSinceEpoch) / 1000} Sekunden)\nAusgabe in: ${e.result}'
+                                : ''))),
+                  ],
+                ),
               ),
             ),
-          ),
-          Card(
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text('Wiederherstellung', style: Theme.of(context).textTheme.headline5),
-                  MaterialButton(
-                      onPressed: onOpenArchiveChooser,
-                      child: Text('Archiv zur Wiederherstellung wählen')),
-                  if (archivePath != null) Text(' Aktuelle Auswahl: $archivePath'),
-                  Divider(height: 16.0),
-                  CheckboxListTile(
-                    title: Text('Vorhandene Daten vor dem Wiederherstellen löschen?'),
-                    value: overwriteRestore,
-                    onChanged: (bool input) => setState(() => overwriteRestore = input),
-                  ),
-                  Divider(height: 16.0),
-                  Text('Datensätze zur Wiederherstellung wählen',
-                      style: Theme.of(context).textTheme.headline6),
-                  CheckboxListTile(
-                    value: recoveryChoice.all,
-                    onChanged: (bool input) => setState(() => recoveryChoice.all = input),
-                    title: Text('Alle'),
-                  ),
-                  CheckboxListTile(
-                    value: recoveryChoice.bills,
-                    onChanged: (bool input) => setState(() => recoveryChoice.bills = input),
-                    title: Text('Rechnungen'),
-                  ),
-                  CheckboxListTile(
-                    value: recoveryChoice.customers,
-                    onChanged: (bool input) => setState(() => recoveryChoice.customers = input),
-                    title: Text('Kunden'),
-                  ),
-                  CheckboxListTile(
-                    value: recoveryChoice.drafts,
-                    onChanged: (bool input) => setState(() => recoveryChoice.drafts = input),
-                    title: Text('Entwürfe'),
-                  ),
-                  CheckboxListTile(
-                    value: recoveryChoice.items,
-                    onChanged: (bool input) => setState(() => recoveryChoice.items = input),
-                    title: Text('Artikel'),
-                  ),
-                  CheckboxListTile(
-                    value: recoveryChoice.vendors,
-                    onChanged: (bool input) => setState(() => recoveryChoice.vendors = input),
-                    title: Text('Verkäufer'),
-                  ),
-                  Row(
-                    children: [
-                      RaisedButton(
-                          onPressed: onStartRecovery, child: Text('Wiederherstellung starten')),
-                      Spacer(),
-                      if (busy) CircularProgressIndicator(),
-                    ],
-                  ),
-                  ...restores.map<Widget>((Operation e) => Text(
-                      'Wiederherstellung gestartet um ${DateFormat.Hms().format(e.started)}' +
-                          (e.finished != null
-                              ? ' und beendet um ${DateFormat.Hms().format(e.finished)} (${(e.finished.millisecondsSinceEpoch - e.started.millisecondsSinceEpoch) / 1000} Sekunden)\n${e.result}'
-                              : ''))),
-                ],
+            Card(
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text('Wiederherstellung', style: Theme.of(context).textTheme.headline5),
+                    MaterialButton(
+                        onPressed: onOpenArchiveChooser,
+                        child: Text('Archiv zur Wiederherstellung wählen')),
+                    if (archivePath != null) Text(' Aktuelle Auswahl: $archivePath'),
+                    Divider(height: 16.0),
+                    CheckboxListTile(
+                      title: Text('Vorhandene Daten vor dem Wiederherstellen löschen?'),
+                      value: overwriteRestore,
+                      onChanged: (bool input) => setState(() => overwriteRestore = input),
+                    ),
+                    Divider(height: 16.0),
+                    Text('Datensätze zur Wiederherstellung wählen',
+                        style: Theme.of(context).textTheme.headline6),
+                    CheckboxListTile(
+                      value: recoveryChoice.all,
+                      onChanged: (bool input) => setState(() => recoveryChoice.all = input),
+                      title: Text('Alle'),
+                    ),
+                    CheckboxListTile(
+                      value: recoveryChoice.bills,
+                      onChanged: (bool input) => setState(() => recoveryChoice.bills = input),
+                      title: Text('Rechnungen'),
+                    ),
+                    CheckboxListTile(
+                      value: recoveryChoice.customers,
+                      onChanged: (bool input) => setState(() => recoveryChoice.customers = input),
+                      title: Text('Kunden'),
+                    ),
+                    CheckboxListTile(
+                      value: recoveryChoice.drafts,
+                      onChanged: (bool input) => setState(() => recoveryChoice.drafts = input),
+                      title: Text('Entwürfe'),
+                    ),
+                    CheckboxListTile(
+                      value: recoveryChoice.items,
+                      onChanged: (bool input) => setState(() => recoveryChoice.items = input),
+                      title: Text('Artikel'),
+                    ),
+                    CheckboxListTile(
+                      value: recoveryChoice.vendors,
+                      onChanged: (bool input) => setState(() => recoveryChoice.vendors = input),
+                      title: Text('Verkäufer'),
+                    ),
+                    Row(
+                      children: [
+                        RaisedButton(
+                            onPressed: onStartRecovery, child: Text('Wiederherstellung starten')),
+                        Spacer(),
+                        if (busy) CircularProgressIndicator(),
+                      ],
+                    ),
+                    ...restores.map<Widget>((Operation e) => Text(
+                        'Wiederherstellung gestartet um ${DateFormat.Hms().format(e.started)}' +
+                            (e.finished != null
+                                ? ' und beendet um ${DateFormat.Hms().format(e.finished)} (${(e.finished.millisecondsSinceEpoch - e.started.millisecondsSinceEpoch) / 1000} Sekunden)\n${e.result}'
+                                : ''))),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

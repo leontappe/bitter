@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../models/vendor.dart';
-
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
 import '../../repositories/settings_repository.dart';
+import '../../widgets/database_error_watcher.dart';
 import 'bill_list_tile.dart';
 import 'bill_page.dart';
 
@@ -79,69 +79,71 @@ class _BillsListPageState extends State<BillsListPage> {
         ],
       ),
       body: RefreshIndicator(
-        child: (busy)
-            ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
-            : ListView(
-                children: <Widget>[
-                  if (_groupedMode)
-                    Column(
-                      children: [
-                        ListTile(
-                            title:
-                                Text('Überfällig', style: Theme.of(context).textTheme.headline4)),
-                        ...bills
-                            .where((Bill b) =>
-                                (((b.reminders == null || b.reminders.isEmpty) &&
-                                        DateTime.now().isAfter(b.dueDate)) ||
-                                    (b.reminders != null &&
-                                        b.reminders.isNotEmpty &&
-                                        DateTime.now().isAfter(b.reminders.last.deadline))) &&
-                                b.status == BillStatus.unpaid)
-                            .map(
-                              (Bill b) => BillListTile(
-                                bill: b,
-                                onTap: () => onPushBillPage(b.id),
-                              ),
-                            ),
-                        Divider(),
-                        ListTile(
-                            title: Text('Laufend', style: Theme.of(context).textTheme.headline4)),
-                        ...bills
-                            .where((Bill b) =>
-                                b.status == BillStatus.unpaid &&
-                                (DateTime.now().isBefore(b.dueDate) ||
-                                    (b.reminders.isNotEmpty &&
-                                        DateTime.now().isBefore(b.reminders.last.deadline))))
-                            .map(
-                              (Bill b) => BillListTile(
-                                bill: b,
-                                onTap: () => onPushBillPage(b.id),
-                              ),
-                            ),
-                        Divider(),
-                        ListTile(
-                            title: Text('Abgeschlossen oder storniert',
-                                style: Theme.of(context).textTheme.headline4)),
-                        ...bills
-                            .where((Bill b) =>
-                                b.status == BillStatus.paid || b.status == BillStatus.cancelled)
-                            .map(
-                              (Bill b) => BillListTile(
-                                bill: b,
-                                onTap: () => onPushBillPage(b.id),
-                              ),
-                            ),
-                      ],
-                    )
-                  else
-                    ...bills.map(
-                      (Bill b) => BillListTile(
-                        bill: b,
-                        onTap: () => onPushBillPage(b.id),
-                      ),
-                    ),
-                ],
-              ),
+        child: DatabaseErrorWatcher(
+            child: (busy)
+                ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
+                : ListView(
+                    children: <Widget>[
+                      if (_groupedMode)
+                        Column(
+                          children: [
+                            ListTile(
+                                title: Text('Überfällig',
+                                    style: Theme.of(context).textTheme.headline4)),
+                            ...bills
+                                .where((Bill b) =>
+                                    (((b.reminders == null || b.reminders.isEmpty) &&
+                                            DateTime.now().isAfter(b.dueDate)) ||
+                                        (b.reminders != null &&
+                                            b.reminders.isNotEmpty &&
+                                            DateTime.now().isAfter(b.reminders.last.deadline))) &&
+                                    b.status == BillStatus.unpaid)
+                                .map(
+                                  (Bill b) => BillListTile(
+                                    bill: b,
+                                    onTap: () => onPushBillPage(b.id),
+                                  ),
+                                ),
+                            Divider(),
+                            ListTile(
+                                title:
+                                    Text('Laufend', style: Theme.of(context).textTheme.headline4)),
+                            ...bills
+                                .where((Bill b) =>
+                                    b.status == BillStatus.unpaid &&
+                                    (DateTime.now().isBefore(b.dueDate) ||
+                                        (b.reminders.isNotEmpty &&
+                                            DateTime.now().isBefore(b.reminders.last.deadline))))
+                                .map(
+                                  (Bill b) => BillListTile(
+                                    bill: b,
+                                    onTap: () => onPushBillPage(b.id),
+                                  ),
+                                ),
+                            Divider(),
+                            ListTile(
+                                title: Text('Abgeschlossen oder storniert',
+                                    style: Theme.of(context).textTheme.headline4)),
+                            ...bills
+                                .where((Bill b) =>
+                                    b.status == BillStatus.paid || b.status == BillStatus.cancelled)
+                                .map(
+                                  (Bill b) => BillListTile(
+                                    bill: b,
+                                    onTap: () => onPushBillPage(b.id),
+                                  ),
+                                ),
+                          ],
+                        )
+                      else
+                        ...bills.map(
+                          (Bill b) => BillListTile(
+                            bill: b,
+                            onTap: () => onPushBillPage(b.id),
+                          ),
+                        ),
+                    ],
+                  )),
         onRefresh: () async => await onGetBills(),
       ),
     );

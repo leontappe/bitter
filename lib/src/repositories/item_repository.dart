@@ -47,21 +47,22 @@ class ItemRepository<T extends DatabaseProvider> {
     final settingsRepo = SettingsRepository();
     await settingsRepo.setUp();
     final settings = await settingsRepo.getMySqlSettings();
-    await db.open(
+    final opened = await db.open(
       settings.database,
       host: settings.host,
       port: settings.port,
       user: settings.user,
       password: settings.password,
     );
-
-    await db.createTable(
-      tableName,
-      ['id', 'title', 'description', 'price', 'tax', 'item_id', 'vendor', 'quantity'],
-      ['INTEGER', 'TEXT', 'TEXT', 'INTEGER', 'INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'],
-      'id',
-      nullable: <bool>[true, false, true, false, false, false, false, false],
-    );
+    if (opened) {
+      await db.createTable(
+        tableName,
+        ['id', 'title', 'description', 'price', 'tax', 'item_id', 'vendor', 'quantity'],
+        ['INTEGER', 'TEXT', 'TEXT', 'INTEGER', 'INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'],
+        'id',
+        nullable: <bool>[true, false, true, false, false, false, false, false],
+      );
+    }
   }
 
   Future<void> update(Item item) {

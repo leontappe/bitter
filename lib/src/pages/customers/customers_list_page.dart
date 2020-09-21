@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
+import '../../widgets/database_error_watcher.dart';
 import 'customer_page.dart';
 
 class CustomersListPage extends StatefulWidget {
@@ -59,22 +60,24 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
         ],
       ),
       body: RefreshIndicator(
-        child: (busy)
-            ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
-            : ListView(
-                semanticChildCount: customers.length,
-                children: <Widget>[
-                  ...List.from(
-                    customers.map<ListTile>((Customer c) => ListTile(
-                          title: Text((c.company == null || c.company.isEmpty)
-                              ? '${c.name} ${c.surname}'
-                              : '${c.company} ${c.organizationUnit ?? ''}'),
-                          subtitle: Text('${c.address}, ${c.zipCode} ${c.city}'),
-                          onTap: () => onPushCustomerPage(context, c.id),
-                        )),
-                  )
-                ],
-              ),
+        child: DatabaseErrorWatcher(
+          child: (busy)
+              ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
+              : ListView(
+                  semanticChildCount: customers.length,
+                  children: <Widget>[
+                    ...List.from(
+                      customers.map<ListTile>((Customer c) => ListTile(
+                            title: Text((c.company == null || c.company.isEmpty)
+                                ? '${c.name} ${c.surname}'
+                                : '${c.company} ${c.organizationUnit ?? ''}'),
+                            subtitle: Text('${c.address}, ${c.zipCode} ${c.city}'),
+                            onTap: () => onPushCustomerPage(context, c.id),
+                          )),
+                    )
+                  ],
+                ),
+        ),
         onRefresh: onGetCustomers,
       ),
     );
@@ -98,11 +101,6 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
     customers = await repo.select();
     _sortCustomers();
     if (mounted) setState(() => busy = false);
-  }
-
-  void _sortCustomers() {
-    customers
-        .sort((Customer a, Customer b) => (a.company ?? a.name).compareTo(b.company ?? b.name));
   }
 
   Future<void> onPushCustomerPage(BuildContext context, int id) async {
@@ -141,5 +139,10 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
     if (!searchEnabled) {
       await onGetCustomers();
     }
+  }
+
+  void _sortCustomers() {
+    customers
+        .sort((Customer a, Customer b) => (a.company ?? a.name).compareTo(b.company ?? b.name));
   }
 }

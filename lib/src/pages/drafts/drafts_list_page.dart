@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../models/draft.dart';
-
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
 import '../../repositories/settings_repository.dart';
 import '../../repositories/vendor_repository.dart';
+import '../../widgets/database_error_watcher.dart';
 import 'draft_creator.dart';
 import 'draft_popup_menu.dart';
 
@@ -86,32 +86,34 @@ class _DraftsListPageState extends State<DraftsListPage> {
         ],
       ),
       body: RefreshIndicator(
-        child: (busy)
-            ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
-            : ListView(
-                children: [
-                  ...drafts.reversed.map((Draft d) => ListTile(
-                        title: Text('Entwurf ${d.id}'),
-                        subtitle: Text((vendors.isNotEmpty && customers.isNotEmpty)
-                            ? 'Bearbeiter*in: ${d.editor}, ${vendors.where((Vendor v) => v.id == d.vendor).isEmpty ? '' : vendors.singleWhere((Vendor v) => v.id == d.vendor).name} - Kunde*in: ${customers.where((Customer c) => c.id == d.customer).isEmpty ? '' : customers.singleWhere((Customer c) => c.id == d.customer).name} ${customers.where((Customer c) => c.id == d.customer).isEmpty ? '' : customers.singleWhere((Customer c) => c.id == d.customer).surname}'
-                            : 'Bearbeiter*in: ${d.editor}'),
-                        trailing: DraftPopupMenu(
-                            id: d.id,
-                            onStarted: () => setState(() => busy = true),
-                            onCompleted: (bool changed, bool redirect) {
-                              setState(() => busy = false);
-                              if (changed) {
-                                if (redirect) {
-                                  Navigator.pushNamed(context, '/bills');
-                                  return;
+        child: DatabaseErrorWatcher(
+          child: (busy)
+              ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
+              : ListView(
+                  children: [
+                    ...drafts.reversed.map((Draft d) => ListTile(
+                          title: Text('Entwurf ${d.id}'),
+                          subtitle: Text((vendors.isNotEmpty && customers.isNotEmpty)
+                              ? 'Bearbeiter*in: ${d.editor}, ${vendors.where((Vendor v) => v.id == d.vendor).isEmpty ? '' : vendors.singleWhere((Vendor v) => v.id == d.vendor).name} - Kunde*in: ${customers.where((Customer c) => c.id == d.customer).isEmpty ? '' : customers.singleWhere((Customer c) => c.id == d.customer).name} ${customers.where((Customer c) => c.id == d.customer).isEmpty ? '' : customers.singleWhere((Customer c) => c.id == d.customer).surname}'
+                              : 'Bearbeiter*in: ${d.editor}'),
+                          trailing: DraftPopupMenu(
+                              id: d.id,
+                              onStarted: () => setState(() => busy = true),
+                              onCompleted: (bool changed, bool redirect) {
+                                setState(() => busy = false);
+                                if (changed) {
+                                  if (redirect) {
+                                    Navigator.pushNamed(context, '/bills');
+                                    return;
+                                  }
+                                  onGetDrafts();
                                 }
-                                onGetDrafts();
-                              }
-                            }),
-                        onTap: () => onPushDraftCreator(draft: d),
-                      )),
-                ],
-              ),
+                              }),
+                          onTap: () => onPushDraftCreator(draft: d),
+                        )),
+                  ],
+                ),
+        ),
         onRefresh: () async => await onGetDrafts(),
       ),
     );

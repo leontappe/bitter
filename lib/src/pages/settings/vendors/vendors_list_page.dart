@@ -4,6 +4,7 @@ import '../../../models/vendor.dart';
 import '../../../providers/database_provider.dart';
 import '../../../providers/inherited_database.dart';
 import '../../../repositories/vendor_repository.dart';
+import '../../../widgets/database_error_watcher.dart';
 import 'vendor_page.dart';
 
 class VendorsPage extends StatefulWidget {
@@ -33,15 +34,17 @@ class _VendorsPageState extends State<VendorsPage> {
       ),
       body: RefreshIndicator(
         onRefresh: onGetVendors,
-        child: (busy)
-            ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
-            : ListView(
-                semanticChildCount: vendors.length,
-                children: <Widget>[
-                  ...vendors.reversed.map((Vendor v) =>
-                      ListTile(title: Text(v.name), onTap: () => onPushVendorPage(context, v.id))),
-                ],
-              ),
+        child: DatabaseErrorWatcher(
+          child: (busy)
+              ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
+              : ListView(
+                  semanticChildCount: vendors.length,
+                  children: <Widget>[
+                    ...vendors.reversed.map((Vendor v) => ListTile(
+                        title: Text(v.name), onTap: () => onPushVendorPage(context, v.id))),
+                  ],
+                ),
+        ),
       ),
     );
   }

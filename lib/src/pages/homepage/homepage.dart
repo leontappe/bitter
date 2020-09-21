@@ -1,15 +1,16 @@
 import 'dart:io';
 
-import 'package:bitter/src/providers/database_provider.dart';
-import 'package:bitter/src/providers/inherited_database.dart';
-import 'package:bitter/src/repositories/vendor_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import '../../repositories/settings_repository.dart';
 import '../../bitter_platform_path_provider.dart';
+import '../../providers/database_provider.dart';
+import '../../providers/inherited_database.dart';
+import '../../repositories/settings_repository.dart';
+import '../../repositories/vendor_repository.dart';
+import '../../widgets/database_error_watcher.dart';
 import '../../widgets/navigation_card.dart';
 import '../../widgets/settings_list.dart';
 import 'bills_navigation_card.dart';
@@ -30,17 +31,6 @@ class _HomepageState extends State<Homepage> {
   List<Vendor> _vendors;
   List<Vendor> filterVendors = [];
   int filterVendor = -1;
-
-  Future<void> onFilter(int value) async {
-    setState(() {
-      if (value >= 0) {
-        filterVendor = value;
-      } else {
-        filterVendor = null;
-      }
-    });
-    await settings.insert('homepage_filter', filterVendor);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,28 +60,36 @@ class _HomepageState extends State<Homepage> {
                   applicationName: 'bitter Rechnungen',
                   applicationVersion: packageInfo?.version ?? 'unidentified non-mobile version',
                   applicationIcon: Icon(Icons.monetization_on),
-                  applicationLegalese: '© 2020 Leon Tappe'))
+                  applicationLegalese: '© 2020 Leon Tappe')),
         ],
       ),
-      body: ListView(
-        children: <Widget>[
-          DraftsNavigationCard(filter: filterVendor),
-          BillsNavigationCard(filter: filterVendor),
-          CustomersNavigationCard(),
-          ItemsNavigationCard(filter: filterVendor),
-          NavigationCard(
-            context,
-            '/settings',
-            children: <Widget>[
-              Text('Einstellungen',
-                  style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis),
-              Divider(),
-              SettingsList(context),
-            ],
-          ),
-        ],
+      body: DatabaseErrorWatcher(
+        child: ListView(
+          children: <Widget>[
+            DraftsNavigationCard(filter: filterVendor),
+            BillsNavigationCard(filter: filterVendor),
+            CustomersNavigationCard(),
+            ItemsNavigationCard(filter: filterVendor),
+            NavigationCard(
+              context,
+              '/settings',
+              children: <Widget>[
+                Text('Einstellungen',
+                    style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis),
+                Divider(),
+                SettingsList(context),
+              ],
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    initDb();
+    super.didChangeDependencies();
   }
 
   Future<void> initDb() async {
@@ -118,8 +116,13 @@ class _HomepageState extends State<Homepage> {
 
     if (mounted) {
       vendorRepo = VendorRepository<DatabaseProvider>(InheritedDatabase.of(context));
-      await vendorRepo.setUp();
-      _vendors = await vendorRepo.select();
+      try {
+        await vendorRepo.setUp();
+        _vendors = await vendorRepo.select();
+      } on NoSuchMethodError {
+        print('db not availiable');
+        return;
+      }
     }
 
     filterVendor = await settings.select<int>('homepage_filter');
@@ -133,15 +136,20 @@ class _HomepageState extends State<Homepage> {
   }
 
   @override
-  void didChangeDependencies() {
-    initDb();
-    super.didChangeDependencies();
-  }
-
-  @override
   void initState() {
     super.initState();
     initPackageInfo();
     PathProviderPlatform.instance = BitterPlatformPathProvider();
+  }
+
+  Future<void> onFilter(int value) async {
+    setState(() {
+      if (value >= 0) {
+        filterVendor = value;
+      } else {
+        filterVendor = null;
+      }
+    });
+    await settings.insert('homepage_filter', filterVendor);
   }
 }

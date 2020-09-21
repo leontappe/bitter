@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../models/item.dart';
 import '../../models/vendor.dart';
-
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../util.dart';
-import '../../widgets/item_card.dart';
+import '../../widgets/database_error_watcher.dart';
+import '../../widgets/info_cards/item_card.dart';
 import '../../widgets/vendor_selector.dart';
 
 class ItemPage extends StatefulWidget {
@@ -47,112 +47,116 @@ class _ItemPageState extends State<ItemPage> {
                 onPressed: (busy) ? null : () => onDeleteItem(widget.item.id)),
         ],
       ),
-      body: (busy)
-          ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
-          : ListView(
-              children: <Widget>[
-                if (widget.item != null) ItemCard(item: item),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(16.0, (widget.item != null) ? 16.0 : 8.0, 16.0, 8.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: <Widget>[
-                        VendorSelector(
-                          disabled: widget.item != null,
-                          onChanged: (Vendor v) {
-                            setState(() {
-                              item.vendor = v.id;
-                              item.tax = v.defaultTax;
-                            });
-                          },
-                          initialValue: item.vendor,
-                        ),
-                        TextFormField(
-                          initialValue: item.title ?? '',
-                          maxLines: 1,
-                          decoration: InputDecoration(labelText: 'Titel'),
-                          validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                          onChanged: (String input) {
-                            item.title = input;
-                            _formKey.currentState.validate();
-                            dirty = true;
-                          },
-                        ),
-                        TextFormField(
-                          initialValue: item.description ?? '',
-                          maxLines: 1,
-                          decoration: InputDecoration(labelText: 'Beschreibung'),
-                          onChanged: (String input) {
-                            item.description = input;
-                            dirty = true;
-                          },
-                        ),
-                        ListTile(
-                          title: Text('Preis', style: Theme.of(context).textTheme.headline6),
-                          trailing: Container(
-                            width: 94.0,
-                            height: 64.0,
-                            child: TextFormField(
-                              initialValue: (item.price != null)
-                                  ? (item.price.toDouble() / 100.0).toStringAsFixed(2)
-                                  : '',
-                              validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                              keyboardType: TextInputType.numberWithOptions(),
-                              onChanged: (String input) {
-                                setState(() => item.price = parseFloat(input));
-                                dirty = true;
-                                _formKey.currentState.validate();
-                              },
-                              decoration: InputDecoration(suffixText: '€'),
+      body: DatabaseErrorWatcher(
+        child: (busy)
+            ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
+            : ListView(
+                children: <Widget>[
+                  if (widget.item != null) ItemCard(item: item),
+                  Padding(
+                    padding:
+                        EdgeInsets.fromLTRB(16.0, (widget.item != null) ? 16.0 : 8.0, 16.0, 8.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: <Widget>[
+                          VendorSelector(
+                            disabled: widget.item != null,
+                            onChanged: (Vendor v) {
+                              setState(() {
+                                item.vendor = v.id;
+                                item.tax = v.defaultTax;
+                              });
+                            },
+                            initialValue: item.vendor,
+                          ),
+                          TextFormField(
+                            initialValue: item.title ?? '',
+                            maxLines: 1,
+                            decoration: InputDecoration(labelText: 'Titel'),
+                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            onChanged: (String input) {
+                              item.title = input;
+                              _formKey.currentState.validate();
+                              dirty = true;
+                            },
+                          ),
+                          TextFormField(
+                            initialValue: item.description ?? '',
+                            maxLines: 1,
+                            decoration: InputDecoration(labelText: 'Beschreibung'),
+                            onChanged: (String input) {
+                              item.description = input;
+                              dirty = true;
+                            },
+                          ),
+                          ListTile(
+                            title: Text('Preis', style: Theme.of(context).textTheme.headline6),
+                            trailing: Container(
+                              width: 94.0,
+                              height: 64.0,
+                              child: TextFormField(
+                                initialValue: (item.price != null)
+                                    ? (item.price.toDouble() / 100.0).toStringAsFixed(2)
+                                    : '',
+                                validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                                keyboardType: TextInputType.numberWithOptions(),
+                                onChanged: (String input) {
+                                  setState(() => item.price = parseFloat(input));
+                                  dirty = true;
+                                  _formKey.currentState.validate();
+                                },
+                                decoration: InputDecoration(suffixText: '€'),
+                              ),
                             ),
                           ),
-                        ),
-                        ListTile(
-                          title: Text('Umsatzsteuer', style: Theme.of(context).textTheme.headline6),
-                          trailing: Container(
-                            width: 94.0,
-                            height: 64.0,
-                            child: TextFormField(
-                              maxLines: 1,
-                              controller: TextEditingController(text: item.tax.toString()),
-                              keyboardType: TextInputType.numberWithOptions(),
-                              decoration: InputDecoration(suffixText: '%'),
-                              validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                              onChanged: (String input) {
-                                item.tax = int.parse(input);
-                                _formKey.currentState.validate();
-                                dirty = true;
-                              },
+                          ListTile(
+                            title:
+                                Text('Umsatzsteuer', style: Theme.of(context).textTheme.headline6),
+                            trailing: Container(
+                              width: 94.0,
+                              height: 64.0,
+                              child: TextFormField(
+                                maxLines: 1,
+                                controller: TextEditingController(text: item.tax.toString()),
+                                keyboardType: TextInputType.numberWithOptions(),
+                                decoration: InputDecoration(suffixText: '%'),
+                                validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                                onChanged: (String input) {
+                                  item.tax = int.parse(input);
+                                  _formKey.currentState.validate();
+                                  dirty = true;
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                        ListTile(
-                          title:
-                              Text('Standardmenge', style: Theme.of(context).textTheme.headline6),
-                          trailing: Container(
-                            width: 94.0,
-                            height: 64.0,
-                            child: TextFormField(
-                              maxLines: 1,
-                              initialValue: item.quantity?.toString() ?? '1',
-                              keyboardType: TextInputType.numberWithOptions(),
-                              decoration: InputDecoration(suffixText: 'x'),
-                              validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                              onChanged: (String input) {
-                                item.quantity = int.parse(input);
-                                _formKey.currentState.validate();
-                                dirty = true;
-                              },
+                          ListTile(
+                            title:
+                                Text('Standardmenge', style: Theme.of(context).textTheme.headline6),
+                            trailing: Container(
+                              width: 94.0,
+                              height: 64.0,
+                              child: TextFormField(
+                                maxLines: 1,
+                                initialValue: item.quantity?.toString() ?? '1',
+                                keyboardType: TextInputType.numberWithOptions(),
+                                decoration: InputDecoration(suffixText: 'x'),
+                                validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                                onChanged: (String input) {
+                                  item.quantity = int.parse(input);
+                                  _formKey.currentState.validate();
+                                  dirty = true;
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+      ),
     );
   }
 

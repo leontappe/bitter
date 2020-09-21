@@ -43,7 +43,7 @@ class CustomerRepository<T extends DatabaseProvider> {
     final settingsRepo = SettingsRepository();
     await settingsRepo.setUp();
     final settings = await settingsRepo.getMySqlSettings();
-    await db.open(
+    final opened = await db.open(
       settings.database,
       host: settings.host,
       port: settings.port,
@@ -51,58 +51,60 @@ class CustomerRepository<T extends DatabaseProvider> {
       password: settings.password,
     );
 
-    await db.createTable(
-      tableName,
-      [
+    if (opened) {
+      await db.createTable(
+        tableName,
+        [
+          'id',
+          'company',
+          'organization_unit',
+          'name',
+          'surname',
+          'gender',
+          'address',
+          'zip_code',
+          'city',
+          'country',
+          'telephone',
+          'fax',
+          'mobile',
+          'email'
+        ],
+        [
+          'INTEGER',
+          'TEXT',
+          'TEXT',
+          'TEXT',
+          'TEXT',
+          'INTEGER',
+          'TEXT',
+          'INTEGER',
+          'TEXT',
+          'TEXT',
+          'TEXT',
+          'TEXT',
+          'TEXT',
+          'TEXT'
+        ],
         'id',
-        'company',
-        'organization_unit',
-        'name',
-        'surname',
-        'gender',
-        'address',
-        'zip_code',
-        'city',
-        'country',
-        'telephone',
-        'fax',
-        'mobile',
-        'email'
-      ],
-      [
-        'INTEGER',
-        'TEXT',
-        'TEXT',
-        'TEXT',
-        'TEXT',
-        'INTEGER',
-        'TEXT',
-        'INTEGER',
-        'TEXT',
-        'TEXT',
-        'TEXT',
-        'TEXT',
-        'TEXT',
-        'TEXT'
-      ],
-      'id',
-      nullable: <bool>[
-        true,
-        true,
-        true,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        true,
-        true,
-        true,
-        true,
-        false
-      ],
-    );
+        nullable: <bool>[
+          true,
+          true,
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          true,
+          true,
+          true,
+          false
+        ],
+      );
+    }
   }
 
   Future<void> update(Customer customer) {

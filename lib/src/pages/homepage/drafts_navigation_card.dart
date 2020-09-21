@@ -20,7 +20,7 @@ class DraftsNavigationCard extends StatefulWidget {
 }
 
 class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
-  DraftRepository _billRepo;
+  DraftRepository _draftRepo;
   CustomerRepository _customerRepo;
   VendorRepository _vendorRepo;
 
@@ -104,21 +104,28 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
 
   Future<void> initDb() async {
     if (mounted) setState(() => busy = true);
-    _billRepo = DraftRepository(InheritedDatabase.of(context));
-    _customerRepo = CustomerRepository(InheritedDatabase.of(context));
-    _vendorRepo = VendorRepository(InheritedDatabase.of(context));
 
-    await _billRepo.setUp();
-    await _customerRepo.setUp();
-    await _vendorRepo.setUp();
+    final db = InheritedDatabase.of(context);
+    _draftRepo = DraftRepository(db);
+    _customerRepo = CustomerRepository(db);
+    _vendorRepo = VendorRepository(db);
 
-    await onRefresh();
+    try {
+      await _draftRepo.setUp();
+      await _customerRepo.setUp();
+      await _vendorRepo.setUp();
+      await onRefresh();
+    } on NoSuchMethodError {
+      if (mounted) setState(() => busy = false);
+      print('db not availiable');
+      return;
+    }
   }
 
   Future<void> onRefresh() async {
     _customers = await _customerRepo.select();
     _vendors = await _vendorRepo.select();
-    _drafts = await _billRepo.select();
+    _drafts = await _draftRepo.select();
     if (widget.filter != null && widget.filter > 0) {
       _drafts.removeWhere((Draft d) => d.vendor != widget.filter);
     }

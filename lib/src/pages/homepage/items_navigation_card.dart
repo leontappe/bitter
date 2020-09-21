@@ -1,8 +1,8 @@
-import 'package:bitter/src/repositories/vendor_repository.dart';
 import 'package:flutter/material.dart';
 
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
+import '../../repositories/vendor_repository.dart';
 import '../../widgets/navigation_card.dart';
 import '../../widgets/shortcuts/item_shortcut.dart';
 import '../items/item_page.dart';
@@ -98,10 +98,18 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
     if (mounted) setState(() => busy = true);
     _itemRepo = ItemRepository(InheritedDatabase.of(context));
     _vendorRepo = VendorRepository(InheritedDatabase.of(context));
-    await _itemRepo.setUp();
-    await _vendorRepo.setUp();
-    await onRefresh();
-    _vendors = await _vendorRepo.select();
+
+    try {
+      await _itemRepo.setUp();
+      await _vendorRepo.setUp();
+      await onRefresh();
+      _vendors = await _vendorRepo.select();
+    } on NoSuchMethodError {
+      if (mounted) setState(() => busy = false);
+      print('db not availiable');
+      return;
+    }
+
     if (mounted) setState(() => _vendors);
   }
 
