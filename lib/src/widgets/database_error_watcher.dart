@@ -17,9 +17,9 @@ class DatabaseErrorWatcher extends StatefulWidget {
 class _DatabaseErrorWatcherState extends State<DatabaseErrorWatcher> {
   StreamSubscription listener;
 
-  /// the last error that went through listener
+  /// the last errors that went through listener
   /// used to sort out big bulks of identical errors
-  DatabaseError lastError;
+  List<DatabaseError> lastErrors = [];
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +32,17 @@ class _DatabaseErrorWatcherState extends State<DatabaseErrorWatcher> {
 
     listener = db.errors
         .where((DatabaseError error) =>
-            error != lastError ||
-            error.timestamp.difference(lastError.timestamp).compareTo(const Duration(seconds: 30)) >
+            !lastErrors.contains(error) ||
+            error.timestamp
+                    .difference(lastErrors.first.timestamp)
+                    .compareTo(const Duration(seconds: 30)) >
                 0)
         .listen((DatabaseError error) {
       Scaffold.of(context).showSnackBar(
           SnackBar(content: Text(error.description), duration: const Duration(seconds: 3)));
-      lastError = error;
+      lastErrors.add(error);
+      lastErrors.removeWhere((DatabaseError error) =>
+          error.timestamp.isBefore(DateTime.now().subtract(const Duration(seconds: 5))));
     });
 
     super.didChangeDependencies();
