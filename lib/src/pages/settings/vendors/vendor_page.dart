@@ -487,7 +487,12 @@ class _VendorPageState extends State<VendorPage> {
   }
 
   Future<void> onOpenImage(HeaderImage image) async {
-    final dialogResult = await FilePickerCross.importFromStorage(type: FileTypeCross.image);
+    FilePickerCross dialogResult;
+    try {
+      dialogResult = await FilePickerCross.importFromStorage(type: FileTypeCross.image);
+    } on NoSuchMethodError {
+      return;
+    }
 
     if (dialogResult == null) {
       return;

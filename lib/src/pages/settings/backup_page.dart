@@ -247,8 +247,13 @@ class _BackupPageState extends State<BackupPage> {
   }
 
   void onOpenArchiveChooser() async {
-    final dialogResult =
-        await FilePickerCross.importFromStorage(type: FileTypeCross.custom, fileExtension: 'zip');
+    FilePickerCross dialogResult;
+    try {
+      dialogResult = await FilePickerCross.importFromStorage(
+          type: FileTypeCross.custom, fileExtension: 'zip');
+    } on NoSuchMethodError {
+      return;
+    }
 
     if (dialogResult == null) {
       return;
