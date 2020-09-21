@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:archive/archive_io.dart';
 import 'package:csv/csv.dart';
-import 'package:file_chooser/file_chooser.dart';
+import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -113,6 +113,7 @@ class _BackupPageState extends State<BackupPage> {
   List<Operation> restores = <Operation>[];
 
   String archivePath;
+  Uint8List archiveData;
   bool overwriteRestore = false;
   RecoveryChoice recoveryChoice = RecoveryChoice();
 
@@ -246,59 +247,17 @@ class _BackupPageState extends State<BackupPage> {
   }
 
   void onOpenArchiveChooser() async {
-    List<String> result;
-    if (!Platform.isWindows) {
-      final dialogResult = await showOpenPanel(
-        //initialDirectory: (await getApplicationDocumentsDirectory()).path,
-        allowedFileTypes: [
-          FileTypeFilterGroup(label: 'archives', fileExtensions: ['zip'])
-        ],
-        allowsMultipleSelection: false,
-        canSelectDirectories: false,
-        confirmButtonText: 'Auswählen',
-      );
+    final dialogResult =
+        await FilePickerCross.importFromStorage(type: FileTypeCross.custom, fileExtension: 'zip');
 
-      if (dialogResult.canceled) {
-        return;
-      } else {
-        result = dialogResult.paths;
-      }
-    } else {
-      final dialogResult = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: Text('Wiederherstellungsdatei laden'),
-          content: Text(
-              'Um ein Archiv zum Wiederherstellen auszuwählen die entsprechende Datei unter Dokumente\\bitter\\config platzieren und danach \'Fertig\' drücken.'),
-          actions: [
-            MaterialButton(
-              child: Text('Abbrechen'),
-              onPressed: () => Navigator.pop(context, false),
-            ),
-            MaterialButton(
-              child: Text('Fertig'),
-              onPressed: () => Navigator.pop(context, true),
-            ),
-          ],
-        ),
-      );
-      if (dialogResult) {
-        final docPath = '${(await getApplicationDocumentsDirectory()).path}\\bitter\\config';
-        final docs = Directory(docPath);
-        final backups =
-            docs.listSync(followLinks: false).where((e) => e.path.contains('.zip')).toList();
-        backups.removeWhere(
-            (element) => element.path.contains('.json') || element.path.contains('.db'));
-
-        if (backups.isEmpty) {
-          return;
-        } else {
-          result = List.from(backups.map<String>((e) => e.path));
-        }
-      }
+    if (dialogResult == null) {
+      return;
     }
 
-    setState(() => archivePath = result.first);
+    setState(() {
+      archivePath = dialogResult.path;
+      archiveData = dialogResult.toUint8List();
+    });
   }
 
   void onStartBackup() async {
@@ -370,6 +329,17 @@ class _BackupPageState extends State<BackupPage> {
   }
 
   void onStartRecovery() async {
+    if (archivePath == null || archiveData == null) {
+      await showDialog<dynamic>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text(
+              'Du musst eine Backupdatei (Zip-Archiv) zum Wiederherstellen auswählen.\nBitte wähle eine Datei aus und versuche es noch ein Mal.'),
+          actions: [MaterialButton(onPressed: () => Navigator.pop(context), child: Text('Okay'))],
+        ),
+      );
+      return;
+    }
     if (!recoveryChoice.isset) {
       await showDialog<dynamic>(
         context: context,
@@ -404,8 +374,7 @@ class _BackupPageState extends State<BackupPage> {
 
     final db = InheritedDatabase.of(context);
 
-    final byteContent = await File(archivePath).readAsBytes();
-    final archive = ZipDecoder().decodeBytes(byteContent);
+    final archive = ZipDecoder().decodeBytes(archiveData);
 
     archive.forEach((ArchiveFile file) async {
       if (recoveryChoice.customers && file.name.contains('customers')) {

@@ -24,11 +24,7 @@ dependencies:
   crypto: ^2.1.5
   path_provider: ^1.6.15
   path_provider_macos: ^0.0.4+4
-  file_chooser:
-    git:
-      url: git://github.com/leontappe/flutter-desktop-embedding.git
-      path: plugins/file_chooser
-    #path: ../file_chooser
+  file_picker_cross: ^4.2.2
   autocomplete_textfield: ^1.7.3
   csv: ^4.0.3
   archive: ^2.0.13

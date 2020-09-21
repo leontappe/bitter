@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:file_chooser/file_chooser.dart';
+import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../../models/reminder.dart';
 import '../../../models/vendor.dart';
@@ -489,85 +487,28 @@ class _VendorPageState extends State<VendorPage> {
   }
 
   Future<void> onOpenImage(HeaderImage image) async {
-    List<String> result;
-    if (!Platform.isWindows) {
-      final dialogResult = await showOpenPanel(
-        //initialDirectory: (await getApplicationDocumentsDirectory()).path,
-        allowedFileTypes: [
-          FileTypeFilterGroup(label: 'images', fileExtensions: ['png', 'jpg', 'jpeg', 'gif'])
-        ],
-        allowsMultipleSelection: false,
-        canSelectDirectories: false,
-        confirmButtonText: 'Auswählen',
-      );
+    final dialogResult = await FilePickerCross.importFromStorage(type: FileTypeCross.image);
 
-      if (dialogResult.canceled) {
-        return;
-      } else {
-        result = dialogResult.paths;
-      }
-    } else {
-      final dialogResult = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: Text('Kopfzeilenbild festlegen'),
-          content: Text('''
-Um ein Kopfzeilenbild für diesen Verkäufer festzulegen, bitte ein Bild unter Dokumente\\bitter\\config platzieren und danach \'Fertig\' drücken. 
-(Das Bild löscht sich dort selber nachdem bitter es in die Datenbank kopiert hat)
-'''),
-          actions: [
-            MaterialButton(
-              child: Text('Abbrechen'),
-              onPressed: () => Navigator.pop(context, false),
-            ),
-            MaterialButton(
-              child: Text('Fertig'),
-              onPressed: () => Navigator.pop(context, true),
-            ),
-          ],
-        ),
-      );
-      if (dialogResult) {
-        final docPath = '${(await getApplicationDocumentsDirectory()).path}\\bitter\\config';
-        final docs = Directory(docPath);
-        final images = docs
-            .listSync(followLinks: false)
-            .where((e) =>
-                e.path.contains('.png') ||
-                e.path.contains('.jpg') ||
-                e.path.contains('.jpeg') ||
-                e.path.contains('.gif'))
-            .toList();
-        images.removeWhere(
-            (element) => element.path.contains('.json') || element.path.contains('.db'));
-
-        if (images.isEmpty) {
-          return;
-        } else {
-          result = List.from(images.map<String>((e) => e.path));
-        }
-      }
+    if (dialogResult == null) {
+      return;
     }
 
     switch (image) {
       case HeaderImage.right:
-        newVendor.headerImageRight = await File(result.first).readAsBytes();
+        newVendor.headerImageRight = dialogResult.toUint8List();
         break;
       case HeaderImage.center:
-        newVendor.headerImageCenter = await File(result.first).readAsBytes();
+        newVendor.headerImageCenter = dialogResult.toUint8List();
         break;
       case HeaderImage.left:
-        newVendor.headerImageLeft = await File(result.first).readAsBytes();
+        newVendor.headerImageLeft = dialogResult.toUint8List();
         break;
       default:
     }
 
-    if (Platform.isWindows) {
-      await File(result.first).delete();
-    }
+    await repo.update(newVendor);
 
     setState(() => newVendor);
-    await repo.update(newVendor);
   }
 
   void onPopRoute() async {
