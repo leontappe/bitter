@@ -25,7 +25,17 @@ class BillListTile extends StatelessWidget {
               'Rechnungsdatum: ${formatDate(bill.created)} - Leistungsdatum: ${formatDate(bill.serviceDate)} - Zahlungsziel: ${formatDate(bill.dueDate)}')
         ],
       ),
-      trailing: SaveBillButton(bill: bill),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Flexible(
+              child: Text(formatFigure(bill.sum),
+                  style: Theme.of(context).textTheme.headline6,
+                  textScaleFactor: 0.9,
+                  overflow: TextOverflow.ellipsis)),
+          SaveBillButton(bill: bill),
+        ],
+      ),
       onTap: onTap,
     );
   }
