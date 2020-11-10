@@ -22,13 +22,13 @@ class CustomerCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(customer.company, style: Theme.of(context).textTheme.headline5),
+                  Text(customer.company, style: Theme.of(context).textTheme.headline6),
                   Text('Ansprechpartner: ' + customer.name + ' ' + customer.surname)
                 ],
               )
             else
               Text(customer.name + ' ' + customer.surname,
-                  style: Theme.of(context).textTheme.headline5),
+                  style: Theme.of(context).textTheme.headline6),
             if (customer.organizationUnit != null && customer.organizationUnit.isNotEmpty)
               Text('Abteilung: ${customer.organizationUnit}'),
             Text('Adresse: ${customer.address}'),

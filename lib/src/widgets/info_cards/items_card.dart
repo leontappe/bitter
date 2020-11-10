@@ -78,8 +78,9 @@ class ItemsCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('Summe', style: Theme.of(context).textTheme.subtitle2),
-              Text(formatFigure(sum), style: Theme.of(context).textTheme.subtitle2)
+              Text('Summe', style: Theme.of(context).textTheme.headline6, textScaleFactor: 0.9),
+              Text(formatFigure(sum),
+                  style: Theme.of(context).textTheme.headline6, textScaleFactor: 0.9)
             ],
           ),
         ),

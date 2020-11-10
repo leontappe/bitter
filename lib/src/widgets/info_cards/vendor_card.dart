@@ -18,7 +18,7 @@ class VendorCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(vendor.name, style: Theme.of(context).textTheme.headline5),
+            Text(vendor.name, style: Theme.of(context).textTheme.headline6),
             if (vendor.manager != null) Text('Organisation: ${vendor.manager}'),
             if (vendor.contact != null) Text('Ansprechpartner: ${vendor.contact}'),
             Text('Adresse: ${vendor.address}'),
