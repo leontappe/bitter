@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:windows_documents/windows_documents.dart';
 
 import '../models/mysql_settings.dart';
 
@@ -67,7 +68,11 @@ class SettingsRepository {
   Future<void> setMySqlSettings(MySqlSettings settings) => insert(mySqlKey, settings.toMap);
 
   Future<void> setUp() async {
-    basePath = (await getApplicationDocumentsDirectory()).path;
+    if (Platform.isWindows) {
+      basePath = await getDocumentsDirectory();
+    } else {
+      basePath = (await getApplicationDocumentsDirectory()).path;
+    }
     //print(basePath);
     if (Platform.isWindows) {
       dataPath = basePath + '/bitter/config/settings.json';

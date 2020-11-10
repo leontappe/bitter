@@ -20,7 +20,7 @@ dependencies:
   image: ^2.1.15
   meta: ^1.2.3
   bloc: ^6.0.3
-  flutter_bloc: ^6.0.5
+  flutter_bloc: ^6.1.0
   crypto: ^2.1.5
   path_provider: ^1.6.15
   path_provider_macos: ^0.0.4+4
@@ -28,6 +28,7 @@ dependencies:
   autocomplete_textfield: ^1.7.3
   csv: ^4.0.3
   archive: ^2.0.13
+  windows_documents: ^0.0.1
 
 dev_dependencies:
   flutter_test:

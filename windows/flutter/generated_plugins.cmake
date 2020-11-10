@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   file_chooser
+  windows_documents
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

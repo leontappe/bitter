@@ -210,7 +210,6 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
   Future<bool> onSaveConfig() async {
     if (((dbEngine == DbEngine.sqlite) ? true : _databaseFormKey.currentState.validate()) &&
         _usernameFormKey.currentState.validate()) {
-      settings = settings;
       await repo.setMySqlSettings(settings);
       await repo.setUsername(username);
       if (repo.getDbEngine() != null && repo.getDbEngine() != dbEngine) {
