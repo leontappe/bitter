@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/bill.dart';
 import '../../pages/bills/bill_page.dart';
+import '../../util.dart';
 import 'base_shortcut.dart';
 
 class BillShortcut extends StatelessWidget {
@@ -26,7 +27,7 @@ class BillShortcut extends StatelessWidget {
         if (showVendor) Text(bill.vendor.name, overflow: TextOverflow.ellipsis),
         Text(bill.customer.fullCompany ?? bill.customer.fullName, overflow: TextOverflow.ellipsis),
         Text('${bill.items.length} Artikel', overflow: TextOverflow.ellipsis),
-        Text((bill.sum / 100.0).toStringAsFixed(2) + ' €', overflow: TextOverflow.ellipsis),
+        Text(formatFigure(bill.sum), overflow: TextOverflow.ellipsis),
       ],
     );
   }

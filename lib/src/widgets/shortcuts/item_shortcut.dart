@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/item.dart';
 import '../../models/vendor.dart';
 import '../../pages/items/item_page.dart';
+import '../../util.dart';
 import 'base_shortcut.dart';
 
 class ItemShortcut extends StatelessWidget {
@@ -28,7 +29,7 @@ class ItemShortcut extends StatelessWidget {
             overflow: TextOverflow.ellipsis),
         Text(item.description ?? '', overflow: TextOverflow.ellipsis),
         if (showVendor && vendor != null) Text(vendor.name, overflow: TextOverflow.ellipsis),
-        Text('${(item.price / 100.0).toStringAsFixed(2)} €', overflow: TextOverflow.ellipsis),
+        Text(formatFigure(item.price), overflow: TextOverflow.ellipsis),
       ],
     );
   }

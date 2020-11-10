@@ -52,7 +52,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
         itemBuilder: (BuildContext context, Item item) => ListTile(
           title: Text(item.title),
           subtitle: (item.description != null) ? Text(item.description) : null,
-          trailing: Text((item.price / 100.0).toStringAsFixed(2) + '€'),
+          trailing: Text(formatFigure(item.price)),
         ),
         itemSorter: (Item a, Item b) => a.title.compareTo(b.title),
         itemFilter: (Item item, String query) =>

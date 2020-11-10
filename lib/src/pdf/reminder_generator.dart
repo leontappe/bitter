@@ -143,14 +143,13 @@ class ReminderGenerator {
               TableRow(children: <Widget>[
                 PaddedText('Rechnung ${bill.billNr} vom ${formatDate(bill.created)}', ttfSans),
                 PaddedText('${reminder.iteration.index + 1}', ttfSans),
-                PaddedText(
-                    (bill.sum / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' €', ttfSans),
+                PaddedText(formatFigure(bill.sum), ttfSans),
               ]),
               if (reminder.fee != 0)
                 TableRow(children: <Widget>[
                   PaddedText('Mahngebühr', ttfSans),
                   PaddedText('', ttfSans),
-                  PaddedText(reminder.fee.toStringAsFixed(2).replaceAll('.', ',') + ' €', ttfSans),
+                  PaddedText(formatFigure(reminder.fee), ttfSans),
                 ]),
             ],
           ),
@@ -160,8 +159,7 @@ class ReminderGenerator {
             children: <Widget>[
               Spacer(),
               Paragraph(
-                text:
-                    'Gesamtbetrag: ${((bill.sum / 100.0) + reminder.fee).toStringAsFixed(2).replaceAll('.', ',')} €',
+                text: 'Gesamtbetrag: ${formatFigure(bill.sum + (reminder.fee * 100))}',
                 style: TextStyle(
                     fontSize: fontsize + 1.0, fontWeight: FontWeight.bold, font: ttfSansBold),
                 margin: EdgeInsets.only(top: 8.0, bottom: 8.0),

@@ -154,10 +154,8 @@ class PdfGenerator {
                         ttfSans),
                     PaddedText(i.quantity.toString(), ttfSans),
                     PaddedText('${i.tax.toStringAsFixed(0)} %', ttfSans),
-                    PaddedText(
-                        (i.price / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' €', ttfSans),
-                    PaddedText(
-                        (i.sum / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' €', ttfSans),
+                    PaddedText(formatFigure(i.price), ttfSans),
+                    PaddedText(formatFigure(i.sum), ttfSans),
                   ])),
             ],
           ),
@@ -170,15 +168,14 @@ class PdfGenerator {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Paragraph(
-                    text:
-                        'Gesamtbetrag: ${(bill.sum / 100.0).toStringAsFixed(2).replaceAll('.', ',')} €',
+                    text: 'Gesamtbetrag: ${formatFigure(bill.sum)}',
                     style: TextStyle(
                         fontSize: fontsize + 1.0, fontWeight: FontWeight.bold, font: ttfSansBold),
                     margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
                   ),
                   Paragraph(
                     text:
-                        'Der Gesamtbetrag setzt sich aus ${((bill.sum - calculateTaxes(bill.items, bill.tax)) / 100.0).toStringAsFixed(2).replaceAll('.', ',')} € netto zzgl. ${(calculateTaxes(bill.items, bill.tax) / 100.0).toStringAsFixed(2).replaceAll('.', ',')} € Umsatzsteuer zusammen.',
+                        'Der Gesamtbetrag setzt sich aus ${formatFigure(bill.sum - calculateTaxes(bill.items, bill.tax))} netto zzgl. ${formatFigure(calculateTaxes(bill.items, bill.tax))} Umsatzsteuer zusammen.',
                     style: TextStyle(fontSize: fontsize + 1.0, font: ttfSans),
                     margin: EdgeInsets.all(0.0),
                   ),

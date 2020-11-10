@@ -8,6 +8,8 @@ String formatDateTime(DateTime date) {
   return DateFormat('dd.MM.yyyy HH:mm', 'de_DE').format(date);
 }
 
+String formatFigure(int value) => (value / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' €';
+
 int parseFloat(String input) {
   final split = input.replaceAll(',', '.').split('.');
   return (int.parse(split.first) * 100) +

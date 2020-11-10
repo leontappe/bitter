@@ -97,7 +97,7 @@ class _ItemPageState extends State<ItemPage> {
                               height: 64.0,
                               child: TextFormField(
                                 initialValue: (item.price != null)
-                                    ? (item.price.toDouble() / 100.0).toStringAsFixed(2)
+                                    ? (item.price / 100.0).toStringAsFixed(2)
                                     : '',
                                 validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                                 keyboardType: TextInputType.numberWithOptions(),

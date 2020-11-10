@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/item.dart';
+import '../../util.dart';
 
 class ItemsCard extends StatelessWidget {
   final List<Item> items;
@@ -58,8 +59,8 @@ class ItemsCard extends StatelessWidget {
                           ),
                           Flexible(child: Text('${i.quantity}x')),
                           Flexible(child: Text('${i.tax}%')),
-                          Flexible(child: Text((i.price / 100.0).toStringAsFixed(2) + '€')),
-                          Flexible(child: Text((i.sum / 100.0).toStringAsFixed(2) + '€')),
+                          Flexible(child: Text(formatFigure(i.price))),
+                          Flexible(child: Text(formatFigure(i.sum))),
                         ],
                       ),
                       Divider(),
@@ -78,8 +79,7 @@ class ItemsCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text('Summe', style: Theme.of(context).textTheme.subtitle2),
-              Text((sum / 100.0).toStringAsFixed(2) + '€',
-                  style: Theme.of(context).textTheme.subtitle2),
+              Text(formatFigure(sum), style: Theme.of(context).textTheme.subtitle2)
             ],
           ),
         ),

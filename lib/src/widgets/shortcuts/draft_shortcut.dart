@@ -4,6 +4,7 @@ import '../../models/customer.dart';
 import '../../models/draft.dart';
 import '../../models/vendor.dart';
 import '../../pages/drafts/draft_creator.dart';
+import '../../util.dart';
 import 'base_shortcut.dart';
 
 class DraftShortcut extends StatelessWidget {
@@ -34,7 +35,7 @@ class DraftShortcut extends StatelessWidget {
         else
           Text(''),
         Text('${draft.items.length} Artikel', overflow: TextOverflow.ellipsis),
-        Text('${(draft.sum / 100.0).toStringAsFixed(2)} €', overflow: TextOverflow.ellipsis),
+        Text(formatFigure(draft.sum), overflow: TextOverflow.ellipsis),
       ],
     );
   }
