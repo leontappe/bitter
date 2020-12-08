@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:bitter/src/repositories/item_repository.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:flutter/material.dart';
 
@@ -28,6 +29,7 @@ class _VendorPageState extends State<VendorPage> {
   Vendor vendor;
 
   DraftRepository draftRepo;
+  ItemRepository itemRepo;
 
   Vendor newVendor = Vendor.empty();
 
@@ -438,8 +440,9 @@ class _VendorPageState extends State<VendorPage> {
 
   void initDb() async {
     if (mounted) setState(() => busy = true);
-    repo = VendorRepository<DatabaseProvider>(InheritedDatabase.of(context));
-    draftRepo = DraftRepository<DatabaseProvider>(InheritedDatabase.of(context));
+    repo = VendorRepository(InheritedDatabase.of(context));
+    draftRepo = DraftRepository(InheritedDatabase.of(context));
+    itemRepo = ItemRepository(InheritedDatabase.of(context));
 
     if (widget.id != null) {
       vendor = await repo.selectSingle(widget.id);
@@ -482,9 +485,11 @@ class _VendorPageState extends State<VendorPage> {
               ],
             ));
     if (result == 1) {
-      final vendorDrafts =
-          (await draftRepo.select()).where((Draft d) => d.vendor == vendor.id).toList();
-      if (vendorDrafts.isEmpty) {
+      // check for missing drafts that belong to this vendor
+      final vendorDrafts = (await draftRepo.select()).where((Draft d) => d.vendor == vendor.id);
+      final vendorItems = (await itemRepo.select()).where((Item i) => i.vendor == vendor.id);
+
+      if (vendorDrafts.isEmpty && vendorItems.isEmpty) {
         await repo.delete(widget.id);
         Navigator.pop(context, true);
       } else {
@@ -492,7 +497,7 @@ class _VendorPageState extends State<VendorPage> {
           context: context,
           builder: (BuildContext context) => AlertDialog(
             title: Text(
-                'Es existieren noch ${vendorDrafts.length} Rechnungsentwürfe für diesen Verkäufer. Sollen die Entwürfe auch gelöscht werden?'),
+                'Es existieren noch ${vendorDrafts.length} Rechnungsentwürfe und ${vendorItems.length} Artikel für diesen Verkäufer. Soll wirklich alles gelöscht werden?'),
             actions: <Widget>[
               MaterialButton(
                   onPressed: () => Navigator.pop(context, 0), child: Text('Alles behalten')),
@@ -505,14 +510,20 @@ class _VendorPageState extends State<VendorPage> {
           for (var draft in vendorDrafts) {
             await draftRepo.delete(draft.id);
           }
+          for (var item in vendorItems) {
+            await itemRepo.delete(item.id);
+          }
+
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Verbleibende Rechnungsentwürfe wurden gelöscht.'),
+            content: Text('Verbleibende Rechnungsentwürfe und Artikel wurden gelöscht.'),
             duration: Duration(seconds: 3),
           ));
+
           await repo.delete(widget.id);
           Navigator.pop(context, true);
         }
       }
+
       if (mounted) setState(() => busy = false);
     }
   }
