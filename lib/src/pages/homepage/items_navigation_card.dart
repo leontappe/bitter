@@ -71,12 +71,15 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
             if (busy)
               Container(
                   height: (widget.filter != null && widget.filter > 0) ? 77.0 : 93.0, width: 0.0),
-            ..._items.take(4).map<Widget>((Item i) => Expanded(
-                  child: ItemShortcut(context,
-                      item: i,
-                      vendor: _vendors?.singleWhere((Vendor v) => v.id == i.vendor),
-                      showVendor: widget.filter == null),
-                )),
+            ..._items.take(4).map<Widget>((Item i) {
+              final vendors = _vendors?.where((Vendor v) => v.id == i.vendor) ?? [];
+              return Expanded(
+                child: ItemShortcut(context,
+                    item: i,
+                    vendor: vendors.isNotEmpty ? vendors.first : null,
+                    showVendor: widget.filter == null),
+              );
+            }),
             if (_items.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
             else if (_items.isNotEmpty)
