@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
+import '../../repositories/draft_repository.dart';
 import '../../widgets/database_error_watcher.dart';
 import '../../widgets/info_cards/customer_card.dart';
 
@@ -19,6 +20,8 @@ class _CustomerPageState extends State<CustomerPage> {
 
   CustomerRepository repo;
   Customer customer;
+
+  DraftRepository draftRepo;
 
   int dropdownValue = 2;
 
@@ -247,7 +250,10 @@ class _CustomerPageState extends State<CustomerPage> {
 
   void initDb() async {
     if (mounted) setState(() => busy = true);
+
     repo = CustomerRepository(InheritedDatabase.of(context));
+    draftRepo = DraftRepository(InheritedDatabase.of(context));
+
     if (widget.id != null) {
       customer = await repo.selectSingle(widget.id);
       if (customer == null) {
@@ -261,6 +267,7 @@ class _CustomerPageState extends State<CustomerPage> {
         });
       }
     }
+
     if (mounted) setState(() => busy = false);
   }
 
@@ -274,7 +281,7 @@ class _CustomerPageState extends State<CustomerPage> {
   }
 
   void onDeleteCustomer() async {
-    var result = await showDialog<int>(
+    final result = await showDialog<int>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
               title: Text('Soll dieser Kunde wirlich gelöscht werden?'),
@@ -283,11 +290,41 @@ class _CustomerPageState extends State<CustomerPage> {
                 MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Löschen')),
               ],
             ));
+
     if (result == 1) {
       if (mounted) setState(() => busy = true);
-      await repo.delete(widget.id);
+      final customerDrafts =
+          (await draftRepo.select()).where((Draft d) => d.customer == customer.id).toList();
+      if (customerDrafts.isEmpty) {
+        await repo.delete(widget.id);
+        Navigator.pop(context, true);
+      } else {
+        final result = await showDialog<int>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text(
+                'Es existieren noch ${customerDrafts.length} Rechnungsentwürfe für diesen Kunden. Sollen die Entwürfe auch gelöscht werden?'),
+            actions: <Widget>[
+              MaterialButton(
+                  onPressed: () => Navigator.pop(context, 0), child: Text('Alles behalten')),
+              MaterialButton(
+                  onPressed: () => Navigator.pop(context, 1), child: Text('Alles löschen')),
+            ],
+          ),
+        );
+        if (result == 1) {
+          for (var draft in customerDrafts) {
+            await draftRepo.delete(draft.id);
+          }
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Verbleibende Rechnungsentwürfe wurden gelöscht.'),
+            duration: Duration(seconds: 3),
+          ));
+          await repo.delete(widget.id);
+          Navigator.pop(context, true);
+        }
+      }
       if (mounted) setState(() => busy = false);
-      Navigator.pop(context, true);
     }
   }
 
