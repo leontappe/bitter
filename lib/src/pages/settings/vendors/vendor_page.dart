@@ -7,6 +7,7 @@ import '../../../models/reminder.dart';
 import '../../../models/vendor.dart';
 import '../../../providers/database_provider.dart';
 import '../../../providers/inherited_database.dart';
+import '../../../repositories/draft_repository.dart';
 import '../../../repositories/vendor_repository.dart';
 import '../../../widgets/database_error_watcher.dart';
 import '../../../widgets/info_cards/vendor_card.dart';
@@ -25,6 +26,8 @@ class _VendorPageState extends State<VendorPage> {
 
   VendorRepository repo;
   Vendor vendor;
+
+  DraftRepository draftRepo;
 
   Vendor newVendor = Vendor.empty();
 
@@ -436,6 +439,8 @@ class _VendorPageState extends State<VendorPage> {
   void initDb() async {
     if (mounted) setState(() => busy = true);
     repo = VendorRepository<DatabaseProvider>(InheritedDatabase.of(context));
+    draftRepo = DraftRepository<DatabaseProvider>(InheritedDatabase.of(context));
+
     if (widget.id != null) {
       vendor = await repo.selectSingle(widget.id);
       if (vendor == null) {
@@ -472,17 +477,43 @@ class _VendorPageState extends State<VendorPage> {
         builder: (BuildContext context) => AlertDialog(
               title: Text('Soll dieser Verkäufer wirlich gelöscht werden?'),
               actions: <Widget>[
-                MaterialButton(
-                    onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
-                MaterialButton(
-                    onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
+                MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Behalten')),
+                MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Löschen')),
               ],
             ));
     if (result == 1) {
-      if (mounted) setState(() => busy = true);
-      await repo.delete(widget.id);
+      final vendorDrafts =
+          (await draftRepo.select()).where((Draft d) => d.vendor == vendor.id).toList();
+      if (vendorDrafts.isEmpty) {
+        await repo.delete(widget.id);
+        Navigator.pop(context, true);
+      } else {
+        final result = await showDialog<int>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text(
+                'Es existieren noch ${vendorDrafts.length} Rechnungsentwürfe für diesen Verkäufer. Sollen die Entwürfe auch gelöscht werden?'),
+            actions: <Widget>[
+              MaterialButton(
+                  onPressed: () => Navigator.pop(context, 0), child: Text('Alles behalten')),
+              MaterialButton(
+                  onPressed: () => Navigator.pop(context, 1), child: Text('Alles löschen')),
+            ],
+          ),
+        );
+        if (result == 1) {
+          for (var draft in vendorDrafts) {
+            await draftRepo.delete(draft.id);
+          }
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Verbleibende Rechnungsentwürfe wurden gelöscht.'),
+            duration: Duration(seconds: 3),
+          ));
+          await repo.delete(widget.id);
+          Navigator.pop(context, true);
+        }
+      }
       if (mounted) setState(() => busy = false);
-      Navigator.pop(context, true);
     }
   }
 
