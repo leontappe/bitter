@@ -86,23 +86,25 @@ class _BillsListPageState extends State<ItemsListPage> {
               : ListView(
                   children: <Widget>[
                     ...items.map(
-                      (Item i) => ListTile(
-                        leading: Text(
-                            vendors.singleWhere((Vendor v) => v.id == i.vendor).billPrefix +
-                                '\nA' +
-                                i.itemId.toString()),
-                        title: Text(i.title),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (i.description != null) Text('Beschreibung: ${i.description}'),
-                            Text('Steuer: ${i.tax} %'),
-                          ],
-                        ),
-                        trailing: Text('${formatFigure(i.price)}',
-                            style: Theme.of(context).textTheme.subtitle1),
-                        onTap: () => onPushItemPage(item: i),
-                      ),
+                      (Item i) {
+                        final itemVendors = vendors.where((Vendor v) => v.id == i.vendor);
+                        return ListTile(
+                          leading: (itemVendors.isNotEmpty)
+                              ? Text(itemVendors.first.billPrefix + '\nA' + i.itemId.toString())
+                              : null,
+                          title: Text(i.title),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (i.description != null) Text('Beschreibung: ${i.description}'),
+                              Text('Steuer: ${i.tax} %'),
+                            ],
+                          ),
+                          trailing: Text('${formatFigure(i.price)}',
+                              style: Theme.of(context).textTheme.subtitle1),
+                          onTap: () => onPushItemPage(item: i),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -149,9 +151,9 @@ class _BillsListPageState extends State<ItemsListPage> {
     items = await repo.select(searchQuery: searchQuery, vendorFilter: filterVendor);
     if (filterVendor == null) {
       for (var item in items) {
-        final vendor = await vendorRepo.selectSingle(item.vendor);
-        if (!vendors.contains(vendor)) {
-          vendors.add(vendor);
+        final itemVendors = (await vendorRepo.select()).where((Vendor v) => v.id == item.vendor);
+        if (itemVendors.isNotEmpty && !vendors.contains(itemVendors.first)) {
+          vendors.add(itemVendors.first);
         }
       }
     }
