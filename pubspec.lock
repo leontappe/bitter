@@ -140,7 +140,7 @@ packages:
       name: file_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.12"
+    version: "2.1.0"
   file_picker_cross:
     dependency: "direct main"
     description:
@@ -159,7 +159,7 @@ packages:
       name: flutter_bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.0"
+    version: "6.1.1"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -197,7 +197,7 @@ packages:
       name: image
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.18"
+    version: "2.1.19"
   intl:
     dependency: "direct main"
     description:
@@ -316,7 +316,7 @@ packages:
       name: pdf
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.11.2"
+    version: "1.12.0"
   pedantic:
     dependency: "direct dev"
     description:
@@ -365,7 +365,7 @@ packages:
       name: provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.3.2+2"
+    version: "4.3.2+3"
   qr:
     dependency: transitive
     description:
@@ -419,7 +419,7 @@ packages:
       name: sqlite3
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.7"
+    version: "0.1.8"
   stack_trace:
     dependency: transitive
     description:
@@ -489,7 +489,7 @@ packages:
       name: win32
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.7.3"
+    version: "1.7.4"
   windows_documents:
     dependency: "direct main"
     description:

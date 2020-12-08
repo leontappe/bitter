@@ -78,13 +78,17 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
             if (busy)
               Container(
                   height: (widget.filter != null && widget.filter > 0) ? 93.0 : 109.0, width: 0.0),
-            ..._drafts.take(4).map<Widget>((Draft d) => Expanded(
-                  child: DraftShortcut(context,
-                      draft: d,
-                      vendor: _vendors?.singleWhere((Vendor v) => v.id == d.vendor),
-                      customer: _customers?.singleWhere((Customer c) => c.id == d.customer),
-                      showVendor: widget.filter == null),
-                )),
+            ..._drafts.take(4).map<Widget>((Draft d) {
+              final customers = _customers?.where((Customer c) => c.id == d.customer) ?? [];
+              final vendors = _vendors?.where((Vendor v) => v.id == d.vendor) ?? [];
+              return Expanded(
+                child: DraftShortcut(context,
+                    draft: d,
+                    vendor: vendors.isNotEmpty ? vendors.first : null,
+                    customer: customers.isNotEmpty ? customers.first : null,
+                    showVendor: widget.filter == null),
+              );
+            }),
             if (_drafts.length > 4)
               Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
             else if (_drafts.isNotEmpty)

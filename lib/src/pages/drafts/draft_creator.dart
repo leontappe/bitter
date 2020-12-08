@@ -289,13 +289,18 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
 
     editor = await settingsRepo.getUsername();
     _customers = await customerRepo.select();
+
     if (vendorIsset) {
       try {
         _vendor = await vendorRepo.selectSingle(draft.vendor);
       } catch (e) {
         print(e);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Der bisherige Verkäufer ist nicht mehr verfügbar oder wurde gelöscht.'),
+          duration: Duration(seconds: 5),
+        ));
         setState(() => draft.vendor = null);
-        await onSaveDraft();
+        //await onSaveDraft();
       }
     }
     if (customerIsset) {
@@ -303,8 +308,12 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
         _customer = await customerRepo.selectSingle(draft.customer);
       } catch (e) {
         print(e);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Der bisherige Kunde ist nicht mehr verfügbar oder wurde gelöscht.'),
+          duration: Duration(seconds: 5),
+        ));
         setState(() => draft.customer = null);
-        await onSaveDraft();
+        //await onSaveDraft();
       }
     }
 
