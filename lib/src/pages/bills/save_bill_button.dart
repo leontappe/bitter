@@ -29,7 +29,7 @@ class SaveBillButton extends StatelessWidget {
     final file = File('${downloadsPath}/bitter/${bill.billNr}.pdf');
     await file.create(recursive: true);
     await file.writeAsBytes(bill.file);
-    await Scaffold.of(context).showSnackBar(SnackBar(
+    await ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Die Rechnung wurde erfolgreich unter ${file.path} abgespeichert.'),
       duration: const Duration(seconds: 5),
     ));

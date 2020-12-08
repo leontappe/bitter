@@ -103,7 +103,7 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
     if (draft == null) return false;
 
     if (draft.items.isEmpty) {
-      Scaffold.of(context).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Dieser Entwurf enthält keine Artikel'), duration: Duration(seconds: 3)));
       return false;
     }
@@ -154,7 +154,7 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
       await repo.delete(draft.id);
       return true;
     } else {
-      Scaffold.of(context).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
             'Die Rechnung wurde nicht abgespeichert, bitte starte die Anwendung neu und versuche es noch mal'),
         duration: Duration(seconds: 3),

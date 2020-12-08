@@ -217,7 +217,7 @@ class _BillPageState extends State<BillPage> {
           break;
         case 1:
           if (!await onSaveBill()) {
-            Scaffold.of(context).showSnackBar(const SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text(
                   'Es gibt noch Fehler und/oder fehlende Felder in dem Formular, sodass gerade nicht gespeichert werden kann.'),
               duration: Duration(seconds: 3),
@@ -271,7 +271,7 @@ class _BillPageState extends State<BillPage> {
     await file.create(recursive: true);
     await file.writeAsBytes(pdfData);
 
-    await (_key.currentState as ScaffoldState).showSnackBar(SnackBar(
+    await ScaffoldMessenger.of(_key.currentContext).showSnackBar(SnackBar(
       content: Text('Die Mahnung wurde erfolgreich unter ${file.path} abgespeichert.'),
       duration: const Duration(seconds: 5),
     ));

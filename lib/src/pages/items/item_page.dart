@@ -215,7 +215,7 @@ class _ItemPageState extends State<ItemPage> {
           break;
         case 1:
           if (!await onSaveItem()) {
-            Scaffold.of(context).showSnackBar(const SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text(
                   'Es gibt noch Fehler und/oder fehlende Felder in dem Formular, sodass gerade nicht gespeichert werden kann.'),
               duration: Duration(seconds: 3),
