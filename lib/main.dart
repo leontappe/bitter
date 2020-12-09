@@ -31,16 +31,29 @@ void main() async {
 Future<void> startLogging() async {
   final logPath =
       '${await getLogPath()}/log_${formatDate(DateTime.now()).replaceAll('.', '-')}.txt';
+  final mySqlLogPath =
+      '${await getLogPath()}/mysql_log_${formatDate(DateTime.now()).replaceAll('.', '-')}.txt';
+
   final logFile = await File(logPath).create(recursive: true);
+  final mySqlLogFile = await File(mySqlLogPath).create(recursive: true);
 
   Logger.root.level = Level.ALL; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     final line = '${record.loggerName}/${record.level.name}: ${record.time}: ${record.message}';
-    logFile.writeAsBytesSync(utf8.encode(line + '\n'), mode: FileMode.append);
+    if (record.loggerName == 'MySqlConnection' ||
+        record.loggerName == 'BufferedSocket' ||
+        record.loggerName == 'QueryStreamHandler' ||
+        record.loggerName == 'AuthHandler' ||
+        record.loggerName == 'StandardDataPacket') {
+      mySqlLogFile.writeAsBytesSync(utf8.encode(line + '\n'), mode: FileMode.append);
+    } else {
+      logFile.writeAsBytesSync(utf8.encode(line + '\n'), mode: FileMode.append);
+    }
     if (record.level.value >= 700) print(line);
   });
 
   Logger('bitter').info('Starting log in $logPath');
+  Logger('bitter').info('Starting MySql log in $mySqlLogPath');
 }
 
 class Bitter extends StatelessWidget {
