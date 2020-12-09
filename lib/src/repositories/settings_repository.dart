@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:logging/logging.dart';
+
 import '../models/mysql_settings.dart';
 import '../util.dart';
 
@@ -16,6 +18,8 @@ enum DbEngine {
 }
 
 class SettingsRepository {
+  final Logger _log = Logger('SettingsRepository');
+
   String basePath;
   String dataPath;
 
@@ -48,13 +52,17 @@ class SettingsRepository {
   bool hasUsername() => _hasGeneric(userKey);
 
   Future<void> insert(String key, dynamic value) async {
+    _log.config('inserting $key:$value');
     final settings = await _getCurrentSettings;
     settings.addEntries(<MapEntry<String, dynamic>>[MapEntry<String, dynamic>(key, value)]);
+    _log.fine('content of new config: $settings');
     await _writeSettings(settings);
   }
 
   T select<T>(String key) {
+    _log.fine('selecting $key of type $T');
     if (_hasGeneric(key)) {
+      _log.fine('found $key:${_getCurrentSettings[key]}');
       return _getCurrentSettings[key] as T;
     } else {
       return null;
@@ -67,9 +75,12 @@ class SettingsRepository {
 
   Future<void> setUp() async {
     data = File((await getConfigPath()) + '/settings.json');
+    _log.fine('setting up configuration in ${data.path}');
     await data.create(recursive: true);
 
-    if ((await data.readAsString()).isEmpty) {
+    final oldData = await data.readAsString();
+    _log.fine('content of existing config: $oldData');
+    if (oldData.isEmpty) {
       await _writeSettings(<String, String>{});
     }
   }
