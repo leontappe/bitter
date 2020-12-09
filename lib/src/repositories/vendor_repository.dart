@@ -36,6 +36,7 @@ class VendorRepository<T extends DatabaseProvider> {
     Map<dynamic, dynamic> result;
     try {
       result = await db.selectSingle(tableName, id);
+      if (result == null) return null;
       return Vendor.fromMap(result);
     } catch (e) {
       return null;

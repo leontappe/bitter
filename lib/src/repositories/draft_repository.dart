@@ -64,9 +64,14 @@ class DraftRepository<T extends DatabaseProvider> {
   }
 
   Future<Draft> selectSingle(int id) async {
-    final result = await db.selectSingle(tableName, id);
-    if (result == null) return null;
-    return Draft.fromMap(result);
+    Map<dynamic, dynamic> result;
+    try {
+      result = await db.selectSingle(tableName, id);
+      if (result == null) return null;
+      return Draft.fromMap(result);
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<void> setUp() async {

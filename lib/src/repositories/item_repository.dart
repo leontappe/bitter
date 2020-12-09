@@ -40,7 +40,14 @@ class ItemRepository<T extends DatabaseProvider> {
   }
 
   Future<Item> selectSingle(int id) async {
-    return Item.fromMap(await db.selectSingle(tableName, id));
+    Map<dynamic, dynamic> result;
+    try {
+      result = await db.selectSingle(tableName, id);
+      if (result == null) return null;
+      return Item.fromMap(result);
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<void> setUp() async {

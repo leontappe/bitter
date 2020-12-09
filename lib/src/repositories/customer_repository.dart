@@ -36,7 +36,14 @@ class CustomerRepository<T extends DatabaseProvider> {
   }
 
   Future<Customer> selectSingle(int id) async {
-    return Customer.fromMap(await db.selectSingle(tableName, id));
+    Map<dynamic, dynamic> result;
+    try {
+      result = await db.selectSingle(tableName, id);
+      if (result == null) return null;
+      return Customer.fromMap(result);
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<void> setUp() async {
