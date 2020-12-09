@@ -2,8 +2,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:windows_documents/windows_documents.dart';
 
 import '../../models/bill.dart';
 import '../../models/reminder.dart';
@@ -261,14 +259,8 @@ class _BillPageState extends State<BillPage> {
       rightHeader: bill.vendor.headerImageRight as Uint8List,
     );
 
-    String downloadsPath;
-    if (Platform.isWindows) {
-      downloadsPath = await getDocumentsDirectory();
-    } else {
-      downloadsPath = (await getDownloadsDirectory()).path;
-    }
     final file = File(
-        '${downloadsPath}/bitter/${reminder.title.replaceAll(' ', '_').replaceAll('.', ' ')}_${bill.billNr}.pdf');
+        '${await getDataPath()}/${reminder.title.replaceAll(' ', '_').replaceAll('.', ' ')}_${bill.billNr}.pdf');
     await file.create(recursive: true);
     await file.writeAsBytes(pdfData);
 

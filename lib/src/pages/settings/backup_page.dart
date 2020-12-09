@@ -7,8 +7,6 @@ import 'package:csv/csv.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:windows_documents/windows_documents.dart';
 
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
@@ -17,6 +15,7 @@ import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/vendor_repository.dart';
+import '../../util.dart';
 import '../../widgets/database_error_watcher.dart';
 
 class BackupPage extends StatefulWidget {
@@ -271,14 +270,7 @@ class _BackupPageState extends State<BackupPage> {
 
     setState(() => backups.add(Operation(startTime)));
 
-    // set up paths for all platforms
-    String downloadsPath;
-    if (Platform.isWindows) {
-      downloadsPath = await getDocumentsDirectory();
-    } else {
-      downloadsPath = (await getDownloadsDirectory()).path;
-    }
-    final backupPath = '${downloadsPath}/bitter/backup';
+    final backupPath = '${await getDataPath()}/backup';
     await Directory(backupPath).create();
 
     // collect data from repos and store as csv

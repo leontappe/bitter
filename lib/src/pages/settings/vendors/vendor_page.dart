@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 
 import '../../../models/reminder.dart';
 import '../../../models/vendor.dart';
-import '../../../providers/database_provider.dart';
 import '../../../providers/inherited_database.dart';
 import '../../../repositories/draft_repository.dart';
 import '../../../repositories/vendor_repository.dart';

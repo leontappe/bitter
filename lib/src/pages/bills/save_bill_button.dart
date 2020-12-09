@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:windows_documents/windows_documents.dart';
 
 import '../../models/bill.dart';
+import '../../util.dart';
 
 class SaveBillButton extends StatelessWidget {
   final Bill bill;
@@ -21,13 +20,7 @@ class SaveBillButton extends StatelessWidget {
   }
 
   Future<void> onSaveBill(BuildContext context) async {
-    String downloadsPath;
-    if (Platform.isWindows) {
-      downloadsPath = await getDocumentsDirectory();
-    } else {
-      downloadsPath = (await getDownloadsDirectory()).path;
-    }
-    final file = File('${downloadsPath}/bitter/${bill.billNr}.pdf');
+    final file = File('${await getDataPath()}/${bill.billNr}.pdf');
     await file.create(recursive: true);
     await file.writeAsBytes(bill.file);
     await ScaffoldMessenger.of(context).showSnackBar(SnackBar(

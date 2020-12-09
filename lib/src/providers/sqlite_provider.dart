@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:windows_documents/windows_documents.dart';
 
 import '../models/database_error.dart';
+import '../util.dart';
 import 'database_provider.dart';
 
 class SqliteProvider extends DatabaseProvider {
@@ -67,12 +66,7 @@ class SqliteProvider extends DatabaseProvider {
 
   @override
   Future<bool> open(String path, {String host, int port, String user, String password}) async {
-    String dbPath;
-    if (Platform.isWindows) {
-      dbPath = (await getDocumentsDirectory()) + '/bitter/config/bitter.db';
-    } else {
-      dbPath = (await getApplicationDocumentsDirectory()).path + '/bitter/bitter.db';
-    }
+    final dbPath = '${await getConfigPath()}/bitter.db';
 
     if (Platform.isLinux || Platform.isWindows) {
       sqfliteFfiInit();
