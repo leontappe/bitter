@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:windows_documents/windows_documents.dart';
 
 import '../../models/bill.dart';
 import '../../models/reminder.dart';
@@ -262,7 +263,7 @@ class _BillPageState extends State<BillPage> {
 
     String downloadsPath;
     if (Platform.isWindows) {
-      downloadsPath = (await getApplicationDocumentsDirectory()).path;
+      downloadsPath = await getDocumentsDirectory();
     } else {
       downloadsPath = (await getDownloadsDirectory()).path;
     }

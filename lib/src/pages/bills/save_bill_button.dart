@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:windows_documents/windows_documents.dart';
 
 import '../../models/bill.dart';
 
@@ -22,7 +23,7 @@ class SaveBillButton extends StatelessWidget {
   Future<void> onSaveBill(BuildContext context) async {
     String downloadsPath;
     if (Platform.isWindows) {
-      downloadsPath = (await getApplicationDocumentsDirectory()).path;
+      downloadsPath = await getDocumentsDirectory();
     } else {
       downloadsPath = (await getDownloadsDirectory()).path;
     }
