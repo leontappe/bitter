@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:logging/logging.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -10,6 +11,8 @@ import '../util.dart';
 import 'database_provider.dart';
 
 class SqliteProvider extends DatabaseProvider {
+  final Logger _log = Logger('SqliteProvider');
+
   Database conn;
   StreamController<DatabaseError> _errors;
 
@@ -45,22 +48,26 @@ class SqliteProvider extends DatabaseProvider {
       i++;
     }
     cols = cols.substring(0, cols.length - 2);
+    _log.fine('creating table named "$table" with $cols');
     final query = 'CREATE TABLE IF NOT EXISTS $table($cols);';
     await conn.execute(query);
   }
 
   @override
   Future<int> delete(String table, int id) {
+    _log.fine('deleting from "$table": $id');
     return conn.delete(table, where: 'id=?', whereArgs: <dynamic>[id]);
   }
 
   @override
   Future<void> dropTable(String table) {
+    _log.fine('dropping "$table"');
     return conn.execute('DROP TABLE $table;');
   }
 
   @override
   Future<int> insert(String table, Map<String, dynamic> item) {
+    _log.fine('inserting into "$table": $item');
     return conn.insert(table, item);
   }
 
@@ -68,7 +75,10 @@ class SqliteProvider extends DatabaseProvider {
   Future<bool> open(String path, {String host, int port, String user, String password}) async {
     final dbPath = '${await getConfigPath()}/bitter.db';
 
+    _log.fine('opening DB at $dbPath');
+
     if (Platform.isLinux || Platform.isWindows) {
+      _log.finer('using FFI for windows and linux');
       sqfliteFfiInit();
       final databaseFactory = databaseFactoryFfi;
       conn = await databaseFactory.openDatabase(dbPath);
@@ -80,16 +90,19 @@ class SqliteProvider extends DatabaseProvider {
 
   @override
   Future<List<Map<String, dynamic>>> select(String table) {
+    _log.fine('selecting all from "$table"');
     return conn.query(table);
   }
 
   @override
   Future<Map> selectSingle(String table, int id) async {
+    _log.fine('selecting item with id=$id from "$table"');
     return (await conn.query(table, where: 'id=?', whereArgs: <dynamic>[id])).single;
   }
 
   @override
   Future<int> update(String table, int id, Map<String, dynamic> item) {
+    _log.fine('updating $item with id=$id in "$table"');
     return conn.update(table, item, where: 'id=?', whereArgs: <dynamic>[id]);
   }
 }
