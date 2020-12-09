@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:mysql1/mysql1.dart';
 
@@ -8,6 +9,8 @@ import '../models/database_error.dart';
 import 'database_provider.dart';
 
 class MySqlProvider extends DatabaseProvider {
+  Logger _log = Logger('MySqlProvider');
+
   MySqlConnection conn;
   StreamController<DatabaseError> _errors;
 
@@ -38,15 +41,19 @@ class MySqlProvider extends DatabaseProvider {
     cols = cols.substring(0, cols.length - 2);
     final query = 'CREATE TABLE IF NOT EXISTS $table($cols);';
 
+    _log.fine('creating table named "$table" with $cols');
+
     try {
       await conn.query(query);
     } on SocketException catch (e) {
+      _log.severe('$e ${_socketExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.create,
           exception: e,
           description: (e.message.contains('Failed host lookup'))
               ? 'Host ${e.address.host} konnte nicht aufgelöst werden'
               : 'Verbindung durch Zeitüberschreitung fehlgeschlagen'));
     } on MySqlException catch (e) {
+      _log.severe('$e ${_mySqlExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.create,
           exception: e, description: _mySqlExceptionText(e)));
     }
@@ -54,13 +61,16 @@ class MySqlProvider extends DatabaseProvider {
 
   @override
   Future<int> delete(String table, int id) async {
+    _log.fine('deleting from "$table": $id');
     int result;
     try {
       result = (await conn.query('DELETE FROM $table WHERE id = ?', [id])).affectedRows;
     } on SocketException catch (e) {
+      _log.severe('$e ${_socketExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.delete,
           exception: e, description: _socketExceptionText(e)));
     } on MySqlException catch (e) {
+      _log.severe('$e ${_mySqlExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.delete,
           exception: e, description: _mySqlExceptionText(e)));
     }
@@ -69,12 +79,15 @@ class MySqlProvider extends DatabaseProvider {
 
   @override
   Future<void> dropTable(String table) async {
+    _log.fine('dropping "$table"');
     try {
       await conn.query('DROP TABLE $table;');
     } on SocketException catch (e) {
+      _log.severe('$e ${_socketExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.drop,
           exception: e, description: _socketExceptionText(e)));
     } on MySqlException catch (e) {
+      _log.severe('$e ${_mySqlExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.drop,
           exception: e, description: _mySqlExceptionText(e)));
     }
@@ -82,6 +95,7 @@ class MySqlProvider extends DatabaseProvider {
 
   @override
   Future<int> insert(String table, Map<String, dynamic> item) async {
+    _log.fine('inserting into "$table": $item');
     var cols = '';
     for (var col in item.keys) {
       cols += '$col, ';
@@ -100,9 +114,11 @@ class MySqlProvider extends DatabaseProvider {
           (await conn.query('INSERT INTO $table ($cols) VALUES ($vals);', item.values.toList()))
               .insertId;
     } on SocketException catch (e) {
+      _log.severe('$e ${_socketExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.insert,
           exception: e, description: _socketExceptionText(e)));
     } on MySqlException catch (e) {
+      _log.severe('$e ${_mySqlExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.insert,
           exception: e, description: _mySqlExceptionText(e)));
     }
@@ -113,13 +129,16 @@ class MySqlProvider extends DatabaseProvider {
   @override
   Future<bool> open(String database,
       {@required String host, @required int port, String user, String password}) async {
+    _log.fine('opening DB on sql://$user:password@$host:$port');
     try {
       conn = await MySqlConnection.connect(
           ConnectionSettings(db: database, host: host, port: port, user: user, password: password));
     } on SocketException catch (e) {
+      _log.severe('$e ${_socketExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.open,
           exception: e, description: _socketExceptionText(e)));
     } on MySqlException catch (e) {
+      _log.severe('$e ${_mySqlExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.open,
           exception: e, description: _mySqlExceptionText(e)));
     }
@@ -128,13 +147,16 @@ class MySqlProvider extends DatabaseProvider {
 
   @override
   Future<List<Map>> select(String table) async {
+    _log.fine('selecting all from "$table"');
     Results result;
     try {
       result = await conn.query('SELECT * FROM $table;');
     } on SocketException catch (e) {
+      _log.severe('$e ${_socketExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.select,
           exception: e, description: _socketExceptionText(e)));
     } on MySqlException catch (e) {
+      _log.severe('$e ${_mySqlExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.select,
           exception: e, description: _mySqlExceptionText(e)));
     }
@@ -144,14 +166,17 @@ class MySqlProvider extends DatabaseProvider {
 
   @override
   Future<Map> selectSingle(String table, int id) async {
+    _log.fine('selecting item with id=$id from "$table"');
     Iterable<Map<dynamic, dynamic>> result = [];
     try {
       result = (await conn.query('SELECT * FROM $table WHERE id = ?;', <dynamic>[id]))
           .map<Map>((Row e) => e.fields);
     } on SocketException catch (e) {
+      _log.severe('$e ${_socketExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.selectSingle,
           exception: e, description: _socketExceptionText(e)));
     } on MySqlException catch (e) {
+      _log.severe('$e ${_mySqlExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.selectSingle,
           exception: e, description: _mySqlExceptionText(e)));
     }
@@ -164,6 +189,7 @@ class MySqlProvider extends DatabaseProvider {
 
   @override
   Future<int> update(String table, int id, Map<String, dynamic> item) async {
+    _log.fine('updating $item with id=$id in "$table"');
     final columns = item.keys;
     final values = item.values;
     var cols = '';
@@ -178,9 +204,11 @@ class MySqlProvider extends DatabaseProvider {
       result = (await conn.query('UPDATE $table SET $cols WHERE id=?;', <dynamic>[...values, id]))
           .affectedRows;
     } on SocketException catch (e) {
+      _log.severe('$e ${_socketExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.update,
           exception: e, description: _socketExceptionText(e)));
     } on MySqlException catch (e) {
+      _log.severe('$e ${_mySqlExceptionText(e)}');
       _errors.add(DatabaseError(DatabaseErrorCategory.update,
           exception: e, description: _mySqlExceptionText(e)));
     }
