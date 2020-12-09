@@ -33,7 +33,13 @@ class VendorRepository<T extends DatabaseProvider> {
   }
 
   Future<Vendor> selectSingle(int id) async {
-    return Vendor.fromMap(await db.selectSingle(tableName, id));
+    Map<dynamic, dynamic> result;
+    try {
+      result = await db.selectSingle(tableName, id);
+      return Vendor.fromMap(result);
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<void> setUp() async {
