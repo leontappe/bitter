@@ -29,14 +29,15 @@ void main() async {
 }
 
 Future<void> startLogging() async {
-  final logPath = '${await getLogPath()}/${DateTime.now().toIso8601String()}.txt';
+  final logPath =
+      '${await getLogPath()}/log_${formatDate(DateTime.now()).replaceAll('.', '-')}.txt';
   final logFile = await File(logPath).create(recursive: true);
 
   Logger.root.level = Level.ALL; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
-    final line = '${record.loggerName}/${record.level.name}: ${record.time}: ${record.message}\n';
-    logFile.writeAsBytesSync(utf8.encode(line), mode: FileMode.append);
-    print(line);
+    final line = '${record.loggerName}/${record.level.name}: ${record.time}: ${record.message}';
+    logFile.writeAsBytesSync(utf8.encode(line + '\n'), mode: FileMode.append);
+    if (record.level.value >= 700) print(line);
   });
 
   Logger('bitter').info('Starting log in $logPath');
