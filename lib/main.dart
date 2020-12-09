@@ -1,11 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:logging/logging.dart';
 
-import 'src/pages/homepage/homepage.dart';
 import 'src/pages/bills/bills_list_page.dart';
 import 'src/pages/customers/customers_list_page.dart';
 import 'src/pages/drafts/drafts_list_page.dart';
+import 'src/pages/homepage/homepage.dart';
 import 'src/pages/items/items_list_page.dart';
 import 'src/pages/settings/app_settings_page.dart';
 import 'src/pages/settings/backup_page.dart';
@@ -15,11 +19,27 @@ import 'src/providers/inherited_database.dart';
 import 'src/providers/mysql_provider.dart';
 import 'src/providers/sqlite_provider.dart';
 import 'src/repositories/settings_repository.dart';
+import 'src/util.dart';
 
 void main() async {
   Intl.defaultLocale = 'de_DE';
   await initializeDateFormatting(Intl.defaultLocale);
   runApp(Bitter());
+  await startLogging();
+}
+
+Future<void> startLogging() async {
+  final logPath = '${await getLogPath()}/${DateTime.now().toIso8601String()}.txt';
+  final logFile = await File(logPath).create(recursive: true);
+
+  Logger.root.level = Level.ALL; // defaults to Level.INFO
+  Logger.root.onRecord.listen((record) {
+    final line = '${record.loggerName}/${record.level.name}: ${record.time}: ${record.message}\n';
+    logFile.writeAsBytesSync(utf8.encode(line), mode: FileMode.append);
+    print(line);
+  });
+
+  Logger('bitter').info('Starting log in $logPath');
 }
 
 class Bitter extends StatelessWidget {
