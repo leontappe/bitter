@@ -1,10 +1,7 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:package_info/package_info.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
+import '../../../version.dart';
 import '../../bitter_platform_path_provider.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
@@ -24,8 +21,6 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  PackageInfo packageInfo;
-
   SettingsRepository settings;
   VendorRepository<DatabaseProvider> vendorRepo;
   List<Vendor> _vendors;
@@ -58,7 +53,7 @@ class _HomepageState extends State<Homepage> {
               onPressed: () => showAboutDialog(
                   context: context,
                   applicationName: 'bitter Rechnungen',
-                  applicationVersion: packageInfo?.version ?? 'unidentified non-mobile version',
+                  applicationVersion: version,
                   applicationIcon: Icon(Icons.monetization_on),
                   applicationLegalese: '© 2020 Leon Tappe')),
         ],
@@ -129,16 +124,9 @@ class _HomepageState extends State<Homepage> {
     if (mounted) setState(() => filterVendors = _vendors);
   }
 
-  void initPackageInfo() async {
-    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)) {
-      packageInfo = await PackageInfo.fromPlatform();
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    initPackageInfo();
     PathProviderPlatform.instance = BitterPlatformPathProvider();
   }
 
