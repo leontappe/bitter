@@ -94,7 +94,7 @@ class _DraftsListPageState extends State<DraftsListPage> {
                     ...drafts.reversed.map((Draft d) => ListTile(
                           title: Text('Entwurf ${d.id}'),
                           subtitle: Text((vendors.isNotEmpty && customers.isNotEmpty)
-                              ? 'Bearbeiter*in: ${d.editor}, ${vendors.where((Vendor v) => v.id == d.vendor).isEmpty ? '' : vendors.singleWhere((Vendor v) => v.id == d.vendor).name} - Kunde*in: ${customers.where((Customer c) => c.id == d.customer).isEmpty ? '' : customers.singleWhere((Customer c) => c.id == d.customer).name} ${customers.where((Customer c) => c.id == d.customer).isEmpty ? '' : customers.singleWhere((Customer c) => c.id == d.customer).surname}'
+                              ? 'Bearbeiter*in: ${d.editor}, ${vendors.where((Vendor v) => v.id == d.vendor).isEmpty ? '' : vendors.singleWhere((Vendor v) => v.id == d.vendor).name} - Kunde*in: ${customers.where((Customer c) => c.id == d.customer).isEmpty ? '' : customers.singleWhere((Customer c) => c.id == d.customer).fullCompany ?? customers.singleWhere((Customer c) => c.id == d.customer).fullName}'
                               : 'Bearbeiter*in: ${d.editor}'),
                           trailing: DraftPopupMenu(
                               id: d.id,
