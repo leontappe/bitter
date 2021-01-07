@@ -25,7 +25,7 @@ void main() async {
   Intl.defaultLocale = 'de_DE';
   await initializeDateFormatting(Intl.defaultLocale);
   runApp(Bitter());
-  await startLogging();
+  //await startLogging();
 }
 
 Future<void> startLogging() async {
