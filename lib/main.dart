@@ -25,7 +25,7 @@ void main() async {
   Intl.defaultLocale = 'de_DE';
   await initializeDateFormatting(Intl.defaultLocale);
   runApp(Bitter());
-  //await startLogging();
+  await startLogging();
 }
 
 Future<void> startLogging() async {
@@ -38,16 +38,16 @@ Future<void> startLogging() async {
   final mySqlLogFile = await File(mySqlLogPath).create(recursive: true);
 
   Logger.root.level = Level.ALL; // defaults to Level.INFO
-  Logger.root.onRecord.listen((record) {
+  Logger.root.onRecord.listen((record) async {
     final line = '${record.loggerName}/${record.level.name}: ${record.time}: ${record.message}';
     if (record.loggerName == 'MySqlConnection' ||
         record.loggerName == 'BufferedSocket' ||
         record.loggerName == 'QueryStreamHandler' ||
         record.loggerName == 'AuthHandler' ||
         record.loggerName == 'StandardDataPacket') {
-      mySqlLogFile.writeAsBytesSync(utf8.encode(line + '\n'), mode: FileMode.append);
+      await mySqlLogFile.writeAsBytes(utf8.encode(line + '\n'), mode: FileMode.append);
     } else {
-      logFile.writeAsBytesSync(utf8.encode(line + '\n'), mode: FileMode.append);
+      await logFile.writeAsBytes(utf8.encode(line + '\n'), mode: FileMode.append);
     }
     if (record.level.value >= 700) print(line);
   });
