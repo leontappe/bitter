@@ -32,11 +32,12 @@ Widget createHeaderFromImages(PdfDocument doc,
           if (left != null)
             Container(
               height: 48.0,
-              child: Image(
-                PdfImage(doc,
-                    image: leftImg.data.buffer.asUint8List(),
-                    height: leftImg.height,
-                    width: leftImg.width),
+              child: Image.provider(
+                RawImage(
+                  bytes: leftImg.data.buffer.asUint8List(),
+                  height: leftImg.height,
+                  width: leftImg.width,
+                ),
               ),
             )
           else
@@ -44,11 +45,12 @@ Widget createHeaderFromImages(PdfDocument doc,
           if (center != null)
             Container(
               height: 48.0,
-              child: Image(
-                PdfImage(doc,
-                    image: centerImg.data.buffer.asUint8List(),
-                    height: centerImg.height,
-                    width: centerImg.width),
+              child: Image.provider(
+                RawImage(
+                  bytes: centerImg.data.buffer.asUint8List(),
+                  height: centerImg.height,
+                  width: centerImg.width,
+                ),
               ),
             )
           else
@@ -56,11 +58,12 @@ Widget createHeaderFromImages(PdfDocument doc,
           if (right != null)
             Container(
               height: 48.0,
-              child: Image(
-                PdfImage(doc,
-                    image: rightImg.data.buffer.asUint8List(),
-                    height: rightImg.height,
-                    width: rightImg.width),
+              child: Image.provider(
+                RawImage(
+                  bytes: rightImg.data.buffer.asUint8List(),
+                  height: rightImg.height,
+                  width: rightImg.width,
+                ),
               ),
             )
           else
