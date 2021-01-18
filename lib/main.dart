@@ -21,6 +21,17 @@ import 'src/providers/sqlite_provider.dart';
 import 'src/repositories/settings_repository.dart';
 import 'src/util.dart';
 
+const List<String> mySqlLogNames = [
+  'MySqlConnection',
+  'BufferedSocket',
+  'QueryStreamHandler',
+  'StandardDataPacket',
+  'PrepareHandler',
+  'BinaryDataPacket',
+  'ExecuteQueryHandler',
+  'AuthHandler',
+];
+
 void main() async {
   Intl.defaultLocale = 'de_DE';
   await initializeDateFormatting(Intl.defaultLocale);
@@ -29,23 +40,22 @@ void main() async {
 }
 
 Future<void> startLogging() async {
-  final logPath =
-      '${await getLogPath()}/log_${formatDate(DateTime.now()).replaceAll('.', '-')}.txt';
-  final mySqlLogPath =
-      '${await getLogPath()}/mysql_log_${formatDate(DateTime.now()).replaceAll('.', '-')}.txt';
+  String logPath;
+
+  if (Platform.isWindows) {
+    logPath =
+        '${(await getLogPath()).replaceAll('/', '\\')}\\log_${formatDate(DateTime.now()).replaceAll('.', '-')}.txt';
+  } else {
+    logPath = '${await getLogPath()}/log_${formatDate(DateTime.now()).replaceAll('.', '-')}.txt';
+  }
 
   final logFile = await File(logPath).create(recursive: true);
-  final mySqlLogFile = await File(mySqlLogPath).create(recursive: true);
 
   Logger.root.level = Level.ALL; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) async {
     final line = '${record.loggerName}/${record.level.name}: ${record.time}: ${record.message}';
-    if (record.loggerName == 'MySqlConnection' ||
-        record.loggerName == 'BufferedSocket' ||
-        record.loggerName == 'QueryStreamHandler' ||
-        record.loggerName == 'AuthHandler' ||
-        record.loggerName == 'StandardDataPacket') {
-      await mySqlLogFile.writeAsBytes(utf8.encode(line + '\n'), mode: FileMode.append);
+    if (mySqlLogNames.contains(record.loggerName)) {
+      return;
     } else {
       await logFile.writeAsBytes(utf8.encode(line + '\n'), mode: FileMode.append);
     }
@@ -53,7 +63,6 @@ Future<void> startLogging() async {
   });
 
   Logger('bitter').info('Starting log in $logPath');
-  Logger('bitter').info('Starting MySql log in $mySqlLogPath');
 }
 
 class Bitter extends StatelessWidget {
