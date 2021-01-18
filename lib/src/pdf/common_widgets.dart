@@ -79,15 +79,15 @@ Widget pageCountFooter(Context context, Vendor vendor, Font font) {
     Container(
         margin: EdgeInsets.only(bottom: 8.0),
         decoration: BoxDecoration(
-            border: BoxBorder(
-                top: true,
-                bottom: false,
-                right: false,
-                left: false,
-                color: PdfColors.grey400,
-                width: 1.0),
-            borderRadius: 0.0,
-            shape: BoxShape.rectangle),
+          border: Border(
+            top: BorderSide(
+              color: PdfColors.grey400,
+              width: 1.0,
+            ),
+          ),
+          borderRadiusEx: BorderRadius.all(Radius.zero),
+          shape: BoxShape.rectangle,
+        ),
         child: Container(width: 500.0, height: 0.0)),
     Row(
       mainAxisSize: MainAxisSize.max,
