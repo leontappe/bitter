@@ -133,7 +133,7 @@ class ReminderGenerator {
               2: FixedColumnWidth(50.0),
             },
             tableWidth: TableWidth.max,
-            border: TableBorder(),
+            border: TableBorder.ex(),
             children: <TableRow>[
               TableRow(children: <Widget>[
                 PaddedHeaderText('Position'),

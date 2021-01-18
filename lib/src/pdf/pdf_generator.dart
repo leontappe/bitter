@@ -137,7 +137,7 @@ class PdfGenerator {
               5: FixedColumnWidth(55.0),
             },
             tableWidth: TableWidth.max,
-            border: TableBorder(),
+            border: TableBorder.ex(),
             children: <TableRow>[
               TableRow(children: <Widget>[
                 PaddedHeaderText('Pos.'),
