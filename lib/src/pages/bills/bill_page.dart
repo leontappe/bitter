@@ -133,7 +133,7 @@ class _BillPageState extends State<BillPage> {
                               DateTime.now().isAfter(bill.dueDate)) &&
                           bill.reminders.length < 3)
                         ListTile(
-                            title: RaisedButton(
+                            title: ElevatedButton(
                           child: Text(
                               '${(bill.reminders.isNotEmpty) ? bill.reminders.last.iteration.index + 2 : '1'}. Mahnung erstellen'),
                           onPressed: (bill.reminders.isEmpty ||

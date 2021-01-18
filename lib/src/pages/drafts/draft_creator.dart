@@ -245,16 +245,18 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                       ),
                       Padding(
                         padding: EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 16.0),
-                        child: RaisedButton(
+                        child: Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Icon(Icons.add, size: 32.0),
-                          onPressed: (vendorIsset)
-                              ? () => onAddItem(Item(
-                                  price: null,
-                                  title: '',
-                                  tax: _vendor.defaultTax ?? 19,
-                                  vendor: _vendor.id))
-                              : null,
+                          child: ElevatedButton(
+                            child: Icon(Icons.add, size: 32.0),
+                            onPressed: (vendorIsset)
+                                ? () => onAddItem(Item(
+                                    price: null,
+                                    title: '',
+                                    tax: _vendor.defaultTax ?? 19,
+                                    vendor: _vendor.id))
+                                : null,
+                          ),
                         ),
                       ),
                     ],

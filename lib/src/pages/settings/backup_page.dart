@@ -136,7 +136,7 @@ class _BackupPageState extends State<BackupPage> {
                     Text('Backup/Export', style: Theme.of(context).textTheme.headline5),
                     Row(
                       children: [
-                        RaisedButton(
+                        ElevatedButton(
                           onPressed: !busy ? onStartBackup : null,
                           child: Text('Backup starten'),
                         ),
@@ -205,7 +205,7 @@ class _BackupPageState extends State<BackupPage> {
                     ),
                     Row(
                       children: [
-                        RaisedButton(
+                        ElevatedButton(
                             onPressed: onStartRecovery, child: Text('Wiederherstellung starten')),
                         Spacer(),
                         if (busy) CircularProgressIndicator(),
@@ -354,11 +354,11 @@ class _BackupPageState extends State<BackupPage> {
         builder: (BuildContext context) => AlertDialog(
               title: Text('Möchtest du wirklich die Wiederherstellung starten?'),
               actions: [
-                RaisedButton(
+                ElevatedButton(
                   onPressed: () => Navigator.pop(context, false),
                   child: Text('Nein doch nicht!'),
                 ),
-                RaisedButton(
+                ElevatedButton(
                   onPressed: () => Navigator.pop(context, true),
                   child: Text('Ja, bitte starten'),
                 ),
