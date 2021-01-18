@@ -9,7 +9,7 @@ import '../models/database_error.dart';
 import 'database_provider.dart';
 
 class MySqlProvider extends DatabaseProvider {
-  Logger _log = Logger('MySqlProvider');
+  final Logger _log = Logger('MySqlProvider');
 
   MySqlConnection conn;
   StreamController<DatabaseError> _errors;
