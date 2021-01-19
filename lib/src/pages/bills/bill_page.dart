@@ -260,7 +260,7 @@ class _BillPageState extends State<BillPage> {
     );
 
     final file = File(
-        '${await getDataPath()}/${reminder.title.replaceAll(' ', '_').replaceAll('.', ' ')}_${bill.billNr}.pdf');
+        '${await getDataPath()}/${reminder.title.isNotEmpty ? reminder.title.replaceAll(' ', '_').replaceAll('.', ' ') : 'Mahnung' + (reminder.iteration.index + 1).toString()}_${bill.billNr}.pdf');
     await file.create(recursive: true);
     await file.writeAsBytes(pdfData);
 
@@ -273,12 +273,12 @@ class _BillPageState extends State<BillPage> {
   void _onShowReminderDialog(ReminderIteration iteration) async {
     final reminder = Reminder(
       iteration: iteration,
-      title: vendor != null
+      title: vendor != null && vendor.reminderTitles != null && vendor.reminderTitles.isNotEmpty
           ? vendor.reminderTitles[iteration]
-          : bill.vendor.reminderTitles[iteration] ?? '',
-      text: vendor != null
+          : bill.vendor?.reminderTitles[iteration] ?? '',
+      text: vendor != null && vendor.reminderTexts != null && vendor.reminderTexts.isNotEmpty
           ? vendor.reminderTexts[iteration]
-          : bill.vendor.reminderTexts[iteration] ?? '',
+          : bill.vendor?.reminderTexts[iteration] ?? '',
       fee: vendor != null ? vendor?.reminderFee : bill.vendor.reminderFee ?? 5,
       deadline: DateTime.now().add(Duration(
           days: vendor != null ? vendor?.reminderDeadline : bill.vendor.reminderDeadline ?? 14)),
@@ -294,7 +294,7 @@ class _BillPageState extends State<BillPage> {
             decoration: InputDecoration(labelText: 'Mahngebühr', suffixText: '€'),
             keyboardType: TextInputType.number,
             initialValue: reminder.fee.toString(),
-            onChanged: (String input) => reminder.fee = int.parse(input),
+            onChanged: (String input) => reminder.fee = int.tryParse(input) ?? 0,
           ),
           TextFormField(
             decoration: InputDecoration(labelText: 'Frist', suffixText: 'Tage'),

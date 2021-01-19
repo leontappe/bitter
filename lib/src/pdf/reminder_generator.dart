@@ -125,7 +125,7 @@ class ReminderGenerator {
                   : '${reminder.iteration == ReminderIteration.second ? 'Zweite ' : reminder.iteration == ReminderIteration.third ? 'Dritte ' : 'Erste '}Mahnung',
               textStyle: TextStyle(font: ttfSans)),
           Paragraph(text: 'Sehr geehrte Damen und Herren,', style: TextStyle(font: ttfSans)),
-          Paragraph(text: reminder.text, style: TextStyle(font: ttfSans)),
+          Paragraph(text: reminder.text ?? '', style: TextStyle(font: ttfSans)),
           Table(
             columnWidths: <int, TableColumnWidth>{
               0: FixedColumnWidth(150.0),
