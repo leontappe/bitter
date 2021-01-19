@@ -7,13 +7,13 @@ import '../../fonts/LiberationSansBold.dart';
 import '../models/item.dart';
 
 int calculateTaxes(List<Item> items, int tax) {
-  var tax = 0;
+  var result = 0;
   for (var item in items) {
-    tax += (((item.price * item.quantity) -
+    result += (((item.price * item.quantity) -
             ((item.price * item.quantity) / (1 + ((item.tax ?? tax) / 100)))))
         .round();
   }
-  return tax;
+  return result;
 }
 
 Font getTtfSans() {
