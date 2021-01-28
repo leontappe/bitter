@@ -14,13 +14,15 @@ import 'common_widgets.dart';
 
 class PdfGenerator {
   Future<Document> createDocumentFromBill(
-    String billNr,
     Draft bill,
     Customer customer,
     Vendor vendor, {
+    String billNr,
     Uint8List leftHeader,
     Uint8List centerHeader,
     Uint8List rightHeader,
+    String title = 'Rechnung',
+    String letter = 'hiermit berechnen wir Ihnen die folgenden Positionen:',
   }) async {
     await initializeDateFormatting('de_DE');
 
@@ -122,11 +124,9 @@ class PdfGenerator {
               ),
             ],
           ),
-          Header(level: 1, text: 'Rechnung ${billNr}', textStyle: TextStyle(font: ttfSans)),
+          Header(level: 1, text: '$title ${billNr ?? ''}', textStyle: TextStyle(font: ttfSans)),
           Paragraph(text: 'Sehr geehrte Damen und Herren,', style: TextStyle(font: ttfSans)),
-          Paragraph(
-              text: 'hiermit berechnen wir Ihnen die folgenden Positionen:',
-              style: TextStyle(font: ttfSans)),
+          Paragraph(text: letter, style: TextStyle(font: ttfSans)),
           Table(
             columnWidths: <int, TableColumnWidth>{
               0: FixedColumnWidth(22.0),
@@ -204,22 +204,26 @@ class PdfGenerator {
   }
 
   Future<List<int>> getBytesFromBill(
-    String billNr,
     Draft bill,
     Customer customer,
     Vendor vendor, {
+    String billNr,
     Uint8List leftHeader,
     Uint8List centerHeader,
     Uint8List rightHeader,
+    String title,
+    String letter,
   }) async =>
       (await createDocumentFromBill(
-        billNr,
         bill,
         customer,
         vendor,
+        billNr: billNr,
         leftHeader: leftHeader,
         centerHeader: centerHeader,
         rightHeader: rightHeader,
+        title: title,
+        letter: letter,
       ))
           .save();
 }

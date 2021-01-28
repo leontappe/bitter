@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import '../../pdf/pdf_generator.dart';
-
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
 import '../../repositories/customer_repository.dart';
@@ -123,10 +122,10 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
     final billNrString = '${vendor.billPrefix}-$billNr';
 
     final doc = await pdfGen.getBytesFromBill(
-      billNrString,
       draft,
       customer,
       vendor,
+      billNr: billNrString,
       rightHeader:
           (vendor.headerImageRight != null) ? Uint8List.fromList(vendor.headerImageRight) : null,
       centerHeader:

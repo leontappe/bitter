@@ -12,10 +12,10 @@ void main() async {
   final logo = File('test/logo.png');
 
   doc = await pdf.createDocumentFromBill(
-    'RE1',
     exampleDraft,
     exampleCustomer,
     exampleVendor,
+    billNr: 'RE1',
     rightHeader: logo.readAsBytesSync(),
   );
 
@@ -23,5 +23,16 @@ void main() async {
 
   file.writeAsBytesSync(doc.save());
 
-  print(doc);
+  doc = await pdf.createDocumentFromBill(
+    exampleDraft,
+    exampleCustomer,
+    exampleVendor,
+    title: 'Vorschau',
+    letter: 'zahl mal das hier:',
+    rightHeader: logo.readAsBytesSync(),
+  );
+
+  var previewFile = File('test/test_preview.pdf');
+
+  previewFile.writeAsBytesSync(doc.save());
 }
