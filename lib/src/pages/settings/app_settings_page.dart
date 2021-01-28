@@ -98,7 +98,8 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
                       decoration: InputDecoration(labelText: 'Host/IP'),
                       validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                       onChanged: (String input) {
-                        if (_databaseFormKey.currentState.validate()) settings.host = input;
+                        settings.host = input;
+                        _databaseFormKey.currentState.validate();
                         dirty = true;
                       },
                     ),
