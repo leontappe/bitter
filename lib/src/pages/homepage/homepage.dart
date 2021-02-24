@@ -1,3 +1,4 @@
+import 'package:bitter/src/pages/homepage/warehouse_navigation_card.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
@@ -65,6 +66,7 @@ class _HomepageState extends State<Homepage> {
             BillsNavigationCard(filter: filterVendor),
             CustomersNavigationCard(),
             ItemsNavigationCard(filter: filterVendor),
+            WarehouseNavigationCard(filter: filterVendor),
             NavigationCard(
               context,
               '/settings',

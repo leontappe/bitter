@@ -15,11 +15,19 @@ import 'src/pages/settings/app_settings_page.dart';
 import 'src/pages/settings/backup_page.dart';
 import 'src/pages/settings/settings_page.dart';
 import 'src/pages/settings/vendors/vendors_list_page.dart';
+import 'src/pages/warehouse/warehouse_page.dart';
 import 'src/providers/inherited_database.dart';
 import 'src/providers/mysql_provider.dart';
 import 'src/providers/sqlite_provider.dart';
 import 'src/repositories/settings_repository.dart';
 import 'src/util.dart';
+
+void main() async {
+  Intl.defaultLocale = 'de_DE';
+  await initializeDateFormatting(Intl.defaultLocale);
+  runApp(Bitter());
+  await startLogging();
+}
 
 const List<String> mySqlLogNames = [
   'MySqlConnection',
@@ -31,13 +39,6 @@ const List<String> mySqlLogNames = [
   'ExecuteQueryHandler',
   'AuthHandler',
 ];
-
-void main() async {
-  Intl.defaultLocale = 'de_DE';
-  await initializeDateFormatting(Intl.defaultLocale);
-  runApp(Bitter());
-  await startLogging();
-}
 
 Future<void> startLogging() async {
   String logPath;
@@ -91,6 +92,7 @@ class Bitter extends StatelessWidget {
                 '/drafts': (BuildContext context) => DraftsListPage(),
                 '/home': (BuildContext context) => Homepage(),
                 '/items': (BuildContext context) => ItemsListPage(),
+                '/warehouse': (BuildContext context) => WarehousePage(),
                 '/settings': (BuildContext context) => SettingsPage(),
                 '/settings/app': (BuildContext context) => AppSettingsPage(),
                 '/settings/vendors': (BuildContext context) => VendorsPage(),
