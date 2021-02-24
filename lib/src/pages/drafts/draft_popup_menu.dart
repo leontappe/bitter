@@ -240,7 +240,7 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
           );
         });
 
-    if (!dialogResult.submit) return false;
+    if (dialogResult == null || !dialogResult.submit) return false;
 
     final customer = await customerRepo.selectSingle(draft.customer);
     final vendor = await vendorRepo.selectSingle(draft.vendor);
