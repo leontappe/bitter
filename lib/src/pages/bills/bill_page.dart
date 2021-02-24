@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:bitter/src/widgets/option_dialog.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/bill.dart';
@@ -286,9 +287,9 @@ class _BillPageState extends State<BillPage> {
 
     final result = await showDialog<Reminder>(
       context: context,
-      builder: (BuildContext context) => SimpleDialog(
-        contentPadding: EdgeInsets.all(16.0),
-        title: Text('${iteration.index + 1}. Mahnung erstellen'),
+      builder: (BuildContext context) => OptionDialog(
+        disableCheckbox: true,
+        titleText: '${iteration.index + 1}. Mahnung erstellen',
         children: [
           TextFormField(
             decoration: InputDecoration(labelText: 'Mahngebühr', suffixText: '€'),
@@ -317,17 +318,13 @@ class _BillPageState extends State<BillPage> {
             initialValue: reminder.text,
             onChanged: (String input) => reminder.text = input,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              MaterialButton(
-                  onPressed: () => Navigator.of(context).pop(null), child: Text('Abbrechen')),
-              MaterialButton(
-                  onPressed: () => Navigator.of(context).pop(reminder),
-                  child: Text('Mahnung erstellen')),
-            ],
-          )
+        ],
+        actions: [
+          MaterialButton(
+              onPressed: () => Navigator.of(context).pop(null), child: Text('Abbrechen')),
+          MaterialButton(
+              onPressed: () => Navigator.of(context).pop(reminder),
+              child: Text('Mahnung erstellen')),
         ],
       ),
     );

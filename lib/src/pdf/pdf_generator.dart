@@ -23,6 +23,7 @@ class PdfGenerator {
     Uint8List rightHeader,
     String title = 'Rechnung',
     String letter = 'hiermit berechnen wir Ihnen die folgenden Positionen:',
+    bool showDates = true,
   }) async {
     await initializeDateFormatting('de_DE');
 
@@ -190,13 +191,15 @@ class PdfGenerator {
                   (bill.userMessage ?? ''),
               style: TextStyle(font: ttfSans)),
           Paragraph(text: bill.comment ?? '', style: TextStyle(font: ttfSans)),
-          Paragraph(
-              text: 'Lieferdatum/Leistungsdatum: ${formatDate(bill.serviceDate)}',
-              style: TextStyle(font: ttfSans)),
-          Paragraph(
-              text:
-                  'Bezahlbar ohne Abzug bis zum ${formatDate(DateTime.now().add(Duration(days: bill.dueDays)))}.',
-              style: TextStyle(font: ttfSans)),
+          if (showDates)
+            Paragraph(
+                text: 'Lieferdatum/Leistungsdatum: ${formatDate(bill.serviceDate)}',
+                style: TextStyle(font: ttfSans)),
+          if (showDates)
+            Paragraph(
+                text:
+                    'Bezahlbar ohne Abzug bis zum ${formatDate(DateTime.now().add(Duration(days: bill.dueDays)))}.',
+                style: TextStyle(font: ttfSans)),
         ],
       ),
     );
@@ -213,6 +216,7 @@ class PdfGenerator {
     Uint8List rightHeader,
     String title,
     String letter,
+    bool showDates,
   }) async =>
       (await createDocumentFromBill(
         bill,
@@ -224,6 +228,7 @@ class PdfGenerator {
         rightHeader: rightHeader,
         title: title,
         letter: letter,
+        showDates: showDates,
       ))
           .save();
 }

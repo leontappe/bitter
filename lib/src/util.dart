@@ -1,16 +1,17 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:windows_documents/windows_documents.dart';
 
-String formatDate(DateTime date) {
-  return DateFormat('dd.MM.yyyy', 'de_DE').format(date);
-}
+final dateFormat = DateFormat('dd.MM.yyyy', 'de_DE');
+final dateTimeFormat = DateFormat('dd.MM.yyyy HH:mm', 'de_DE');
+final filenameDateFormat = DateFormat('yyMMdd', 'de_DE');
 
-String formatDateTime(DateTime date) {
-  return DateFormat('dd.MM.yyyy HH:mm', 'de_DE').format(date);
-}
+String formatFilenameDate(DateTime date) => filenameDateFormat.format(date);
+String formatDate(DateTime date) => dateFormat.format(date);
+String formatDateTime(DateTime date) => dateTimeFormat.format(date);
 
 String formatFigure(int value) => (value / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' €';
 
@@ -43,6 +44,24 @@ Future<String> getLogPath() async {
   } else {
     return (await getDownloadsDirectory()).path + '/bitter/log';
   }
+}
+
+Future<void> onSaveBill(BuildContext context, String filename, List<int> bytes) async {
+  var file = File('${await getDataPath()}/${filename}.pdf');
+  if (await file.exists()) {
+    var i = 2;
+    file = File('${await getDataPath()}/${filename} $i.pdf');
+    while (await file.exists()) {
+      i++;
+      file = File('${await getDataPath()}/${filename} $i.pdf');
+    }
+  }
+  await file.create(recursive: true);
+  await file.writeAsBytes(bytes);
+  await ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text('Die Rechnung wurde erfolgreich unter ${file.path} abgespeichert.'),
+    duration: const Duration(seconds: 5),
+  ));
 }
 
 int parseFloat(String input) {

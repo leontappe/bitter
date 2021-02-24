@@ -8,6 +8,8 @@ import '../../repositories/bill_repository.dart';
 import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
 import '../../repositories/vendor_repository.dart';
+import '../../util.dart';
+import '../../widgets/option_dialog.dart';
 
 class DraftPopupMenu extends StatefulWidget {
   final int id;
@@ -25,6 +27,21 @@ class DraftPopupMenu extends StatefulWidget {
 enum DraftPopupSelection {
   createBill,
   delete,
+  createPreview,
+}
+
+class PreviewDialogResult {
+  bool submit;
+  String letter;
+  String title;
+  bool showDates;
+
+  PreviewDialogResult({
+    this.submit = false,
+    this.letter = '',
+    this.title = 'Vorschau',
+    this.showDates = true,
+  });
 }
 
 class _DraftPopupMenuState extends State<DraftPopupMenu> {
@@ -44,6 +61,10 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
       onSelected: onSelected,
       onCanceled: () => (widget.onCompleted != null) ? widget.onCompleted(false, false) : null,
       itemBuilder: (BuildContext context) => <PopupMenuEntry<DraftPopupSelection>>[
+        const PopupMenuItem<DraftPopupSelection>(
+          value: DraftPopupSelection.createPreview,
+          child: Text('Vorschau exportieren'),
+        ),
         const PopupMenuItem<DraftPopupSelection>(
           value: DraftPopupSelection.createBill,
           child: Text('Rechnung exportieren'),
@@ -89,6 +110,10 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
       case DraftPopupSelection.delete:
         final result = await _deleteDraft();
         (widget.onCompleted != null) ? widget.onCompleted(result, false) : null;
+        break;
+      case DraftPopupSelection.createPreview:
+        await _createPreview(widget.id);
+        (widget.onCompleted != null) ? widget.onCompleted(false, false) : null;
         break;
       default:
         (widget.onCompleted != null) ? widget.onCompleted(false, false) : null;
@@ -160,6 +185,84 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
       ));
       return false;
     }
+  }
+
+  Future<bool> _createPreview(int id) async {
+    draft = await repo.selectSingle(id);
+
+    if (draft == null) return false;
+
+    if (draft.items.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Dieser Entwurf enthält keine Artikel'), duration: Duration(seconds: 3)));
+      return false;
+    }
+
+    final dialogResult = await showDialog<PreviewDialogResult>(
+        context: context,
+        builder: (BuildContext context) {
+          var result = PreviewDialogResult();
+          return OptionDialog(
+            titleText: 'Vorschau erstellen',
+            checkboxText: 'Liefer- und Leistungsdatum anzeigen',
+            checked: result.showDates,
+            onChecked: (bool input) => result.showDates = input,
+            children: [
+              TextField(
+                decoration: InputDecoration(labelText: 'Titel'),
+                maxLines: 1,
+                controller: TextEditingController(text: result.title),
+                onChanged: (String input) => result.title = input,
+              ),
+              TextField(
+                decoration: InputDecoration(labelText: 'Anschreiben'),
+                maxLines: null,
+                controller: TextEditingController(text: result.letter),
+                onChanged: (String input) => result.letter = input,
+              ),
+            ],
+            actions: [
+              MaterialButton(
+                onPressed: () {
+                  result.submit = false;
+                  Navigator.pop(context, result);
+                },
+                child: Text('Abbrechen'),
+              ),
+              MaterialButton(
+                onPressed: () {
+                  result.submit = true;
+                  Navigator.pop(context, result);
+                },
+                child: Text('Erstellen'),
+              ),
+            ],
+          );
+        });
+
+    if (!dialogResult.submit) return false;
+
+    final customer = await customerRepo.selectSingle(draft.customer);
+    final vendor = await vendorRepo.selectSingle(draft.vendor);
+
+    final doc = await pdfGen.getBytesFromBill(
+      draft,
+      customer,
+      vendor,
+      title: dialogResult.title,
+      letter: dialogResult.letter,
+      rightHeader:
+          (vendor.headerImageRight != null) ? Uint8List.fromList(vendor.headerImageRight) : null,
+      centerHeader:
+          (vendor.headerImageCenter != null) ? Uint8List.fromList(vendor.headerImageCenter) : null,
+      leftHeader:
+          (vendor.headerImageLeft != null) ? Uint8List.fromList(vendor.headerImageLeft) : null,
+      showDates: dialogResult.showDates,
+    );
+
+    await onSaveBill(context, '${formatFilenameDate(DateTime.now())}_${dialogResult.title}', doc);
+
+    return true;
   }
 
   Future<bool> _deleteDraft() async {

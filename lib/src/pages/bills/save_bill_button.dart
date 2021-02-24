@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 import '../../models/bill.dart';
@@ -15,17 +13,7 @@ class SaveBillButton extends StatelessWidget {
     return IconButton(
       tooltip: 'Rechnung abspeichern',
       icon: Icon(Icons.file_download),
-      onPressed: (bill != null) ? () => onSaveBill(context) : null,
+      onPressed: (bill != null) ? () => onSaveBill(context, bill.billNr, bill.file) : null,
     );
-  }
-
-  Future<void> onSaveBill(BuildContext context) async {
-    final file = File('${await getDataPath()}/${bill.billNr}.pdf');
-    await file.create(recursive: true);
-    await file.writeAsBytes(bill.file);
-    await ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Die Rechnung wurde erfolgreich unter ${file.path} abgespeichert.'),
-      duration: const Duration(seconds: 5),
-    ));
   }
 }
