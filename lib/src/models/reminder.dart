@@ -4,6 +4,7 @@ class Reminder {
   String title;
   String text;
   int fee;
+  int remainder;
 
   Reminder({
     this.iteration,
@@ -11,6 +12,7 @@ class Reminder {
     this.title,
     this.text,
     this.fee,
+    this.remainder
   });
 
   factory Reminder.fromMap(Map map) => Reminder(
@@ -19,6 +21,7 @@ class Reminder {
         title: map['title'] as String,
         text: map['text'] as String,
         fee: map['fee'] as int,
+        remainder: map['remainder'] as int,
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
@@ -27,6 +30,7 @@ class Reminder {
         'title': title,
         'text': text,
         'fee': fee,
+        'remainder': remainder,
       };
 }
 

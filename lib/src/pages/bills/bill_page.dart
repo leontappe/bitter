@@ -251,6 +251,8 @@ class _BillPageState extends State<BillPage> {
       dirty = true;
     }
 
+    reminder.remainder ??= bill.sum;
+
     final pdfData = await ReminderGenerator().getBytesFromBill(
       bill,
       await vendorRepo.selectSingle(bill.vendor.id) ?? bill.vendor,
@@ -283,6 +285,7 @@ class _BillPageState extends State<BillPage> {
       fee: vendor != null ? vendor?.reminderFee : bill.vendor.reminderFee ?? 5,
       deadline: DateTime.now().add(Duration(
           days: vendor != null ? vendor?.reminderDeadline : bill.vendor.reminderDeadline ?? 14)),
+      remainder: bill.sum,
     );
 
     final result = await showDialog<Reminder>(
@@ -296,6 +299,12 @@ class _BillPageState extends State<BillPage> {
             keyboardType: TextInputType.number,
             initialValue: reminder.fee.toString(),
             onChanged: (String input) => reminder.fee = int.tryParse(input) ?? 0,
+          ),
+          TextFormField(
+            decoration: InputDecoration(labelText: 'Restbetrag', suffixText: '€'),
+            keyboardType: TextInputType.number,
+            initialValue: (reminder.remainder / 100.0).toStringAsFixed(2),
+            onChanged: (String input) => reminder.remainder = parseFloat(input) ?? 0,
           ),
           TextFormField(
             decoration: InputDecoration(labelText: 'Frist', suffixText: 'Tage'),
