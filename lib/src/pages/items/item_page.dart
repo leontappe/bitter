@@ -102,7 +102,7 @@ class _ItemPageState extends State<ItemPage> {
                                 validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                                 keyboardType: TextInputType.numberWithOptions(),
                                 onChanged: (String input) {
-                                  setState(() => item.price = parseFloat(input));
+                                  setState(() => item.price = parseFloat(input.replaceAll(',', '.')));
                                   dirty = true;
                                   _formKey.currentState.validate();
                                 },
