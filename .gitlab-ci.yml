@@ -11,6 +11,7 @@ build:
     - schedules
     - web
   script:
+    - flutter channel dev
     - flutter upgrade
     - flutter pub get
     - flutter build linux
