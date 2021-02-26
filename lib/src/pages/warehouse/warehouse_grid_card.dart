@@ -18,7 +18,7 @@ class WarehouseGridCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.only(right: 8.0, left: 8.0),
+          padding: EdgeInsets.only(right: 8.0, left: 16.0, top: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -29,6 +29,7 @@ class WarehouseGridCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
+              Divider(),
               ...children,
             ],
           ),

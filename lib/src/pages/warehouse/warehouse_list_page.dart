@@ -1,15 +1,17 @@
-import 'package:bitter/src/pages/warehouse/warehouse_grid_card.dart';
-import 'package:bitter/src/pages/warehouse/warehouse_page.dart';
-import 'package:bitter/src/repositories/warehouse_repository.dart';
-import 'package:bitter/src/widgets/option_dialog.dart';
-import 'package:bitter/src/widgets/vendor_selector.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/crate.dart';
 import '../../models/vendor.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/settings_repository.dart';
 import '../../repositories/vendor_repository.dart';
+import '../../repositories/warehouse_repository.dart';
+import '../../widgets/option_dialog.dart';
+import '../../widgets/vendor_selector.dart';
+import 'crate_list_tile.dart';
+import 'warehouse_grid_card.dart';
+import 'warehouse_page.dart';
 
 class WarehouseListPage extends StatefulWidget {
   @override
@@ -94,6 +96,17 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
               onTap: () => Navigator.of(context).push<MaterialPageRoute>(
                 MaterialPageRoute(builder: (BuildContext context) => WarehousePage(id: w.id)),
               ),
+              children: [
+                ...w.inventory.take(5).map<Widget>(
+                  (Crate c) {
+                    final itemResult = items.where((Item i) => i.id == c.itemId);
+                    return CrateListTile(
+                      crate: c,
+                      item: itemResult.isNotEmpty ? itemResult.single : null,
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ],

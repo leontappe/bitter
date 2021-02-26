@@ -7,6 +7,7 @@ import '../../repositories/item_repository.dart';
 import '../../repositories/warehouse_repository.dart';
 import '../../widgets/item_selector.dart';
 import '../../widgets/option_dialog.dart';
+import 'crate_list_tile.dart';
 
 class WarehousePage extends StatefulWidget {
   final int id;
@@ -49,15 +50,9 @@ class _WarehousePageState extends State<WarehousePage> {
                 ...warehouse.inventory.map<Widget>(
                   (Crate c) {
                     final filteredItems = items.where((Item i) => i.id == c.itemId);
-                    return ListTile(
-                      title: Text(c.name ??
-                          (filteredItems.isNotEmpty
-                              ? 'Kiste mit ${filteredItems.single.title}'
-                              : 'Kiste')),
-                      subtitle: Text(filteredItems.isNotEmpty
-                          ? filteredItems.single.title + ' - ' + filteredItems.single.description
-                          : ''),
-                      trailing: Text('${c.level}/${c.size == 0 ? 'Unbegrenzt' : c.size}'),
+                    return CrateListTile(
+                      crate: c,
+                      item: filteredItems.isNotEmpty ? filteredItems.single : null,
                       onLongPress: () => _onDeleteCrate(c.uid),
                     );
                   },
@@ -104,6 +99,7 @@ class _WarehousePageState extends State<WarehousePage> {
           var sizeController =
               TextEditingController(text: result.size > 0 ? result.size.toString() : 'Unbegrenzt');
           return OptionDialog(
+            disableCheckbox: true,
             titleText: 'Neue Kiste',
             children: [
               TextField(
@@ -124,7 +120,7 @@ class _WarehousePageState extends State<WarehousePage> {
                       result.size = int.parse(input);
                     }
                   }),
-              TextField(
+              /*TextField(
                 controller: TextEditingController(text: result.level.toString()),
                 decoration: InputDecoration(labelText: 'Füllstand', suffixText: 'Einheiten'),
                 onChanged: (String input) {
@@ -132,7 +128,7 @@ class _WarehousePageState extends State<WarehousePage> {
                     result.level = int.parse(input);
                   }
                 },
-              ),
+              ),*/
               ItemSelector(
                 onChanged: (Item i) {
                   result.itemId = i.id;
@@ -152,7 +148,7 @@ class _WarehousePageState extends State<WarehousePage> {
                 onPressed: () => Navigator.pop(context, result),
               ),
             ],
-            checkboxText: 'Enthält Kisten statt Artikel',
+            /*checkboxText: 'Enthält Kisten statt Artikel',
             onChecked: (bool input) {
               setState(() {
                 if (input) {
@@ -165,7 +161,7 @@ class _WarehousePageState extends State<WarehousePage> {
                 print(result.toMap);
               });
             },
-            checked: isMetaCrate,
+            checked: isMetaCrate,*/
           );
         });
 
