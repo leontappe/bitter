@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../models/crate.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/warehouse_repository.dart';
@@ -49,7 +50,10 @@ class _WarehousePageState extends State<WarehousePage> {
                   (Crate c) {
                     final filteredItems = items.where((Item i) => i.id == c.itemId);
                     return ListTile(
-                      title: Text(c.name),
+                      title: Text(c.name ??
+                          (filteredItems.isNotEmpty
+                              ? 'Kiste mit ${filteredItems.single.title}'
+                              : 'Kiste')),
                       subtitle: Text(filteredItems.isNotEmpty
                           ? filteredItems.single.title + ' - ' + filteredItems.single.description
                           : ''),
