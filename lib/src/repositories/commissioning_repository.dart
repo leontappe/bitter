@@ -6,10 +6,10 @@ export '../models/commissioning.dart';
 
 const String tableName = 'commissionings';
 
-class WarehouseRepository<T extends DatabaseProvider> {
+class CommissioningRepository<T extends DatabaseProvider> {
   final T db;
 
-  WarehouseRepository(this.db);
+  CommissioningRepository(this.db);
 
   Future<void> delete(int id) {
     return db.delete(tableName, id);
@@ -20,11 +20,14 @@ class WarehouseRepository<T extends DatabaseProvider> {
     return commissioning;
   }
 
-  Future<List<Commissioning>> select({String searchQuery, int vendorFilter}) async {
+  Future<List<Commissioning>> select({int vendorFilter, int warehouesFilter}) async {
     var results =
         (await db.select(tableName)).map<Commissioning>((Map e) => Commissioning.fromMap(e));
-    if (vendorFilter != null) {
+    if (vendorFilter != null && warehouesFilter == null) {
       results = results.where((Commissioning c) => c.vendorId == vendorFilter);
+    }
+    if (warehouesFilter != null) {
+      results = results.where((Commissioning c) => c.warehouseId == warehouesFilter);
     }
     return List<Commissioning>.from(results);
   }
@@ -54,10 +57,10 @@ class WarehouseRepository<T extends DatabaseProvider> {
     if (opened) {
       await db.createTable(
         tableName,
-        ['id', 'vendor_id', 'timestamp', 'items'],
-        ['INTEGER', 'INTEGER', 'TEXT', 'TEXT'],
+        ['id', 'vendor_id', 'warehouse_id', 'timestamp', 'items'],
+        ['INTEGER', 'INTEGER', 'INTEGER', 'TEXT', 'TEXT'],
         'id',
-        nullable: <bool>[true, false, false, false],
+        nullable: <bool>[true, false, false, false, false],
       );
     }
   }

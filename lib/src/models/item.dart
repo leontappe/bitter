@@ -52,6 +52,7 @@ class Item {
   int get sum => (price ?? 0) * (quantity ?? 0);
 
   Map<String, dynamic> get toMap => <String, dynamic>{
+        'id': id,
         'item_id': itemId,
         'title': title,
         'description': description,

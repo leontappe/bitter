@@ -34,10 +34,14 @@ class Crate {
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
+        'uid': uid,
         'name': name,
         'size': size,
         'level': level,
         'item_id': itemId,
         'subcrate': subcrate != null ? subcrate.toMap : null,
       };
+
+  @override
+  String toString() => 'Crate [$toMap]';
 }
