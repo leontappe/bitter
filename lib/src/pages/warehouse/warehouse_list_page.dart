@@ -101,6 +101,7 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
                   (Crate c) {
                     final itemResult = items.where((Item i) => i.id == c.itemId);
                     return CrateListTile(
+                      compact: true,
                       crate: c,
                       item: itemResult.isNotEmpty ? itemResult.single : null,
                     );
