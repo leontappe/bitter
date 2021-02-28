@@ -53,7 +53,7 @@ class DraftRepository<T extends DatabaseProvider> {
             (customer?.name ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
             (customer?.surname ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
             (vendor?.name ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
-            d.userMessage.toLowerCase().contains(searchQuery.toLowerCase());
+            (d?.userMessage ?? '').toLowerCase().contains(searchQuery.toLowerCase());
       });
     }
     if (vendorFilter != null) {
