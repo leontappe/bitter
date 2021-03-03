@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../format_util.dart';
 import '../../models/item.dart';
 import '../../models/vendor.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
-import '../../util.dart';
 import '../../widgets/database_error_watcher.dart';
 import '../../widgets/info_cards/item_card.dart';
 import '../../widgets/vendor_selector.dart';
@@ -102,7 +102,8 @@ class _ItemPageState extends State<ItemPage> {
                                 validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                                 keyboardType: TextInputType.numberWithOptions(),
                                 onChanged: (String input) {
-                                  setState(() => item.price = parseFloat(input.replaceAll(',', '.')));
+                                  setState(
+                                      () => item.price = parseFloat(input.replaceAll(',', '.')));
                                   dirty = true;
                                   _formKey.currentState.validate();
                                 },

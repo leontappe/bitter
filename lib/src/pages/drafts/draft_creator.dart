@@ -4,6 +4,7 @@ import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../format_util.dart';
 import '../../models/draft.dart';
 import '../../models/item.dart';
 import '../../models/vendor.dart';
@@ -13,7 +14,6 @@ import '../../repositories/draft_repository.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/settings_repository.dart';
 import '../../repositories/vendor_repository.dart';
-import '../../util.dart';
 import '../../widgets/database_error_watcher.dart';
 import '../../widgets/vendor_selector.dart';
 import 'draft_popup_menu.dart';

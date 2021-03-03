@@ -1,11 +1,10 @@
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 
+import '../../format_util.dart';
 import '../../models/item.dart';
-
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
-import '../../util.dart';
 
 enum EditorTileAction { delete, save }
 

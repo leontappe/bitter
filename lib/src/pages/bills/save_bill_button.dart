@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/bill.dart';
-import '../../util.dart';
+import '../../ui_util.dart';
 
 class SaveBillButton extends StatelessWidget {
   final Bill bill;
