@@ -11,4 +11,4 @@ PRODUCT_NAME = bitter
 PRODUCT_BUNDLE_IDENTIFIER = de.ltappe.bitter
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2020 de.ltappe. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2021 de.ltappe. All rights reserved.
