@@ -181,7 +181,8 @@ class _BillsListPageState extends State<BillsListPage> {
 
   Future<void> onGetBills() async {
     if (mounted) setState(() => busy = true);
-    bills = await billRepo.select(searchQuery: searchQuery, vendorFilter: filterVendor);
+    bills =
+        await billRepo.select(searchQuery: searchQuery, vendorFilter: filterVendor, short: true);
     if (filterVendor == null) {
       for (var bill in bills) {
         if (!vendors.contains(bill.vendor)) {

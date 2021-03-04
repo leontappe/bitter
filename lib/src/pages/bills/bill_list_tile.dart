@@ -33,7 +33,7 @@ class BillListTile extends StatelessWidget {
                   style: Theme.of(context).textTheme.headline6,
                   textScaleFactor: 0.9,
                   overflow: TextOverflow.ellipsis)),
-          SaveBillButton(bill: bill),
+          SaveBillButton(billId: bill.id),
         ],
       ),
       onTap: onTap,
