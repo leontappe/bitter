@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:bitter/src/widgets/option_dialog.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/bill.dart';
@@ -15,6 +14,7 @@ import '../../widgets/database_error_watcher.dart';
 import '../../widgets/info_cards/customer_card.dart';
 import '../../widgets/info_cards/items_card.dart';
 import '../../widgets/info_cards/vendor_card.dart';
+import '../../widgets/option_dialog.dart';
 import 'save_bill_button.dart';
 
 class BillPage extends StatefulWidget {

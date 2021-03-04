@@ -3,7 +3,13 @@ import '../models/database_error.dart';
 abstract class DatabaseProvider {
   Stream<DatabaseError> get errors;
 
+  Future<void> createTable(
+      String table, List<String> columns, List<String> types, String primaryKey,
+      {List<bool> nullable});
+
   Future<int> delete(String table, int id);
+
+  Future<void> dropTable(String table);
 
   Future<int> insert(String table, Map<String, dynamic> item);
 
@@ -14,10 +20,9 @@ abstract class DatabaseProvider {
   Future<Map> selectSingle(String table, int id);
 
   Future<int> update(String table, int id, Map<String, dynamic> item);
+}
 
-  Future<void> createTable(
-      String table, List<String> columns, List<String> types, String primaryKey,
-      {List<bool> nullable});
-
-  Future<void> dropTable(String table);
+mixin PooledDatabaseProvider on DatabaseProvider {
+  Future<bool> openPool(String path,
+      {String host, int port, String user, String password, int size});
 }
