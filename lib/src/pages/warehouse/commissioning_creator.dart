@@ -63,7 +63,7 @@ class _CommissioningCreatorPageState extends State<CommissioningCreatorPage> {
               title: Text(c.name ??
                   (itemResult.isNotEmpty ? 'Kiste mit ${itemResult.single.title}' : 'Kiste')),
               subtitle: Text(itemResult.isNotEmpty
-                  ? itemResult.single.title + ' - ' + itemResult.single.description
+                  ? itemResult.single.title + ' - ' + (itemResult.single.description ?? '')
                   : ''),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -140,8 +140,12 @@ class _CommissioningCreatorPageState extends State<CommissioningCreatorPage> {
         final newItem = itemResult.single;
         newItem.quantity = crate.level - fresh.singleWhere((Crate c) => c.uid == crate.uid).level;
         diffItems.add(newItem);
+      } else {
+        diffItems.singleWhere((Item i) => i.id == crate.itemId).quantity +=
+            crate.level - fresh.singleWhere((Crate c) => c.uid == crate.uid).level;
       }
     }
+    diffItems.removeWhere((Item i) => i.quantity == 0);
     return diffItems;
   }
 

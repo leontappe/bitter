@@ -4,14 +4,16 @@ import 'package:bitter/src/widgets/info_cards/items_card.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../format_util.dart';
 import '../../models/crate.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/warehouse_repository.dart';
-import '../../util.dart';
 import '../../widgets/item_selector.dart';
 import '../../widgets/option_dialog.dart';
 import 'crate_list_tile.dart';
+
+enum CratePopupSelection { delete }
 
 class WarehousePage extends StatefulWidget {
   final int id;
@@ -21,8 +23,6 @@ class WarehousePage extends StatefulWidget {
   @override
   _WarehousePageState createState() => _WarehousePageState();
 }
-
-enum CratePopupSelection { delete }
 
 class _WarehousePageState extends State<WarehousePage> {
   WarehouseRepository warehouseRepo;
@@ -147,25 +147,29 @@ class _WarehousePageState extends State<WarehousePage> {
   Future<void> onRefresh() async {
     warehouse = await warehouseRepo.selectSingle(widget.id);
     items = await itemRepo.select(vendorFilter: warehouse.vendorId);
-    commissionings = await commissioningRepository.select();
+    commissionings = await commissioningRepository.select(warehouesFilter: widget.id);
     if (mounted) setState(() => busy = false);
   }
 
-  Future<void> _showCommissioningDetails(Commissioning comm) async {
-    await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) => SimpleDialog(
-              title: Text('Kommissionierung vom ${formatDateTime(comm.timestamp)}'),
-              children: [
-                ListTile(title: Text('ID:'), trailing: Text('${comm.id}')),
-                ListTile(
-                    title: Text('Zeitstempel:'),
-                    trailing: Text('${comm.timestamp.toIso8601String()}')),
-                ListTile(title: Text('Verkäufer:'), trailing: Text('')),
-                ListTile(title: Text('Lagerplatz:'), trailing: Text('')),
-                ItemsCard(items: comm.items, sum: comm.sum),
-              ],
-            ));
+  void onSelected(CratePopupSelection value, Crate crate) {
+    switch (value) {
+      case CratePopupSelection.delete:
+        if (crate.level == 0) {
+          _onDeleteCrate(crate.uid);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Nur leere Kisten können gelöscht werden'),
+            duration: Duration(seconds: 3),
+          ));
+        }
+        break;
+      default:
+    }
+  }
+
+  void _onCreateCommissioning() {
+    Navigator.of(context).push<dynamic>(MaterialPageRoute<dynamic>(
+        builder: (BuildContext context) => CommissioningCreatorPage(warehouse: warehouse)));
   }
 
   Future<void> _onCreateCrate() async {
@@ -241,24 +245,20 @@ class _WarehousePageState extends State<WarehousePage> {
     await warehouseRepo.update(warehouse);
   }
 
-  void _onCreateCommissioning() {
-    Navigator.of(context).push<dynamic>(MaterialPageRoute<dynamic>(
-        builder: (BuildContext context) => CommissioningCreatorPage(warehouse: warehouse)));
-  }
-
-  void onSelected(CratePopupSelection value, Crate crate) {
-    switch (value) {
-      case CratePopupSelection.delete:
-        if (crate.level == 0) {
-          _onDeleteCrate(crate.uid);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Nur leere Kisten können gelöscht werden'),
-            duration: Duration(seconds: 3),
-          ));
-        }
-        break;
-      default:
-    }
+  Future<void> _showCommissioningDetails(Commissioning comm) async {
+    await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) => SimpleDialog(
+              title: Text('Kommissionierung vom ${formatDateTime(comm.timestamp)}'),
+              children: [
+                ListTile(title: Text('ID:'), trailing: Text('${comm.id}')),
+                ListTile(
+                    title: Text('Zeitstempel:'),
+                    trailing: Text('${comm.timestamp.toIso8601String()}')),
+                ListTile(title: Text('Verkäufer:'), trailing: Text('')),
+                ListTile(title: Text('Lagerplatz:'), trailing: Text('${warehouse?.name ?? ''}')),
+                ItemsCard(items: comm.items, sum: comm.sum),
+              ],
+            ));
   }
 }

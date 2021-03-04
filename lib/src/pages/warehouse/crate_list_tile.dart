@@ -25,7 +25,7 @@ class CrateListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(crate.name ?? (item != null ? 'Kiste mit ${item.title}' : 'Kiste')),
-      subtitle: Text(item != null ? item.title + ' - ' + item.description : ''),
+      subtitle: Text(item != null ? item.title + ' - ' + (item?.description ?? '') : ''),
       leading: Text('${crate.level}/${crate.size == 0 ? '∞' : crate.size}'),
       trailing: compact ? null : trailing,
       onLongPress: onLongPress,
