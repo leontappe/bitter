@@ -53,7 +53,7 @@ Future<void> startLogging() async {
   final logSink = logFile.openWrite(mode: FileMode.writeOnlyAppend);
 
   Logger.root.level = Level.ALL; // defaults to Level.INFO
-  Logger.root.onRecord.listen((record) async {
+  Logger.root.onRecord.listen((record) {
     final line = '${record.loggerName}/${record.level.name}: ${record.time}: ${record.message}';
     if (mySqlLogNames.contains(record.loggerName)) {
       return;
