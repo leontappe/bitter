@@ -289,7 +289,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
     await settingsRepo.setUp();
     await vendorRepo.setUp();
 
-    editor = await settingsRepo.getUsername();
+    editor = settingsRepo.getUsername();
     _customers = await customerRepo.select();
 
     if (vendorIsset) {

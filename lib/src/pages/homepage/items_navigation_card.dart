@@ -106,7 +106,7 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
       await _itemRepo.setUp();
       await _vendorRepo.setUp();
       await onRefresh();
-      _vendors = await _vendorRepo.select();
+      _vendors = await _vendorRepo.select(short: true);
     } on NoSuchMethodError {
       if (mounted) setState(() => busy = false);
       print('db not availiable');

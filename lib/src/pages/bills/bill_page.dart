@@ -135,8 +135,6 @@ class _BillPageState extends State<BillPage> {
                           bill.reminders.length < 3)
                         ListTile(
                             title: ElevatedButton(
-                          child: Text(
-                              '${(bill.reminders.isNotEmpty) ? bill.reminders.last.iteration.index + 2 : '1'}. Mahnung erstellen'),
                           onPressed: (bill.reminders.isEmpty ||
                                   (bill.reminders.isNotEmpty &&
                                       DateTime.now().isAfter(bill.reminders.last.deadline)))
@@ -145,6 +143,8 @@ class _BillPageState extends State<BillPage> {
                                       ? bill.reminders.last.iteration.index + 1
                                       : 0))
                               : null,
+                          child: Text(
+                              '${(bill.reminders.isNotEmpty) ? bill.reminders.last.iteration.index + 2 : '1'}. Mahnung erstellen'),
                         )),
                       Padding(
                         padding: EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 8.0),

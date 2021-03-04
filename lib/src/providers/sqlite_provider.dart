@@ -89,9 +89,9 @@ class SqliteProvider extends DatabaseProvider {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> select(String table) {
+  Future<List<Map<String, dynamic>>> select(String table, {List<String> keys}) {
     _log.fine('selecting all from "$table"');
-    return conn.query(table);
+    return conn.query(table, columns: keys);
   }
 
   @override

@@ -120,11 +120,13 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
       if (mounted) setState(() => busy = false);
       print('db not availiable');
       return;
+    } catch (e) {
+      print(e);
     }
   }
 
   Future<void> onGetBills() async {
-    _bills = await _billRepo.select();
+    _bills = await _billRepo.select(short: true);
     if (widget.filter != null && widget.filter > 0) {
       _bills.removeWhere((Bill b) => b.vendor.id != widget.filter);
     }

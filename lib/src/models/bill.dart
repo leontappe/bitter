@@ -8,24 +8,42 @@ import 'reminder.dart';
 import 'vendor.dart';
 
 class Bill {
+  static final shortKeys = <String>[
+    'id',
+    'status',
+    'bill_nr',
+    'sum',
+    'editor',
+    'vendor',
+    'customer',
+    'items',
+    'user_message',
+    'comment',
+    'created',
+    'service_date',
+    'due_date',
+    'note',
+    'reminders'
+  ];
+
   int id;
-
   final String billNr;
-  final List<int> file;
 
+  final List<int> file;
   final DateTime created;
   final DateTime serviceDate;
-  final DateTime dueDate;
 
+  final DateTime dueDate;
   final int sum;
   final String editor;
   final Vendor vendor;
   final Customer customer;
   final List<Item> items;
   final String userMessage;
-  final String comment;
 
+  final String comment;
   BillStatus status;
+
   String note;
 
   List<Reminder> reminders;

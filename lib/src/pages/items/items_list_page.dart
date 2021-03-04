@@ -22,7 +22,7 @@ class _BillsListPageState extends State<ItemsListPage> {
   bool searchEnabled = false;
 
   List<Item> items = [];
-  List<Vendor> vendors = [];
+  List<Vendor> filterVendors = [];
   int filterVendor;
   String searchQuery;
 
@@ -61,8 +61,12 @@ class _BillsListPageState extends State<ItemsListPage> {
                   TextStyle(color: Colors.white, decorationColor: Colors.white70, fontSize: 14.0),
               hint: Text('Nach Verkäufer filtern', style: TextStyle(color: Colors.white)),
               items: <DropdownMenuItem<int>>[
-                DropdownMenuItem(child: Text('Filter zurücksetzen'), value: -1),
-                ...vendors.map((Vendor v) => DropdownMenuItem(value: v.id, child: Text(v.name)))
+                DropdownMenuItem(
+                  value: -1,
+                  child: Text('Filter zurücksetzen'),
+                ),
+                ...filterVendors
+                    .map((Vendor v) => DropdownMenuItem(value: v.id, child: Text(v.name))),
               ],
               onChanged: onFilter,
             ),
@@ -80,6 +84,7 @@ class _BillsListPageState extends State<ItemsListPage> {
         ],
       ),
       body: RefreshIndicator(
+        onRefresh: () => onGetItems(),
         child: DatabaseErrorWatcher(
           child: (busy)
               ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
@@ -87,7 +92,7 @@ class _BillsListPageState extends State<ItemsListPage> {
                   children: <Widget>[
                     ...items.map(
                       (Item i) {
-                        final itemVendors = vendors.where((Vendor v) => v.id == i.vendor);
+                        final itemVendors = filterVendors.where((Vendor v) => v.id == i.vendor);
                         return ListTile(
                           leading: (itemVendors.isNotEmpty)
                               ? Text(itemVendors.first.billPrefix + '\nA' + i.itemId.toString())
@@ -109,7 +114,6 @@ class _BillsListPageState extends State<ItemsListPage> {
                   ],
                 ),
         ),
-        onRefresh: () => onGetItems(),
       ),
     );
   }
@@ -129,9 +133,10 @@ class _BillsListPageState extends State<ItemsListPage> {
     await vendorRepo.setUp();
     await settings.setUp();
 
-    await onGetItems();
-
     filterVendor = settings.select<int>('items_filter');
+    if (items.where((Item i) => i.vendor == filterVendor).isEmpty) {
+      filterVendor = null;
+    }
 
     await onGetItems();
   }
@@ -149,14 +154,19 @@ class _BillsListPageState extends State<ItemsListPage> {
   Future<void> onGetItems() async {
     if (mounted) setState(() => busy = true);
     items = await repo.select(searchQuery: searchQuery, vendorFilter: filterVendor);
+
     if (filterVendor == null) {
       for (var item in items) {
-        final itemVendors = (await vendorRepo.select()).where((Vendor v) => v.id == item.vendor);
-        if (itemVendors.isNotEmpty && !vendors.contains(itemVendors.first)) {
-          vendors.add(itemVendors.first);
+        if (filterVendors.where((Vendor v) => v.id == item.vendor).isEmpty) {
+          try {
+            filterVendors.add(await vendorRepo.selectSingle(item.vendor));
+          } catch (e) {
+            print(e);
+          }
         }
       }
     }
+
     _sortItems();
     if (mounted) setState(() => busy = false);
   }

@@ -19,9 +19,10 @@ class VendorRepository<T extends DatabaseProvider> {
     return vendor;
   }
 
-  Future<List<Vendor>> select({String searchQuery}) async {
-    final results =
-        List<Vendor>.from((await db.select(tableName)).map<Vendor>((Map e) => Vendor.fromMap(e)));
+  Future<List<Vendor>> select({String searchQuery, bool short = false}) async {
+    final results = List<Vendor>.from(
+        (await db.select(tableName, keys: short ? Vendor.shortKeys : null))
+            .map<Vendor>((Map e) => Vendor.fromMap(e)));
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
       return List.from(

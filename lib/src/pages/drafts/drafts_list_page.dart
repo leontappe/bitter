@@ -86,6 +86,7 @@ class _DraftsListPageState extends State<DraftsListPage> {
         ],
       ),
       body: RefreshIndicator(
+        onRefresh: () async => await onGetDrafts(),
         child: DatabaseErrorWatcher(
           child: (busy)
               ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
@@ -114,7 +115,6 @@ class _DraftsListPageState extends State<DraftsListPage> {
                   ],
                 ),
         ),
-        onRefresh: () async => await onGetDrafts(),
       ),
     );
   }
@@ -137,9 +137,9 @@ class _DraftsListPageState extends State<DraftsListPage> {
     await settings.setUp();
 
     customers = await customerRepo.select();
-    vendors = await vendorRepo.select();
+    vendors = await vendorRepo.select(short: true);
 
-    final filter = await settings.select<int>('drafts_filter');
+    final filter = settings.select<int>('drafts_filter');
     if (drafts.where((Draft d) => d.vendor == filter).isEmpty) {
       filterVendor = null;
     } else {

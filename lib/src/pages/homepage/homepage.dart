@@ -41,7 +41,7 @@ class _HomepageState extends State<Homepage> {
             style: TextStyle(color: Colors.white, decorationColor: Colors.white70, fontSize: 14.0),
             hint: Text('Nach Verkäufer filtern', style: TextStyle(color: Colors.white)),
             items: <DropdownMenuItem<int>>[
-              DropdownMenuItem(child: Text('Filter zurücksetzen'), value: -1),
+              DropdownMenuItem(value: -1, child: Text('Filter zurücksetzen')),
               ...filterVendors
                   .map((Vendor v) => DropdownMenuItem(value: v.id, child: Text(v.name))),
             ],
@@ -90,7 +90,7 @@ class _HomepageState extends State<Homepage> {
   Future<void> initDb() async {
     settings = SettingsRepository();
     await settings.setUp();
-    if (!await settings.hasDbEngine() || !await settings.hasUsername()) {
+    if (!settings.hasDbEngine() || !settings.hasUsername()) {
       await showDialog<dynamic>(
         barrierDismissible: false,
         context: context,
@@ -100,8 +100,8 @@ class _HomepageState extends State<Homepage> {
               'Es ist noch keine Datenbankverbindung eingestellt. Gebe auf der folgenden Seite deinen vollen Namen und die Verbindungsinformationen für den MySQL Server ein um fortzufahren.'),
           actions: <Widget>[
             MaterialButton(
-              child: Text('Fortfahren'),
               onPressed: () => Navigator.of(context).popAndPushNamed('/settings/app'),
+              child: Text('Fortfahren'),
             ),
           ],
         ),
@@ -113,7 +113,7 @@ class _HomepageState extends State<Homepage> {
       vendorRepo = VendorRepository<DatabaseProvider>(InheritedDatabase.of(context));
       try {
         await vendorRepo.setUp();
-        _vendors = await vendorRepo.select();
+        _vendors = await vendorRepo.select(short: true);
       } on NoSuchMethodError {
         print('db not availiable');
         return;

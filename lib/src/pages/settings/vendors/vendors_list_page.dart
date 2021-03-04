@@ -64,7 +64,7 @@ class _VendorsPageState extends State<VendorsPage> {
 
   Future<void> onGetVendors() async {
     if (mounted) setState(() => busy = true);
-    vendors = await repo.select();
+    vendors = await repo.select(short: true);
     if (mounted) setState(() => busy = false);
   }
 

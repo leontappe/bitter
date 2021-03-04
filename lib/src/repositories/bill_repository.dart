@@ -16,8 +16,9 @@ class BillRepository<T extends DatabaseProvider> {
     return bill;
   }
 
-  Future<List<Bill>> select({String searchQuery, int vendorFilter}) async {
-    var results = (await db.select(tableName)).map<Bill>((Map e) => Bill.fromMap(e));
+  Future<List<Bill>> select({String searchQuery, int vendorFilter, bool short = false}) async {
+    var results = (await db.select(tableName, keys: short ? Bill.shortKeys: null))
+        .map<Bill>((Map e) => Bill.fromMap(e));
     if (searchQuery != null && searchQuery.isNotEmpty) {
       results = results.where((Bill d) => (d.billNr
               .toLowerCase()

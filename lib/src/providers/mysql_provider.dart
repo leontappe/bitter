@@ -128,7 +128,7 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
     }
 
     var connsString = '';
-    connections.forEach((PooledConnection c) => connsString += '$c \n' );
+    connections.forEach((PooledConnection c) => connsString += '$c \n');
     _log.info('avaliable connections:\n$connsString');
 
     if (connections.length != size) return false;
@@ -158,10 +158,10 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
   }
 
   @override
-  Future<List<Map>> select(String table) async {
+  Future<List<Map>> select(String table, {List<String> keys}) async {
     _log.fine('selecting all from "$table"');
 
-    final poolQuery = Query('SELECT * FROM $table;');
+    final poolQuery = Query('SELECT ${keys != null ? keys.join(', ') : '*'} FROM $table;');
     _queries.add(poolQuery);
 
     final result =

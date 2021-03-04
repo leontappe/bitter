@@ -15,7 +15,7 @@ abstract class DatabaseProvider {
 
   Future<bool> open(String path, {String host, int port, String user, String password});
 
-  Future<List<Map>> select(String table);
+  Future<List<Map>> select(String table, {List<String> keys});
 
   Future<Map> selectSingle(String table, int id);
 
