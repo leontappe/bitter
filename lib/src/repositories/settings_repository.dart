@@ -62,7 +62,7 @@ class SettingsRepository {
   T select<T>(String key) {
     _log.fine('selecting $key of type $T');
     if (_hasGeneric(key)) {
-      _log.fine('found $key:${_getCurrentSettings[key]}');
+      //_log.fine('found $key:${_getCurrentSettings[key]}');
       return _getCurrentSettings[key] as T;
     } else {
       return null;
@@ -79,7 +79,7 @@ class SettingsRepository {
     await data.create(recursive: true);
 
     final oldData = await data.readAsString();
-    _log.fine('content of existing config: $oldData');
+    //_log.fine('content of existing config: $oldData');
     if (oldData.isEmpty) {
       await _writeSettings(<String, String>{});
     }

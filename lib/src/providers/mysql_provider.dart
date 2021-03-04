@@ -127,8 +127,9 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
       }
     }
 
-    _log.info('avaliable connections:\n');
-    connections.forEach(_log.info);
+    var connsString = '';
+    connections.forEach((PooledConnection c) => connsString += '$c \n' );
+    _log.info('avaliable connections:\n$connsString');
 
     if (connections.length != size) return false;
 
