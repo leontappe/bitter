@@ -389,8 +389,8 @@ class _VendorPageState extends State<VendorPage> {
                                     onPressed: () => onClearImage(HeaderImage.right),
                                     child: Text('Bild entfernen'))
                                 : MaterialButton(
-                                    child: Text('Bild auswählen'),
                                     onPressed: () => onOpenImage(HeaderImage.right),
+                                    child: Text('Bild auswählen'),
                                   ),
                           ),
                           ListTile(
@@ -403,8 +403,8 @@ class _VendorPageState extends State<VendorPage> {
                                     onPressed: () => onClearImage(HeaderImage.center),
                                     child: Text('Bild entfernen'))
                                 : MaterialButton(
-                                    child: Text('Bild auswählen'),
                                     onPressed: () => onOpenImage(HeaderImage.center),
+                                    child: Text('Bild auswählen'),
                                   ),
                           ),
                           ListTile(
@@ -417,8 +417,8 @@ class _VendorPageState extends State<VendorPage> {
                                     onPressed: () => onClearImage(HeaderImage.left),
                                     child: Text('Bild entfernen'))
                                 : MaterialButton(
-                                    child: Text('Bild auswählen'),
                                     onPressed: () => onOpenImage(HeaderImage.left),
+                                    child: Text('Bild auswählen'),
                                   ),
                           ),
                         ],
@@ -584,7 +584,7 @@ class _VendorPageState extends State<VendorPage> {
       }
     }
 
-    await Navigator.pop(context, changed);
+    Navigator.pop(context, changed);
   }
 
   Future<void> onSaveVendor() async {

@@ -69,7 +69,7 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
                   TextStyle(color: Colors.white, decorationColor: Colors.white70, fontSize: 14.0),
               hint: Text('Nach Verkäufer filtern', style: TextStyle(color: Colors.white)),
               items: <DropdownMenuItem<int>>[
-                DropdownMenuItem(child: Text('Filter zurücksetzen'), value: -1),
+                DropdownMenuItem(value: -1, child: Text('Filter zurücksetzen')),
                 ...vendors.map((Vendor v) => DropdownMenuItem(value: v.id, child: Text(v.name)))
               ],
               onChanged: onFilter,
@@ -187,16 +187,6 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
         return OptionDialog(
           disableCheckbox: true,
           titleText: 'Lagerplatz erstellen',
-          children: [
-            VendorSelector(
-              initialValue: null,
-              onChanged: (Vendor v) => result.vendorId = v.id,
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Name'),
-              onChanged: (String input) => result.name = input,
-            )
-          ],
           actions: [
             MaterialButton(
               onPressed: () => Navigator.pop(context, null),
@@ -206,6 +196,16 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
               onPressed: () => Navigator.pop(context, result),
               child: Text('Erstellen'),
             ),
+          ],
+          children: [
+            VendorSelector(
+              initialValue: null,
+              onChanged: (Vendor v) => result.vendorId = v.id,
+            ),
+            TextField(
+              decoration: InputDecoration(labelText: 'Name'),
+              onChanged: (String input) => result.name = input,
+            )
           ],
         );
       },

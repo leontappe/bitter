@@ -46,7 +46,7 @@ class CommissioningRepository<T extends DatabaseProvider> {
   Future<void> setUp() async {
     final settingsRepo = SettingsRepository();
     await settingsRepo.setUp();
-    final settings = await settingsRepo.getMySqlSettings();
+    final settings = settingsRepo.getMySqlSettings();
     final opened = await db.open(
       settings.database,
       host: settings.host,

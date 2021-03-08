@@ -348,14 +348,14 @@ class _CustomerPageState extends State<CustomerPage> {
         case 0:
           break;
         case 1:
-          await onSaveCustomer();
+          onSaveCustomer();
           break;
         default:
           return;
       }
     }
 
-    await Navigator.pop(context, changed);
+    Navigator.pop(context, changed);
   }
 
   void onSaveCustomer() async {

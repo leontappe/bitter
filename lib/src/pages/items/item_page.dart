@@ -190,7 +190,7 @@ class _ItemPageState extends State<ItemPage> {
       if (mounted) setState(() => busy = true);
       await repo.delete(id);
       if (mounted) setState(() => busy = false);
-      await Navigator.pop(context, true);
+      Navigator.pop(context, true);
     }
   }
 
@@ -243,7 +243,7 @@ class _ItemPageState extends State<ItemPage> {
       } else {
         await repo.insert(item);
         dirty = false;
-        await Navigator.pop<bool>(context, true);
+        Navigator.pop<bool>(context, true);
       }
       if (mounted) setState(() => busy = false);
       return true;

@@ -21,7 +21,7 @@ void main() async {
 
   var file = File('test/test.pdf');
 
-  file.writeAsBytesSync(doc.save());
+  file.writeAsBytesSync(await doc.save());
 
   doc = await pdf.createDocumentFromBill(
     exampleDraft,
@@ -34,5 +34,5 @@ void main() async {
 
   var previewFile = File('test/test_preview.pdf');
 
-  previewFile.writeAsBytesSync(doc.save());
+  previewFile.writeAsBytesSync(await doc.save());
 }

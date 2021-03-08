@@ -69,12 +69,12 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
                 value: dbEngine,
                 items: <DropdownMenuItem<DbEngine>>[
                   DropdownMenuItem<DbEngine>(
-                    child: Text('SQLite'),
                     value: DbEngine.sqlite,
+                    child: Text('SQLite'),
                   ),
                   DropdownMenuItem<DbEngine>(
-                    child: Text('MySQL'),
                     value: DbEngine.mysql,
+                    child: Text('MySQL'),
                   ),
                 ],
                 onChanged: (DbEngine engine) {
@@ -167,10 +167,10 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
   Future<void> initDb() async {
     repo = SettingsRepository();
     await repo.setUp();
-    settings = await repo.getMySqlSettings();
-    username = await repo.getUsername() ?? '';
+    settings = repo.getMySqlSettings();
+    username = repo.getUsername() ?? '';
     if (!Platform.isWindows) {
-      dbEngine = await repo.getDbEngine() ?? DbEngine.sqlite;
+      dbEngine = repo.getDbEngine() ?? DbEngine.sqlite;
     } else {
       await repo.setDbEngine(dbEngine);
     }

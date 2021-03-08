@@ -49,8 +49,8 @@ class _CommissioningCreatorPageState extends State<CommissioningCreatorPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  child: Text('Infos', style: Theme.of(context).textTheme.headline5),
                   padding: EdgeInsets.only(left: 8.0, top: 8.0),
+                  child: Text('Infos', style: Theme.of(context).textTheme.headline5),
                 ),
                 ListTile(title: Text('Verkäufer: '), trailing: Text('${vendor?.name ?? ''}')),
                 ListTile(title: Text('Lagerplatz: '), trailing: Text('${warehouse.name}')),

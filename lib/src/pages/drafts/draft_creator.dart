@@ -151,9 +151,6 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                           width: 196.0,
                           height: 64.0,
                           child: MaterialButton(
-                            child: Text((draft.serviceDate != null)
-                                ? formatDate(draft.serviceDate)
-                                : 'Am Rechnungsdatum'),
                             onPressed: (vendorIsset)
                                 ? () async {
                                     draft.serviceDate = await showDatePicker(
@@ -168,6 +165,9 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                                     dirty = true;
                                   }
                                 : null,
+                            child: Text((draft.serviceDate != null)
+                                ? formatDate(draft.serviceDate)
+                                : 'Am Rechnungsdatum'),
                           ),
                         ),
                       ),
@@ -248,7 +248,6 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                         child: Padding(
                           padding: EdgeInsets.all(8.0),
                           child: ElevatedButton(
-                            child: Icon(Icons.add, size: 32.0),
                             onPressed: (vendorIsset)
                                 ? () => onAddItem(Item(
                                     price: null,
@@ -256,6 +255,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                                     tax: _vendor.defaultTax ?? 19,
                                     vendor: _vendor.id))
                                 : null,
+                            child: Icon(Icons.add, size: 32.0),
                           ),
                         ),
                       ),

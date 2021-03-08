@@ -53,7 +53,7 @@ class SettingsRepository {
 
   Future<void> insert(String key, dynamic value) async {
     _log.config('inserting $key:$value');
-    final settings = await _getCurrentSettings;
+    final settings = _getCurrentSettings;
     settings.addEntries(<MapEntry<String, dynamic>>[MapEntry<String, dynamic>(key, value)]);
     _log.fine('content of new config: $settings');
     await _writeSettings(settings);

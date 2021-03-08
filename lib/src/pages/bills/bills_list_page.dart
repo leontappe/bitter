@@ -61,7 +61,7 @@ class _BillsListPageState extends State<BillsListPage> {
                   TextStyle(color: Colors.white, decorationColor: Colors.white70, fontSize: 14.0),
               hint: Text('Nach Verkäufer filtern', style: TextStyle(color: Colors.white)),
               items: <DropdownMenuItem<int>>[
-                DropdownMenuItem(child: Text('Filter zurücksetzen'), value: -1),
+                DropdownMenuItem(value: -1, child: Text('Filter zurücksetzen')),
                 ...vendors.map((Vendor v) => DropdownMenuItem(value: v.id, child: Text(v.name)))
               ],
               onChanged: onFilter,

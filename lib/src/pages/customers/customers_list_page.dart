@@ -60,6 +60,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
         ],
       ),
       body: RefreshIndicator(
+        onRefresh: onGetCustomers,
         child: DatabaseErrorWatcher(
           child: (busy)
               ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
@@ -78,7 +79,6 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
                   ],
                 ),
         ),
-        onRefresh: onGetCustomers,
       ),
     );
   }

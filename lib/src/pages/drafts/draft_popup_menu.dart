@@ -208,20 +208,6 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
             checkboxText: 'Liefer- und Leistungsdatum anzeigen',
             checked: result.showDates,
             onChecked: (bool input) => result.showDates = input,
-            children: [
-              TextField(
-                decoration: InputDecoration(labelText: 'Titel'),
-                maxLines: 1,
-                controller: TextEditingController(text: result.title),
-                onChanged: (String input) => result.title = input,
-              ),
-              TextField(
-                decoration: InputDecoration(labelText: 'Anschreiben'),
-                maxLines: null,
-                controller: TextEditingController(text: result.letter),
-                onChanged: (String input) => result.letter = input,
-              ),
-            ],
             actions: [
               MaterialButton(
                 onPressed: () {
@@ -236,6 +222,20 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
                   Navigator.pop(context, result);
                 },
                 child: Text('Erstellen'),
+              ),
+            ],
+            children: [
+              TextField(
+                decoration: InputDecoration(labelText: 'Titel'),
+                maxLines: 1,
+                controller: TextEditingController(text: result.title),
+                onChanged: (String input) => result.title = input,
+              ),
+              TextField(
+                decoration: InputDecoration(labelText: 'Anschreiben'),
+                maxLines: null,
+                controller: TextEditingController(text: result.letter),
+                onChanged: (String input) => result.letter = input,
               ),
             ],
           );

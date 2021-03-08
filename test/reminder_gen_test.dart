@@ -20,7 +20,7 @@ void main() async {
 
   var file = File('test/test_reminder.pdf');
 
-  file.writeAsBytesSync(doc.save());
+  file.writeAsBytesSync(await doc.save());
 
   print(doc);
 }

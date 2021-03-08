@@ -320,7 +320,7 @@ class _BackupPageState extends State<BackupPage> {
     final archivePath =
         '$backupPath/backup_${startTime.toString().replaceAll(':', '-').replaceAll(' ', '_').replaceAll('.', '-')}.zip';
     encoder.create(archivePath);
-    await encoder.addDirectory(csvDir);
+    encoder.addDirectory(csvDir);
     encoder.close();
 
     setState(() => backups.last.finish(result: archivePath));

@@ -268,7 +268,7 @@ class _BillPageState extends State<BillPage> {
     await file.create(recursive: true);
     await file.writeAsBytes(pdfData);
 
-    await ScaffoldMessenger.of(_key.currentContext).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(_key.currentContext).showSnackBar(SnackBar(
       content: Text('Die Mahnung wurde erfolgreich unter ${file.path} abgespeichert.'),
       duration: const Duration(seconds: 5),
     ));

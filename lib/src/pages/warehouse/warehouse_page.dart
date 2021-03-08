@@ -182,6 +182,25 @@ class _WarehousePageState extends State<WarehousePage> {
           return OptionDialog(
             disableCheckbox: true,
             titleText: 'Neue Kiste',
+            actions: [
+              MaterialButton(
+                onPressed: () => Navigator.pop(context, null),
+                child: Text('Abbrechen'),
+              ),
+              MaterialButton(
+                onPressed: () {
+                  if (result.itemId == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Bitte gebe der Kiste einen Artikel '),
+                      duration: Duration(seconds: 3),
+                    ));
+                  } else {
+                    Navigator.pop(context, result);
+                  }
+                },
+                child: Text('Erstellen'),
+              ),
+            ],
             children: [
               TextField(
                 decoration: InputDecoration(labelText: 'Name'),
@@ -209,25 +228,6 @@ class _WarehousePageState extends State<WarehousePage> {
                 },
                 initialValue: result.itemId,
                 disabled: result.subcrate != null,
-              ),
-            ],
-            actions: [
-              MaterialButton(
-                child: Text('Abbrechen'),
-                onPressed: () => Navigator.pop(context, null),
-              ),
-              MaterialButton(
-                child: Text('Erstellen'),
-                onPressed: () {
-                  if (result.itemId == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Bitte gebe der Kiste einen Artikel '),
-                      duration: Duration(seconds: 3),
-                    ));
-                  } else {
-                    Navigator.pop(context, result);
-                  }
-                },
               ),
             ],
           );

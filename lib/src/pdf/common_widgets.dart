@@ -32,7 +32,7 @@ Widget createHeaderFromImages(PdfDocument doc,
           if (left != null)
             Container(
               height: 48.0,
-              child: Image.provider(
+              child: Image(
                 RawImage(
                   bytes: leftImg.data.buffer.asUint8List(),
                   height: leftImg.height,
@@ -45,7 +45,7 @@ Widget createHeaderFromImages(PdfDocument doc,
           if (center != null)
             Container(
               height: 48.0,
-              child: Image.provider(
+              child: Image(
                 RawImage(
                   bytes: centerImg.data.buffer.asUint8List(),
                   height: centerImg.height,
@@ -58,7 +58,7 @@ Widget createHeaderFromImages(PdfDocument doc,
           if (right != null)
             Container(
               height: 48.0,
-              child: Image.provider(
+              child: Image(
                 RawImage(
                   bytes: rightImg.data.buffer.asUint8List(),
                   height: rightImg.height,
@@ -85,7 +85,7 @@ Widget pageCountFooter(Context context, Vendor vendor, Font font) {
               width: 1.0,
             ),
           ),
-          borderRadiusEx: BorderRadius.all(Radius.zero),
+          borderRadius: BorderRadius.all(Radius.zero),
           shape: BoxShape.rectangle,
         ),
         child: Container(width: 500.0, height: 0.0)),

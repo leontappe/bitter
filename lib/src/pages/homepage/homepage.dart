@@ -122,7 +122,7 @@ class _HomepageState extends State<Homepage> {
       }
     }
 
-    filterVendor = await settings.select<int>('homepage_filter');
+    filterVendor = settings.select<int>('homepage_filter');
     if (mounted) setState(() => filterVendors = _vendors);
   }
 
