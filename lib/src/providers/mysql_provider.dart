@@ -4,18 +4,24 @@ import 'dart:io';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/database_error.dart';
 import 'database_provider.dart';
 
-class MySqlProvider extends DatabaseProvider {
+class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
   final Logger _log = Logger('MySqlProvider');
 
-  MySqlConnection conn;
   StreamController<DatabaseError> _errors;
+
+  List<PooledConnection> connections;
+  StreamController<Query> _queries;
+  StreamController<PooledResult> _results;
 
   MySqlProvider() {
     _errors = StreamController<DatabaseError>.broadcast();
+    _results = StreamController<PooledResult>.broadcast();
+    _queries = StreamController<Query>();
   }
 
   @override
@@ -43,54 +49,28 @@ class MySqlProvider extends DatabaseProvider {
 
     _log.fine('creating table named "$table" with $cols');
 
-    try {
-      await conn.query(query);
-    } on SocketException catch (e) {
-      _log.severe('$e ${_socketExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.create,
-          exception: e,
-          description: (e.message.contains('Failed host lookup'))
-              ? 'Host ${e.address.host} konnte nicht aufgelöst werden'
-              : 'Verbindung durch Zeitüberschreitung fehlgeschlagen'));
-    } on MySqlException catch (e) {
-      _log.severe('$e ${_mySqlExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.create,
-          exception: e, description: _mySqlExceptionText(e)));
-    }
+    final poolQuery = Query(query);
+    _queries.add(poolQuery);
+
+    return (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid));
   }
 
   @override
   Future<int> delete(String table, int id) async {
     _log.fine('deleting from "$table": $id');
-    int result;
-    try {
-      result = (await conn.query('DELETE FROM $table WHERE id = ?', [id])).affectedRows;
-    } on SocketException catch (e) {
-      _log.severe('$e ${_socketExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.delete,
-          exception: e, description: _socketExceptionText(e)));
-    } on MySqlException catch (e) {
-      _log.severe('$e ${_mySqlExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.delete,
-          exception: e, description: _mySqlExceptionText(e)));
-    }
-    return result;
+    final poolQuery = Query('DELETE FROM $table WHERE id = ?', <dynamic>[id]);
+    _queries.add(poolQuery);
+    return (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
+        .results
+        .affectedRows;
   }
 
   @override
   Future<void> dropTable(String table) async {
     _log.fine('dropping "$table"');
-    try {
-      await conn.query('DROP TABLE $table;');
-    } on SocketException catch (e) {
-      _log.severe('$e ${_socketExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.drop,
-          exception: e, description: _socketExceptionText(e)));
-    } on MySqlException catch (e) {
-      _log.severe('$e ${_mySqlExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.drop,
-          exception: e, description: _mySqlExceptionText(e)));
-    }
+    final poolQuery = Query('DROP TABLE $table;');
+    _queries.add(poolQuery);
+    return (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid));
   }
 
   @override
@@ -107,59 +87,86 @@ class MySqlProvider extends DatabaseProvider {
     }
     vals = vals.substring(0, vals.length - 2);
 
-    int result;
+    final poolQuery = Query('INSERT INTO $table ($cols) VALUES ($vals);', item.values.toList());
+    _queries.add(poolQuery);
 
-    try {
-      result =
-          (await conn.query('INSERT INTO $table ($cols) VALUES ($vals);', item.values.toList()))
-              .insertId;
-    } on SocketException catch (e) {
-      _log.severe('$e ${_socketExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.insert,
-          exception: e, description: _socketExceptionText(e)));
-    } on MySqlException catch (e) {
-      _log.severe('$e ${_mySqlExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.insert,
-          exception: e, description: _mySqlExceptionText(e)));
-    }
-
-    return result;
+    return (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
+        .results
+        .insertId;
   }
 
   @override
-  Future<bool> open(String database,
-      {@required String host, @required int port, String user, String password}) async {
+  Future<bool> open(String path, {String host, int port, String user, String password}) {
+    return Future.value(connections.isNotEmpty);
+  }
+
+  @override
+  Future<bool> openPool(
+    String database, {
+    @required String host,
+    @required int port,
+    String user,
+    String password,
+    int size = 10,
+  }) async {
     _log.fine('opening DB on sql://$user:password@$host:$port');
-    try {
-      conn = await MySqlConnection.connect(
-          ConnectionSettings(db: database, host: host, port: port, user: user, password: password));
-    } on SocketException catch (e) {
-      _log.severe('$e ${_socketExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.open,
-          exception: e, description: _socketExceptionText(e)));
-    } on MySqlException catch (e) {
-      _log.severe('$e ${_mySqlExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.open,
-          exception: e, description: _mySqlExceptionText(e)));
+    connections = <PooledConnection>[];
+    for (var i = 0; i < size; i++) {
+      _log.fine('spawning connection ${i + 1}');
+      try {
+        connections.add(PooledConnection(await MySqlConnection.connect(ConnectionSettings(
+            db: database, host: host, port: port, user: user, password: password))));
+      } on SocketException catch (e) {
+        _log.severe('$e ${_socketExceptionText(e)}');
+        _errors.add(DatabaseError(DatabaseErrorCategory.open,
+            exception: e, description: _socketExceptionText(e)));
+      } on MySqlException catch (e) {
+        _log.severe('$e ${_mySqlExceptionText(e)}');
+        _errors.add(DatabaseError(DatabaseErrorCategory.open,
+            exception: e, description: _mySqlExceptionText(e)));
+      }
     }
-    return conn != null;
+
+    var connsString = '';
+    connections.forEach((PooledConnection c) => connsString += '$c \n');
+    _log.info('avaliable connections:\n$connsString');
+
+    if (connections.length != size) return false;
+
+    final listener = _queries.stream.listen((Query q) async {
+      final freeConn = connections.firstWhere((PooledConnection conn) => !conn.busy);
+      _log.fine('starting query "${q.query}" on $freeConn');
+      freeConn.busy = true;
+      try {
+        _results.add(PooledResult(q.uid, await freeConn.connection.query(q.query, q.values)));
+      } on SocketException catch (e) {
+        _log.severe('$e ${_socketExceptionText(e)}');
+        _errors.add(DatabaseError(DatabaseErrorCategory.create,
+            exception: e,
+            description: (e.message.contains('Failed host lookup'))
+                ? 'Host ${e.address.host} konnte nicht aufgelöst werden'
+                : 'Verbindung durch Zeitüberschreitung fehlgeschlagen'));
+      } on MySqlException catch (e) {
+        _log.severe('$e ${_mySqlExceptionText(e)}');
+        _errors.add(DatabaseError(DatabaseErrorCategory.create,
+            exception: e, description: _mySqlExceptionText(e)));
+      }
+      freeConn.busy = false;
+    });
+
+    return !listener.isPaused;
   }
 
   @override
-  Future<List<Map>> select(String table) async {
+  Future<List<Map>> select(String table, {List<String> keys}) async {
     _log.fine('selecting all from "$table"');
-    Results result;
-    try {
-      result = await conn.query('SELECT * FROM $table;');
-    } on SocketException catch (e) {
-      _log.severe('$e ${_socketExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.select,
-          exception: e, description: _socketExceptionText(e)));
-    } on MySqlException catch (e) {
-      _log.severe('$e ${_mySqlExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.select,
-          exception: e, description: _mySqlExceptionText(e)));
-    }
+
+    final poolQuery = Query('SELECT ${keys != null ? keys.join(', ') : '*'} FROM $table;');
+    _queries.add(poolQuery);
+
+    final result =
+        (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
+            .results;
     if (result == null) return null;
     return List.from(result.map<Map>((Row e) => e.fields));
   }
@@ -167,20 +174,14 @@ class MySqlProvider extends DatabaseProvider {
   @override
   Future<Map> selectSingle(String table, int id) async {
     _log.fine('selecting item with id=$id from "$table"');
-    Iterable<Map<dynamic, dynamic>> result = [];
-    try {
-      result = (await conn.query('SELECT * FROM $table WHERE id = ?;', <dynamic>[id]))
-          .map<Map>((Row e) => e.fields);
-    } on SocketException catch (e) {
-      _log.severe('$e ${_socketExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.selectSingle,
-          exception: e, description: _socketExceptionText(e)));
-    } on MySqlException catch (e) {
-      _log.severe('$e ${_mySqlExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.selectSingle,
-          exception: e, description: _mySqlExceptionText(e)));
-    }
 
+    final poolQuery = Query('SELECT * FROM $table WHERE id = $id;');
+    _queries.add(poolQuery);
+
+    final result =
+        (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
+            .results
+            .map<Map>((Row e) => e.fields);
     if (result.isNotEmpty) {
       return result.single;
     }
@@ -191,29 +192,20 @@ class MySqlProvider extends DatabaseProvider {
   Future<int> update(String table, int id, Map<String, dynamic> item) async {
     _log.fine('updating $item with id=$id in "$table"');
     final columns = item.keys;
-    final values = item.values;
+    final values = item.values.toList();
     var cols = '';
     for (var item in columns) {
       cols = '$cols$item=?, ';
     }
     cols = cols.substring(0, cols.length - 2);
 
-    int result;
+    final poolQuery = Query('UPDATE $table SET $cols WHERE id=$id;', values);
 
-    try {
-      result = (await conn.query('UPDATE $table SET $cols WHERE id=?;', <dynamic>[...values, id]))
-          .affectedRows;
-    } on SocketException catch (e) {
-      _log.severe('$e ${_socketExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.update,
-          exception: e, description: _socketExceptionText(e)));
-    } on MySqlException catch (e) {
-      _log.severe('$e ${_mySqlExceptionText(e)}');
-      _errors.add(DatabaseError(DatabaseErrorCategory.update,
-          exception: e, description: _mySqlExceptionText(e)));
-    }
+    _queries.add(poolQuery);
 
-    return result;
+    return (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
+        .results
+        .affectedRows;
   }
 
   String _mySqlExceptionText(MySqlException e) {
@@ -230,5 +222,38 @@ class MySqlProvider extends DatabaseProvider {
                 : (e.osError?.message ?? '').contains('Connection refused')
                     ? 'Verbindung wurde vom Server abgelehnt. Bitte prüfe die Anwendungseinstellungen.'
                     : 'Unbekanntes Verbindungsproblem: ${e}.';
+  }
+}
+
+class PooledConnection {
+  String uid;
+  final MySqlConnection connection;
+  bool busy;
+
+  PooledConnection(this.connection, {this.busy = false}) {
+    uid = Uuid().v4();
+  }
+
+  Map<String, dynamic> get toMap =>
+      <String, dynamic>{'uid': uid, 'connection': connection.toString(), 'busy': busy};
+
+  @override
+  String toString() => 'PooledConnection [$toMap]';
+}
+
+class PooledResult {
+  final String uid;
+  final Results results;
+
+  PooledResult(this.uid, this.results);
+}
+
+class Query {
+  String uid;
+  final String query;
+  final List<dynamic> values;
+
+  Query(this.query, [this.values]) {
+    uid = Uuid().v4();
   }
 }

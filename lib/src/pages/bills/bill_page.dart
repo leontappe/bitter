@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:bitter/src/widgets/option_dialog.dart';
 import 'package:flutter/material.dart';
 
 import '../../format_util.dart';
@@ -16,6 +15,7 @@ import '../../widgets/database_error_watcher.dart';
 import '../../widgets/info_cards/customer_card.dart';
 import '../../widgets/info_cards/items_card.dart';
 import '../../widgets/info_cards/vendor_card.dart';
+import '../../widgets/option_dialog.dart';
 import 'save_bill_button.dart';
 
 class BillPage extends StatefulWidget {
@@ -55,7 +55,7 @@ class _BillPageState extends State<BillPage> {
         title: Text(bill?.billNr ?? ''),
         actions: [
           IconButton(icon: Icon(Icons.save), onPressed: (!busy) ? onSaveBill : null),
-          SaveBillButton(bill: (!busy) ? bill : null),
+          SaveBillButton(billId: (!busy) ? bill.id : null),
         ],
       ),
       body: DatabaseErrorWatcher(
@@ -136,8 +136,6 @@ class _BillPageState extends State<BillPage> {
                           bill.reminders.length < 3)
                         ListTile(
                             title: ElevatedButton(
-                          child: Text(
-                              '${(bill.reminders.isNotEmpty) ? bill.reminders.last.iteration.index + 2 : '1'}. Mahnung erstellen'),
                           onPressed: (bill.reminders.isEmpty ||
                                   (bill.reminders.isNotEmpty &&
                                       DateTime.now().isAfter(bill.reminders.last.deadline)))
@@ -146,6 +144,8 @@ class _BillPageState extends State<BillPage> {
                                       ? bill.reminders.last.iteration.index + 1
                                       : 0))
                               : null,
+                          child: Text(
+                              '${(bill.reminders.isNotEmpty) ? bill.reminders.last.iteration.index + 2 : '1'}. Mahnung erstellen'),
                         )),
                       Padding(
                         padding: EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 8.0),
@@ -294,6 +294,13 @@ class _BillPageState extends State<BillPage> {
       builder: (BuildContext context) => OptionDialog(
         disableCheckbox: true,
         titleText: '${iteration.index + 1}. Mahnung erstellen',
+        actions: [
+          MaterialButton(
+              onPressed: () => Navigator.of(context).pop(null), child: Text('Abbrechen')),
+          MaterialButton(
+              onPressed: () => Navigator.of(context).pop(reminder),
+              child: Text('Mahnung erstellen')),
+        ],
         children: [
           TextFormField(
             decoration: InputDecoration(labelText: 'Mahngebühr', suffixText: '€'),
@@ -328,13 +335,6 @@ class _BillPageState extends State<BillPage> {
             initialValue: reminder.text,
             onChanged: (String input) => reminder.text = input,
           ),
-        ],
-        actions: [
-          MaterialButton(
-              onPressed: () => Navigator.of(context).pop(null), child: Text('Abbrechen')),
-          MaterialButton(
-              onPressed: () => Navigator.of(context).pop(reminder),
-              child: Text('Mahnung erstellen')),
         ],
       ),
     );

@@ -1,7 +1,6 @@
 import '../models/bill.dart';
 import '../models/item.dart';
 import '../providers/database_provider.dart';
-import 'settings_repository.dart';
 
 export '../models/bill.dart';
 
@@ -17,8 +16,9 @@ class BillRepository<T extends DatabaseProvider> {
     return bill;
   }
 
-  Future<List<Bill>> select({String searchQuery, int vendorFilter}) async {
-    var results = (await db.select(tableName)).map<Bill>((Map e) => Bill.fromMap(e));
+  Future<List<Bill>> select({String searchQuery, int vendorFilter, bool short = false}) async {
+    var results = (await db.select(tableName, keys: short ? Bill.shortKeys: null))
+        .map<Bill>((Map e) => Bill.fromMap(e));
     if (searchQuery != null && searchQuery.isNotEmpty) {
       results = results.where((Bill d) => (d.billNr
               .toLowerCase()
@@ -53,16 +53,7 @@ class BillRepository<T extends DatabaseProvider> {
   }
 
   Future<void> setUp() async {
-    final settingsRepo = SettingsRepository();
-    await settingsRepo.setUp();
-    final settings = await settingsRepo.getMySqlSettings();
-    final opened = await db.open(
-      settings.database,
-      host: settings.host,
-      port: settings.port,
-      user: settings.user,
-      password: settings.password,
-    );
+    final opened = await db.open(null);
 
     if (opened) {
       await db.createTable(

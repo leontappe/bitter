@@ -52,30 +52,44 @@ Future<void> startLogging() async {
   }
 
   final logFile = await File(logPath).create(recursive: true);
+  final logSink = logFile.openWrite(mode: FileMode.writeOnlyAppend);
 
   Logger.root.level = Level.ALL; // defaults to Level.INFO
-  Logger.root.onRecord.listen((record) async {
+  Logger.root.onRecord.listen((record) {
     final line = '${record.loggerName}/${record.level.name}: ${record.time}: ${record.message}';
     if (mySqlLogNames.contains(record.loggerName)) {
       return;
     } else {
-      await logFile.writeAsBytes(utf8.encode(line + '\n'), mode: FileMode.append);
+      logSink.add(utf8.encode(line + '\n'));
     }
     if (record.level.value >= 700) print(line);
-  });
+  }, onDone: () => logSink.close());
 
   Logger('bitter').info('Starting log in $logPath');
 }
 
 class Bitter extends StatelessWidget {
+  final SettingsRepository settingsRepo = SettingsRepository();
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DbEngine>(
       future: initDb(),
       builder: (BuildContext context, AsyncSnapshot<DbEngine> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
+          final provider = (snapshot.data == DbEngine.mysql) ? MySqlProvider() : SqliteProvider();
+          if (provider is MySqlProvider) {
+            final settings = settingsRepo.getMySqlSettings();
+            provider.openPool(
+              settings.database,
+              host: settings.host,
+              port: settings.port,
+              user: settings.user,
+              password: settings.password,
+            );
+          }
           return InheritedDatabase(
-            provider: (snapshot.data == DbEngine.mysql) ? MySqlProvider() : SqliteProvider(),
+            provider: provider,
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
               title: 'bitter',
@@ -109,8 +123,7 @@ class Bitter extends StatelessWidget {
   }
 
   Future<DbEngine> initDb() async {
-    final settings = SettingsRepository();
-    await settings.setUp();
-    return settings.getDbEngine();
+    await settingsRepo.setUp();
+    return settingsRepo.getDbEngine();
   }
 }

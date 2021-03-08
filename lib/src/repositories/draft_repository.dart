@@ -3,7 +3,6 @@ import '../models/draft.dart';
 import '../models/item.dart';
 import '../models/vendor.dart';
 import '../providers/database_provider.dart';
-import 'settings_repository.dart';
 
 export '../models/draft.dart';
 
@@ -75,16 +74,7 @@ class DraftRepository<T extends DatabaseProvider> {
   }
 
   Future<void> setUp() async {
-    final settingsRepo = SettingsRepository();
-    await settingsRepo.setUp();
-    final settings = await settingsRepo.getMySqlSettings();
-    final opened = await db.open(
-      settings.database,
-      host: settings.host,
-      port: settings.port,
-      user: settings.user,
-      password: settings.password,
-    );
+    final opened = await db.open(null);
 
     if (opened) {
       await db.createTable(

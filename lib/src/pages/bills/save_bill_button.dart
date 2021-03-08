@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 
-import '../../models/bill.dart';
+import '../../providers/inherited_database.dart';
+import '../../repositories/bill_repository.dart';
 import '../../ui_util.dart';
 
 class SaveBillButton extends StatelessWidget {
-  final Bill bill;
+  final int billId;
 
-  const SaveBillButton({Key key, @required this.bill}) : super(key: key);
+  const SaveBillButton({@required this.billId});
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
       tooltip: 'Rechnung abspeichern',
       icon: Icon(Icons.file_download),
-      onPressed: (bill != null) ? () => onSaveBill(context, bill.billNr, bill.file) : null,
+      onPressed: (billId != null)
+          ? () async {
+              final bill = await BillRepository(InheritedDatabase.of(context)).selectSingle(billId);
+              await onSaveBill(context, bill.billNr, bill.file);
+            }
+          : null,
     );
   }
 }

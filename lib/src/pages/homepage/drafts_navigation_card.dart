@@ -128,7 +128,7 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
 
   Future<void> onRefresh() async {
     _customers = await _customerRepo.select();
-    _vendors = await _vendorRepo.select();
+    _vendors = await _vendorRepo.select(short: true);
     _drafts = await _draftRepo.select();
     if (widget.filter != null && widget.filter > 0) {
       _drafts.removeWhere((Draft d) => d.vendor != widget.filter);

@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:bitter/src/repositories/item_repository.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +7,7 @@ import '../../../models/reminder.dart';
 import '../../../models/vendor.dart';
 import '../../../providers/inherited_database.dart';
 import '../../../repositories/draft_repository.dart';
+import '../../../repositories/item_repository.dart';
 import '../../../repositories/vendor_repository.dart';
 import '../../../widgets/database_error_watcher.dart';
 import '../../../widgets/info_cards/vendor_card.dart';

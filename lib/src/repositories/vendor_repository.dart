@@ -1,6 +1,5 @@
 import '../models/vendor.dart';
 import '../providers/database_provider.dart';
-import 'settings_repository.dart';
 
 export '../models/vendor.dart';
 
@@ -20,9 +19,10 @@ class VendorRepository<T extends DatabaseProvider> {
     return vendor;
   }
 
-  Future<List<Vendor>> select({String searchQuery}) async {
-    final results =
-        List<Vendor>.from((await db.select(tableName)).map<Vendor>((Map e) => Vendor.fromMap(e)));
+  Future<List<Vendor>> select({String searchQuery, bool short = false}) async {
+    final results = List<Vendor>.from(
+        (await db.select(tableName, keys: short ? Vendor.shortKeys : null))
+            .map<Vendor>((Map e) => Vendor.fromMap(e)));
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
       return List.from(
@@ -44,16 +44,7 @@ class VendorRepository<T extends DatabaseProvider> {
   }
 
   Future<void> setUp() async {
-    final settingsRepo = SettingsRepository();
-    await settingsRepo.setUp();
-    final settings = await settingsRepo.getMySqlSettings();
-    final opened = await db.open(
-      settings.database,
-      host: settings.host,
-      port: settings.port,
-      user: settings.user,
-      password: settings.password,
-    );
+    final opened = await db.open(null);
 
     if (opened) {
       await db.createTable(

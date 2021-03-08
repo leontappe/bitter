@@ -11,6 +11,25 @@ enum HeaderImage {
 }
 
 class Vendor {
+  static final shortKeys = <String>[
+    'id',
+    'name',
+    'manager',
+    'contact',
+    'address',
+    'zip_code',
+    'city',
+    'iban',
+    'bic',
+    'bank',
+    'tax_nr',
+    'vat_nr',
+    'email',
+    'website',
+    'full_address',
+    'bill_prefix',
+  ];
+
   int id;
   String name;
   String manager;
@@ -24,22 +43,23 @@ class Vendor {
   String taxNr;
   String vatNr;
   String email;
+
   String website;
-
   String fullAddress;
-  String billPrefix;
 
+  String billPrefix;
   int defaultDueDays;
   int defaultTax;
-  String defaultComment;
 
+  String defaultComment;
   int reminderFee;
   int reminderDeadline;
   Map<ReminderIteration, String> reminderTexts;
-  Map<ReminderIteration, String> reminderTitles;
 
+  Map<ReminderIteration, String> reminderTitles;
   List<int> headerImageRight;
   List<int> headerImageCenter;
+
   List<int> headerImageLeft;
 
   String userMessageLabel;
