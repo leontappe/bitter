@@ -21,15 +21,19 @@ Future<String> getConfigPath() async {
 Future<String> getDataPath() async {
   if (Platform.isWindows) {
     return (await getDocumentsDirectory()) + '/bitter';
-  } else {
+  } else if (Platform.isMacOS) {
     return (await getDownloadsDirectory()).path + '/bitter';
+  } else {
+    return (await getExternalStorageDirectories(type: StorageDirectory.downloads)).first.path;
   }
 }
 
 Future<String> getLogPath() async {
   if (Platform.isWindows) {
     return (await getDocumentsDirectory()) + '/bitter/log';
-  } else {
+  } else if (Platform.isMacOS) {
     return (await getDownloadsDirectory()).path + '/bitter/log';
+  } else {
+    return (await getApplicationDocumentsDirectory()).path + '/log';
   }
 }
