@@ -58,7 +58,9 @@ class Customer {
         surname: map['surname'].toString(),
         gender: (map['gender'] == 0)
             ? Gender.male
-            : (map['gender'] == 1) ? Gender.diverse : Gender.diverse,
+            : (map['gender'] == 1)
+                ? Gender.diverse
+                : Gender.diverse,
         address: map['address'].toString(),
         zipCode: map['zip_code'] as int,
         city: map['city'].toString(),

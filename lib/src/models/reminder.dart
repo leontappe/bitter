@@ -12,7 +12,7 @@ class Reminder {
     this.title,
     this.text,
     this.fee,
-    this.remainder
+    this.remainder,
   });
 
   factory Reminder.fromMap(Map map) => Reminder(
@@ -36,6 +36,8 @@ class Reminder {
 
 ReminderIteration iterationFromInt(int number) => (number == 0)
     ? ReminderIteration.first
-    : (number == 1) ? ReminderIteration.second : ReminderIteration.third;
+    : (number == 1)
+        ? ReminderIteration.second
+        : ReminderIteration.third;
 
 enum ReminderIteration { first, second, third }
