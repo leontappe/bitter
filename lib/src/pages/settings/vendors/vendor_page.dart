@@ -306,7 +306,7 @@ class _VendorPageState extends State<VendorPage> {
                             decoration:
                                 InputDecoration(labelText: 'Standard Mahngebühr', suffixText: '€'),
                             onChanged: (String input) {
-                              newVendor.reminderFee = int.parse(input);
+                              newVendor.reminderFee = int.tryParse(input);
                               dirty = true;
                             },
                           ),
