@@ -168,7 +168,7 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
         (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
             .results;
     if (result == null) return null;
-    return List.from(result.map<Map>((ResultRow e) => e.fields));
+    return List.from(result.map<Map>((Row e) => e.fields));
   }
 
   @override
@@ -181,7 +181,7 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
     final result =
         (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
             .results
-            .map<Map>((ResultRow e) => e.fields);
+            .map<Map>((Row e) => e.fields);
     if (result.isNotEmpty) {
       return result.single;
     }
