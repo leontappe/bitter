@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:file_picker_cross/file_picker_cross.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/reminder.dart';
@@ -528,26 +528,26 @@ class _VendorPageState extends State<VendorPage> {
   }
 
   Future<void> onOpenImage(HeaderImage image) async {
-    FilePickerCross dialogResult;
+    FilePickerResult dialogResult;
     try {
-      dialogResult = await FilePickerCross.importFromStorage(type: FileTypeCross.image);
+      dialogResult = await FilePicker.platform.pickFiles(type: FileType.image);
     } on NoSuchMethodError {
       return;
     }
 
-    if (dialogResult == null) {
+    if (!dialogResult.isSinglePick || dialogResult == null) {
       return;
     }
 
     switch (image) {
       case HeaderImage.right:
-        newVendor.headerImageRight = dialogResult.toUint8List();
+        newVendor.headerImageRight = dialogResult.files.single.bytes;
         break;
       case HeaderImage.center:
-        newVendor.headerImageCenter = dialogResult.toUint8List();
+        newVendor.headerImageCenter = dialogResult.files.single.bytes;
         break;
       case HeaderImage.left:
-        newVendor.headerImageLeft = dialogResult.toUint8List();
+        newVendor.headerImageLeft = dialogResult.files.single.bytes;
         break;
       default:
     }

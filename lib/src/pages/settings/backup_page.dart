@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:archive/archive_io.dart';
 import 'package:csv/csv.dart';
-import 'package:file_picker_cross/file_picker_cross.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -247,21 +247,21 @@ class _BackupPageState extends State<BackupPage> {
   }
 
   void onOpenArchiveChooser() async {
-    FilePickerCross dialogResult;
+    FilePickerResult dialogResult;
     try {
       dialogResult =
-          await FilePickerCross.importFromStorage(type: FileTypeCross.custom, fileExtension: 'zip');
+          await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['zip']);
     } on NoSuchMethodError {
       return;
     }
 
-    if (dialogResult == null) {
+    if (dialogResult == null || !dialogResult.isSinglePick) {
       return;
     }
 
     setState(() {
-      archivePath = dialogResult.path;
-      archiveData = dialogResult.toUint8List();
+      archivePath = dialogResult.files.single.path;
+      archiveData = dialogResult.files.single.bytes;
     });
   }
 
