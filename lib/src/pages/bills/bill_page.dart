@@ -3,14 +3,14 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
-import '../../format_util.dart';
 import '../../models/bill.dart';
 import '../../models/reminder.dart';
-import '../../path_util.dart';
 import '../../pdf/reminder_generator.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
 import '../../repositories/vendor_repository.dart';
+import '../../util/format_util.dart';
+import '../../util/path_util.dart';
 import '../../widgets/database_error_watcher.dart';
 import '../../widgets/info_cards/customer_card.dart';
 import '../../widgets/info_cards/items_card.dart';

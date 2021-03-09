@@ -1,16 +1,16 @@
-import 'package:bitter/src/pages/warehouse/commissioning_creator.dart';
-import 'package:bitter/src/repositories/commissioning_repository.dart';
-import 'package:bitter/src/widgets/info_cards/items_card.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../format_util.dart';
 import '../../models/crate.dart';
 import '../../providers/inherited_database.dart';
+import '../../repositories/commissioning_repository.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/warehouse_repository.dart';
+import '../../util/format_util.dart';
+import '../../widgets/info_cards/items_card.dart';
 import '../../widgets/item_selector.dart';
 import '../../widgets/option_dialog.dart';
+import 'commissioning_creator.dart';
 import 'crate_list_tile.dart';
 
 enum CratePopupSelection { delete }

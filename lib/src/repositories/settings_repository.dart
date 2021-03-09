@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:logging/logging.dart';
 
 import '../models/mysql_settings.dart';
-import '../path_util.dart';
+import '../util/path_util.dart';
 
 export '../models/mysql_settings.dart';
 

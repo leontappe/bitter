@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../format_util.dart';
 import '../../models/bill.dart';
+import '../../util/format_util.dart';
 import 'bill_icon.dart';
 import 'save_bill_button.dart';
 

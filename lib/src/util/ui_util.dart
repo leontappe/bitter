@@ -1,7 +1,8 @@
 import 'dart:io';
 
-import 'package:bitter/src/path_util.dart';
 import 'package:flutter/material.dart';
+
+import 'path_util.dart';
 
 Future<void> onSaveBill(BuildContext context, String filename, List<int> bytes) async {
   var file = File('${await getDataPath()}/$filename.pdf');

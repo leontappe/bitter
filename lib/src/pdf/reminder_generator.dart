@@ -4,10 +4,10 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
-import '../format_util.dart';
 import '../models/bill.dart';
 import '../models/reminder.dart';
 import '../models/vendor.dart';
+import '../util/format_util.dart';
 import 'common_methods.dart';
 import 'common_widgets.dart';
 

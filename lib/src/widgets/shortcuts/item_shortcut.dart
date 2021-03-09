@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../format_util.dart';
 import '../../models/item.dart';
 import '../../models/vendor.dart';
 import '../../pages/items/item_page.dart';
+import '../../util/format_util.dart';
 import 'base_shortcut.dart';
 
 class ItemShortcut extends StatelessWidget {

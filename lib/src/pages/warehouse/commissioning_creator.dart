@@ -1,12 +1,12 @@
-import 'package:bitter/src/models/crate.dart';
-import 'package:bitter/src/repositories/item_repository.dart';
-import 'package:bitter/src/repositories/warehouse_repository.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/crate.dart';
 import '../../models/warehouse.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/commissioning_repository.dart';
+import '../../repositories/item_repository.dart';
 import '../../repositories/vendor_repository.dart';
+import '../../repositories/warehouse_repository.dart';
 
 class CommissioningCreatorPage extends StatefulWidget {
   final Warehouse warehouse;

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../format_util.dart';
 import '../../models/customer.dart';
 import '../../models/draft.dart';
 import '../../models/vendor.dart';
 import '../../pages/drafts/draft_creator.dart';
+import '../../util/format_util.dart';
 import 'base_shortcut.dart';
 
 class DraftShortcut extends StatelessWidget {

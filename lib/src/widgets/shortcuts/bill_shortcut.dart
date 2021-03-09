@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../format_util.dart';
 import '../../models/bill.dart';
 import '../../pages/bills/bill_page.dart';
+import '../../util/format_util.dart';
 import 'base_shortcut.dart';
 
 class BillShortcut extends StatelessWidget {

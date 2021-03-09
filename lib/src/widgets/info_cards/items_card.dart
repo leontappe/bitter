@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../format_util.dart';
 import '../../models/item.dart';
+import '../../util/format_util.dart';
 
 class ItemsCard extends StatelessWidget {
   final List<Item> items;

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
-import '../../ui_util.dart';
+import '../../util/ui_util.dart';
 
 class SaveBillButton extends StatelessWidget {
   final int billId;

@@ -6,7 +6,6 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 
-import 'src/format_util.dart';
 import 'src/pages/bills/bills_list_page.dart';
 import 'src/pages/customers/customers_list_page.dart';
 import 'src/pages/drafts/drafts_list_page.dart';
@@ -17,11 +16,12 @@ import 'src/pages/settings/backup_page.dart';
 import 'src/pages/settings/settings_page.dart';
 import 'src/pages/settings/vendors/vendors_list_page.dart';
 import 'src/pages/warehouse/warehouse_list_page.dart';
-import 'src/path_util.dart';
 import 'src/providers/inherited_database.dart';
 import 'src/providers/mysql_provider.dart';
 import 'src/providers/sqlite_provider.dart';
 import 'src/repositories/settings_repository.dart';
+import 'src/util/format_util.dart';
+import 'src/util/path_util.dart';
 
 void main() async {
   Intl.defaultLocale = 'de_DE';

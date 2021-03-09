@@ -1,13 +1,12 @@
-import 'package:bitter/src/pages/homepage/warehouse_navigation_card.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
 import '../../../version.dart';
-import '../../bitter_platform_path_provider.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/settings_repository.dart';
 import '../../repositories/vendor_repository.dart';
+import '../../util/bitter_platform_path_provider.dart';
 import '../../widgets/database_error_watcher.dart';
 import '../../widgets/navigation_card.dart';
 import '../../widgets/settings_list.dart';
@@ -15,6 +14,7 @@ import 'bills_navigation_card.dart';
 import 'customers_navigation_card.dart';
 import 'drafts_navigation_card.dart';
 import 'items_navigation_card.dart';
+import 'warehouse_navigation_card.dart';
 
 class Homepage extends StatefulWidget {
   @override

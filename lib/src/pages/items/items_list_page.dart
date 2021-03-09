@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../format_util.dart';
 import '../../models/vendor.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/settings_repository.dart';
 import '../../repositories/vendor_repository.dart';
+import '../../util/format_util.dart';
 import '../../widgets/database_error_watcher.dart';
 import 'item_page.dart';
 
