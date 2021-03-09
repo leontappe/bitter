@@ -447,7 +447,7 @@ packages:
       name: windows_documents
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.1"
+    version: "1.0.0"
   xdg_directories:
     dependency: transitive
     description:

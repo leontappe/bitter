@@ -30,7 +30,7 @@ dependencies:
   autocomplete_textfield: ^1.7.3
   csv: ^4.1.0
   archive: ^2.0.13
-  windows_documents: ^0.0.1
+  windows_documents: ^1.0.0
   logging: ^0.11.1
   uuid: ^2.2.2
 
