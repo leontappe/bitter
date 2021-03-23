@@ -27,6 +27,11 @@ class BillPage extends StatefulWidget {
   _BillPageState createState() => _BillPageState();
 }
 
+enum ReminderOption {
+  save,
+  delete,
+}
+
 class _BillPageState extends State<BillPage> {
   final _key = GlobalKey();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -114,8 +119,51 @@ class _BillPageState extends State<BillPage> {
                                   child: Card(
                                       clipBehavior: Clip.antiAlias,
                                       margin: EdgeInsets.all(8.0),
-                                      child: InkWell(
-                                        onTap: () => _onGenerateReminder(r, skipSaving: true),
+                                      child: PopupMenuButton<ReminderOption>(
+                                        tooltip: 'Menü zeigen',
+                                        onSelected: (ReminderOption option) async {
+                                          switch (option) {
+                                            case ReminderOption.save:
+                                              _onGenerateReminder(r, skipSaving: true);
+                                              break;
+                                            case ReminderOption.delete:
+                                              final dialogResult = await showDialog<bool>(
+                                                  context: context,
+                                                  builder: (BuildContext context) => AlertDialog(
+                                                        title: Text('Mahnung löschen?'),
+                                                        content: Text(
+                                                            'Solange die Rechnung nicht gespeichert wird, ist diese Änderung widerrufbar.'),
+                                                        actions: [
+                                                          MaterialButton(
+                                                            onPressed: () =>
+                                                                Navigator.of(context).pop(true),
+                                                            child: Text('Ja'),
+                                                          ),
+                                                          MaterialButton(
+                                                            onPressed: () =>
+                                                                Navigator.of(context).pop(false),
+                                                            child: Text('Nein'),
+                                                          ),
+                                                        ],
+                                                      ));
+                                              if (dialogResult) {
+                                                _onDeleteReminder(r.iteration);
+                                              }
+                                              break;
+                                            default:
+                                          }
+                                        },
+                                        itemBuilder: (BuildContext context) =>
+                                            <PopupMenuEntry<ReminderOption>>[
+                                          const PopupMenuItem<ReminderOption>(
+                                            value: ReminderOption.save,
+                                            child: Text('Speichern'),
+                                          ),
+                                          const PopupMenuItem<ReminderOption>(
+                                            value: ReminderOption.delete,
+                                            child: Text('Löschen'),
+                                          ),
+                                        ],
                                         child: Padding(
                                           padding: EdgeInsets.all(16.0),
                                           child: Column(
@@ -246,6 +294,13 @@ class _BillPageState extends State<BillPage> {
       return true;
     }
     return false;
+  }
+
+  void _onDeleteReminder(ReminderIteration iteration) async {
+    setState(() {
+      bill.reminders.removeWhere((Reminder r) => r.iteration == iteration);
+      dirty = true;
+    });
   }
 
   void _onGenerateReminder(Reminder reminder, {bool skipSaving = false}) async {
