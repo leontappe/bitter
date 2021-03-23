@@ -6,7 +6,8 @@ final filenameDateFormat = DateFormat('yyMMdd', 'de_DE');
 
 String formatDate(DateTime date) => dateFormat.format(date);
 String formatDateTime(DateTime date) => dateTimeFormat.format(date);
-String formatFigure(int value) => (value / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' €';
+String formatFigure(int value) =>
+    value != null ? (value / 100.0).toStringAsFixed(2).replaceAll('.', ',') + ' €' : null;
 
 String formatFilenameDate(DateTime date) => filenameDateFormat.format(date);
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../models/reminder.dart';
 import '../../models/vendor.dart';
+import '../../util/format_util.dart';
 
 class VendorCard extends StatelessWidget {
   final Vendor vendor;
@@ -37,7 +39,21 @@ class VendorCard extends StatelessWidget {
             Text('Standard Umsatzsteuer: ${vendor.defaultTax} %'),
             if (vendor.defaultComment != null)
               Text('Standard Rechnungskommentar: ${vendor.defaultComment}'),
-            if (vendor.reminderFee != null) Text('Standard Mahngebühr: ${vendor.reminderFee}€'),
+            if (vendor.reminderFees != null)
+              Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Standard Mahngebühr für erste Mahnung: ${formatFigure(vendor.reminderFees[ReminderIteration.first]) ?? 'n.a.'}',
+                    ),
+                    Text(
+                      'Standard Mahngebühr für zweite Mahnung: ${formatFigure(vendor.reminderFees[ReminderIteration.second]) ?? 'n.a.'}',
+                    ),
+                    Text(
+                      'Standard Mahngebühr für dritte Mahnung: ${formatFigure(vendor.reminderFees[ReminderIteration.third]) ?? 'n.a.'}',
+                    ),
+                  ]),
             if (vendor.reminderDeadline != null)
               Text('Standardfrist für Mahnungen: ${vendor.reminderDeadline} Tage'),
             if (vendor.reminderTitles != null)

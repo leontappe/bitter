@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:bitter/src/util/format_util.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -301,12 +302,49 @@ class _VendorPageState extends State<VendorPage> {
                           ),
                           TextFormField(
                             maxLines: 1,
-                            initialValue: newVendor.reminderFee?.toString() ?? '0',
+                            initialValue: newVendor.reminderFees[ReminderIteration.first] != null
+                                ? formatFigure(newVendor.reminderFees[ReminderIteration.first])
+                                    .split(' ')
+                                    .first
+                                : null,
                             keyboardType: TextInputType.numberWithOptions(),
-                            decoration:
-                                InputDecoration(labelText: 'Standard Mahngebühr', suffixText: '€'),
+                            decoration: InputDecoration(
+                                labelText: 'Standard Mahngebühr für erste Mahnung',
+                                suffixText: '€'),
                             onChanged: (String input) {
-                              newVendor.reminderFee = int.tryParse(input);
+                              newVendor.reminderFees[ReminderIteration.first] = parseFloat(input);
+                              dirty = true;
+                            },
+                          ),
+                          TextFormField(
+                            maxLines: 1,
+                            initialValue: newVendor.reminderFees[ReminderIteration.second] != null
+                                ? formatFigure(newVendor.reminderFees[ReminderIteration.second])
+                                    .split(' ')
+                                    .first
+                                : null,
+                            keyboardType: TextInputType.numberWithOptions(),
+                            decoration: InputDecoration(
+                                labelText: 'Standard Mahngebühr für zweite Mahnung',
+                                suffixText: '€'),
+                            onChanged: (String input) {
+                              newVendor.reminderFees[ReminderIteration.second] = parseFloat(input);
+                              dirty = true;
+                            },
+                          ),
+                          TextFormField(
+                            maxLines: 1,
+                            initialValue: newVendor.reminderFees[ReminderIteration.third] != null
+                                ? formatFigure(newVendor.reminderFees[ReminderIteration.third])
+                                    .split(' ')
+                                    .first
+                                : null,
+                            keyboardType: TextInputType.numberWithOptions(),
+                            decoration: InputDecoration(
+                                labelText: 'Standard Mahngebühr für dritte Mahnung',
+                                suffixText: '€'),
+                            onChanged: (String input) {
+                              newVendor.reminderFees[ReminderIteration.third] = parseFloat(input);
                               dirty = true;
                             },
                           ),
@@ -381,7 +419,7 @@ class _VendorPageState extends State<VendorPage> {
                           ListTile(title: Text('Kopfzeilenbilder')),
                           ListTile(
                             title: Text('Rechtes Kopfzeilenbild'),
-                            subtitle: (newVendor.headerImageRight != null)
+                            subtitle: (vendor.headerImageRight != null)
                                 ? Image.memory(Uint8List.fromList(vendor.headerImageRight))
                                 : Text('Nicht vorhanden'),
                             trailing: (newVendor.headerImageRight != null)
@@ -395,7 +433,7 @@ class _VendorPageState extends State<VendorPage> {
                           ),
                           ListTile(
                             title: Text('Mittleres Kopfzeilenbild'),
-                            subtitle: (newVendor.headerImageCenter != null)
+                            subtitle: (vendor.headerImageCenter != null)
                                 ? Image.memory(Uint8List.fromList(vendor.headerImageCenter))
                                 : Text('Nicht vorhanden'),
                             trailing: (newVendor.headerImageCenter != null)
@@ -409,7 +447,7 @@ class _VendorPageState extends State<VendorPage> {
                           ),
                           ListTile(
                             title: Text('Linkes Kopfzeilenbild'),
-                            subtitle: (newVendor.headerImageLeft != null)
+                            subtitle: (vendor.headerImageLeft != null)
                                 ? Image.memory(Uint8List.fromList(vendor.headerImageLeft))
                                 : Text('Nicht vorhanden'),
                             trailing: (newVendor.headerImageLeft != null)

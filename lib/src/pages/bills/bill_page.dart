@@ -41,6 +41,8 @@ class _BillPageState extends State<BillPage> {
 
   bool busy = false;
 
+  final GlobalKey<FormState> _reminderFormKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +126,7 @@ class _BillPageState extends State<BillPage> {
                                               if (r.title != null && r.title.isNotEmpty)
                                                 Text('Titel: ${r.title}'),
                                               Text('Frist: ${formatDate(r.deadline)}'),
-                                              Text('Mahngebühr: ${r.fee}€'),
+                                              Text('Mahngebühr: ${formatFigure(r.fee)}'),
                                             ],
                                           ),
                                         ),
@@ -283,7 +285,7 @@ class _BillPageState extends State<BillPage> {
       text: vendor != null && vendor.reminderTexts != null && vendor.reminderTexts.isNotEmpty
           ? vendor.reminderTexts[iteration]
           : bill.vendor?.reminderTexts[iteration] ?? '',
-      fee: vendor != null ? vendor?.reminderFee : bill.vendor.reminderFee ?? 5,
+      fee: vendor != null ? vendor.reminderFees[iteration] : bill.vendor.reminderFees[iteration],
       deadline: DateTime.now().add(Duration(
           days: vendor != null ? vendor?.reminderDeadline : bill.vendor.reminderDeadline ?? 14)),
       remainder: bill.sum,
@@ -298,43 +300,57 @@ class _BillPageState extends State<BillPage> {
           MaterialButton(
               onPressed: () => Navigator.of(context).pop(null), child: Text('Abbrechen')),
           MaterialButton(
-              onPressed: () => Navigator.of(context).pop(reminder),
+              onPressed: () {
+                if (_reminderFormKey.currentState.validate()) {
+                  Navigator.of(context).pop(reminder);
+                }
+              },
               child: Text('Mahnung erstellen')),
         ],
         children: [
-          TextFormField(
-            decoration: InputDecoration(labelText: 'Mahngebühr', suffixText: '€'),
-            keyboardType: TextInputType.number,
-            initialValue: reminder.fee.toString(),
-            onChanged: (String input) => reminder.fee = int.tryParse(input) ?? 0,
-          ),
-          TextFormField(
-            decoration: InputDecoration(labelText: 'Restbetrag', suffixText: '€'),
-            keyboardType: TextInputType.number,
-            initialValue: (reminder.remainder / 100.0).toStringAsFixed(2),
-            onChanged: (String input) => reminder.remainder = parseFloat(input) ?? 0,
-          ),
-          TextFormField(
-            decoration: InputDecoration(labelText: 'Frist', suffixText: 'Tage'),
-            keyboardType: TextInputType.number,
-            initialValue:
-                (vendor != null ? vendor.reminderDeadline : bill.vendor.reminderDeadline ?? 14)
-                    .toString(),
-            onChanged: (String input) =>
-                reminder.deadline = DateTime.now().add(Duration(days: int.parse(input))),
-          ),
-          TextFormField(
-            decoration: InputDecoration(labelText: 'Mahnungstitel'),
-            initialValue: reminder.title,
-            onChanged: (String input) => reminder.title = input,
-          ),
-          TextFormField(
-            keyboardType: TextInputType.multiline,
-            decoration: InputDecoration(labelText: 'Mahnungstext'),
-            maxLines: 3,
-            initialValue: reminder.text,
-            onChanged: (String input) => reminder.text = input,
-          ),
+          Form(
+              key: _reminderFormKey,
+              autovalidateMode: AutovalidateMode.always,
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    decoration: InputDecoration(labelText: 'Mahngebühr', suffixText: '€'),
+                    keyboardType: TextInputType.number,
+                    initialValue: formatFigure(reminder.fee).split(' ').first,
+                    validator: (String input) =>
+                        (input == null || input.isEmpty) ? 'Pflichtfeld' : null,
+                    onChanged: (String input) => reminder.fee = parseFloat(input),
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(labelText: 'Restbetrag', suffixText: '€'),
+                    keyboardType: TextInputType.number,
+                    initialValue: (reminder.remainder / 100.0).toStringAsFixed(2),
+                    onChanged: (String input) => reminder.remainder = parseFloat(input) ?? 0,
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(labelText: 'Frist', suffixText: 'Tage'),
+                    keyboardType: TextInputType.number,
+                    initialValue: (vendor != null
+                            ? vendor.reminderDeadline
+                            : bill.vendor.reminderDeadline ?? 14)
+                        .toString(),
+                    onChanged: (String input) =>
+                        reminder.deadline = DateTime.now().add(Duration(days: int.parse(input))),
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(labelText: 'Mahnungstitel'),
+                    initialValue: reminder.title,
+                    onChanged: (String input) => reminder.title = input,
+                  ),
+                  TextFormField(
+                    keyboardType: TextInputType.multiline,
+                    decoration: InputDecoration(labelText: 'Mahnungstext'),
+                    maxLines: 3,
+                    initialValue: reminder.text,
+                    onChanged: (String input) => reminder.text = input,
+                  ),
+                ],
+              )),
         ],
       ),
     );

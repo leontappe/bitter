@@ -68,6 +68,11 @@ Vendor exampleVendor = Vendor(
   fullAddress: 'My Company Example Road 3 12345 Town',
   billPrefix: 'R',
   email: 'info@example.com',
+  reminderFees: <ReminderIteration, int>{
+    ReminderIteration.first: 0,
+    ReminderIteration.second: 500,
+    ReminderIteration.third: 500
+  },
   defaultDueDays: 14,
   reminderDeadline: 14,
 );

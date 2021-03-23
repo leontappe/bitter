@@ -155,7 +155,7 @@ class ReminderGenerator {
                 TableRow(children: <Widget>[
                   PaddedText('Mahngebühr', ttfSans),
                   PaddedText('', ttfSans),
-                  PaddedText(reminder.fee.toString() + ' €', ttfSans),
+                  PaddedText(formatFigure(reminder.fee), ttfSans),
                 ]),
             ],
           ),
@@ -165,7 +165,7 @@ class ReminderGenerator {
             children: <Widget>[
               Spacer(),
               Paragraph(
-                text: 'Gesamtbetrag: ${formatFigure(reminder.remainder + (reminder.fee * 100))}',
+                text: 'Gesamtbetrag: ${formatFigure(reminder.remainder + reminder.fee)}',
                 style: TextStyle(
                     fontSize: fontsize + 1.0, fontWeight: FontWeight.bold, font: ttfSansBold),
                 margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
