@@ -3,14 +3,16 @@ import 'dart:convert';
 import 'item.dart';
 
 class GoodsIssue extends WarehouseProcess {
-  Commission commission;
+  Picking picking;
+  IssueType type;
 
   GoodsIssue({
     int id,
     int vendorId,
     int warehouseId,
     DateTime timestamp,
-    this.commission,
+    this.picking,
+    this.type,
   }) : super(id: id, vendorId: vendorId, warehouseId: warehouseId, timestamp: timestamp);
 
   factory GoodsIssue.fromMap(Map map) => GoodsIssue(
@@ -18,45 +20,21 @@ class GoodsIssue extends WarehouseProcess {
         vendorId: map['vendor_id'] as int,
         warehouseId: map['warehouse_id'] as int,
         timestamp: DateTime.parse(map['timestamp'] as String),
-        commission: Commission.fromMap(json.decode(map['commission'] as String) as Map),
+        picking: Picking.fromMap(json.decode(map['picking'] as String) as Map),
+        type: IssueType.values[map['type'] as int],
       );
 
   @override
   Map<String, dynamic> get toMap => <String, dynamic>{
         ...super.toMap,
-        'commission': json.encode(commission.toMap),
-      };
-}
-
-class Commission extends WarehouseProcess {
-  List<Item> items;
-
-  Commission({
-    int id,
-    int vendorId,
-    int warehouseId,
-    DateTime timestamp,
-    this.items,
-  }) : super(id: id, vendorId: vendorId, warehouseId: warehouseId, timestamp: timestamp);
-
-  factory Commission.fromMap(Map map) => Commission(
-        id: map['id'] as int,
-        vendorId: map['vendor_id'] as int,
-        warehouseId: map['warehouse_id'] as int,
-        timestamp: DateTime.parse(map['timestamp'] as String),
-        items: List.from((json.decode(map['items'] as String) as List)
-            .map<Item>((dynamic map) => Item.fromMap(map as Map))),
-      );
-
-  @override
-  Map<String, dynamic> get toMap => <String, dynamic>{
-        ...super.toMap,
-        'items': json.encode(items.map<Map>((Item i) => i.toMap).toList()),
+        'picking': json.encode(picking.toMap),
+        'type': type.index,
       };
 }
 
 class GoodsReceipt extends WarehouseProcess {
   List<IncomingItem> items;
+  ReceiptType type;
 
   GoodsReceipt({
     int id,
@@ -64,20 +42,24 @@ class GoodsReceipt extends WarehouseProcess {
     int warehouseId,
     DateTime timestamp,
     this.items,
+    this.type,
   }) : super(id: id, vendorId: vendorId, warehouseId: warehouseId, timestamp: timestamp);
 
   factory GoodsReceipt.fromMap(Map map) => GoodsReceipt(
-      id: map['id'] as int,
-      vendorId: map['vendor_id'] as int,
-      warehouseId: map['warehouse_id'] as int,
-      timestamp: DateTime.parse(map['timestamp'] as String),
-      items: List.from((json.decode(map['items'] as String) as List)
-          .map<IncomingItem>((dynamic e) => IncomingItem.fromMap(e as Map))));
+        id: map['id'] as int,
+        vendorId: map['vendor_id'] as int,
+        warehouseId: map['warehouse_id'] as int,
+        timestamp: DateTime.parse(map['timestamp'] as String),
+        items: List.from((json.decode(map['items'] as String) as List)
+            .map<IncomingItem>((dynamic e) => IncomingItem.fromMap(e as Map))),
+        type: ReceiptType.values[map['type'] as int],
+      );
 
   @override
   Map<String, dynamic> get toMap => <String, dynamic>{
         ...super.toMap,
         'items': json.encode(List<Map>.from(items.map<Map>((IncomingItem i) => i.toMap))),
+        'type': type.index,
       };
 }
 
@@ -100,6 +82,45 @@ class IncomingItem {
         'tax': tax,
         'quantity': quantity,
       };
+}
+
+enum IssueType {
+  issue,
+  shipping,
+  transfer,
+}
+
+class Picking extends WarehouseProcess {
+  List<Item> items;
+
+  Picking({
+    int id,
+    int vendorId,
+    int warehouseId,
+    DateTime timestamp,
+    this.items,
+  }) : super(id: id, vendorId: vendorId, warehouseId: warehouseId, timestamp: timestamp);
+
+  factory Picking.fromMap(Map map) => Picking(
+        id: map['id'] as int,
+        vendorId: map['vendor_id'] as int,
+        warehouseId: map['warehouse_id'] as int,
+        timestamp: DateTime.parse(map['timestamp'] as String),
+        items: List.from((json.decode(map['items'] as String) as List)
+            .map<Item>((dynamic map) => Item.fromMap(map as Map))),
+      );
+
+  @override
+  Map<String, dynamic> get toMap => <String, dynamic>{
+        ...super.toMap,
+        'items': json.encode(items.map<Map>((Item i) => i.toMap).toList()),
+      };
+}
+
+enum ReceiptType {
+  receipt,
+  returned,
+  transfer,
 }
 
 abstract class WarehouseProcess {
