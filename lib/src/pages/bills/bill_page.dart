@@ -124,7 +124,7 @@ class _BillPageState extends State<BillPage> {
                                               if (r.title != null && r.title.isNotEmpty)
                                                 Text('Titel: ${r.title}'),
                                               Text('Frist: ${formatDate(r.deadline)}'),
-                                              Text('Mahngebühr: ${formatFigure(r.fee)}'),
+                                              Text('Mahngebühr: ${r.fee}€'),
                                             ],
                                           ),
                                         ),
