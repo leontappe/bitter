@@ -85,7 +85,6 @@ Widget pageCountFooter(Context context, Vendor vendor, Font font) {
               width: 1.0,
             ),
           ),
-          borderRadius: BorderRadius.all(Radius.zero),
           shape: BoxShape.rectangle,
         ),
         child: Container(width: 500.0, height: 0.0)),
