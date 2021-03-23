@@ -66,7 +66,7 @@ class _HomepageState extends State<Homepage> {
             BillsNavigationCard(filter: filterVendor),
             CustomersNavigationCard(),
             ItemsNavigationCard(filter: filterVendor),
-            WarehouseNavigationCard(filter: filterVendor),
+            //WarehouseNavigationCard(filter: filterVendor),
             NavigationCard(
               context,
               '/settings',
