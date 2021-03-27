@@ -127,7 +127,7 @@ class PdfGenerator {
           ),
           Header(level: 1, text: '$title ${billNr ?? ''}', textStyle: TextStyle(font: ttfSans)),
           Paragraph(text: 'Sehr geehrte Damen und Herren,', style: TextStyle(font: ttfSans)),
-          Paragraph(text: letter, style: TextStyle(font: ttfSans)),
+          Paragraph(text: letter ?? '', style: TextStyle(font: ttfSans)),
           Table(
             columnWidths: <int, TableColumnWidth>{
               0: FixedColumnWidth(22.0),
@@ -185,21 +185,24 @@ class PdfGenerator {
             ],
           ),
           Paragraph(
-              text: ((vendor.userMessageLabel != null && bill.userMessage != null)
-                      ? '${vendor.userMessageLabel}: '
-                      : '') +
-                  (bill.userMessage ?? ''),
-              style: TextStyle(font: ttfSans)),
+            text: ((vendor.userMessageLabel != null && bill.userMessage != null)
+                    ? '${vendor.userMessageLabel}: '
+                    : '') +
+                (bill.userMessage ?? ''),
+            style: TextStyle(font: ttfSans),
+          ),
           Paragraph(text: bill.comment ?? '', style: TextStyle(font: ttfSans)),
           if (showDates)
             Paragraph(
-                text: 'Lieferdatum/Leistungsdatum: ${formatDate(bill.serviceDate)}',
-                style: TextStyle(font: ttfSans)),
+              text: 'Lieferdatum/Leistungsdatum: ${formatDate(bill.serviceDate)}',
+              style: TextStyle(font: ttfSans),
+            ),
           if (showDates)
             Paragraph(
-                text:
-                    'Bezahlbar ohne Abzug bis zum ${formatDate(DateTime.now().add(Duration(days: bill.dueDays)))}.',
-                style: TextStyle(font: ttfSans)),
+              text:
+                  'Bezahlbar ohne Abzug bis zum ${formatDate(DateTime.now().add(Duration(days: bill.dueDays)))}.',
+              style: TextStyle(font: ttfSans),
+            ),
         ],
       ),
     );
@@ -216,7 +219,7 @@ class PdfGenerator {
     Uint8List rightHeader,
     String title,
     String letter,
-    bool showDates,
+    bool showDates = true,
   }) async =>
       (await createDocumentFromBill(
         bill,

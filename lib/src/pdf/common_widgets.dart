@@ -146,12 +146,14 @@ Widget pageCountFooter(Context context, Vendor vendor, Font font) {
 
 class PaddedHeaderText extends Padding {
   PaddedHeaderText(String text)
-      : super(
+      : assert(text != null),
+        super(
             padding: EdgeInsets.all(4.0),
             child: Text(text, style: TextStyle(fontWeight: FontWeight.bold)));
 }
 
 class PaddedText extends Padding {
   PaddedText(String text, Font font)
-      : super(padding: EdgeInsets.all(2.0), child: Text(text, style: TextStyle(font: font)));
+      : assert(text != null),
+        super(padding: EdgeInsets.all(2.0), child: Text(text, style: TextStyle(font: font)));
 }
