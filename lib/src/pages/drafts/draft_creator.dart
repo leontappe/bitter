@@ -227,7 +227,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                       ),
                       Text('Artikel', style: Theme.of(context).textTheme.headline6),
                       BlocBuilder<ItemsBloc, ItemsState>(
-                        cubit: itemsBloc,
+                        bloc: itemsBloc,
                         builder: (BuildContext context, ItemsState state) {
                           if (state.items != null) {
                             return Column(children: <Widget>[
