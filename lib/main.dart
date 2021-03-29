@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -43,27 +44,31 @@ const List<String> mySqlLogNames = [
 
 Future<void> startLogging() async {
   String logPath;
-
-  if (Platform.isWindows) {
-    logPath =
-        '${(await getLogPath()).replaceAll('/', '\\')}\\log_${formatDate(DateTime.now()).replaceAll('.', '-')}.txt';
+  if (kIsWeb) {
+    Logger.root.level = Level.FINE; // defaults to Level.INFO
+    Logger.root.onRecord.listen(print);
   } else {
-    logPath = '${await getLogPath()}/log_${formatDate(DateTime.now()).replaceAll('.', '-')}.txt';
-  }
-
-  final logFile = await File(logPath).create(recursive: true);
-  final logSink = logFile.openWrite(mode: FileMode.writeOnlyAppend);
-
-  Logger.root.level = Level.ALL; // defaults to Level.INFO
-  Logger.root.onRecord.listen((record) {
-    final line = '${record.loggerName}/${record.level.name}: ${record.time}: ${record.message}';
-    if (mySqlLogNames.contains(record.loggerName)) {
-      return;
+    if (Platform.isWindows) {
+      logPath =
+          '${(await getLogPath()).replaceAll('/', '\\')}\\log_${formatDate(DateTime.now()).replaceAll('.', '-')}.txt';
     } else {
-      logSink.add(utf8.encode(line + '\n'));
+      logPath = '${await getLogPath()}/log_${formatDate(DateTime.now()).replaceAll('.', '-')}.txt';
     }
-    if (record.level.value >= 700) print(line);
-  }, onDone: () => logSink.close());
+
+    final logFile = await File(logPath).create(recursive: true);
+    final logSink = logFile.openWrite(mode: FileMode.writeOnlyAppend);
+
+    Logger.root.level = Level.ALL; // defaults to Level.INFO
+    Logger.root.onRecord.listen((record) {
+      final line = '${record.loggerName}/${record.level.name}: ${record.time}: ${record.message}';
+      if (mySqlLogNames.contains(record.loggerName)) {
+        return;
+      } else {
+        logSink.add(utf8.encode(line + '\n'));
+      }
+      if (record.level.value >= 700) print(line);
+    }, onDone: () => logSink.close());
+  }
 
   Logger('bitter').info('Starting log in $logPath');
 }

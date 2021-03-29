@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:bitter/src/util/format_util.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/reminder.dart';
@@ -566,26 +569,35 @@ class _VendorPageState extends State<VendorPage> {
   }
 
   Future<void> onOpenImage(HeaderImage image) async {
-    FilePickerResult dialogResult;
-    try {
-      dialogResult = await FilePicker.platform.pickFiles(type: FileType.image);
-    } on NoSuchMethodError {
-      return;
+    Uint8List data;
+    if (kIsWeb || (!kIsWeb && (Platform.isIOS || Platform.isAndroid))) {
+      final dialogResult = await FilePicker.platform
+          .pickFiles(type: FileType.custom, allowedExtensions: ['jpeg', 'png', 'gif', 'jpg']);
+
+      if (dialogResult == null || !dialogResult.isSinglePick) {
+        return;
+      }
+
+      data = dialogResult.files.single.bytes;
+    } else {
+      final result = await openFile(acceptedTypeGroups: [
+        XTypeGroup(label: 'image', extensions: ['jpeg', 'png', 'gif', 'jpg'])
+      ]);
+
+      data = await result.readAsBytes();
     }
 
-    if (!dialogResult.isSinglePick || dialogResult == null) {
-      return;
-    }
+    if (data == null) return;
 
     switch (image) {
       case HeaderImage.right:
-        newVendor.headerImageRight = dialogResult.files.single.bytes;
+        newVendor.headerImageRight = data;
         break;
       case HeaderImage.center:
-        newVendor.headerImageCenter = dialogResult.files.single.bytes;
+        newVendor.headerImageCenter = data;
         break;
       case HeaderImage.left:
-        newVendor.headerImageLeft = dialogResult.files.single.bytes;
+        newVendor.headerImageLeft = data;
         break;
       default:
     }

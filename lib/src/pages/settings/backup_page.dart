@@ -5,6 +5,8 @@ import 'dart:typed_data';
 import 'package:archive/archive_io.dart';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -247,21 +249,32 @@ class _BackupPageState extends State<BackupPage> {
   }
 
   void onOpenArchiveChooser() async {
-    FilePickerResult dialogResult;
-    try {
-      dialogResult =
+    String path;
+    Uint8List data;
+    if (kIsWeb || (!kIsWeb && (Platform.isIOS || Platform.isAndroid))) {
+      final dialogResult =
           await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['zip']);
-    } on NoSuchMethodError {
-      return;
+
+      if (dialogResult == null || !dialogResult.isSinglePick) {
+        return;
+      }
+
+      path = dialogResult.files.single.path;
+      data = dialogResult.files.single.bytes;
+    } else {
+      final result = await openFile(acceptedTypeGroups: [
+        XTypeGroup(label: 'zip-archive', extensions: ['zip'])
+      ]);
+
+      path = result.path;
+      data = await result.readAsBytes();
     }
 
-    if (dialogResult == null || !dialogResult.isSinglePick) {
-      return;
-    }
+    if (path == null || data == null) return;
 
     setState(() {
-      archivePath = dialogResult.files.single.path;
-      archiveData = dialogResult.files.single.bytes;
+      archivePath = path;
+      archiveData = data;
     });
   }
 
