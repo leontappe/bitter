@@ -4,12 +4,9 @@
 
 #include "generated_plugin_registrant.h"
 
-#include <file_chooser/file_chooser_plugin.h>
 #include <windows_documents/windows_documents_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
-  FileChooserPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FileChooserPlugin"));
   WindowsDocumentsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("WindowsDocumentsPlugin"));
 }
