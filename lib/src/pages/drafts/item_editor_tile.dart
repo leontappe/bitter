@@ -5,6 +5,7 @@ import '../../models/item.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../util/format_util.dart';
+import '../../widgets/gestureless_list_tile.dart';
 
 enum EditorTileAction { delete, save }
 
@@ -38,7 +39,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    return GesturelessListTile(
       title: AutoCompleteTextField<Item>(
         controller: TextEditingController(text: _item.title ?? ''),
         key: GlobalKey<AutoCompleteTextFieldState<Item>>(),
@@ -46,6 +47,7 @@ class _ItemEditorTileState extends State<ItemEditorTile> {
         textChanged: (String input) {
           _item.title = input;
         },
+        keyboardType: TextInputType.text,
         itemSubmitted: _onItemSubmitted,
         suggestions: _items,
         itemBuilder: (BuildContext context, Item item) => ListTile(

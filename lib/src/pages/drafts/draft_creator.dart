@@ -15,6 +15,7 @@ import '../../repositories/settings_repository.dart';
 import '../../repositories/vendor_repository.dart';
 import '../../util/format_util.dart';
 import '../../widgets/database_error_watcher.dart';
+import '../../widgets/gestureless_list_tile.dart';
 import '../../widgets/vendor_selector.dart';
 import 'draft_popup_menu.dart';
 import 'item_editor_tile.dart';
@@ -96,7 +97,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   key: _formKey,
                   child: ListView(
                     children: <Widget>[
-                      ListTile(
+                      GesturelessListTile(
                         title: Text('Kunde', style: Theme.of(context).textTheme.headline6),
                         trailing:
                             (customerIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
@@ -128,7 +129,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                           },
                         ),
                       ),
-                      ListTile(
+                      GesturelessListTile(
                         title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
                         trailing:
                             (vendorIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
@@ -144,7 +145,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                           },
                         ),
                       ),
-                      ListTile(
+                      GesturelessListTile(
+                        height: 64.0,
                         title: Text('Lieferdatum/Leistungsdatum:',
                             style: Theme.of(context).textTheme.headline6),
                         trailing: Container(
@@ -171,7 +173,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                           ),
                         ),
                       ),
-                      ListTile(
+                      GesturelessListTile(
+                        height: 64.0,
                         title: Text('Zahlungsziel:', style: Theme.of(context).textTheme.headline6),
                         trailing: Container(
                           width: 80.0,
@@ -193,7 +196,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                         ),
                       ),
                       if (_vendor?.userMessageLabel != null && _vendor.userMessageLabel.isNotEmpty)
-                        ListTile(
+                        GesturelessListTile(
                           title: Text(
                               '${_vendor?.userMessageLabel}:' ??
                                   'Benutzerdefinierter Rechnungskommentar:',
@@ -209,7 +212,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                             ),
                           ),
                         ),
-                      ListTile(
+                      GesturelessListTile(
                         title: Text('Rechnungskommentar:',
                             style: Theme.of(context).textTheme.headline6),
                         trailing: Container(
