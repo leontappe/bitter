@@ -125,7 +125,11 @@ class PdfGenerator {
               ),
             ],
           ),
-          Header(level: 1, text: '$title ${billNr ?? ''}', textStyle: TextStyle(font: ttfSans)),
+          Header(
+            level: 1,
+            text: '${title ?? 'Rechnung'} ${billNr ?? ''}',
+            textStyle: TextStyle(font: ttfSans),
+          ),
           Paragraph(text: 'Sehr geehrte Damen und Herren,', style: TextStyle(font: ttfSans)),
           Paragraph(text: letter ?? '', style: TextStyle(font: ttfSans)),
           Table(
