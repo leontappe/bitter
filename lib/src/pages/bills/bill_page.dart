@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:bitter/src/pages/drafts/draft_creator.dart';
+import 'package:bitter/src/repositories/draft_repository.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/bill.dart';
@@ -37,6 +39,7 @@ class _BillPageState extends State<BillPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   BillRepository repo;
   VendorRepository vendorRepo;
+  DraftRepository draftRepo;
 
   Bill bill;
 
@@ -47,6 +50,26 @@ class _BillPageState extends State<BillPage> {
   bool busy = false;
 
   final GlobalKey<FormState> _reminderFormKey = GlobalKey<FormState>();
+
+  Future<void> onExportDraft() async {
+    final draft = Draft(
+      items: bill.items,
+      customer: bill.customer.id,
+      vendor: bill.vendor.id,
+      dueDays: vendor.defaultDueDays,
+      editor: bill.editor,
+      serviceDate: bill.serviceDate,
+      tax: vendor.defaultTax,
+      comment: bill.comment,
+      userMessage: bill.userMessage,
+    );
+
+    await draftRepo.insert(draft);
+
+    await Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute<bool>(builder: (BuildContext context) => DraftCreatorPage(draft: draft)),
+        (Route route) => route.settings.name == '/home');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +84,7 @@ class _BillPageState extends State<BillPage> {
                 )),
         title: Text(bill?.billNr ?? ''),
         actions: [
+          IconButton(icon: Icon(Icons.ios_share), onPressed: (!busy) ? onExportDraft : null),
           IconButton(icon: Icon(Icons.save), onPressed: (!busy) ? onSaveBill : null),
           SaveBillButton(billId: (!busy) ? bill.id : null),
         ],
@@ -235,10 +259,12 @@ class _BillPageState extends State<BillPage> {
   Future<void> initDb() async {
     repo = BillRepository(InheritedDatabase.of(context));
     vendorRepo = VendorRepository(InheritedDatabase.of(context));
+    draftRepo = DraftRepository(InheritedDatabase.of(context));
 
     if (mounted) setState(() => busy = true);
 
     await vendorRepo.setUp();
+    await draftRepo.setUp();
 
     bill = await repo.selectSingle(widget.id);
     vendor = await vendorRepo.selectSingle(bill.vendor.id);
