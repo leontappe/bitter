@@ -103,6 +103,8 @@ class Bill {
             : <Reminder>[],
       );
 
+  int get reminderSum => sum + reminders.map((Reminder r) => r.fee).reduce((int a, int b) => a + b);
+
   Map<String, dynamic> get toMap => <String, dynamic>{
         ...toMapShort,
         'file': base64.encode(file),

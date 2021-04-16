@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/bill.dart';
+import '../../models/reminder.dart';
 import '../../util/format_util.dart';
 import 'bill_icon.dart';
 import 'save_bill_button.dart';
@@ -29,10 +30,18 @@ class BillListTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Flexible(
-              child: Text(formatFigure(bill.sum),
-                  style: Theme.of(context).textTheme.headline6,
-                  textScaleFactor: 0.9,
-                  overflow: TextOverflow.ellipsis)),
+            child: Text(
+              formatFigure(bill.reminders.isNotEmpty ? bill.reminderSum : bill.sum),
+              style: Theme.of(context).textTheme.headline6.copyWith(
+                  color: bill.reminders.isNotEmpty
+                      ? bill.reminders.where((Reminder reminder) => reminder.fee > 0).isNotEmpty
+                          ? Colors.red
+                          : null
+                      : null),
+              textScaleFactor: 0.9,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
           SaveBillButton(billId: bill.id),
         ],
       ),
