@@ -3,15 +3,20 @@ import 'package:flutter/services.dart';
 
 class AttributeTable extends StatelessWidget {
   final Map<String, String> attributes;
+  final double dataRowHeight;
 
-  const AttributeTable({Key key, this.attributes = const <String, String>{}}) : super(key: key);
+  const AttributeTable({
+    Key key,
+    this.attributes = const <String, String>{},
+    this.dataRowHeight,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return DataTable(
       showCheckboxColumn: false,
       headingRowHeight: 0.0,
-      dataRowHeight: 32.0,
+      dataRowHeight: dataRowHeight,
       columns: [DataColumn(label: Container()), DataColumn(label: Container())],
       rows: [
         ...attributes.keys
@@ -20,7 +25,7 @@ class AttributeTable extends StatelessWidget {
                   cells: [
                     DataCell(Text(key, style: TextStyle(fontWeight: FontWeight.bold))),
                     DataCell(
-                      Text(attributes[key]),
+                      Text(attributes[key], overflow: TextOverflow.clip),
                     )
                   ],
                 ))

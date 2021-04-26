@@ -28,6 +28,7 @@ class CustomerCard extends StatelessWidget {
                   child: Text(customer.name + ' ' + customer.surname,
                       style: Theme.of(context).textTheme.headline6)),
             AttributeTable(
+              dataRowHeight: 32.0,
               attributes: <String, String>{
                 if (customer.company != null && customer.company.isNotEmpty)
                   customer.gender == Gender.male

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/reminder.dart';
 import '../../models/vendor.dart';
 import '../../util/format_util.dart';
+import '../attribute_table.dart';
 
 class VendorCard extends StatelessWidget {
   final Vendor vendor;
@@ -15,63 +16,59 @@ class VendorCard extends StatelessWidget {
       margin: EdgeInsets.all(8.0),
       elevation: 2.0,
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(8.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(vendor.name, style: Theme.of(context).textTheme.headline6),
-            if (vendor.manager != null) Text('Organisation: ${vendor.manager}'),
-            if (vendor.contact != null) Text('Ansprechpartner: ${vendor.contact}'),
-            Text('Adresse: ${vendor.address}'),
-            Text('Postleitzahl: ${vendor.zipCode}'),
-            Text('Stadt: ${vendor.city}'),
-            Text('IBAN: ${vendor.iban}'),
-            Text('BIC: ${vendor.bic}'),
-            Text('Bank: ${vendor.bank}'),
-            Text('Steuernummer: ${vendor.taxNr}'),
-            Text('Umsatzsteuernummer: ${vendor.vatNr}'),
-            Text('E-Mail: ${vendor.email}'),
-            if (vendor.website != null) Text('Website: ${vendor.website}'),
-            Text('Adresszeile für Briefkopf: ${vendor.fullAddress}'),
-            Text('Prefix für Rechnungsnummern: ${vendor.billPrefix}'),
-            Text('Standard Zahlungsfrist: ${vendor.defaultDueDays} Tage'),
-            Text('Standard Umsatzsteuer: ${vendor.defaultTax} %'),
-            if (vendor.defaultComment != null)
-              Text('Standard Rechnungskommentar: ${vendor.defaultComment}'),
-            if (vendor.reminderFees != null)
-              Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Standard Mahngebühr für erste Mahnung: ${formatFigure(vendor.reminderFees[ReminderIteration.first]) ?? 'n.a.'}',
-                    ),
-                    Text(
-                      'Standard Mahngebühr für zweite Mahnung: ${formatFigure(vendor.reminderFees[ReminderIteration.second]) ?? 'n.a.'}',
-                    ),
-                    Text(
-                      'Standard Mahngebühr für dritte Mahnung: ${formatFigure(vendor.reminderFees[ReminderIteration.third]) ?? 'n.a.'}',
-                    ),
-                  ]),
-            if (vendor.reminderDeadline != null)
-              Text('Standardfrist für Mahnungen: ${vendor.reminderDeadline} Tage'),
-            if (vendor.reminderTitles != null)
-              ...vendor.reminderTitles
-                  .map((key, value) => (value.isNotEmpty)
-                      ? MapEntry(key, Text('Titel für ${key.index + 1}. Mahnung: $value'))
-                      : MapEntry(key, Container(width: 0, height: 0)))
-                  .values,
-            if (vendor.reminderTexts != null)
-              ...vendor.reminderTexts
-                  .map((key, value) => (value.isNotEmpty)
-                      ? MapEntry(key, Text('Text für ${key.index + 1}. Mahnung: $value'))
-                      : MapEntry(key, Container(width: 0, height: 0)))
-                  .values,
-            Text(
-                'Kopfzeilenbilder:\n\tRechts: ${vendor.headerImageRight != null ? 'Vorhanden' : 'Nicht vorhanden'}\n\tMitte: ${vendor.headerImageCenter != null ? 'Vorhanden' : 'Nicht vorhanden'}\n\tLinks: ${vendor.headerImageLeft != null ? 'Vorhanden' : 'Nicht vorhanden'}'),
-            Text(
-                'Label für benutzerdefinierten Rechnungskommentar: ${vendor.userMessageLabel ?? 'Keins'}'),
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
+              child: Text(vendor.name, style: Theme.of(context).textTheme.headline6),
+            ),
+            AttributeTable(
+              attributes: <String, String>{
+                if (vendor.manager != null) 'Organisation': vendor.manager,
+                if (vendor.contact != null) 'Ansprechpartner*in': vendor.contact,
+                'Adresse': vendor.address,
+                'Postleitzahl': vendor.zipCode.toString(),
+                'Stadt': vendor.city,
+                'IBAN': vendor.iban,
+                'BIC': vendor.bic,
+                'Bank': vendor.bank,
+                'Steuernummer': vendor.taxNr,
+                'Umsatzsteuernummer': vendor.vatNr,
+                'E-Mail': vendor.email,
+                if (vendor.website != null) 'Website': vendor.website,
+                'Adresszeile für Briefkopf': vendor.fullAddress,
+                'Prefix für Rechnungsnummern': vendor.billPrefix,
+                'Standard Zahlungsfrist': '${vendor.defaultDueDays} Tage',
+                'Standard Umsatzsteuer': '${vendor.defaultTax} %',
+                if (vendor.defaultComment != null)
+                  'Standard Rechnungskommentar': vendor.defaultComment,
+                if (vendor.reminderFees[ReminderIteration.first] != null)
+                  'Standard Mahngebühr für erste Mahnung':
+                      '${formatFigure(vendor.reminderFees[ReminderIteration.first])}',
+                if (vendor.reminderFees[ReminderIteration.second] != null)
+                  'Standard Mahngebühr für zweite Mahnung':
+                      '${formatFigure(vendor.reminderFees[ReminderIteration.second])}',
+                if (vendor.reminderFees[ReminderIteration.third] != null)
+                  'Standard Mahngebühr für dritte Mahnung':
+                      '${formatFigure(vendor.reminderFees[ReminderIteration.third])}',
+                if (vendor.reminderDeadline != null)
+                  'Standardfrist für Mahnungen': '${vendor.reminderDeadline} Tage',
+                if (vendor.reminderTitles != null)
+                  ...vendor.reminderTitles.map(
+                      (key, value) => MapEntry('Titel für ${key.index + 1}. Mahnung', value ?? '')),
+                if (vendor.reminderTexts != null)
+                  ...vendor.reminderTexts.map(
+                      (key, value) => MapEntry('Text für ${key.index + 1}. Mahnung', value ?? '')),
+                if (vendor.headerImageLeft != null) 'Linkes Kopfzeilenbild': 'Vorhanden',
+                if (vendor.headerImageCenter != null) 'Mittleres Kopfzeilenbild': 'Vorhanden',
+                if (vendor.headerImageRight != null) 'Rechtes Kopfzeilenbild': 'Vorhanden',
+                'Label für benutzerdefinierten Rechnungskommentar':
+                    vendor.userMessageLabel ?? 'Keins',
+              },
+            ),
           ],
         ),
       ),
