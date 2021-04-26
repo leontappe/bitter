@@ -50,7 +50,9 @@ class _VendorPageState extends State<VendorPage> {
           icon: Icon((widget.id != null) ? Icons.arrow_back_ios : Icons.cancel),
           onPressed: onPopRoute,
         ),
-        title: Text((widget.id != null) ? 'Verkäuferansicht' : 'Verkäufer hinzufügen'),
+        title: Text((widget.id != null)
+            ? '${vendor?.name ?? 'Verkäufer'} bearbeiten'
+            : 'Verkäufer hinzufügen'),
         actions: <Widget>[
           if (widget.id != null)
             IconButton(
@@ -70,13 +72,8 @@ class _VendorPageState extends State<VendorPage> {
             ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
             : ListView(
                 children: <Widget>[
-                  if (widget.id != null)
-                    Text(' Aktuelle Informationen', style: Theme.of(context).textTheme.headline4),
-                  if (widget.id != null) VendorCard(vendor: vendor),
-                  if (widget.id != null)
-                    Text(' Verkäufer bearbeiten', style: Theme.of(context).textTheme.headline4),
                   Padding(
-                    padding: EdgeInsets.fromLTRB(16.0, (widget.id != null) ? 16.0 : 8.0, 16.0, 8.0),
+                    padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
                     child: Form(
                       key: _formKey,
                       child: Column(
