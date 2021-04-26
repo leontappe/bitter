@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/customer.dart';
+import '../attribute_table.dart';
 
 class CustomerCard extends StatelessWidget {
   final Customer customer;
@@ -13,31 +14,38 @@ class CustomerCard extends StatelessWidget {
       margin: EdgeInsets.all(16.0),
       elevation: 8.0,
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(8.0),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             if (customer.company != null && customer.company.isNotEmpty)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(customer.company, style: Theme.of(context).textTheme.headline6),
-                  Text('Ansprechpartner: ' + customer.name + ' ' + customer.surname)
-                ],
-              )
+              Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Text(customer.company, style: Theme.of(context).textTheme.headline6))
             else
-              Text(customer.name + ' ' + customer.surname,
-                  style: Theme.of(context).textTheme.headline6),
-            if (customer.organizationUnit != null && customer.organizationUnit.isNotEmpty)
-              Text('Abteilung: ${customer.organizationUnit}'),
-            Text('Adresse: ${customer.address}'),
-            Text('Stadt: ${customer.zipCode} ${customer.city}'),
-            if (customer.country != null) Text('Land: ${customer.country}'),
-            if (customer.telephone != null) Text('Telefon: ${customer.telephone}'),
-            if (customer.fax != null) Text('Fax: ${customer.fax}'),
-            if (customer.mobile != null) Text('Mobil: ${customer.mobile}'),
-            Text('E-Mail: ${customer.email}')
+              Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Text(customer.name + ' ' + customer.surname,
+                      style: Theme.of(context).textTheme.headline6)),
+            AttributeTable(
+              attributes: <String, String>{
+                if (customer.company != null && customer.company.isNotEmpty)
+                  customer.gender == Gender.male
+                      ? 'Ansprechpartner'
+                      : customer.gender == Gender.female
+                          ? 'Ansprechpartnerin'
+                          : 'Ansprechpartner*in': customer.name + ' ' + customer.surname,
+                if (customer.organizationUnit != null && customer.organizationUnit.isNotEmpty)
+                  'Abteilung': customer.organizationUnit,
+                'Adresse': customer.address,
+                'Stadt': '${customer.zipCode} ${customer.city}',
+                if (customer.country != null) 'Land': customer.country,
+                'E-Mail': customer.email,
+                if (customer.telephone != null) 'Telefon': customer.telephone,
+                if (customer.fax != null) 'Fax': customer.fax,
+                if (customer.mobile != null) 'Mobil': customer.mobile,
+              },
+            ),
           ],
         ),
       ),
