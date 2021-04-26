@@ -23,7 +23,7 @@ class ItemsCard extends StatelessWidget {
           (Item i) => DataRow(
             cells: [
               DataCell(Text(i.title)),
-              DataCell(Text(i.description)),
+              DataCell(Text(i.description ?? '')),
               DataCell(Text('${i.quantity}x')),
               DataCell(Text('${i.tax}%')),
               DataCell(Text(formatFigure(i.price))),
