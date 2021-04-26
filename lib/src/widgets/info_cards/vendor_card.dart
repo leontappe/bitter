@@ -12,8 +12,8 @@ class VendorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(16.0),
-      elevation: 8.0,
+      margin: EdgeInsets.all(8.0),
+      elevation: 2.0,
       child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
