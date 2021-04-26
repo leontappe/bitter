@@ -6,7 +6,6 @@ import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../util/format_util.dart';
 import '../../widgets/database_error_watcher.dart';
-import '../../widgets/info_cards/item_card.dart';
 import '../../widgets/vendor_selector.dart';
 
 class ItemPage extends StatefulWidget {
@@ -38,7 +37,8 @@ class _ItemPageState extends State<ItemPage> {
                   icon: Icon(widget.item != null ? Icons.arrow_back_ios : Icons.cancel),
                   onPressed: () => onPopRoute(context),
                 )),
-        title: Text((widget.item != null) ? 'Artikel bearbeiten' : 'Artikel erstellen'),
+        title: Text(
+            (widget.item != null) ? 'Artikel ${item.itemId} - ${item.title}' : 'Artikel erstellen'),
         actions: [
           IconButton(icon: Icon(Icons.save), onPressed: (busy) ? null : onSaveItem),
           if (widget.item != null)
@@ -52,7 +52,6 @@ class _ItemPageState extends State<ItemPage> {
             ? Center(child: CircularProgressIndicator(strokeWidth: 5.0))
             : ListView(
                 children: <Widget>[
-                  if (widget.item != null) ItemCard(item: item),
                   Padding(
                     padding:
                         EdgeInsets.fromLTRB(16.0, (widget.item != null) ? 16.0 : 8.0, 16.0, 8.0),
