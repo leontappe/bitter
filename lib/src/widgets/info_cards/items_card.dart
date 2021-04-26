@@ -9,82 +9,44 @@ class ItemsCard extends StatelessWidget {
 
   const ItemsCard({Key key, @required this.items, @required this.sum}) : super(key: key);
 
+  List<DataColumn> get _column => <DataColumn>[
+        DataColumn(label: Text('Name')),
+        DataColumn(label: Text('Beschreibung')),
+        DataColumn(label: Text('Menge')),
+        DataColumn(label: Text('Ust.')),
+        DataColumn(label: Text('Einzelpreis')),
+        DataColumn(label: Text('Nettopreis')),
+      ];
+
+  List<DataRow> get _rows => <DataRow>[
+        ...items.map(
+          (Item i) => DataRow(
+            cells: [
+              DataCell(Text(i.title)),
+              DataCell(Text(i.description)),
+              DataCell(Text('${i.quantity}x')),
+              DataCell(Text('${i.tax}%')),
+              DataCell(Text(formatFigure(i.price))),
+              DataCell(Text(formatFigure(i.sum))),
+            ],
+          ),
+        ),
+      ];
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 0.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('Name', style: Theme.of(context).textTheme.bodyText1),
-              Text('Menge', style: Theme.of(context).textTheme.bodyText1),
-              Text('Ust.', style: Theme.of(context).textTheme.bodyText1),
-              Text('Einzelpreis', style: Theme.of(context).textTheme.bodyText1),
-              Text('Nettopreis', style: Theme.of(context).textTheme.bodyText1),
-            ],
-          ),
+    return Card(
+      margin: EdgeInsets.all(8.0),
+      elevation: 2.0,
+      child: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: DataTable(
+          headingRowHeight: 40.0,
+          showCheckboxColumn: false,
+          columns: _column,
+          rows: _rows,
         ),
-        Card(
-          margin: EdgeInsets.all(16.0),
-          elevation: 8.0,
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                ...items.map(
-                  (Item i) => Column(
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(i.title),
-                                if (i.description != null && i.description.isNotEmpty)
-                                  Text(i.description),
-                              ],
-                            ),
-                          ),
-                          Flexible(child: Text('${i.quantity}x')),
-                          Flexible(child: Text('${i.tax}%')),
-                          Flexible(child: Text(formatFigure(i.price))),
-                          Flexible(child: Text(formatFigure(i.sum))),
-                        ],
-                      ),
-                      Divider(),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 16.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('Summe', style: Theme.of(context).textTheme.headline6, textScaleFactor: 0.9),
-              Text(formatFigure(sum),
-                  style: Theme.of(context).textTheme.headline6, textScaleFactor: 0.9)
-            ],
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
