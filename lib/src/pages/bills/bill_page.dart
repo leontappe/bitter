@@ -233,16 +233,16 @@ class _BillPageState extends State<BillPage> {
                         ),
                       ),
                       ListTile(
-                        title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
-                        subtitle: VendorCard(vendor: bill.vendor),
+                        title: Text('Artikel', style: Theme.of(context).textTheme.headline6),
+                        subtitle: ItemsCard(items: bill.items, sum: bill.sum),
                       ),
                       ListTile(
                         title: Text('Kunde', style: Theme.of(context).textTheme.headline6),
                         subtitle: CustomerCard(customer: bill.customer),
                       ),
                       ListTile(
-                        title: Text('Artikel', style: Theme.of(context).textTheme.headline6),
-                        subtitle: ItemsCard(items: bill.items, sum: bill.sum),
+                        title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
+                        subtitle: VendorCard(vendor: bill.vendor),
                       ),
                     ],
                   ),
