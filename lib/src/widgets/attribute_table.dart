@@ -8,33 +8,22 @@ class AttributeTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Table(
-      columnWidths: {
-        0: FlexColumnWidth(),
-        1: FlexColumnWidth(),
-      },
-      border: TableBorder.symmetric(inside: BorderSide(color: Colors.grey[300])),
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      children: [
+    return DataTable(
+      showCheckboxColumn: false,
+      headingRowHeight: 0.0,
+      dataRowHeight: 32.0,
+      columns: [DataColumn(label: Container()), DataColumn(label: Container())],
+      rows: [
         ...attributes.keys
-            .map<TableRow>(
-              (String key) => TableRow(
-                children: [
-                  TableCell(
-                    child: Padding(padding: EdgeInsets.all(8.0), child: Text(key)),
-                  ),
-                  TableCell(
-                    child: InkWell(
-                      onTap: () => _onTapRow(context, key),
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(attributes[key]),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
+            .map<DataRow>((String key) => DataRow(
+                  onSelectChanged: (_) => _onTapRow(context, key),
+                  cells: [
+                    DataCell(Text(key, style: TextStyle(fontWeight: FontWeight.bold))),
+                    DataCell(
+                      Text(attributes[key]),
+                    )
+                  ],
+                ))
             .toList(),
       ],
     );
@@ -42,6 +31,7 @@ class AttributeTable extends StatelessWidget {
 
   Future<void> _onTapRow(BuildContext context, String key) async {
     await Clipboard.setData(ClipboardData(text: attributes[key]));
+    ScaffoldMessenger.of(context).hideCurrentSnackBar(reason: SnackBarClosedReason.hide);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('$key wurde in die Zwischenablage kopiert'),
       duration: const Duration(seconds: 1),

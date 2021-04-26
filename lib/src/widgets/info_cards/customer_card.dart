@@ -16,15 +16,15 @@ class CustomerCard extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(8.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (customer.company != null && customer.company.isNotEmpty)
               Padding(
-                  padding: EdgeInsets.only(left: 8.0),
+                  padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
                   child: Text(customer.company, style: Theme.of(context).textTheme.headline6))
             else
               Padding(
-                  padding: EdgeInsets.only(left: 8.0),
+                  padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
                   child: Text(customer.name + ' ' + customer.surname,
                       style: Theme.of(context).textTheme.headline6)),
             AttributeTable(
