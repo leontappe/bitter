@@ -100,7 +100,9 @@ Widget pageCountFooter(Context context, Vendor vendor, Font font) {
                 text: 'Geschäftsinhaber:',
                 style: TextStyle(fontSize: fontSize, font: font, color: color),
                 margin: EdgeInsets.only(bottom: 8.0)),
-            if (vendor.manager == null || vendor.manager.isEmpty)
+            if (vendor.smallBusiness && vendor.contact.isNotEmpty)
+              Text(vendor.contact, style: TextStyle(fontSize: fontSize, font: font, color: color))
+            else if (vendor.manager == null || vendor.manager.isEmpty)
               Text(vendor.name, style: TextStyle(fontSize: fontSize, font: font, color: color))
             else
               Text(vendor.manager, style: TextStyle(fontSize: fontSize, font: font, color: color)),
@@ -133,7 +135,7 @@ Widget pageCountFooter(Context context, Vendor vendor, Font font) {
                 text: 'Steuer-Nr.: ${vendor.taxNr}',
                 style: TextStyle(fontSize: fontSize, font: font, color: color),
                 margin: EdgeInsets.only(top: 17.0)),
-            Text('USt.-ID: ${vendor.vatNr}',
+            Text(vendor.vatNr != null ? 'USt.-ID: ${vendor.vatNr}' : '',
                 style: TextStyle(fontSize: fontSize, font: font, color: color)),
             Text(vendor.website ?? '',
                 style: TextStyle(fontSize: fontSize, font: font, color: color)),

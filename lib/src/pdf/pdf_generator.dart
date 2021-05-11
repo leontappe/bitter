@@ -137,8 +137,8 @@ class PdfGenerator {
               0: FixedColumnWidth(22.0),
               1: FixedColumnWidth(150.0),
               2: FixedColumnWidth(32.0),
-              3: FixedColumnWidth(24.0),
-              4: FixedColumnWidth(50.0),
+              3: FixedColumnWidth(!vendor.smallBusiness ? 24.0 : 74.0),
+              4: FixedColumnWidth(!vendor.smallBusiness ? 50.0 : 55.0),
               5: FixedColumnWidth(55.0),
             },
             tableWidth: TableWidth.max,
@@ -148,7 +148,7 @@ class PdfGenerator {
                 PaddedHeaderText('Pos.'),
                 PaddedHeaderText('Artikel'),
                 PaddedHeaderText('Menge'),
-                PaddedHeaderText('USt.'),
+                if (!vendor.smallBusiness) PaddedHeaderText('USt.'),
                 PaddedHeaderText('Einzelpreis\nBrutto'),
                 PaddedHeaderText('Gesamtpreis\nBrutto')
               ]),
@@ -158,7 +158,7 @@ class PdfGenerator {
                         (i.description != null) ? '${i.title} - ${i.description}' : '${i.title}',
                         ttfSans),
                     PaddedText(i.quantity.toString(), ttfSans),
-                    PaddedText('${i.tax.toStringAsFixed(0)} %', ttfSans),
+                    if (!vendor.smallBusiness) PaddedText('${i.tax.toStringAsFixed(0)} %', ttfSans),
                     PaddedText(formatFigure(i.price), ttfSans),
                     PaddedText(formatFigure(i.sum), ttfSans),
                   ])),
@@ -178,12 +178,20 @@ class PdfGenerator {
                         fontSize: fontsize + 1.0, fontWeight: FontWeight.bold, font: ttfSansBold),
                     margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
                   ),
-                  Paragraph(
-                    text:
-                        'Der Gesamtbetrag setzt sich aus ${formatFigure(bill.sum - calculateTaxes(bill.items, bill.tax))} netto zzgl. ${formatFigure(calculateTaxes(bill.items, bill.tax))} Umsatzsteuer zusammen.',
-                    style: TextStyle(fontSize: fontsize + 1.0, font: ttfSans),
-                    margin: EdgeInsets.all(0.0),
-                  ),
+                  if (!vendor.smallBusiness)
+                    Paragraph(
+                      text:
+                          'Der Gesamtbetrag setzt sich aus ${formatFigure(bill.sum - calculateTaxes(bill.items, bill.tax))} netto zzgl. ${formatFigure(calculateTaxes(bill.items, bill.tax))} Umsatzsteuer zusammen.',
+                      style: TextStyle(fontSize: fontsize + 1.0, font: ttfSans),
+                      margin: EdgeInsets.all(0.0),
+                    )
+                  else
+                    Paragraph(
+                      text:
+                          'Als Kleinunternehmer im Sinne von § 19 Abs. 1 UStG wird keine Umsatzsteuer berechnet.',
+                      style: TextStyle(fontSize: fontsize + 1.0, font: ttfSans),
+                      margin: EdgeInsets.all(0.0),
+                    ),
                 ],
               ),
             ],
