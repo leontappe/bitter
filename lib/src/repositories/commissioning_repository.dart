@@ -44,16 +44,10 @@ class CommissioningRepository<T extends DatabaseProvider> {
   }
 
   Future<void> setUp() async {
-    final settingsRepo = SettingsRepository();
-    await settingsRepo.setUp();
-    final settings = settingsRepo.getMySqlSettings();
-    final opened = await db.open(
-      settings.database,
-      host: settings.host,
-      port: settings.port,
-      user: settings.user,
-      password: settings.password,
-    );
+    final settings = SettingsRepository();
+    await settings.setUp();
+    final opened = await db.open(settings.getSqliteName());
+
     if (opened) {
       await db.createTable(
         tableName,

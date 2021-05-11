@@ -116,8 +116,8 @@ class _HomepageState extends State<Homepage> {
       try {
         await vendorRepo.setUp();
         _vendors = await vendorRepo.select(short: true);
-      } on NoSuchMethodError {
-        print('db not availiable');
+      } on NoSuchMethodError catch (e) {
+        print('db not availiable $e ${e.stackTrace}');
         return;
       }
     }

@@ -10,6 +10,7 @@ export '../models/mysql_settings.dart';
 
 const dbKey = 'db_engine';
 const mySqlKey = 'mysql_settings';
+const sqliteKey = 'sqlite_name';
 const userKey = 'username';
 
 enum DbEngine {
@@ -43,11 +44,15 @@ class SettingsRepository {
     }
   }
 
+  String getSqliteName() => select<String>(sqliteKey);
+
   String getUsername() => select<String>(userKey);
 
   bool hasDbEngine() => _hasGeneric(dbKey);
 
   bool hasMySqlSettings() => _hasGeneric(userKey);
+
+  bool hasSqliteName() => _hasGeneric(sqliteKey);
 
   bool hasUsername() => _hasGeneric(userKey);
 
@@ -72,6 +77,8 @@ class SettingsRepository {
   Future<void> setDbEngine(DbEngine engine) => insert(dbKey, engine.index);
 
   Future<void> setMySqlSettings(MySqlSettings settings) => insert(mySqlKey, settings.toMap);
+
+  Future<void> setSqliteName(String name) => insert(sqliteKey, name);
 
   Future<void> setUp() async {
     data = File((await getConfigPath()) + '/settings.json');

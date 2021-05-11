@@ -1,6 +1,7 @@
 import '../models/bill.dart';
 import '../models/item.dart';
 import '../providers/database_provider.dart';
+import 'settings_repository.dart';
 
 export '../models/bill.dart';
 
@@ -53,7 +54,9 @@ class BillRepository<T extends DatabaseProvider> {
   }
 
   Future<void> setUp() async {
-    final opened = await db.open(null);
+    final settings = SettingsRepository();
+    await settings.setUp();
+    final opened = await db.open(settings.getSqliteName());
 
     if (opened) {
       await db.createTable(

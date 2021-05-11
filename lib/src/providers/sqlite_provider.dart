@@ -73,7 +73,7 @@ class SqliteProvider extends DatabaseProvider {
 
   @override
   Future<bool> open(String path, {String host, int port, String user, String password}) async {
-    final dbPath = '${await getConfigPath()}/bitter.db';
+    final dbPath = '${await getConfigPath()}/${path.isEmpty ? 'bitter' : path}.db';
 
     _log.fine('opening DB at $dbPath');
 
