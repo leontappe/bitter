@@ -190,6 +190,14 @@ class _VendorPageState extends State<VendorPage> {
                               dirty = true;
                             },
                           ),
+                          CheckboxListTile(
+                            title: Text('Kleingewerberegelung anwenden'),
+                            value: newVendor.smallBusiness,
+                            onChanged: (bool input) {
+                              setState(() => newVendor.smallBusiness = input);
+                              dirty = true;
+                            },
+                          ),
                           TextFormField(
                             initialValue: newVendor.taxNr,
                             maxLines: 1,
@@ -229,6 +237,15 @@ class _VendorPageState extends State<VendorPage> {
                             decoration: InputDecoration(labelText: 'Website'),
                             onChanged: (String input) {
                               newVendor.website = input;
+                              dirty = true;
+                            },
+                          ),
+                          TextFormField(
+                            initialValue: newVendor.telephone,
+                            maxLines: 1,
+                            decoration: InputDecoration(labelText: 'Telefon'),
+                            onChanged: (String input) {
+                              newVendor.telephone = input;
                               dirty = true;
                             },
                           ),

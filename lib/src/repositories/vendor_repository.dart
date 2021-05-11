@@ -80,6 +80,8 @@ class VendorRepository<T extends DatabaseProvider> {
           'header_image_center',
           'header_image_left',
           'user_message_label',
+          'small_business',
+          'telephone',
         ],
         [
           'INTEGER',
@@ -108,6 +110,8 @@ class VendorRepository<T extends DatabaseProvider> {
           'LONGTEXT',
           'LONGTEXT',
           'LONGTEXT',
+          'TEXT',
+          'INTEGER',
           'TEXT',
         ],
         'id',
@@ -138,6 +142,8 @@ class VendorRepository<T extends DatabaseProvider> {
           true,
           true,
           true,
+          true,
+          false,
           true,
         ],
       );

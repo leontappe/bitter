@@ -39,6 +39,7 @@ class VendorCard extends StatelessWidget {
                 'Umsatzsteuernummer': vendor.vatNr,
                 'E-Mail': vendor.email,
                 if (vendor.website != null) 'Website': vendor.website,
+                if (vendor.telephone != null) 'Telefon': vendor.telephone,
                 'Adresszeile für Briefkopf': vendor.fullAddress,
                 'Prefix für Rechnungsnummern': vendor.billPrefix,
                 'Standard Zahlungsfrist': '${vendor.defaultDueDays} Tage',
@@ -67,6 +68,7 @@ class VendorCard extends StatelessWidget {
                 if (vendor.headerImageRight != null) 'Rechtes Kopfzeilenbild': 'Vorhanden',
                 'Label für benutzerdefinierten Rechnungskommentar':
                     vendor.userMessageLabel ?? 'Keins',
+                'Kleingewerberegelung': vendor.smallBusiness ? 'Ja' : 'Nein',
               },
             ),
           ],

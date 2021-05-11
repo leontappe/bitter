@@ -43,6 +43,7 @@ class Vendor {
   String taxNr;
   String vatNr;
   String email;
+  String telephone;
 
   String website;
   String fullAddress;
@@ -64,6 +65,8 @@ class Vendor {
 
   String userMessageLabel;
 
+  bool smallBusiness;
+
   Vendor({
     this.id,
     @required this.name,
@@ -79,6 +82,7 @@ class Vendor {
     this.vatNr,
     @required this.email,
     this.website,
+    this.telephone,
     @required this.fullAddress,
     @required this.billPrefix,
     this.defaultDueDays,
@@ -96,6 +100,7 @@ class Vendor {
     this.headerImageCenter,
     this.headerImageLeft,
     this.userMessageLabel,
+    this.smallBusiness = false,
   });
 
   factory Vendor.empty() => Vendor(
@@ -129,6 +134,7 @@ class Vendor {
         vatNr: map['vat_nr'].toString(),
         email: map['email'].toString(),
         website: (map['website'] != null) ? map['website'].toString() : null,
+        telephone: (map['telephone'] != null) ? map['telephone'].toString() : null,
         fullAddress: map['full_address'].toString(),
         billPrefix: map['bill_prefix'].toString(),
         defaultDueDays: map['default_due_days'] as int,
@@ -170,6 +176,7 @@ class Vendor {
             : null,
         userMessageLabel:
             (map['user_message_label'] != null) ? map['user_message_label'].toString() : null,
+        smallBusiness: (map['small_business'] as int ?? 0) > 0 ? true : false,
       );
 
   @override
@@ -203,6 +210,7 @@ class Vendor {
         'vat_nr': vatNr,
         'email': email,
         'website': website,
+        'telephone': telephone,
         'full_address': fullAddress,
         'bill_prefix': billPrefix,
         'default_due_days': defaultDueDays,
@@ -215,6 +223,7 @@ class Vendor {
             (ReminderIteration key, String value) => MapEntry(key.index.toString(), value))),
         'reminder_titles': json.encode(reminderTitles.map<String, String>(
             (ReminderIteration key, String value) => MapEntry(key.index.toString(), value))),
+        'small_business': smallBusiness ? 1 : 0,
       };
 
   @override
