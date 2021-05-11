@@ -108,6 +108,12 @@ class ReminderGenerator {
                       style: TextStyle(fontSize: fontsize),
                       margin: EdgeInsets.all(0.0),
                     ),
+                    if (vendor.telephone != null)
+                      Paragraph(
+                        text: 'Telefon: ${vendor.telephone}',
+                        style: TextStyle(fontSize: fontsize),
+                        margin: EdgeInsets.all(0.0),
+                      ),
                     Paragraph(
                       text: 'Datum: ${formatDate(DateTime.now())}',
                       style: TextStyle(fontSize: fontsize),
