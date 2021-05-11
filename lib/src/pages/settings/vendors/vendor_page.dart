@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:bitter/src/util/format_util.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
@@ -13,8 +12,8 @@ import '../../../providers/inherited_database.dart';
 import '../../../repositories/draft_repository.dart';
 import '../../../repositories/item_repository.dart';
 import '../../../repositories/vendor_repository.dart';
+import '../../../util/format_util.dart';
 import '../../../widgets/database_error_watcher.dart';
-import '../../../widgets/info_cards/vendor_card.dart';
 
 class VendorPage extends StatefulWidget {
   final int id;

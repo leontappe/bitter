@@ -1,7 +1,6 @@
-import 'package:bitter/src/repositories/settings_repository.dart';
-
 import '../models/customer.dart';
 import '../providers/database_provider.dart';
+import 'settings_repository.dart';
 
 export '../models/customer.dart';
 

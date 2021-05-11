@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:bitter/src/pages/drafts/draft_creator.dart';
-import 'package:bitter/src/repositories/draft_repository.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/bill.dart';
@@ -10,6 +8,7 @@ import '../../models/reminder.dart';
 import '../../pdf/reminder_generator.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
+import '../../repositories/draft_repository.dart';
 import '../../repositories/vendor_repository.dart';
 import '../../util/format_util.dart';
 import '../../util/path_util.dart';
@@ -18,6 +17,7 @@ import '../../widgets/info_cards/customer_card.dart';
 import '../../widgets/info_cards/items_card.dart';
 import '../../widgets/info_cards/vendor_card.dart';
 import '../../widgets/option_dialog.dart';
+import '../drafts/draft_creator.dart';
 import 'save_bill_button.dart';
 
 class BillPage extends StatefulWidget {
@@ -50,26 +50,6 @@ class _BillPageState extends State<BillPage> {
   bool busy = false;
 
   final GlobalKey<FormState> _reminderFormKey = GlobalKey<FormState>();
-
-  Future<void> onExportDraft() async {
-    final draft = Draft(
-      items: bill.items,
-      customer: bill.customer.id,
-      vendor: bill.vendor.id,
-      dueDays: vendor.defaultDueDays,
-      editor: bill.editor,
-      serviceDate: bill.serviceDate,
-      tax: vendor.defaultTax,
-      comment: bill.comment,
-      userMessage: bill.userMessage,
-    );
-
-    await draftRepo.insert(draft);
-
-    await Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute<bool>(builder: (BuildContext context) => DraftCreatorPage(draft: draft)),
-        (Route route) => route.settings.name == '/home');
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -270,6 +250,26 @@ class _BillPageState extends State<BillPage> {
     vendor = await vendorRepo.selectSingle(bill.vendor.id);
 
     if (mounted) setState(() => busy = false);
+  }
+
+  Future<void> onExportDraft() async {
+    final draft = Draft(
+      items: bill.items,
+      customer: bill.customer.id,
+      vendor: bill.vendor.id,
+      dueDays: vendor.defaultDueDays,
+      editor: bill.editor,
+      serviceDate: bill.serviceDate,
+      tax: vendor.defaultTax,
+      comment: bill.comment,
+      userMessage: bill.userMessage,
+    );
+
+    await draftRepo.insert(draft);
+
+    await Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute<bool>(builder: (BuildContext context) => DraftCreatorPage(draft: draft)),
+        (Route route) => route.settings.name == '/home');
   }
 
   Future<void> onPopRoute(BuildContext context) async {
