@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
 
 import '../../models/bill.dart';
 import '../../models/reminder.dart';
@@ -354,6 +355,11 @@ class _BillPageState extends State<BillPage> {
     ScaffoldMessenger.of(_key.currentContext).showSnackBar(SnackBar(
       content: Text('Die Mahnung wurde erfolgreich unter ${file.path} abgespeichert.'),
       duration: const Duration(seconds: 5),
+      action: SnackBarAction(
+        label: 'Öffnen',
+        onPressed: () => OpenFile.open(file.path),
+        textColor: Colors.white,
+      ),
     ));
   }
 
