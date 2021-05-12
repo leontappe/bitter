@@ -28,6 +28,9 @@ class Vendor {
     'website',
     'full_address',
     'bill_prefix',
+    'small_business',
+    'free_information',
+    'telephone',
   ];
 
   int id;
@@ -67,6 +70,8 @@ class Vendor {
 
   bool smallBusiness;
 
+  String freeInformation;
+
   Vendor({
     this.id,
     @required this.name,
@@ -101,6 +106,7 @@ class Vendor {
     this.headerImageLeft,
     this.userMessageLabel,
     this.smallBusiness = false,
+    this.freeInformation,
   });
 
   factory Vendor.empty() => Vendor(
@@ -177,6 +183,8 @@ class Vendor {
         userMessageLabel:
             (map['user_message_label'] != null) ? map['user_message_label'].toString() : null,
         smallBusiness: (map['small_business'] as int ?? 0) > 0 ? true : false,
+        freeInformation:
+            map['free_information'] != null ? map['free_information'].toString() : null,
       );
 
   @override
@@ -224,6 +232,7 @@ class Vendor {
         'reminder_titles': json.encode(reminderTitles.map<String, String>(
             (ReminderIteration key, String value) => MapEntry(key.index.toString(), value))),
         'small_business': smallBusiness ? 1 : 0,
+        'free_information': freeInformation,
       };
 
   @override

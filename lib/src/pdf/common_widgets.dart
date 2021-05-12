@@ -132,13 +132,18 @@ Widget pageCountFooter(Context context, Vendor vendor, Font font) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Paragraph(
-                text: 'Steuer-Nr.: ${vendor.taxNr}',
+                text: vendor.taxNr.isNotEmpty && vendor.taxNr != ' '
+                    ? 'Steuer-Nr.: ${vendor.taxNr}'
+                    : '',
                 style: TextStyle(fontSize: fontSize, font: font, color: color),
                 margin: EdgeInsets.only(top: 17.0)),
-            Text(vendor.vatNr != null ? 'USt.-ID: ${vendor.vatNr}' : '',
+            Text(vendor.vatNr.isNotEmpty && vendor.vatNr != ' ' ? 'USt.-ID: ${vendor.vatNr}' : '',
                 style: TextStyle(fontSize: fontSize, font: font, color: color)),
             Text(vendor.website ?? '',
                 style: TextStyle(fontSize: fontSize, font: font, color: color)),
+            if (vendor.freeInformation != null && vendor.freeInformation.isNotEmpty)
+              for (var line in vendor.freeInformation.split('\n'))
+                Text(line, style: TextStyle(fontSize: fontSize, font: font, color: color)),
           ],
         ),
       ],

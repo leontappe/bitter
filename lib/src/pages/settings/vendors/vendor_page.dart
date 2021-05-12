@@ -317,6 +317,15 @@ class _VendorPageState extends State<VendorPage> {
                             },
                           ),
                           TextFormField(
+                            initialValue: newVendor.freeInformation,
+                            maxLines: 3,
+                            decoration: InputDecoration(labelText: 'Freitext für Fußzeile'),
+                            onChanged: (String input) {
+                              newVendor.freeInformation = input;
+                              dirty = true;
+                            },
+                          ),
+                          TextFormField(
                             maxLines: 1,
                             initialValue: newVendor.reminderFees[ReminderIteration.first] != null
                                 ? formatFigure(newVendor.reminderFees[ReminderIteration.first])

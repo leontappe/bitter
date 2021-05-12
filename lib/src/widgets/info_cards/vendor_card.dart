@@ -69,6 +69,7 @@ class VendorCard extends StatelessWidget {
                 'Label für benutzerdefinierten Rechnungskommentar':
                     vendor.userMessageLabel ?? 'Keins',
                 'Kleingewerberegelung': vendor.smallBusiness ? 'Ja' : 'Nein',
+                'Freitext für Fußzeile': vendor.freeInformation ?? '',
               },
             ),
           ],
