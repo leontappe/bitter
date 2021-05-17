@@ -21,8 +21,8 @@ class PdfGenerator {
     Uint8List leftHeader,
     Uint8List centerHeader,
     Uint8List rightHeader,
-    String title = 'Rechnung',
-    String letter = 'hiermit berechnen wir Ihnen die folgenden Positionen:',
+    String title,
+    String letter,
     bool showDates = true,
   }) async {
     await initializeDateFormatting('de_DE');
@@ -133,11 +133,16 @@ class PdfGenerator {
           ),
           Header(
             level: 1,
-            text: '${title ?? 'Rechnung'} ${billNr ?? ''}',
+            text: '${title == null || title.isEmpty ? 'Rechnung' : title} ${billNr ?? ''}',
             textStyle: TextStyle(font: ttfSans),
           ),
           Paragraph(text: 'Sehr geehrte Damen und Herren,', style: TextStyle(font: ttfSans)),
-          Paragraph(text: letter ?? '', style: TextStyle(font: ttfSans)),
+          Paragraph(
+            text: letter == null || letter.isEmpty
+                ? 'hiermit berechnen wir Ihnen die folgenden Positionen:'
+                : letter,
+            style: TextStyle(font: ttfSans),
+          ),
           Table(
             columnWidths: <int, TableColumnWidth>{
               0: FixedColumnWidth(22.0),
