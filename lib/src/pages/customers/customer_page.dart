@@ -159,7 +159,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                       keyboardType: TextInputType.numberWithOptions(),
                                       validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
                                       onChanged: (String input) {
-                                        newCustomer.zipCode = int.parse(input);
+                                        newCustomer.zipCode = int.tryParse(input);
                                         _formKey.currentState.validate();
                                         dirty = true;
                                         changed = true;
