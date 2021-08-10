@@ -67,7 +67,7 @@ class _BillsListPageState extends State<BillsListPage> {
               onChanged: onFilter,
             ),
             IconButton(
-              icon: Icon(Icons.dehaze, color: _groupedMode ? null : Colors.green[200]),
+              icon: Icon(Icons.dehaze, color: _groupedMode ? null : Colors.orangeAccent),
               onPressed: () => setState(() => _groupedMode = !_groupedMode),
             ),
             IconButton(
