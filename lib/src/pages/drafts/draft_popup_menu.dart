@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:mysql1/mysql1.dart';
 
 import '../../pdf/pdf_generator.dart';
 import '../../providers/inherited_database.dart';
@@ -146,7 +145,6 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
       billNr = int.parse(relatedBills.last.billNr.split('-').last) + 1;
     }
 
-    // TODO: show dialog and stuff
     final dialogResult = await showDialog<BillDialogResult>(
         context: context,
         builder: (BuildContext context) {
