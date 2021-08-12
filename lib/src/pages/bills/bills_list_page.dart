@@ -122,8 +122,13 @@ class _BillsListPageState extends State<BillsListPage> {
                               ),
                           Divider(),
                           ListTile(
-                              title: Text('Abgeschlossen oder storniert',
-                                  style: Theme.of(context).textTheme.headline4)),
+                            title: Text('Abgeschlossen oder storniert',
+                                style: Theme.of(context).textTheme.headline4),
+                            trailing: IconButton(
+                              onPressed: _onOpenReport,
+                              icon: Icon(Icons.bar_chart),
+                            ),
+                          ),
                           ...bills
                               .where((Bill b) =>
                                   b.status == BillStatus.paid || b.status == BillStatus.cancelled)
@@ -223,5 +228,9 @@ class _BillsListPageState extends State<BillsListPage> {
     if (!searchEnabled) {
       await onGetBills();
     }
+  }
+
+  void _onOpenReport() {
+    Navigator.of(context).pushNamed('/bills/report');
   }
 }

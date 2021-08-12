@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 
 import 'src/pages/bills/bills_list_page.dart';
+import 'src/pages/bills/bills_report_page.dart';
 import 'src/pages/customers/customers_list_page.dart';
 import 'src/pages/drafts/drafts_list_page.dart';
 import 'src/pages/homepage/homepage.dart';
@@ -108,6 +109,7 @@ class Bitter extends StatelessWidget {
               initialRoute: '/home',
               routes: <String, Widget Function(BuildContext)>{
                 '/bills': (BuildContext context) => BillsListPage(),
+                '/bills/report': (BuildContext context) => BillsReportPage(),
                 '/customers': (BuildContext context) => CustomersListPage(),
                 '/drafts': (BuildContext context) => DraftsListPage(),
                 '/home': (BuildContext context) => Homepage(),
