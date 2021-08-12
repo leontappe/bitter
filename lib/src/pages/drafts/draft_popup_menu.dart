@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
 
 import '../../pdf/pdf_generator.dart';
 import '../../providers/inherited_database.dart';
@@ -11,6 +12,20 @@ import '../../repositories/vendor_repository.dart';
 import '../../util/format_util.dart';
 import '../../util/ui_util.dart';
 import '../../widgets/option_dialog.dart';
+
+class BillDialogResult {
+  bool submit;
+  String letter;
+  String title;
+  bool showDates;
+
+  BillDialogResult({
+    this.submit = false,
+    this.letter,
+    this.title,
+    this.showDates = true,
+  });
+}
 
 class DraftPopupMenu extends StatefulWidget {
   final int id;
@@ -29,20 +44,6 @@ enum DraftPopupSelection {
   createBill,
   delete,
   createPreview,
-}
-
-class PreviewDialogResult {
-  bool submit;
-  String letter;
-  String title;
-  bool showDates;
-
-  PreviewDialogResult({
-    this.submit = false,
-    this.letter = '',
-    this.title = 'Vorschau',
-    this.showDates = true,
-  });
 }
 
 class _DraftPopupMenuState extends State<DraftPopupMenu> {
@@ -64,11 +65,11 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
       itemBuilder: (BuildContext context) => <PopupMenuEntry<DraftPopupSelection>>[
         const PopupMenuItem<DraftPopupSelection>(
           value: DraftPopupSelection.createPreview,
-          child: Text('Vorschau exportieren'),
+          child: Text('Vorschau erstellen'),
         ),
         const PopupMenuItem<DraftPopupSelection>(
           value: DraftPopupSelection.createBill,
-          child: Text('Rechnung exportieren'),
+          child: Text('Rechnung erstellen'),
         ),
         const PopupMenuItem<DraftPopupSelection>(
           value: DraftPopupSelection.delete,
@@ -145,6 +146,57 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
       billNr = int.parse(relatedBills.last.billNr.split('-').last) + 1;
     }
 
+    // TODO: show dialog and stuff
+    final dialogResult = await showDialog<BillDialogResult>(
+        context: context,
+        builder: (BuildContext context) {
+          var result = BillDialogResult(title: 'Rechnung');
+          return OptionDialog(
+            titleText: 'Rechnung erstellen',
+            checkboxText: 'Liefer- und Leistungsdatum anzeigen',
+            checked: result.showDates,
+            onChecked: (bool input) => result.showDates = input,
+            actions: [
+              MaterialButton(
+                onPressed: () {
+                  result.submit = false;
+                  Navigator.pop(context, result);
+                },
+                child: Text('Abbrechen'),
+              ),
+              MaterialButton(
+                onPressed: () {
+                  result.submit = true;
+                  Navigator.pop(context, result);
+                },
+                child: Text('Erstellen'),
+              ),
+            ],
+            children: [
+              Text('Der Entwurf wird nach dem Erstellen der Rechnung automatisch gelöscht.'),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Titel*'),
+                maxLines: 1,
+                controller: TextEditingController(text: 'Rechnung'),
+                onChanged: (String input) => result.title = input,
+                validator: (String input) => input.isEmpty ? 'Titel kann nicht leer sein' : null,
+              ),
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Anschreiben',
+                  hintText: defaultLetter,
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                ),
+                maxLines: null,
+                controller: TextEditingController(text: result.letter),
+                onChanged: (String input) => result.letter = input,
+              ),
+            ],
+          );
+        });
+
+    if (dialogResult == null || !dialogResult.submit) return false;
+
     final billNrString = '${vendor.billPrefix}-$billNr';
 
     final doc = await pdfGen.getBytesFromBill(
@@ -158,6 +210,9 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
           (vendor.headerImageCenter != null) ? Uint8List.fromList(vendor.headerImageCenter) : null,
       leftHeader:
           (vendor.headerImageLeft != null) ? Uint8List.fromList(vendor.headerImageLeft) : null,
+      title: dialogResult.title,
+      letter: dialogResult.letter,
+      showDates: dialogResult.showDates,
     );
 
     await billRepo.insert(Bill(
@@ -199,10 +254,10 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
       return false;
     }
 
-    final dialogResult = await showDialog<PreviewDialogResult>(
+    final dialogResult = await showDialog<BillDialogResult>(
         context: context,
         builder: (BuildContext context) {
-          var result = PreviewDialogResult();
+          var result = BillDialogResult(title: 'Vorschau');
           return OptionDialog(
             titleText: 'Vorschau erstellen',
             checkboxText: 'Liefer- und Leistungsdatum anzeigen',
@@ -225,14 +280,19 @@ class _DraftPopupMenuState extends State<DraftPopupMenu> {
               ),
             ],
             children: [
-              TextField(
-                decoration: InputDecoration(labelText: 'Titel'),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Titel*'),
                 maxLines: 1,
-                controller: TextEditingController(text: result.title),
+                controller: TextEditingController(text: 'Vorschau'),
                 onChanged: (String input) => result.title = input,
+                validator: (String input) => input.isEmpty ? 'Titel kann nicht leer sein' : null,
               ),
               TextField(
-                decoration: InputDecoration(labelText: 'Anschreiben'),
+                decoration: InputDecoration(
+                  labelText: 'Anschreiben',
+                  hintText: defaultLetter,
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                ),
                 maxLines: null,
                 controller: TextEditingController(text: result.letter),
                 onChanged: (String input) => result.letter = input,

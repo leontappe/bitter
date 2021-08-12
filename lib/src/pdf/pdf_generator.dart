@@ -12,6 +12,8 @@ import '../util/format_util.dart';
 import 'common_methods.dart';
 import 'common_widgets.dart';
 
+const String defaultLetter = 'hiermit berechnen wir Ihnen die folgenden Positionen:';
+
 class PdfGenerator {
   Future<Document> createDocumentFromBill(
     Draft bill,
@@ -22,7 +24,7 @@ class PdfGenerator {
     Uint8List centerHeader,
     Uint8List rightHeader,
     String title,
-    String letter,
+    String letter = defaultLetter,
     bool showDates = true,
   }) async {
     await initializeDateFormatting('de_DE');
@@ -138,9 +140,7 @@ class PdfGenerator {
           ),
           Paragraph(text: 'Sehr geehrte Damen und Herren,', style: TextStyle(font: ttfSans)),
           Paragraph(
-            text: letter == null || letter.isEmpty
-                ? 'hiermit berechnen wir Ihnen die folgenden Positionen:'
-                : letter,
+            text: letter == null || letter.isEmpty ? defaultLetter : letter,
             style: TextStyle(font: ttfSans),
           ),
           Table(
@@ -241,7 +241,7 @@ class PdfGenerator {
     Uint8List centerHeader,
     Uint8List rightHeader,
     String title,
-    String letter,
+    String letter = defaultLetter,
     bool showDates = true,
   }) async =>
       (await createDocumentFromBill(
