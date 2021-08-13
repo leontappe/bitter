@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'src/pages/bills/bills_list_page.dart';
 import 'src/pages/customers/customers_list_page.dart';
@@ -27,7 +28,9 @@ import 'src/util/path_util.dart';
 void main() async {
   Intl.defaultLocale = 'de_DE';
   await initializeDateFormatting(Intl.defaultLocale);
-  runApp(Bitter());
+  await SentryFlutter.init((options) {
+    options.dsn = 'https://6aea6b9511874d3ea03e38ffa6090d68@o956017.ingest.sentry.io/5905382';
+  }, appRunner: () => runApp(Bitter()));
   await startLogging();
 }
 
