@@ -90,7 +90,7 @@ class _BillsListPageState extends State<BillsListPage> {
                         children: [
                           ListTile(
                               title:
-                                  Text('Überfällig', style: Theme.of(context).textTheme.headline4)),
+                                  Text('Überfällig', style: Theme.of(context).textTheme.headline5)),
                           ...bills
                               .where((Bill b) =>
                                   (((b.reminders == null || b.reminders.isEmpty) &&
@@ -107,7 +107,7 @@ class _BillsListPageState extends State<BillsListPage> {
                               ),
                           Divider(),
                           ListTile(
-                              title: Text('Laufend', style: Theme.of(context).textTheme.headline4)),
+                              title: Text('Laufend', style: Theme.of(context).textTheme.headline5)),
                           ...bills
                               .where((Bill b) =>
                                   b.status == BillStatus.unpaid &&
@@ -123,7 +123,7 @@ class _BillsListPageState extends State<BillsListPage> {
                           Divider(),
                           ListTile(
                               title: Text('Abgeschlossen oder storniert',
-                                  style: Theme.of(context).textTheme.headline4)),
+                                  style: Theme.of(context).textTheme.headline5)),
                           ...bills
                               .where((Bill b) =>
                                   b.status == BillStatus.paid || b.status == BillStatus.cancelled)

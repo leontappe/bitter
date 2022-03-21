@@ -9,15 +9,6 @@ class ItemsCard extends StatelessWidget {
 
   const ItemsCard({Key key, @required this.items, @required this.sum}) : super(key: key);
 
-  List<DataColumn> get _column => <DataColumn>[
-        DataColumn(label: Text('Name')),
-        DataColumn(label: Text('Beschreibung')),
-        DataColumn(label: Text('Menge')),
-        DataColumn(label: Text('Ust.')),
-        DataColumn(label: Text('Einzelpreis')),
-        DataColumn(label: Text('Nettopreis')),
-      ];
-
   List<DataRow> get _rows => <DataRow>[
         ...items.map(
           (Item i) => DataRow(
@@ -43,10 +34,43 @@ class ItemsCard extends StatelessWidget {
         child: DataTable(
           headingRowHeight: 40.0,
           showCheckboxColumn: false,
-          columns: _column,
+          columns: _column(context),
           rows: _rows,
         ),
       ),
     );
   }
+
+  List<DataColumn> _column(BuildContext context) => <DataColumn>[
+        DataColumn(
+            label: Text(
+          'Name',
+          style: Theme.of(context).textTheme.labelLarge,
+        )),
+        DataColumn(
+            label: Text(
+          'Beschreibung',
+          style: Theme.of(context).textTheme.labelLarge,
+        )),
+        DataColumn(
+            label: Text(
+          'Menge',
+          style: Theme.of(context).textTheme.labelLarge,
+        )),
+        DataColumn(
+            label: Text(
+          'Ust.',
+          style: Theme.of(context).textTheme.labelLarge,
+        )),
+        DataColumn(
+            label: Text(
+          'Einzelpreis',
+          style: Theme.of(context).textTheme.labelLarge,
+        )),
+        DataColumn(
+            label: Text(
+          'Nettopreis',
+          style: Theme.of(context).textTheme.labelLarge,
+        )),
+      ];
 }

@@ -97,7 +97,8 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
   }
 
   Future<void> initDb() async {
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Future.delayed(const Duration(milliseconds: 400));
+    if (!mounted) return;
 
     final db = InheritedDatabase.of(context);
     _draftRepo = DraftRepository(db);

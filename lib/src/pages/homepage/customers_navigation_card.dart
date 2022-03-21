@@ -78,7 +78,9 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
   }
 
   Future<void> initDb() async {
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Future.delayed(const Duration(milliseconds: 400));
+    if (!mounted) return;
+
     _customerRepo = CustomerRepository(InheritedDatabase.of(context));
 
     try {

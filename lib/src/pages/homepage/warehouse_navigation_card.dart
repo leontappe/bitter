@@ -57,7 +57,9 @@ class _ItemsNavigationCardState extends State<WarehouseNavigationCard> {
   }
 
   Future<void> initDb() async {
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Future.delayed(const Duration(milliseconds: 400));
+     if (!mounted) return;
+
     _itemRepo = ItemRepository(InheritedDatabase.of(context));
     _vendorRepo = VendorRepository(InheritedDatabase.of(context));
 
