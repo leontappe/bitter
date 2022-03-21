@@ -18,7 +18,7 @@ class CustomerShortcut extends StatelessWidget {
           MaterialPageRoute(builder: (BuildContext context) => CustomerPage(id: customer.id))),
       children: <Widget>[
         Text(customer.fullCompany ?? customer.fullName,
-            style: Theme.of(context).textTheme.subtitle1,
+            style: Theme.of(context).textTheme.subtitle1.copyWith(fontWeight: FontWeight.bold),
             textScaleFactor: 1.1,
             overflow: TextOverflow.ellipsis),
         Text('${customer.address} ${customer.zipCode} ${customer.city}',

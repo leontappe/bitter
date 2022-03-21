@@ -11,6 +11,7 @@ class BaseShortcut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+        clipBehavior: Clip.hardEdge,
         elevation: 0.0,
         color: Theme.of(context).splashColor,
         child: InkWell(

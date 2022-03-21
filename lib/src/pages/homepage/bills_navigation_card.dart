@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../models/bill.dart';
-
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
 import '../../widgets/navigation_card.dart';
@@ -19,8 +18,6 @@ class BillsNavigationCard extends StatefulWidget {
 class _BillsNavigationCardState extends State<BillsNavigationCard> {
   BillRepository _billRepo;
   List<Bill> _bills = [];
-
-  bool busy = false;
 
   List<Bill> get _overdueBills => _bills
       .where((Bill b) =>
@@ -42,7 +39,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
           children: [
             Flexible(
                 child: Text('Rechnungen',
-                    style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)),
+                    style: Theme.of(context).textTheme.headline5, overflow: TextOverflow.ellipsis)),
             IconButton(
                 tooltip: 'Aktualisieren',
                 icon: Icon(Icons.refresh, color: Colors.grey[800]),
@@ -50,18 +47,17 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
           ],
         ),
         Divider(),
-        Text('Neu', style: Theme.of(context).textTheme.headline4),
+        Text('Neu', style: Theme.of(context).textTheme.headline6),
         Text(
-            ' In den letzten 7 Tagen wurde${_bills.length == 1 ? '' : 'n'} ${_bills.where((Bill b) => b.created.isAfter(DateTime.now().subtract(Duration(days: 7)))).length} Rechnung${_bills.length == 1 ? '' : 'en'} erstellt.',
+            'In den letzten 7 Tagen wurde${_bills.length == 1 ? '' : 'n'} ${_bills.where((Bill b) => b.created.isAfter(DateTime.now().subtract(Duration(days: 7)))).length} Rechnung${_bills.length == 1 ? '' : 'en'} erstellt.',
             style: TextStyle(color: Colors.grey[800])),
         Flexible(
             child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            if (busy)
-              Container(
-                  height: (widget.filter != null && widget.filter > 0) ? 93.0 : 109.0, width: 0.0),
+            Container(
+                height: (widget.filter != null && widget.filter > 0) ? 93.0 : 109.0, width: 0.0),
             ..._bills.take(4).map<Widget>(
                   (Bill b) => Expanded(
                       child: BillShortcut(context, bill: b, showVendor: widget.filter == null)),
@@ -73,56 +69,58 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
             for (var i = 0; i < (4 - _bills.length); i++) Spacer(),
           ],
         )),
-        Divider(height: 24.0),
-        Text('Überfällig', style: Theme.of(context).textTheme.headline4),
-        Text(
-          ' Es gibt gerade ${_overdueBills.length} überfällige Rechnung${_overdueBills.length == 1 ? '' : 'en'} oder zugehörige Mahnung${_overdueBills.length == 1 ? '' : 'en'}.',
-          style: TextStyle(color: Colors.grey[800]),
-          overflow: TextOverflow.ellipsis,
-        ),
-        Flexible(
-            child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            if (busy)
-              Container(
-                  height: (widget.filter != null && widget.filter > 0) ? 93.0 : 109.0, width: 0.0),
-            ..._overdueBills.take(4).map<Widget>(
-                  (Bill b) => Expanded(
-                      child: BillShortcut(context, bill: b, showVendor: widget.filter == null)),
-                ),
-            if (_overdueBills.length > 4)
-              Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
-            else if (_overdueBills.isNotEmpty)
-              Container(width: 48.0, height: 48.0),
-            for (var i = 0; i < (4 - _overdueBills.length); i++) Spacer(),
-          ],
-        )),
+        if (_overdueBills.isNotEmpty)
+          Column(
+            children: [
+              Divider(height: 24.0),
+              Text('Überfällig', style: Theme.of(context).textTheme.headline6),
+              Text(
+                'Es gibt gerade ${_overdueBills.length} überfällige Rechnung${_overdueBills.length == 1 ? '' : 'en'} oder zugehörige Mahnung${_overdueBills.length == 1 ? '' : 'en'}.',
+                style: TextStyle(color: Colors.grey[800]),
+                overflow: TextOverflow.ellipsis,
+              ),
+              Flexible(
+                  child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                      height: (widget.filter != null && widget.filter > 0) ? 93.0 : 109.0,
+                      width: 0.0),
+                  ..._overdueBills.take(4).map<Widget>(
+                        (Bill b) => Expanded(
+                            child:
+                                BillShortcut(context, bill: b, showVendor: widget.filter == null)),
+                      ),
+                  if (_overdueBills.length > 4)
+                    Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
+                ],
+              ))
+            ],
+          ),
       ],
     );
   }
 
-  @override
-  void didChangeDependencies() {
-    initDb();
-    super.didChangeDependencies();
-  }
-
   Future<void> initDb() async {
-    if (mounted) setState(() => busy = true);
+    await Future.delayed(const Duration(milliseconds: 200));
     _billRepo = BillRepository(InheritedDatabase.of(context));
 
     try {
       await _billRepo.setUp();
       await onGetBills();
     } on NoSuchMethodError {
-      if (mounted) setState(() => busy = false);
       print('db not availiable');
       return;
     } catch (e) {
       print(e);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initDb();
   }
 
   Future<void> onGetBills() async {
@@ -131,6 +129,6 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
       _bills.removeWhere((Bill b) => b.vendor.id != widget.filter);
     }
     _bills.sort((Bill a, Bill b) => b.created.compareTo(a.created));
-    if (mounted) setState(() => busy = false);
+    if (mounted) setState(() => _bills);
   }
 }

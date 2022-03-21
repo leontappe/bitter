@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
-import '../../widgets/shortcuts/customer_shortcut.dart';
 import '../../widgets/navigation_card.dart';
+import '../../widgets/shortcuts/customer_shortcut.dart';
 import '../customers/customer_page.dart';
 
 class CustomersNavigationCard extends StatefulWidget {
@@ -16,8 +16,6 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
 
   List<Customer> _customers = [];
 
-  bool busy = false;
-
   @override
   Widget build(BuildContext context) {
     return NavigationCard(
@@ -29,7 +27,7 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
           children: [
             Flexible(
                 child: Text('Kunden',
-                    style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)),
+                    style: Theme.of(context).textTheme.headline5, overflow: TextOverflow.ellipsis)),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -52,55 +50,55 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
           ],
         ),
         Divider(),
-        Text('Neu', style: Theme.of(context).textTheme.headline4),
+        Text('Neu', style: Theme.of(context).textTheme.headline6),
         Text(
-          ' Zurzeit ${_customers.length == 1 ? 'ist' : 'sind'} ${_customers.length} Kunde${_customers.length == 1 ? '' : 'n'} vorhanden.',
+          'Zurzeit ${_customers.length == 1 ? 'ist' : 'sind'} ${_customers.length} Kunde${_customers.length == 1 ? '' : 'n'} vorhanden.',
           style: TextStyle(color: Colors.grey[800]),
           overflow: TextOverflow.ellipsis,
         ),
-        Flexible(
-            child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            if (busy) Container(height: 77.0, width: 0.0),
-            ..._customers.take(4).map<Widget>((Customer c) => Expanded(
-                  child: CustomerShortcut(context, customer: c),
-                )),
-            if (_customers.length > 4)
-              Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
-            else if (_customers.isNotEmpty)
-              Container(width: 48.0, height: 48.0),
-            for (var i = 0; i < (4 - _customers.length); i++) Spacer(),
-          ],
-        )),
+        if (_customers.isNotEmpty)
+          Flexible(
+              child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(height: 77.0, width: 0.0),
+              ..._customers.take(4).map<Widget>((Customer c) => Expanded(
+                    child: CustomerShortcut(context, customer: c),
+                  )),
+              if (_customers.length > 4)
+                Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
+              else if (_customers.isNotEmpty)
+                Container(width: 48.0, height: 48.0),
+              for (var i = 0; i < (4 - _customers.length); i++) Spacer(),
+            ],
+          )),
       ],
     );
   }
 
-  @override
-  void didChangeDependencies() {
-    initDb();
-    super.didChangeDependencies();
-  }
-
   Future<void> initDb() async {
-    if (mounted) setState(() => busy = true);
+    await Future.delayed(const Duration(milliseconds: 200));
     _customerRepo = CustomerRepository(InheritedDatabase.of(context));
 
     try {
       await _customerRepo.setUp();
       await onRefresh();
     } on NoSuchMethodError {
-      if (mounted) setState(() => busy = false);
       print('db not availiable');
       return;
     }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    initDb();
+  }
+
   Future<void> onRefresh() async {
     _customers = await _customerRepo.select();
     _customers.sort((Customer a, Customer b) => b.id.compareTo(a.id));
-    if (mounted) setState(() => busy = false);
+    if (mounted) setState(() => _customers);
   }
 }

@@ -21,8 +21,6 @@ class _ItemsNavigationCardState extends State<WarehouseNavigationCard> {
   List<Item> _items = [];
   List<Vendor> _vendors;
 
-  bool busy = false;
-
   @override
   Widget build(BuildContext context) {
     return NavigationCard(
@@ -33,8 +31,11 @@ class _ItemsNavigationCardState extends State<WarehouseNavigationCard> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
-                child: Text('Warenverwaltung',
-                    style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)),
+                child: Text(
+              'Warenverwaltung',
+              style: Theme.of(context).textTheme.headline5,
+              overflow: TextOverflow.ellipsis,
+            )),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -55,14 +56,8 @@ class _ItemsNavigationCardState extends State<WarehouseNavigationCard> {
     );
   }
 
-  @override
-  void didChangeDependencies() {
-    initDb();
-    super.didChangeDependencies();
-  }
-
   Future<void> initDb() async {
-    if (mounted) setState(() => busy = true);
+    await Future.delayed(const Duration(milliseconds: 200));
     _itemRepo = ItemRepository(InheritedDatabase.of(context));
     _vendorRepo = VendorRepository(InheritedDatabase.of(context));
 
@@ -72,12 +67,17 @@ class _ItemsNavigationCardState extends State<WarehouseNavigationCard> {
       await onRefresh();
       _vendors = await _vendorRepo.select();
     } on NoSuchMethodError {
-      if (mounted) setState(() => busy = false);
       print('db not availiable');
       return;
     }
 
     if (mounted) setState(() => _vendors);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initDb();
   }
 
   Future<void> onRefresh() async {
@@ -86,6 +86,6 @@ class _ItemsNavigationCardState extends State<WarehouseNavigationCard> {
       _items.removeWhere((Item i) => i.vendor != widget.filter);
     }
     _items.sort((Item a, Item b) => b.id.compareTo(a.id));
-    if (mounted) setState(() => busy = false);
+    if (mounted) setState(() => _items);
   }
 }

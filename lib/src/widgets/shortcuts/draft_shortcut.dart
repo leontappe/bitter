@@ -26,7 +26,7 @@ class DraftShortcut extends StatelessWidget {
           MaterialPageRoute(builder: (BuildContext context) => DraftCreatorPage(draft: draft))),
       children: <Widget>[
         Text('Entwurf ${draft.id}',
-            style: Theme.of(context).textTheme.subtitle1,
+            style: Theme.of(context).textTheme.subtitle1.copyWith(fontWeight: FontWeight.bold),
             textScaleFactor: 1.1,
             overflow: TextOverflow.ellipsis),
         if (showVendor) Text(vendor?.name ?? '', overflow: TextOverflow.ellipsis),

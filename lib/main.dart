@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:asta_theme/asta_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -107,13 +108,7 @@ class Bitter extends StatelessWidget {
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
               title: 'bitter',
-              theme: ThemeData(
-                primarySwatch: Colors.blueGrey,
-                textTheme: TextTheme(
-                  headline3: TextStyle(color: Colors.grey[700]),
-                  headline4: TextStyle(color: Colors.grey[700], fontSize: 26.0),
-                ),
-              ),
+              theme: darkTheme,
               initialRoute: '/home',
               routes: <String, Widget Function(BuildContext)>{
                 '/bills': (BuildContext context) => BillsListPage(),

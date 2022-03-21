@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../models/draft.dart';
-
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
 import '../../repositories/vendor_repository.dart';
-import '../../widgets/shortcuts/draft_shortcut.dart';
 import '../../widgets/navigation_card.dart';
+import '../../widgets/shortcuts/draft_shortcut.dart';
 import '../drafts/draft_creator.dart';
 
 class DraftsNavigationCard extends StatefulWidget {
@@ -28,8 +27,6 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
   List<Vendor> _vendors;
   List<Customer> _customers;
 
-  bool busy = false;
-
   @override
   Widget build(BuildContext context) {
     return NavigationCard(
@@ -41,7 +38,7 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
           children: [
             Flexible(
                 child: Text('Entwürfe',
-                    style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)),
+                    style: Theme.of(context).textTheme.headline5, overflow: TextOverflow.ellipsis)),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -64,50 +61,44 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
           ],
         ),
         Divider(),
-        Text('Neu', style: Theme.of(context).textTheme.headline4),
+        Text('Neu', style: Theme.of(context).textTheme.headline6),
         Text(
-          ' Zurzeit ${_drafts.length == 1 ? 'ist' : 'sind'} ${_drafts.length} ${_drafts.length == 1 ? 'Entwurf' : 'Entwürfe'} vorhanden.',
+          'Zurzeit ${_drafts.length == 1 ? 'ist' : 'sind'} ${_drafts.length} ${_drafts.length == 1 ? 'Entwurf' : 'Entwürfe'} vorhanden.',
           style: TextStyle(color: Colors.grey[800]),
           overflow: TextOverflow.ellipsis,
         ),
-        Flexible(
-            child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            if (busy)
+        if (_drafts.isNotEmpty)
+          Flexible(
+              child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
               Container(
                   height: (widget.filter != null && widget.filter > 0) ? 93.0 : 109.0, width: 0.0),
-            ..._drafts.take(4).map<Widget>((Draft d) {
-              final customers = _customers?.where((Customer c) => c.id == d.customer) ?? [];
-              final vendors = _vendors?.where((Vendor v) => v.id == d.vendor) ?? [];
-              return Expanded(
-                child: DraftShortcut(context,
-                    draft: d,
-                    vendor: vendors.isNotEmpty ? vendors.first : null,
-                    customer: customers.isNotEmpty ? customers.first : null,
-                    showVendor: widget.filter == null),
-              );
-            }),
-            if (_drafts.length > 4)
-              Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
-            else if (_drafts.isNotEmpty)
-              Container(width: 48.0, height: 48.0),
-            for (var i = 0; i < (4 - _drafts.length); i++) Spacer(),
-          ],
-        )),
+              ..._drafts.take(4).map<Widget>((Draft d) {
+                final customers = _customers?.where((Customer c) => c.id == d.customer) ?? [];
+                final vendors = _vendors?.where((Vendor v) => v.id == d.vendor) ?? [];
+                return Expanded(
+                  child: DraftShortcut(context,
+                      draft: d,
+                      vendor: vendors.isNotEmpty ? vendors.first : null,
+                      customer: customers.isNotEmpty ? customers.first : null,
+                      showVendor: widget.filter == null),
+                );
+              }),
+              if (_drafts.length > 4)
+                Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
+              else if (_drafts.isNotEmpty)
+                Container(width: 48.0, height: 48.0),
+              for (var i = 0; i < (4 - _drafts.length); i++) Spacer(),
+            ],
+          )),
       ],
     );
   }
 
-  @override
-  void didChangeDependencies() {
-    initDb();
-    super.didChangeDependencies();
-  }
-
   Future<void> initDb() async {
-    if (mounted) setState(() => busy = true);
+    await Future.delayed(const Duration(milliseconds: 200));
 
     final db = InheritedDatabase.of(context);
     _draftRepo = DraftRepository(db);
@@ -120,10 +111,15 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
       await _vendorRepo.setUp();
       await onRefresh();
     } on NoSuchMethodError {
-      if (mounted) setState(() => busy = false);
       print('db not availiable');
       return;
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initDb();
   }
 
   Future<void> onRefresh() async {
@@ -134,6 +130,6 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
       _drafts.removeWhere((Draft d) => d.vendor != widget.filter);
     }
     _drafts.sort((Draft a, Draft b) => b.id.compareTo(a.id));
-    if (mounted) setState(() => busy = false);
+    if (mounted) setState(() => _drafts);
   }
 }

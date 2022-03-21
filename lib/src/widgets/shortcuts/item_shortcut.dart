@@ -24,7 +24,7 @@ class ItemShortcut extends StatelessWidget {
           context, MaterialPageRoute(builder: (BuildContext context) => ItemPage(item: item))),
       children: <Widget>[
         Text(item.title,
-            style: Theme.of(context).textTheme.subtitle1,
+            style: Theme.of(context).textTheme.subtitle1.copyWith(fontWeight: FontWeight.bold),
             textScaleFactor: 1.1,
             overflow: TextOverflow.ellipsis),
         Text(item.description ?? '', overflow: TextOverflow.ellipsis),

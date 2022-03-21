@@ -23,8 +23,6 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
   List<Item> _items = [];
   List<Vendor> _vendors;
 
-  bool busy = false;
-
   @override
   Widget build(BuildContext context) {
     return NavigationCard(
@@ -36,7 +34,7 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
           children: [
             Flexible(
                 child: Text('Artikel',
-                    style: Theme.of(context).textTheme.headline3, overflow: TextOverflow.ellipsis)),
+                    style: Theme.of(context).textTheme.headline5, overflow: TextOverflow.ellipsis)),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -57,48 +55,42 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
           ],
         ),
         Divider(),
-        Text('Neu', style: Theme.of(context).textTheme.headline4),
+        Text('Neu', style: Theme.of(context).textTheme.headline6),
         Text(
-          ' Zurzeit ${_items.length == 1 ? 'ist' : 'sind'} ${_items.length} Artikel vorhanden.',
+          'Zurzeit ${_items.length == 1 ? 'ist' : 'sind'} ${_items.length} Artikel vorhanden.',
           style: TextStyle(color: Colors.grey[800]),
           overflow: TextOverflow.ellipsis,
         ),
-        Flexible(
-            child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            if (busy)
+        if (_items.isNotEmpty)
+          Flexible(
+              child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
               Container(
                   height: (widget.filter != null && widget.filter > 0) ? 77.0 : 93.0, width: 0.0),
-            ..._items.take(4).map<Widget>((Item i) {
-              final vendors = _vendors?.where((Vendor v) => v.id == i.vendor) ?? [];
-              return Expanded(
-                child: ItemShortcut(context,
-                    item: i,
-                    vendor: vendors.isNotEmpty ? vendors.first : null,
-                    showVendor: widget.filter == null),
-              );
-            }),
-            if (_items.length > 4)
-              Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
-            else if (_items.isNotEmpty)
-              Container(width: 48.0, height: 48.0),
-            for (var i = 0; i < (4 - _items.length); i++) Spacer(),
-          ],
-        )),
+              ..._items.take(4).map<Widget>((Item i) {
+                final vendors = _vendors?.where((Vendor v) => v.id == i.vendor) ?? [];
+                return Expanded(
+                  child: ItemShortcut(context,
+                      item: i,
+                      vendor: vendors.isNotEmpty ? vendors.first : null,
+                      showVendor: widget.filter == null),
+                );
+              }),
+              if (_items.length > 4)
+                Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
+              else if (_items.isNotEmpty)
+                Container(width: 48.0, height: 48.0),
+              for (var i = 0; i < (4 - _items.length); i++) Spacer(),
+            ],
+          )),
       ],
     );
   }
 
-  @override
-  void didChangeDependencies() {
-    initDb();
-    super.didChangeDependencies();
-  }
-
   Future<void> initDb() async {
-    if (mounted) setState(() => busy = true);
+    await Future.delayed(const Duration(milliseconds: 200));
     _itemRepo = ItemRepository(InheritedDatabase.of(context));
     _vendorRepo = VendorRepository(InheritedDatabase.of(context));
 
@@ -108,12 +100,17 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
       await onRefresh();
       _vendors = await _vendorRepo.select(short: true);
     } on NoSuchMethodError {
-      if (mounted) setState(() => busy = false);
       print('db not availiable');
       return;
     }
 
     if (mounted) setState(() => _vendors);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initDb();
   }
 
   Future<void> onRefresh() async {
@@ -122,6 +119,6 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
       _items.removeWhere((Item i) => i.vendor != widget.filter);
     }
     _items.sort((Item a, Item b) => b.id.compareTo(a.id));
-    if (mounted) setState(() => busy = false);
+    setState(() => _items);
   }
 }
