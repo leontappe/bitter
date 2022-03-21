@@ -40,7 +40,7 @@ class _ItemSelectorState extends State<ItemSelector> {
       items: <DropdownMenuItem<int>>[
         ..._items
             .map<DropdownMenuItem<int>>(
-                (Item i) => DropdownMenuItem<int>(value: i.id, child: Text('${i.title}')))
+                (Item i) => DropdownMenuItem<int>(value: i.id, child: Text(i.title)))
             .toList()
       ],
     );

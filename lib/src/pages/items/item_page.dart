@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../models/item.dart';
 import '../../models/vendor.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
@@ -178,7 +177,7 @@ class _ItemPageState extends State<ItemPage> {
     var result = await showDialog<int>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: Text('Soll dieser Artikel wirlich gelöscht werden?'),
+        title: Text('Soll dieser Artikel wirklich gelöscht werden?'),
         actions: <Widget>[
           MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Behalten')),
           MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Löschen')),
@@ -199,7 +198,7 @@ class _ItemPageState extends State<ItemPage> {
           context: context,
           builder: (BuildContext context) => AlertDialog(
                 title: Text(
-                    'Wenn du ohne Speichern fortfährst gehen alle hier eingebenen Daten verloren. Vor dem Verlassen abspeichern?'),
+                    'Wenn du ohne Speichern fortfährst gehen alle hier eingegebenen Daten verloren. Vor dem Verlassen abspeichern?'),
                 actions: <Widget>[
                   MaterialButton(
                       onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),

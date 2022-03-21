@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../models/crate.dart';
-import '../../models/warehouse.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/commissioning_repository.dart';
 import '../../repositories/item_repository.dart';
@@ -52,8 +51,8 @@ class _CommissioningCreatorPageState extends State<CommissioningCreatorPage> {
                   padding: EdgeInsets.only(left: 8.0, top: 8.0),
                   child: Text('Infos', style: Theme.of(context).textTheme.headline5),
                 ),
-                ListTile(title: Text('Verkäufer: '), trailing: Text('${vendor?.name ?? ''}')),
-                ListTile(title: Text('Lagerplatz: '), trailing: Text('${warehouse.name}')),
+                ListTile(title: Text('Verkäufer: '), trailing: Text(vendor?.name ?? '')),
+                ListTile(title: Text('Lagerplatz: '), trailing: Text(warehouse.name)),
               ],
             ),
           ),

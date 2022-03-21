@@ -49,7 +49,7 @@ class Customer {
         email: null,
       );
 
-  factory Customer.fromMap(Map map) => Customer(
+  factory Customer.fromMap(Map<String, dynamic> map) => Customer(
         id: map['id'] as int,
         company: (map['company'] != null) ? map['company'].toString() : null,
         organizationUnit:

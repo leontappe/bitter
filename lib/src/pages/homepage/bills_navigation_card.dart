@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../models/bill.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/bill_repository.dart';
 import '../../widgets/navigation_card.dart';
@@ -112,7 +111,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
       await _billRepo.setUp();
       await onGetBills();
     } on NoSuchMethodError {
-      print('db not availiable');
+      print('db not available');
       return;
     } catch (e) {
       print(e);

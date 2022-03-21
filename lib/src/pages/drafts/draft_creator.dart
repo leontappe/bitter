@@ -4,9 +4,6 @@ import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../models/draft.dart';
-import '../../models/item.dart';
-import '../../models/vendor.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
@@ -331,7 +328,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
 
     if (widget.draft != null) {
       draft = widget.draft;
-      draft.items.forEach((Item i) => i.vendor = draft.vendor);
+      draft.items.forEach(updateItemVendor);
       itemsBloc.onBulkAdd(draft.items);
       vendorIsset = draft.vendor != null;
       customerIsset = draft.customer != null;
@@ -357,7 +354,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
           context: context,
           builder: (BuildContext context) => AlertDialog(
                 title: Text(
-                    'Wenn du ohne Speichern fortfährst gehen alle hier eingebenen Daten verloren. Vor dem Verlassen abspeichern?'),
+                    'Wenn du ohne Speichern fortfährst gehen alle hier eingegebenen Daten verloren. Vor dem Verlassen abspeichern?'),
                 actions: <Widget>[
                   MaterialButton(
                       onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),
@@ -455,6 +452,8 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
     if (updateState) itemsBloc.onUpdateItem(item);
     dirty = true;
   }
+
+  void updateItemVendor(Item i) => i.vendor = draft.vendor;
 
   bool validateDropdowns() {
     setState(() {

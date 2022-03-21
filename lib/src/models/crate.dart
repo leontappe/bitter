@@ -22,14 +22,14 @@ class Crate {
     //assert(itemId != null && subcrate == null || itemId == null && subcrate != null);
   }
 
-  factory Crate.fromMap(Map map) => Crate(
+  factory Crate.fromMap(Map<String, dynamic> map) => Crate(
         map['uid'] as String,
         name: map['name'] as String,
         size: map['size'] as int,
         level: (map['level'] as int) ?? 0,
         itemId: map['item_id'] as int,
         subcrate: map['subcrate'] != null
-            ? Crate.fromMap(json.decode(map['subcrate'] as String) as Map)
+            ? Crate.fromMap(json.decode(map['subcrate'] as String) as Map<String, dynamic>)
             : null,
       );
 
@@ -39,7 +39,7 @@ class Crate {
         'size': size,
         'level': level,
         'item_id': itemId,
-        'subcrate': subcrate != null ? subcrate.toMap : null,
+        'subcrate': subcrate?.toMap,
       };
 
   @override

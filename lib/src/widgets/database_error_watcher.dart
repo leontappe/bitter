@@ -15,7 +15,7 @@ class DatabaseErrorWatcher extends StatefulWidget {
 }
 
 class _DatabaseErrorWatcherState extends State<DatabaseErrorWatcher> {
-  StreamSubscription listener;
+  StreamSubscription<DatabaseError> listener;
 
   /// the last errors that went through listener
   /// used to sort out big bulks of identical errors

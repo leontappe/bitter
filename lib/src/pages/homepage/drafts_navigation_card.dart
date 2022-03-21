@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../models/draft.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/customer_repository.dart';
 import '../../repositories/draft_repository.dart';
@@ -111,7 +110,7 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
       await _vendorRepo.setUp();
       await onRefresh();
     } on NoSuchMethodError {
-      print('db not availiable');
+      print('db not available');
       return;
     }
   }

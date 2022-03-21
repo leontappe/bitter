@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 
-import '../../models/bill.dart';
 import '../../models/reminder.dart';
 import '../../pdf/reminder_generator.dart';
 import '../../providers/inherited_database.dart';
@@ -137,7 +136,7 @@ class _BillPageState extends State<BillPage> {
                                                   builder: (BuildContext context) => AlertDialog(
                                                         title: Text('Mahnung löschen?'),
                                                         content: Text(
-                                                            'Solange die Rechnung nicht gespeichert wird, ist diese Änderung widerrufbar.'),
+                                                            'Solange die Rechnung nicht gespeichert wird, ist diese Änderung Wiederrufbar.'),
                                                         actions: [
                                                           MaterialButton(
                                                             onPressed: () =>
@@ -271,7 +270,7 @@ class _BillPageState extends State<BillPage> {
 
     await Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute<bool>(builder: (BuildContext context) => DraftCreatorPage(draft: draft)),
-        (Route route) => route.settings.name == '/home');
+        (Route<dynamic> route) => route.settings.name == '/home');
   }
 
   Future<void> onPopRoute(BuildContext context) async {
@@ -280,7 +279,7 @@ class _BillPageState extends State<BillPage> {
           context: context,
           builder: (BuildContext context) => AlertDialog(
                 title: Text(
-                    'Wenn du ohne Speichern fortfährst gehen alle hier eingebenen Daten verloren. Vor dem Verlassen abspeichern?'),
+                    'Wenn du ohne Speichern fortfährst gehen alle hier eingegebenen Daten verloren. Vor dem Verlassen abspeichern?'),
                 actions: <Widget>[
                   MaterialButton(
                       onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),

@@ -20,20 +20,20 @@ class CommissioningRepository<T extends DatabaseProvider> {
     return commissioning;
   }
 
-  Future<List<Commissioning>> select({int vendorFilter, int warehouesFilter}) async {
-    var results =
-        (await db.select(tableName)).map<Commissioning>((Map e) => Commissioning.fromMap(e));
-    if (vendorFilter != null && warehouesFilter == null) {
+  Future<List<Commissioning>> select({int vendorFilter, int warehousesFilter}) async {
+    var results = (await db.select(tableName))
+        .map<Commissioning>((Map<String, dynamic> e) => Commissioning.fromMap(e));
+    if (vendorFilter != null && warehousesFilter == null) {
       results = results.where((Commissioning c) => c.vendorId == vendorFilter);
     }
-    if (warehouesFilter != null) {
-      results = results.where((Commissioning c) => c.warehouseId == warehouesFilter);
+    if (warehousesFilter != null) {
+      results = results.where((Commissioning c) => c.warehouseId == warehousesFilter);
     }
     return List<Commissioning>.from(results);
   }
 
   Future<Commissioning> selectSingle(int id) async {
-    Map<dynamic, dynamic> result;
+    Map<String, dynamic> result;
     try {
       result = await db.selectSingle(tableName, id);
       if (result == null) return null;

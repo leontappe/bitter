@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../providers/inherited_database.dart';
@@ -49,7 +48,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
             IconButton(
               tooltip: 'Neuen Kunden hinzufügen',
               icon: Icon(Icons.add),
-              onPressed: onPushUserAddpage,
+              onPressed: onPushUserAddPage,
             ),
             IconButton(
               tooltip: 'Suchleiste aktivieren',
@@ -113,7 +112,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
     }
   }
 
-  Future<void> onPushUserAddpage() async {
+  Future<void> onPushUserAddPage() async {
     final updated = await Navigator.push<bool>(
         context, MaterialPageRoute<bool>(builder: (BuildContext context) => CustomerPage()));
     if (updated) {

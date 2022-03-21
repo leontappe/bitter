@@ -37,7 +37,7 @@ class Reminder {
     this.created,
   });
 
-  factory Reminder.fromMap(Map map) => Reminder(
+  factory Reminder.fromMap(Map<String, dynamic> map) => Reminder(
         iteration: iterationFromInt(map['iteration'] as int),
         created:
             (map['created'] != null) ? DateTime.parse(map['created'] as String) : DateTime.now(),

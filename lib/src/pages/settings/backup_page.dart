@@ -387,7 +387,7 @@ class _BackupPageState extends State<BackupPage> {
 
     final archive = ZipDecoder().decodeBytes(archiveData);
 
-    archive.forEach((ArchiveFile file) async {
+    for (ArchiveFile file in archive) {
       if (recoveryChoice.customers && file.name.contains('customers')) {
         if (overwriteRestore) {
           await customerRepo.setUp();
@@ -395,7 +395,7 @@ class _BackupPageState extends State<BackupPage> {
           await customerRepo.setUp();
         }
         _mapFileContent(file.content as Uint8List)
-            .map((Map e) => Customer.fromMap(e))
+            .map((Map<String, dynamic> e) => Customer.fromMap(e))
             .forEach((Customer c) => customerRepo.insert(c));
       } else if (recoveryChoice.vendors && file.name.contains('vendors')) {
         if (overwriteRestore) {
@@ -404,7 +404,7 @@ class _BackupPageState extends State<BackupPage> {
           await vendorRepo.setUp();
         }
         _mapFileContent(file.content as Uint8List)
-            .map((Map e) => Vendor.fromMap(e))
+            .map((Map<String, dynamic> e) => Vendor.fromMap(e))
             .forEach((Vendor v) => vendorRepo.insert(v));
       } else if (recoveryChoice.items && file.name.contains('items')) {
         if (overwriteRestore) {
@@ -413,7 +413,7 @@ class _BackupPageState extends State<BackupPage> {
           await itemRepo.setUp();
         }
         _mapFileContent(file.content as Uint8List)
-            .map((Map e) => Item.fromDbMap(e))
+            .map((Map<String, dynamic> e) => Item.fromDbMap(e))
             .forEach((Item i) => itemRepo.insert(i));
       } else if (recoveryChoice.drafts && file.name.contains('drafts')) {
         if (overwriteRestore) {
@@ -422,7 +422,7 @@ class _BackupPageState extends State<BackupPage> {
           await draftRepo.setUp();
         }
         _mapFileContent(file.content as Uint8List)
-            .map((Map e) => Draft.fromMap(e))
+            .map((Map<String, dynamic> e) => Draft.fromMap(e))
             .forEach((Draft d) => draftRepo.insert(d));
       } else if (recoveryChoice.bills && file.name.contains('bills')) {
         if (overwriteRestore) {
@@ -431,10 +431,10 @@ class _BackupPageState extends State<BackupPage> {
           await billRepo.setUp();
         }
         _mapFileContent(file.content as Uint8List)
-            .map((Map e) => Bill.fromMap(e))
+            .map((Map<String, dynamic> e) => Bill.fromMap(e))
             .forEach((Bill b) => billRepo.insert(b));
       }
-    });
+    }
     setState(() => restores.first.finish(result: 'Wiederherstellung abgeschlossen'));
   }
 

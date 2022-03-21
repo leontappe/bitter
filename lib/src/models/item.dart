@@ -27,7 +27,7 @@ class Item {
 
   factory Item.empty() => Item(title: null, price: null);
 
-  factory Item.fromDbMap(Map map) => Item(
+  factory Item.fromDbMap(Map<String, dynamic> map) => Item(
         id: map['id'] as int,
         vendor: map['vendor'] as int,
         itemId: map['item_id'] as int,
@@ -38,7 +38,7 @@ class Item {
         description: (map['description'] != null) ? map['description'].toString() : null,
       );
 
-  factory Item.fromMap(Map map) => Item(
+  factory Item.fromMap(Map<String, dynamic> map) => Item(
         title: map['title'] as String,
         price: map['price'] as int,
         tax: map['tax'] as int,

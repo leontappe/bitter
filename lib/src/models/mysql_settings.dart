@@ -25,7 +25,7 @@ class MySqlSettings {
         user: '',
       );
 
-  factory MySqlSettings.fromMap(Map map) => MySqlSettings(
+  factory MySqlSettings.fromMap(Map<String, dynamic> map) => MySqlSettings(
         host: (map['host'] != null) ? map['host'].toString() : null,
         port: map['port'] as int,
         user: map['user'].toString(),

@@ -147,7 +147,7 @@ class _WarehousePageState extends State<WarehousePage> {
   Future<void> onRefresh() async {
     warehouse = await warehouseRepo.selectSingle(widget.id);
     items = await itemRepo.select(vendorFilter: warehouse.vendorId);
-    commissionings = await commissioningRepository.select(warehouesFilter: widget.id);
+    commissionings = await commissioningRepository.select(warehousesFilter: widget.id);
     if (mounted) setState(() => busy = false);
   }
 
@@ -253,10 +253,9 @@ class _WarehousePageState extends State<WarehousePage> {
               children: [
                 ListTile(title: Text('ID:'), trailing: Text('${comm.id}')),
                 ListTile(
-                    title: Text('Zeitstempel:'),
-                    trailing: Text('${comm.timestamp.toIso8601String()}')),
+                    title: Text('Zeitstempel:'), trailing: Text(comm.timestamp.toIso8601String())),
                 ListTile(title: Text('Verkäufer:'), trailing: Text('')),
-                ListTile(title: Text('Lagerplatz:'), trailing: Text('${warehouse?.name ?? ''}')),
+                ListTile(title: Text('Lagerplatz:'), trailing: Text(warehouse?.name ?? '')),
                 ItemsCard(items: comm.items, sum: comm.sum),
               ],
             ));

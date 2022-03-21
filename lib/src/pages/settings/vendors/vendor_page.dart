@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/reminder.dart';
-import '../../../models/vendor.dart';
 import '../../../providers/inherited_database.dart';
 import '../../../repositories/draft_repository.dart';
 import '../../../repositories/item_repository.dart';
@@ -540,7 +539,7 @@ class _VendorPageState extends State<VendorPage> {
     var result = await showDialog<int>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-              title: Text('Soll dieser Verkäufer wirlich gelöscht werden?'),
+              title: Text('Soll dieser Verkäufer wirklich gelöscht werden?'),
               actions: <Widget>[
                 MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Behalten')),
                 MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Löschen')),

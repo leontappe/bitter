@@ -80,17 +80,17 @@ class Bill {
         serviceDate: null,
       );
 
-  factory Bill.fromMap(Map map) => Bill(
+  factory Bill.fromMap(Map<String, dynamic> map) => Bill(
         id: map['id'] as int,
         status: _intToStatus(int.parse(map['status'].toString())),
         billNr: map['bill_nr'].toString(),
         file: base64.decode(map['file'].toString()),
         sum: int.parse(map['sum'].toString()),
         editor: map['editor'].toString(),
-        vendor: Vendor.fromMap(json.decode(map['vendor'].toString()) as Map),
-        customer: Customer.fromMap(json.decode(map['customer'].toString()) as Map),
+        vendor: Vendor.fromMap(json.decode(map['vendor'].toString()) as Map<String, dynamic>),
+        customer: Customer.fromMap(json.decode(map['customer'].toString()) as Map<String, dynamic>),
         items: ((json.decode(map['items'].toString()) as List)
-            .map<Item>((dynamic map) => Item.fromMap(map as Map))).toList(),
+            .map<Item>((dynamic map) => Item.fromMap(map as Map<String, dynamic>))).toList(),
         userMessage: map['user_message']?.toString(),
         comment: map['comment']?.toString(),
         created: DateTime.parse(map['created'].toString()).toLocal(),
@@ -99,7 +99,7 @@ class Bill {
         note: (map['note'] != null) ? map['note'].toString() : null,
         reminders: (map['reminders'] != null)
             ? List.from((json.decode(map['reminders'].toString()) as List)
-                .map<Reminder>((dynamic map) => Reminder.fromMap(map as Map)))
+                .map<Reminder>((dynamic map) => Reminder.fromMap(map as Map<String, dynamic>)))
             : <Reminder>[],
       );
 

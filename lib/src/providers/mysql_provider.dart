@@ -81,13 +81,13 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
       cols += '$col, ';
     }
     cols = cols.substring(0, cols.length - 2);
-    var vals = '';
+    var values = '';
     for (var i = 0; i < item.values.length; i++) {
-      vals += '?, ';
+      values += '?, ';
     }
-    vals = vals.substring(0, vals.length - 2);
+    values = values.substring(0, values.length - 2);
 
-    final poolQuery = Query('INSERT INTO $table ($cols) VALUES ($vals);', item.values.toList());
+    final poolQuery = Query('INSERT INTO $table ($cols) VALUES ($values);', item.values.toList());
     _queries.add(poolQuery);
 
     return (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
@@ -102,7 +102,7 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
 
   @override
   Future<bool> openPool(
-    String database, {
+    String path, {
     @required String host,
     @required int port,
     String user,
@@ -114,8 +114,8 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
     for (var i = 0; i < size; i++) {
       _log.fine('spawning connection ${i + 1}');
       try {
-        connections.add(PooledConnection(await MySqlConnection.connect(ConnectionSettings(
-            db: database, host: host, port: port, user: user, password: password))));
+        connections.add(PooledConnection(await MySqlConnection.connect(
+            ConnectionSettings(db: path, host: host, port: port, user: user, password: password))));
       } on SocketException catch (e) {
         _log.severe('$e ${_socketExceptionText(e)}');
         _errors.add(DatabaseError(DatabaseErrorCategory.open,
@@ -127,13 +127,13 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
       }
     }
 
-    var connsString = '';
-    connections.forEach((PooledConnection c) => connsString += '$c \n');
-    _log.info('avaliable connections:\n$connsString');
+    var connsString = connections.join(' \n');
+    _log.info('available connections:\n$connsString');
 
     if (connections.length != size) return false;
 
-    final listener = _queries.stream.listen((Query q) async {
+    StreamSubscription<Query> listener;
+    listener = _queries.stream.listen((Query q) async {
       final freeConn = connections.firstWhere((PooledConnection conn) => !conn.busy);
       _log.fine('starting query "${q.query}" on $freeConn');
       freeConn.busy = true;
@@ -152,13 +152,14 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
             exception: e, description: _mySqlExceptionText(e)));
       }
       freeConn.busy = false;
+      listener.cancel();
     });
 
     return !listener.isPaused;
   }
 
   @override
-  Future<List<Map>> select(String table, {List<String> keys}) async {
+  Future<List<Map<String, dynamic>>> select(String table, {List<String> keys}) async {
     _log.fine('selecting all from "$table"');
 
     final poolQuery = Query('SELECT ${keys != null ? keys.join(', ') : '*'} FROM $table;');
@@ -168,11 +169,11 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
         (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
             .results;
     if (result == null) return null;
-    return List.from(result.map<Map>((ResultRow e) => e.fields));
+    return List.from(result.map<Map<String, dynamic>>((ResultRow e) => e.fields));
   }
 
   @override
-  Future<Map> selectSingle(String table, int id) async {
+  Future<Map<String, dynamic>> selectSingle(String table, int id) async {
     _log.fine('selecting item with id=$id from "$table"');
 
     final poolQuery = Query('SELECT * FROM $table WHERE id = $id;');
@@ -181,7 +182,7 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
     final result =
         (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
             .results
-            .map<Map>((ResultRow e) => e.fields);
+            .map<Map<String, dynamic>>((ResultRow e) => e.fields);
     if (result.isNotEmpty) {
       return result.single;
     }

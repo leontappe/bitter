@@ -48,13 +48,13 @@ class VendorCard extends StatelessWidget {
                   'Standard Rechnungskommentar': vendor.defaultComment,
                 if (vendor.reminderFees[ReminderIteration.first] != null)
                   'Standard Mahngebühr für erste Mahnung':
-                      '${formatFigure(vendor.reminderFees[ReminderIteration.first])}',
+                      formatFigure(vendor.reminderFees[ReminderIteration.first]),
                 if (vendor.reminderFees[ReminderIteration.second] != null)
                   'Standard Mahngebühr für zweite Mahnung':
-                      '${formatFigure(vendor.reminderFees[ReminderIteration.second])}',
+                      formatFigure(vendor.reminderFees[ReminderIteration.second]),
                 if (vendor.reminderFees[ReminderIteration.third] != null)
                   'Standard Mahngebühr für dritte Mahnung':
-                      '${formatFigure(vendor.reminderFees[ReminderIteration.third])}',
+                      formatFigure(vendor.reminderFees[ReminderIteration.third]),
                 if (vendor.reminderDeadline != null)
                   'Standardfrist für Mahnungen': '${vendor.reminderDeadline} Tage',
                 if (vendor.reminderTitles != null)

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../../models/mysql_settings.dart';
 import '../../repositories/settings_repository.dart';
 
 class AppSettingsPage extends StatefulWidget {

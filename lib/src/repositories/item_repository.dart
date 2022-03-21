@@ -27,7 +27,8 @@ class ItemRepository<T extends DatabaseProvider> {
   }
 
   Future<List<Item>> select({String searchQuery, int vendorFilter}) async {
-    var results = (await db.select(tableName)).map<Item>((Map e) => Item.fromDbMap(e));
+    var results =
+        (await db.select(tableName)).map<Item>((Map<String, dynamic> e) => Item.fromDbMap(e));
     if (searchQuery != null && searchQuery.isNotEmpty) {
       results = results.where((Item i) {
         return i.title.toLowerCase().contains(searchQuery.toLowerCase());
@@ -40,7 +41,7 @@ class ItemRepository<T extends DatabaseProvider> {
   }
 
   Future<Item> selectSingle(int id) async {
-    Map<dynamic, dynamic> result;
+    Map<String, dynamic> result;
     try {
       result = await db.selectSingle(tableName, id);
       if (result == null) return null;

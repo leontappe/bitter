@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../models/vendor.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/settings_repository.dart';
@@ -105,7 +104,7 @@ class _BillsListPageState extends State<ItemsListPage> {
                               Text('Steuer: ${i.tax} %'),
                             ],
                           ),
-                          trailing: Text('${formatFigure(i.price)}',
+                          trailing: Text(formatFigure(i.price),
                               style: Theme.of(context).textTheme.subtitle1),
                           onTap: () => onPushItemPage(item: i),
                         );

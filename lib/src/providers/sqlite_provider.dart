@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:logging/logging.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../models/database_error.dart';
@@ -95,7 +94,7 @@ class SqliteProvider extends DatabaseProvider {
   }
 
   @override
-  Future<Map> selectSingle(String table, int id) async {
+  Future<Map<String, dynamic>> selectSingle(String table, int id) async {
     _log.fine('selecting item with id=$id from "$table"');
     return (await conn.query(table, where: 'id=?', whereArgs: <dynamic>[id])).single;
   }

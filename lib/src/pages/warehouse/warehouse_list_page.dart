@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../models/crate.dart';
-import '../../models/vendor.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/item_repository.dart';
 import '../../repositories/settings_repository.dart';
@@ -93,7 +92,7 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
           ...warehouses.map(
             (Warehouse w) => WarehouseGridCard(
               title: w.name,
-              onTap: () => Navigator.of(context).push<MaterialPageRoute>(
+              onTap: () => Navigator.of(context).push<MaterialPageRoute<dynamic>>(
                 MaterialPageRoute(builder: (BuildContext context) => WarehousePage(id: w.id)),
               ),
               children: [

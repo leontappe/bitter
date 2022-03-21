@@ -40,7 +40,7 @@ class _VendorSelectorState extends State<VendorSelector> {
       items: <DropdownMenuItem<int>>[
         ..._vendors
             .map<DropdownMenuItem<int>>(
-                (Vendor v) => DropdownMenuItem<int>(value: v.id, child: Text('${v.name}')))
+                (Vendor v) => DropdownMenuItem<int>(value: v.id, child: Text(v.name)))
             .toList()
       ],
     );

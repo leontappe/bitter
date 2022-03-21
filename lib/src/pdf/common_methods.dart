@@ -2,8 +2,8 @@ import 'dart:typed_data';
 
 import 'package:pdf/widgets.dart';
 
-import '../../fonts/LiberationSans.dart';
-import '../../fonts/LiberationSansBold.dart';
+import '../../fonts/liberation_sans.dart';
+import '../../fonts/liberation_sans_bold.dart';
 import '../models/item.dart';
 
 int calculateTaxes(List<Item> items, int tax) {

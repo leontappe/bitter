@@ -18,13 +18,13 @@ class Commissioning {
     this.items = const <Item>[],
   });
 
-  factory Commissioning.fromMap(Map map) => Commissioning(
+  factory Commissioning.fromMap(Map<String, dynamic> map) => Commissioning(
         id: map['id'] as int,
         vendorId: map['vendor_id'] as int,
         warehouseId: map['warehouse_id'] as int,
         timestamp: DateTime.parse(map['timestamp'] as String),
         items: List.from((json.decode(map['items'] as String) as List)
-            .map<Item>((dynamic map) => Item.fromMap(map as Map))),
+            .map<Item>((dynamic map) => Item.fromMap(map as Map<String, dynamic>))),
       );
 
   int get sum {
@@ -40,7 +40,7 @@ class Commissioning {
         'vendor_id': vendorId,
         'warehouse_id': warehouseId,
         'timestamp': timestamp.toIso8601String(),
-        'items': json.encode(items.map<Map>((Item i) => i.toMap).toList()),
+        'items': json.encode(items.map<Map<String, dynamic>>((Item i) => i.toMap).toList()),
       };
 
   @override

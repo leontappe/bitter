@@ -165,8 +165,7 @@ class PdfGenerator {
               ]),
               ...items.map((Item i) => TableRow(children: <Widget>[
                     PaddedText(i.uid, ttfSans),
-                    PaddedText(
-                        (i.description != null) ? '${i.title} - ${i.description}' : '${i.title}',
+                    PaddedText((i.description != null) ? '${i.title} - ${i.description}' : i.title,
                         ttfSans),
                     PaddedText(i.quantity.toString(), ttfSans),
                     if (!vendor.smallBusiness) PaddedText('${i.tax.toStringAsFixed(0)} %', ttfSans),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../models/vendor.dart';
 import '../../../providers/database_provider.dart';
 import '../../../providers/inherited_database.dart';
 import '../../../repositories/vendor_repository.dart';

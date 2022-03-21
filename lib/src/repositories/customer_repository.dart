@@ -21,8 +21,8 @@ class CustomerRepository<T extends DatabaseProvider> {
   }
 
   Future<List<Customer>> select({String searchQuery}) async {
-    final results = List<Customer>.from(
-        (await db.select(tableName)).map<Customer>((Map e) => Customer.fromMap(e)));
+    final results = List<Customer>.from((await db.select(tableName))
+        .map<Customer>((Map<String, dynamic> e) => Customer.fromMap(e)));
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
       return List.from(results.where((Customer c) =>
@@ -36,7 +36,7 @@ class CustomerRepository<T extends DatabaseProvider> {
   }
 
   Future<Customer> selectSingle(int id) async {
-    Map<dynamic, dynamic> result;
+    Map<String, dynamic> result;
     try {
       result = await db.selectSingle(tableName, id);
       if (result == null) return null;

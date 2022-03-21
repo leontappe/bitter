@@ -42,13 +42,13 @@ class Draft {
         dueDays: null,
       );
 
-  factory Draft.fromMap(Map map) => Draft(
+  factory Draft.fromMap(Map<String, dynamic> map) => Draft(
         id: map['id'] as int,
         editor: map['editor'].toString(),
         customer: map['customer'] as int,
         vendor: map['vendor'] as int,
         items: ((json.decode(map['items'].toString()) as List)
-            .map<Item>((dynamic map) => Item.fromMap(map as Map))).toList(),
+            .map<Item>((dynamic map) => Item.fromMap(map as Map<String, dynamic>))).toList(),
         tax: map['tax'] as int,
         serviceDate:
             (map['service_date'] != null) ? DateTime.parse(map['service_date'].toString()) : null,

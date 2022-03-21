@@ -29,7 +29,8 @@ class DraftRepository<T extends DatabaseProvider> {
     List<Customer> customers = const [],
     List<Vendor> vendors = const [],
   }) async {
-    var results = (await db.select(tableName)).map<Draft>((Map e) => Draft.fromMap(e));
+    var results =
+        (await db.select(tableName)).map<Draft>((Map<String, dynamic> e) => Draft.fromMap(e));
     if (searchQuery != null && searchQuery.isNotEmpty) {
       results = results.where((Draft d) {
         final customer = (customers.where((Customer c) => c.id == d.customer).isNotEmpty)
@@ -64,7 +65,7 @@ class DraftRepository<T extends DatabaseProvider> {
   }
 
   Future<Draft> selectSingle(int id) async {
-    Map<dynamic, dynamic> result;
+    Map<String, dynamic> result;
     try {
       result = await db.selectSingle(tableName, id);
       if (result == null) return null;

@@ -28,7 +28,8 @@ class SettingsRepository {
 
   SettingsRepository();
 
-  Map get _getCurrentSettings => (json.decode(data.readAsStringSync())) as Map;
+  Map<String, dynamic> get _getCurrentSettings =>
+      (json.decode(data.readAsStringSync())) as Map<String, dynamic>;
 
   DbEngine getDbEngine() {
     final setting = select<int>(dbKey);
@@ -36,7 +37,7 @@ class SettingsRepository {
   }
 
   MySqlSettings getMySqlSettings() {
-    final settings = select<Map>(mySqlKey);
+    final settings = select<Map<String, dynamic>>(mySqlKey);
     if (settings != null) {
       return MySqlSettings.fromMap(settings);
     } else {
@@ -107,6 +108,6 @@ class SettingsRepository {
     }
   } //&& ((await select(key)).toString().isNotEmpty);
 
-  Future<void> _writeSettings(Map map) async =>
+  Future<void> _writeSettings(Map<String, dynamic> map) async =>
       await data.writeAsBytes(utf8.encode(json.encode(map)));
 }

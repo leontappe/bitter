@@ -125,7 +125,7 @@ class Vendor {
         email: null,
       );
 
-  factory Vendor.fromMap(Map map) => Vendor(
+  factory Vendor.fromMap(Map<String, dynamic> map) => Vendor(
         id: map['id'] as int,
         name: map['name'].toString(),
         manager: map['manager']?.toString(),
@@ -183,8 +183,7 @@ class Vendor {
         userMessageLabel:
             (map['user_message_label'] != null) ? map['user_message_label'].toString() : null,
         smallBusiness: (map['small_business'] as int ?? 0) > 0 ? true : false,
-        freeInformation:
-            map['free_information'] != null ? map['free_information'].toString() : null,
+        freeInformation: map['free_information']?.toString(),
       );
 
   @override
