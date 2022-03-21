@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-import '../../../version.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/settings_repository.dart';
@@ -48,12 +48,15 @@ class _HomepageState extends State<Homepage> {
           IconButton(
               tooltip: 'Informationen über die App anzeigen',
               icon: Icon(Icons.info),
-              onPressed: () => showAboutDialog(
-                  context: context,
-                  applicationName: 'bitter Rechnungen',
-                  applicationVersion: version,
-                  applicationIcon: Icon(Icons.monetization_on),
-                  applicationLegalese: '© 2020 Leon Tappe')),
+              onPressed: () async {
+                PackageInfo info = await PackageInfo.fromPlatform();
+                showAboutDialog(
+                    context: context,
+                    applicationName: 'bitter Rechnungen',
+                    applicationVersion: info.version + '+' + info.buildNumber,
+                    applicationIcon: Icon(Icons.monetization_on),
+                    applicationLegalese: '© 2022 Leon Tappe');
+              }),
         ],
       ),
       body: DatabaseErrorWatcher(
