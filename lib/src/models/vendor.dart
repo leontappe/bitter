@@ -130,7 +130,7 @@ class Vendor {
         name: map['name'].toString(),
         manager: map['manager']?.toString(),
         contact: map['contact']?.toString(),
-        address: map['address'].toString(),
+        address: map['address']?.toString(),
         zipCode: int.parse(map['zip_code'].toString()),
         city: map['city'].toString(),
         iban: map['iban'].toString(),

@@ -18,6 +18,8 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
   StreamController<Query> _queries;
   StreamController<PooledResult> _results;
 
+  StreamSubscription<Query> _listener;
+
   MySqlProvider() {
     _errors = StreamController<DatabaseError>.broadcast();
     _results = StreamController<PooledResult>.broadcast();
@@ -26,6 +28,17 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
 
   @override
   Stream<DatabaseError> get errors => _errors.stream;
+
+  @override
+  Future<void> close() async {
+    await _listener.cancel();
+    for (var connection in connections) {
+      await connection.connection.close();
+    }
+    await _queries.close();
+    await _results.close();
+    await _errors.close();
+  }
 
   @override
   Future<void> createTable(
@@ -132,8 +145,7 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
 
     if (connections.length != size) return false;
 
-    StreamSubscription<Query> listener;
-    listener = _queries.stream.listen((Query q) async {
+    _listener = _queries.stream.listen((Query q) async {
       final freeConn = connections.firstWhere((PooledConnection conn) => !conn.busy);
       _log.fine('starting query "${q.query}" on $freeConn');
       freeConn.busy = true;
@@ -152,10 +164,9 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
             exception: e, description: _mySqlExceptionText(e)));
       }
       freeConn.busy = false;
-      listener.cancel();
     });
 
-    return !listener.isPaused;
+    return !_listener.isPaused;
   }
 
   @override

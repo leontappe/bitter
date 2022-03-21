@@ -20,6 +20,8 @@ abstract class DatabaseProvider {
   Future<Map<String, dynamic>> selectSingle(String table, int id);
 
   Future<int> update(String table, int id, Map<String, dynamic> item);
+
+  Future<void> close();
 }
 
 mixin PooledDatabaseProvider on DatabaseProvider {

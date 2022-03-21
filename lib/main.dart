@@ -82,7 +82,7 @@ Future<void> startLogging() async {
       } else {
         logSink.add(utf8.encode(line + '\n'));
       }
-      if (record.level.value >= 700) print(line);
+      if (!EnvironmentConfig.debug && record.level.value >= 700) print(line);
     }, onDone: () => logSink.close());
   }
 

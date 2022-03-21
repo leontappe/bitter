@@ -23,6 +23,12 @@ class SqliteProvider extends DatabaseProvider {
   Stream<DatabaseError> get errors => _errors.stream;
 
   @override
+  Future<void> close() async {
+    await conn.close();
+    await _errors.close();
+  }
+
+  @override
   Future<void> createTable(
       String table, List<String> columns, List<String> types, String primaryKey,
       {List<bool> nullable}) async {
