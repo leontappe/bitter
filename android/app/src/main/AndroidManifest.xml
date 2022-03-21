@@ -5,7 +5,7 @@
      android:name="android.permission.INTERNET"/>
 
     <application
-        android:name="io.flutter.app.FlutterApplication"
+        android:name="${applicationName}"
         android:label="bitter"
         android:icon="@mipmap/ic_launcher">
         <activity
