@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
 import '../../../version.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/inherited_database.dart';
 import '../../repositories/settings_repository.dart';
 import '../../repositories/vendor_repository.dart';
-import '../../util/bitter_platform_path_provider.dart';
 import '../../widgets/database_error_watcher.dart';
 import '../../widgets/navigation_card.dart';
 import '../../widgets/settings_list.dart';
@@ -82,12 +80,6 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  @override
-  void didChangeDependencies() {
-    initDb();
-    super.didChangeDependencies();
-  }
-
   Future<void> initDb() async {
     settings = SettingsRepository();
     await settings.setUp();
@@ -128,7 +120,7 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     super.initState();
-    PathProviderPlatform.instance = BitterPlatformPathProvider();
+    initDb();
   }
 
   Future<void> onFilter(int value) async {
