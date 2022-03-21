@@ -6,13 +6,13 @@
 
 #include "generated_plugin_registrant.h"
 
-#include <file_selector_windows/file_selector_plugin.h>
+#include <file_selector_windows/file_selector_windows.h>
 #include <sentry_flutter/sentry_flutter_plugin.h>
 #include <windows_documents/windows_documents_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
-  FileSelectorPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FileSelectorPlugin"));
+  FileSelectorWindowsRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("FileSelectorWindows"));
   SentryFlutterPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("SentryFlutterPlugin"));
   WindowsDocumentsPluginRegisterWithRegistrar(
