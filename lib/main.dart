@@ -83,15 +83,15 @@ Future<void> startLogging() async {
 }
 
 class Bitter extends StatelessWidget {
-  final SettingsRepository settingsRepo = SettingsRepository();
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<DbEngine>(
+    return FutureBuilder<SettingsRepository>(
       future: initDb(),
-      builder: (BuildContext context, AsyncSnapshot<DbEngine> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<SettingsRepository> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          final provider = (snapshot.data == DbEngine.mysql) ? MySqlProvider() : SqliteProvider();
+          final settingsRepo = snapshot.data;
+          final provider =
+              (settingsRepo.getDbEngine() == DbEngine.mysql) ? MySqlProvider() : SqliteProvider();
           if (provider is MySqlProvider) {
             final settings = settingsRepo.getMySqlSettings();
             provider.openPool(
@@ -136,8 +136,9 @@ class Bitter extends StatelessWidget {
     );
   }
 
-  Future<DbEngine> initDb() async {
+  Future<SettingsRepository> initDb() async {
+    final settingsRepo = SettingsRepository();
     await settingsRepo.setUp();
-    return settingsRepo.getDbEngine();
+    return settingsRepo;
   }
 }
