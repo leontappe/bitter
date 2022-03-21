@@ -33,11 +33,17 @@ void main() async {
 
   if (EnvironmentConfig.debug) {
     runApp(Bitter());
-    await startLogging();
+
+    Logger.root.level = Level.FINE; // defaults to Level.INFO
+    Logger.root.onRecord.listen((record) {
+      if (mySqlLogNames.contains(record.loggerName)) return;
+      print('${record.loggerName} - ${record.level.name}: ${record.time}: ${record.message}');
+    });
   } else {
     await SentryFlutter.init((options) {
       options.dsn = 'https://6aea6b9511874d3ea03e38ffa6090d68@o956017.ingest.sentry.io/5905382';
     }, appRunner: () => runApp(Bitter()));
+    await startLogging();
   }
 }
 
