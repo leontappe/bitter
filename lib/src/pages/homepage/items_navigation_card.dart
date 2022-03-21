@@ -90,7 +90,8 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
   }
 
   Future<void> initDb() async {
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Future.delayed(const Duration(milliseconds: 400));
+    if (!mounted) return;
     _itemRepo = ItemRepository(InheritedDatabase.of(context));
     _vendorRepo = VendorRepository(InheritedDatabase.of(context));
 
@@ -119,6 +120,6 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
       _items.removeWhere((Item i) => i.vendor != widget.filter);
     }
     _items.sort((Item a, Item b) => b.id.compareTo(a.id));
-    setState(() => _items);
+    if (mounted) setState(() => _items);
   }
 }
