@@ -115,7 +115,7 @@ class ReminderGenerator {
                         margin: EdgeInsets.all(0.0),
                       ),
                     Paragraph(
-                      text: 'Datum: ${formatDate(DateTime.now())}',
+                      text: 'Datum: ${formatDate(reminder.created)}',
                       style: TextStyle(fontSize: fontsize),
                       margin: EdgeInsets.all(0.0),
                     ),

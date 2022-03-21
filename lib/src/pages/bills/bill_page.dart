@@ -178,6 +178,7 @@ class _BillPageState extends State<BillPage> {
                                                   style: Theme.of(context).textTheme.headline5),
                                               if (r.title != null && r.title.isNotEmpty)
                                                 Text('Titel: ${r.title}'),
+                                              Text('Erstellt: ${formatDate(r.created)}'),
                                               Text('Frist: ${formatDate(r.deadline)}'),
                                               Text('Mahngebühr: ${formatFigure(r.fee)}'),
                                             ],
@@ -376,6 +377,7 @@ class _BillPageState extends State<BillPage> {
       deadline: DateTime.now().add(Duration(
           days: vendor != null ? vendor?.reminderDeadline : bill.vendor.reminderDeadline ?? 14)),
       remainder: bill.sum,
+      created: DateTime.now(),
     );
 
     final result = await showDialog<Reminder>(

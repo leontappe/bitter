@@ -51,24 +51,25 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
         Text(
             'In den letzten 7 Tagen wurde${_bills.length == 1 ? '' : 'n'} ${_bills.where((Bill b) => b.created.isAfter(DateTime.now().subtract(Duration(days: 7)))).length} Rechnung${_bills.length == 1 ? '' : 'en'} erstellt.',
             style: TextStyle(color: Colors.grey[800])),
-        Flexible(
-            child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-                height: (widget.filter != null && widget.filter > 0) ? 93.0 : 109.0, width: 0.0),
-            ..._bills.take(4).map<Widget>(
-                  (Bill b) => Expanded(
-                      child: BillShortcut(context, bill: b, showVendor: widget.filter == null)),
-                ),
-            if (_bills.length > 4)
-              Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
-            else if (_bills.isNotEmpty)
-              Container(width: 48.0, height: 48.0),
-            for (var i = 0; i < (4 - _bills.length); i++) Spacer(),
-          ],
-        )),
+        if (_bills.isNotEmpty)
+          Flexible(
+              child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                  height: (widget.filter != null && widget.filter > 0) ? 93.0 : 109.0, width: 0.0),
+              ..._bills.take(4).map<Widget>(
+                    (Bill b) => Expanded(
+                        child: BillShortcut(context, bill: b, showVendor: widget.filter == null)),
+                  ),
+              if (_bills.length > 4)
+                Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
+              else if (_bills.isNotEmpty)
+                Container(width: 48.0, height: 48.0),
+              for (var i = 0; i < (4 - _bills.length); i++) Spacer(),
+            ],
+          )),
         if (_overdueBills.isNotEmpty)
           Column(
             children: [
@@ -104,6 +105,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
 
   Future<void> initDb() async {
     await Future.delayed(const Duration(milliseconds: 200));
+    if (!mounted) return;
     _billRepo = BillRepository(InheritedDatabase.of(context));
 
     try {
