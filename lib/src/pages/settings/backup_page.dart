@@ -440,7 +440,7 @@ class _BackupPageState extends State<BackupPage> {
 
   List<Map<String, dynamic>> _mapFileContent(Uint8List file) {
     final converter = CsvToListConverter();
-    final csvList = converter.convert(utf8.decode(file));
+    final csvList = converter.convert<dynamic>(utf8.decode(file));
     final headers = csvList.first.map<String>((dynamic e) => e.toString());
     final mappedList = <Map<String, dynamic>>[];
     for (var i = 1; i < csvList.length; i++) {
