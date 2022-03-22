@@ -69,7 +69,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
               for (var i = 0; i < (4 - _bills.length); i++) Spacer(),
             ],
           )),
-        if (_overdueBills.isNotEmpty)
+        /* if (_overdueBills.isNotEmpty)
           Column(
             children: [
               Divider(height: 24.0),
@@ -93,11 +93,12 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
                                 BillShortcut(context, bill: b, showVendor: widget.filter == null)),
                       ),
                   if (_overdueBills.length > 4)
-                    Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
+                    Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0)),
+                  for (var i = 0; i < (4 - _overdueBills.length); i++) Spacer(),
                 ],
               ))
             ],
-          ),
+          ), */
       ],
     );
   }
@@ -105,7 +106,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
   Future<void> initDb() async {
     await Future.delayed(const Duration(milliseconds: 400));
     if (!mounted) return;
-    
+
     _billRepo = BillRepository(InheritedDatabase.of(context));
 
     try {
