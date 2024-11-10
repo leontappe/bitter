@@ -5,7 +5,12 @@ class NavigationCard extends StatelessWidget {
   final String route;
   final List<Widget> children;
 
-  NavigationCard(this.context, this.route, {this.children});
+  NavigationCard(
+    this.context,
+    this.route, {
+    this.children = const <Widget>[],
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +22,8 @@ class NavigationCard extends StatelessWidget {
         splashColor: Colors.blue.withAlpha(30),
         onTap: () => Navigator.pushNamed(context, route),
         child: Padding(
-          padding: EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0, top: 8.0),
+          padding:
+              EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0, top: 8.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,

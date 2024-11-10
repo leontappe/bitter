@@ -9,18 +9,18 @@ class ItemSelector extends StatefulWidget {
   final bool disabled;
 
   const ItemSelector({
-    Key key,
-    @required this.onChanged,
-    @required this.initialValue,
+    super.key,
+    required this.onChanged,
+    required this.initialValue,
     this.disabled = false,
-  }) : super(key: key);
+  });
 
   @override
   _ItemSelectorState createState() => _ItemSelectorState();
 }
 
 class _ItemSelectorState extends State<ItemSelector> {
-  ItemRepository repo;
+  late ItemRepository repo;
 
   List<Item> _items = [];
   Item _item = Item.empty();
@@ -33,14 +33,15 @@ class _ItemSelectorState extends State<ItemSelector> {
       value: _item?.id,
       onChanged: (widget.disabled)
           ? null
-          : (int value) {
-              setState(() => _item = _items.singleWhere((Item i) => i.id == value));
+          : (int? value) {
+              setState(
+                  () => _item = _items.singleWhere((Item i) => i.id == value));
               widget.onChanged(_item);
             },
       items: <DropdownMenuItem<int>>[
         ..._items
-            .map<DropdownMenuItem<int>>(
-                (Item i) => DropdownMenuItem<int>(value: i.id, child: Text(i.title)))
+            .map<DropdownMenuItem<int>>((Item i) =>
+                DropdownMenuItem<int>(value: i.id, child: Text(i.title)))
             .toList()
       ],
     );
@@ -59,12 +60,10 @@ class _ItemSelectorState extends State<ItemSelector> {
 
     _items = await repo.select();
 
-    if (widget.initialValue != null) {
-      try {
-        _item = await repo.selectSingle(widget.initialValue);
-      } catch (e) {
-        print(e);
-      }
+    try {
+      _item = await repo.selectSingle(widget.initialValue);
+    } catch (e) {
+      print(e);
     }
 
     if (mounted) setState(() => _items);

@@ -1,59 +1,52 @@
-import 'package:meta/meta.dart';
-
 class Customer {
-  int id;
+  int? id;
 
-  String company;
-  String organizationUnit;
+  String? company;
+  String? organizationUnit;
   String name;
   String surname;
   Gender gender;
   String address;
   int zipCode;
   String city;
-  String country;
-  String telephone;
-  String fax;
-  String mobile;
+  String? country;
+  String? telephone;
+  String? fax;
+  String? mobile;
   String email;
-
-  String get fullName => '$name $surname';
-  String get fullCompany => (company != null)
-      ? '$company${(organizationUnit != null && organizationUnit.isNotEmpty) ? ' ' + organizationUnit : ''} - $name $surname'
-      : null;
 
   Customer({
     this.id,
     this.company,
     this.organizationUnit,
-    @required this.name,
-    @required this.surname,
-    @required this.gender,
-    @required this.address,
-    @required this.zipCode,
-    @required this.city,
+    required this.name,
+    required this.surname,
+    required this.gender,
+    required this.address,
+    required this.zipCode,
+    required this.city,
     this.country,
     this.telephone,
     this.fax,
     this.mobile,
-    @required this.email,
+    required this.email,
   });
-
   factory Customer.empty() => Customer(
-        name: null,
-        surname: null,
-        gender: null,
-        address: null,
-        zipCode: null,
-        city: null,
-        email: null,
+        name: '',
+        surname: '',
+        gender: '',
+        address: '',
+        zipCode: '',
+        city: '',
+        email: '',
       );
 
   factory Customer.fromMap(Map<String, dynamic> map) => Customer(
         id: map['id'] as int,
         company: (map['company'] != null) ? map['company'].toString() : null,
-        organizationUnit:
-            (map['organization_unit'] != null) ? map['organization_unit'].toString() : null,
+        organizationUnit: (map['organization_unit'] != null)
+            ? map['organization_unit'].toString()
+            : null,
         name: map['name'].toString(),
         surname: map['surname'].toString(),
         gender: (map['gender'] == 0)
@@ -65,11 +58,18 @@ class Customer {
         zipCode: map['zip_code'] as int,
         city: map['city'].toString(),
         country: (map['country'] != null) ? map['country'].toString() : null,
-        telephone: (map['telephone'] != null) ? map['telephone'].toString() : null,
+        telephone:
+            (map['telephone'] != null) ? map['telephone'].toString() : null,
         fax: (map['fax'] != null) ? map['fax'].toString() : null,
         mobile: (map['mobile'] != null) ? map['mobile'].toString() : null,
         email: map['email'].toString(),
       );
+
+  String? get fullCompany => (company != null)
+      ? '$company${(organizationUnit != null && organizationUnit!.isNotEmpty) ? ' ' + organizationUnit! : ''} - $name $surname'
+      : null;
+
+  String get fullName => '$name $surname';
 
   Map<String, dynamic> get toMap => <String, dynamic>{
         'company': company,

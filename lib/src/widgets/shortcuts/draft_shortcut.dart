@@ -10,28 +10,41 @@ import 'base_shortcut.dart';
 class DraftShortcut extends StatelessWidget {
   final BuildContext context;
   final Draft draft;
-  final Customer customer;
-  final Vendor vendor;
+  final Customer? customer;
+  final Vendor? vendor;
   final bool showVendor;
 
-  const DraftShortcut(this.context,
-      {Key key, @required this.draft, this.customer, this.vendor, this.showVendor = true})
-      : super(key: key);
+  const DraftShortcut(
+    this.context, {
+    super.key,
+    required this.draft,
+    this.customer,
+    this.vendor,
+    this.showVendor = true,
+  });
 
   @override
   Widget build(BuildContext context) {
     return BaseShortcut(
       context,
-      onTap: () => Navigator.push<bool>(context,
-          MaterialPageRoute(builder: (BuildContext context) => DraftCreatorPage(draft: draft))),
+      onTap: () => Navigator.push<bool>(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  DraftCreatorPage(draft: draft))),
       children: <Widget>[
         Text('Entwurf ${draft.id}',
-            style: Theme.of(context).textTheme.subtitle1.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(fontWeight: FontWeight.bold),
             textScaleFactor: 1.1,
             overflow: TextOverflow.ellipsis),
-        if (showVendor) Text(vendor?.name ?? '', overflow: TextOverflow.ellipsis),
+        if (showVendor)
+          Text(vendor?.name ?? '', overflow: TextOverflow.ellipsis),
         if (customer != null)
-          Text(customer.fullCompany ?? customer.fullName, overflow: TextOverflow.ellipsis)
+          Text(customer.fullCompany ?? customer.fullName,
+              overflow: TextOverflow.ellipsis)
         else
           Text(''),
         Text('${draft.items.length} Artikel', overflow: TextOverflow.ellipsis),

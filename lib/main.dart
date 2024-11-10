@@ -37,11 +37,13 @@ void main() async {
     Logger.root.level = Level.FINE; // defaults to Level.INFO
     Logger.root.onRecord.listen((record) {
       if (mySqlLogNames.contains(record.loggerName)) return;
-      print('${record.loggerName} - ${record.level.name}: ${record.time}: ${record.message}');
+      print(
+          '${record.loggerName} - ${record.level.name}: ${record.time}: ${record.message}');
     });
   } else {
     await SentryFlutter.init((options) {
-      options.dsn = 'https://6aea6b9511874d3ea03e38ffa6090d68@o956017.ingest.sentry.io/5905382';
+      options.dsn =
+          'https://6aea6b9511874d3ea03e38ffa6090d68@o956017.ingest.sentry.io/5905382';
     }, appRunner: () => runApp(Bitter()));
     await startLogging();
   }
@@ -59,7 +61,7 @@ const List<String> mySqlLogNames = [
 ];
 
 Future<void> startLogging() async {
-  String logPath;
+  String? logPath;
   if (kIsWeb) {
     Logger.root.level = Level.FINE; // defaults to Level.INFO
     Logger.root.onRecord.listen(print);
@@ -68,7 +70,8 @@ Future<void> startLogging() async {
       logPath =
           '${(await getLogPath()).replaceAll('/', '\\')}\\log_${formatDate(DateTime.now()).replaceAll('.', '-')}.txt';
     } else {
-      logPath = '${await getLogPath()}/log_${formatDate(DateTime.now()).replaceAll('.', '-')}.txt';
+      logPath =
+          '${await getLogPath()}/log_${formatDate(DateTime.now()).replaceAll('.', '-')}.txt';
     }
 
     final logFile = await File(logPath).create(recursive: true);
@@ -76,7 +79,8 @@ Future<void> startLogging() async {
 
     Logger.root.level = Level.ALL; // defaults to Level.INFO
     Logger.root.onRecord.listen((record) {
-      final line = '${record.loggerName}/${record.level.name}: ${record.time}: ${record.message}';
+      final line =
+          '${record.loggerName}/${record.level.name}: ${record.time}: ${record.message}';
       if (mySqlLogNames.contains(record.loggerName)) {
         return;
       } else {
@@ -94,11 +98,13 @@ class Bitter extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<SettingsRepository>(
       future: initDb(),
-      builder: (BuildContext context, AsyncSnapshot<SettingsRepository> snapshot) {
+      builder:
+          (BuildContext context, AsyncSnapshot<SettingsRepository> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          final settingsRepo = snapshot.data;
-          final provider =
-              (settingsRepo.getDbEngine() == DbEngine.mysql) ? MySqlProvider() : SqliteProvider();
+          final settingsRepo = snapshot.data!;
+          final provider = (settingsRepo.getDbEngine() == DbEngine.mysql)
+              ? MySqlProvider()
+              : SqliteProvider();
           if (provider is MySqlProvider) {
             final settings = settingsRepo.getMySqlSettings();
             provider.openPool(

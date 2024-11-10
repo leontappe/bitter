@@ -11,22 +11,22 @@ class OptionDialog extends StatefulWidget {
   final String checkboxText;
 
   const OptionDialog({
-    Key key,
-    this.titleText,
+    super.key,
+    required this.titleText,
     this.actions = const <Widget>[],
     this.children = const <Widget>[],
     this.disableCheckbox = false,
     this.checked = true,
-    this.onChecked,
+    required this.onChecked,
     this.checkboxText = '',
-  }) : super(key: key);
+  });
 
   @override
   _OptionDialogState createState() => _OptionDialogState();
 }
 
 class _OptionDialogState extends State<OptionDialog> {
-  bool checked;
+  bool checked = false;
 
   @override
   void initState() {
@@ -46,8 +46,8 @@ class _OptionDialogState extends State<OptionDialog> {
             padding: EdgeInsets.only(top: 8.0),
             child: CheckboxListTile(
               value: checked,
-              onChanged: (bool input) {
-                setState(() => checked = input);
+              onChanged: (bool? input) {
+                setState(() => checked = input ?? false);
                 widget.onChecked(checked);
               },
               title: Text(widget.checkboxText),

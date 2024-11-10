@@ -9,9 +9,9 @@ class VendorSelector extends StatefulWidget {
   final bool disabled;
 
   const VendorSelector({
-    Key key,
-    @required this.onChanged,
-    @required this.initialValue,
+    Key? key,
+    required this.onChanged,
+    required this.initialValue,
     this.disabled = false,
   }) : super(key: key);
 
@@ -20,7 +20,7 @@ class VendorSelector extends StatefulWidget {
 }
 
 class _VendorSelectorState extends State<VendorSelector> {
-  VendorRepository repo;
+  late VendorRepository repo;
 
   List<Vendor> _vendors = [];
   Vendor _vendor = Vendor.empty();
@@ -28,19 +28,21 @@ class _VendorSelectorState extends State<VendorSelector> {
   @override
   Widget build(BuildContext context) {
     return DropdownButton<int>(
-      hint: Text((widget.disabled) ? _vendor?.name ?? '' : 'Verkäufer auswählen'),
+      hint:
+          Text((widget.disabled) ? _vendor?.name ?? '' : 'Verkäufer auswählen'),
       isExpanded: true,
-      value: _vendor?.id,
+      value: _vendor.id,
       onChanged: (widget.disabled)
           ? null
-          : (int value) {
-              setState(() => _vendor = _vendors.singleWhere((Vendor v) => v.id == value));
+          : (int? value) {
+              setState(() =>
+                  _vendor = _vendors.singleWhere((Vendor v) => v.id == value));
               widget.onChanged(_vendor);
             },
       items: <DropdownMenuItem<int>>[
         ..._vendors
-            .map<DropdownMenuItem<int>>(
-                (Vendor v) => DropdownMenuItem<int>(value: v.id, child: Text(v.name)))
+            .map<DropdownMenuItem<int>>((Vendor v) =>
+                DropdownMenuItem<int>(value: v.id, child: Text(v.name)))
             .toList()
       ],
     );
@@ -59,12 +61,10 @@ class _VendorSelectorState extends State<VendorSelector> {
 
     _vendors = await repo.select();
 
-    if (widget.initialValue != null) {
-      try {
-        _vendor = await repo.selectSingle(widget.initialValue);
-      } catch (e) {
-        print(e);
-      }
+    try {
+      _vendor = await repo.selectSingle(widget.initialValue);
+    } catch (e) {
+      print(e);
     }
 
     if (mounted) setState(() => _vendors);

@@ -8,14 +8,14 @@ import '../providers/inherited_database.dart';
 class DatabaseErrorWatcher extends StatefulWidget {
   final Widget child;
 
-  const DatabaseErrorWatcher({Key key, @required this.child}) : super(key: key);
+  const DatabaseErrorWatcher({super.key, required this.child});
 
   @override
   _DatabaseErrorWatcherState createState() => _DatabaseErrorWatcherState();
 }
 
 class _DatabaseErrorWatcherState extends State<DatabaseErrorWatcher> {
-  StreamSubscription<DatabaseError> listener;
+  StreamSubscription<DatabaseError>? listener;
 
   /// the last errors that went through listener
   /// used to sort out big bulks of identical errors
@@ -38,11 +38,12 @@ class _DatabaseErrorWatcherState extends State<DatabaseErrorWatcher> {
                     .compareTo(const Duration(seconds: 30)) >
                 0)
         .listen((DatabaseError error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error.description), duration: const Duration(seconds: 3)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(error.description),
+          duration: const Duration(seconds: 3)));
       lastErrors.add(error);
-      lastErrors.removeWhere((DatabaseError error) =>
-          error.timestamp.isBefore(DateTime.now().subtract(const Duration(seconds: 5))));
+      lastErrors.removeWhere((DatabaseError error) => error.timestamp
+          .isBefore(DateTime.now().subtract(const Duration(seconds: 5))));
     });
 
     super.didChangeDependencies();
@@ -51,6 +52,6 @@ class _DatabaseErrorWatcherState extends State<DatabaseErrorWatcher> {
   @override
   void dispose() async {
     super.dispose();
-    await listener.cancel();
+    await listener?.cancel();
   }
 }
