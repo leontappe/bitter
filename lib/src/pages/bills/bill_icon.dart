@@ -5,7 +5,7 @@ import '../../models/bill.dart';
 class BillIcon extends StatelessWidget {
   final Bill bill;
 
-  const BillIcon({Key key, @required this.bill}) : super(key: key);
+  const BillIcon({Key key, required this.bill}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

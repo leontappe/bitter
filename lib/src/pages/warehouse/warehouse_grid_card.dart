@@ -7,8 +7,8 @@ class WarehouseGridCard extends StatelessWidget {
 
   const WarehouseGridCard({
     this.children = const <Widget>[],
-    @required this.onTap,
-    @required this.title,
+    required this.onTap,
+    required this.title,
   });
 
   @override

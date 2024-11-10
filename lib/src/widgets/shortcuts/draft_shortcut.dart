@@ -43,7 +43,7 @@ class DraftShortcut extends StatelessWidget {
         if (showVendor)
           Text(vendor?.name ?? '', overflow: TextOverflow.ellipsis),
         if (customer != null)
-          Text(customer.fullCompany ?? customer.fullName,
+          Text(customer!.fullCompany ?? customer!.fullName,
               overflow: TextOverflow.ellipsis)
         else
           Text(''),

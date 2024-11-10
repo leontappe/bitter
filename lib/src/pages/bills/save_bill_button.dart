@@ -7,7 +7,7 @@ import '../../util/ui_util.dart';
 class SaveBillButton extends StatelessWidget {
   final int billId;
 
-  const SaveBillButton({@required this.billId});
+  const SaveBillButton({required this.billId});
 
   @override
   Widget build(BuildContext context) {

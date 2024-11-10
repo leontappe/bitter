@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+
 
 class Item {
   int id;
@@ -18,8 +18,8 @@ class Item {
     this.id,
     this.vendor,
     this.itemId,
-    @required this.title,
-    @required this.price,
+    required this.title,
+    required this.price,
     this.tax = 19,
     this.quantity = 1,
     this.description,

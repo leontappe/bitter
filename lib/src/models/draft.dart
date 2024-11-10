@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:meta/meta.dart';
+
 
 import 'item.dart';
 
@@ -21,13 +21,13 @@ class Draft {
 
   Draft({
     this.id,
-    @required this.editor,
-    @required this.customer,
-    @required this.vendor,
-    @required this.items,
-    @required this.tax,
-    @required this.serviceDate,
-    @required this.dueDays,
+    required this.editor,
+    required this.customer,
+    required this.vendor,
+    required this.items,
+    required this.tax,
+    required this.serviceDate,
+    required this.dueDays,
     this.userMessage,
     this.comment,
   });

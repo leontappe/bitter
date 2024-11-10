@@ -8,7 +8,7 @@ class CustomerShortcut extends StatelessWidget {
   final BuildContext context;
   final Customer customer;
 
-  const CustomerShortcut(this.context, {Key key, @required this.customer}) : super(key: key);
+  const CustomerShortcut(this.context, {Key key, required this.customer}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

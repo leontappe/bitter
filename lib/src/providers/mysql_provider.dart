@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
+
 import 'package:mysql1/mysql1.dart';
 import 'package:uuid/uuid.dart';
 
@@ -116,8 +116,8 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
   @override
   Future<bool> openPool(
     String path, {
-    @required String host,
-    @required int port,
+    required String host,
+    required int port,
     String user,
     String password,
     int size = 10,

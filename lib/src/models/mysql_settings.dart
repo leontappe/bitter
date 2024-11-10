@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+const localhost = '127.0.0.1';
 
 class MySqlSettings {
   String host;
@@ -8,14 +8,23 @@ class MySqlSettings {
   String database;
 
   MySqlSettings({
-    this.host = '127.0.0.1',
+    this.host = localhost,
     this.port = 3306,
-    @required this.user,
-    @required this.password,
-    @required this.database,
+    required this.user,
+    required this.password,
+    required this.database,
   });
 
-  factory MySqlSettings.empty() => MySqlSettings(user: null, password: null, database: null);
+  factory MySqlSettings.empty() =>
+      MySqlSettings(user: '', password: '', database: '');
+
+  factory MySqlSettings.fromMap(Map<String, dynamic> map) => MySqlSettings(
+        host: (map['host'] != null) ? map['host'].toString() : localhost,
+        port: map['port'] as int,
+        user: map['user'].toString(),
+        password: map['password'].toString(),
+        database: map['database'].toString(),
+      );
 
   factory MySqlSettings.standard() => MySqlSettings(
         host: '127.0.0.1',
@@ -23,14 +32,6 @@ class MySqlSettings {
         database: 'bitter',
         password: '',
         user: '',
-      );
-
-  factory MySqlSettings.fromMap(Map<String, dynamic> map) => MySqlSettings(
-        host: (map['host'] != null) ? map['host'].toString() : null,
-        port: map['port'] as int,
-        user: map['user'].toString(),
-        password: map['password'].toString(),
-        database: map['database'].toString(),
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{

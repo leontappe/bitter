@@ -16,11 +16,11 @@ class ItemEditorTile extends StatefulWidget {
   final Function(Item) itemSaved;
 
   ItemEditorTile({
-    @required this.item,
-    @required this.defaultTax,
-    @required this.itemChanged,
-    @required this.itemDeleted,
-    @required this.itemSaved,
+    required this.item,
+    required this.defaultTax,
+    required this.itemChanged,
+    required this.itemDeleted,
+    required this.itemSaved,
   });
 
   @override

@@ -5,7 +5,7 @@ class BaseShortcut extends StatelessWidget {
   final List<Widget> children;
   final Function() onTap;
 
-  const BaseShortcut(this.context, {Key key, @required this.children, this.onTap})
+  const BaseShortcut(this.context, {Key key, required this.children, this.onTap})
       : super(key: key);
 
   @override

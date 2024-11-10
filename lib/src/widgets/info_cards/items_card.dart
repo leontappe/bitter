@@ -7,7 +7,7 @@ class ItemsCard extends StatelessWidget {
   final List<Item> items;
   final int sum;
 
-  const ItemsCard({Key key, @required this.items, @required this.sum}) : super(key: key);
+  const ItemsCard({Key key, required this.items, required this.sum}) : super(key: key);
 
   List<DataRow> get _rows => <DataRow>[
         ...items.map(

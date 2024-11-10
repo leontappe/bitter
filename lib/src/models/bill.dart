@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:meta/meta.dart';
-
 import 'customer.dart';
 import 'item.dart';
 import 'reminder.dart';
@@ -51,18 +49,18 @@ class Bill {
   Bill({
     this.id,
     this.status = BillStatus.unpaid,
-    @required this.billNr,
-    @required this.file,
-    @required this.sum,
-    @required this.editor,
-    @required this.vendor,
-    @required this.customer,
-    @required this.items,
+    required this.billNr,
+    required this.file,
+    required this.sum,
+    required this.editor,
+    required this.vendor,
+    required this.customer,
+    required this.items,
     this.userMessage,
     this.comment,
-    @required this.created,
-    @required this.serviceDate,
-    @required this.dueDate,
+    required this.created,
+    required this.serviceDate,
+    required this.dueDate,
     this.note,
     this.reminders = const <Reminder>[],
   });
@@ -87,10 +85,13 @@ class Bill {
         file: base64.decode(map['file'].toString()),
         sum: int.parse(map['sum'].toString()),
         editor: map['editor'].toString(),
-        vendor: Vendor.fromMap(json.decode(map['vendor'].toString()) as Map<String, dynamic>),
-        customer: Customer.fromMap(json.decode(map['customer'].toString()) as Map<String, dynamic>),
-        items: ((json.decode(map['items'].toString()) as List)
-            .map<Item>((dynamic map) => Item.fromMap(map as Map<String, dynamic>))).toList(),
+        vendor: Vendor.fromMap(
+            json.decode(map['vendor'].toString()) as Map<String, dynamic>),
+        customer: Customer.fromMap(
+            json.decode(map['customer'].toString()) as Map<String, dynamic>),
+        items: ((json.decode(map['items'].toString()) as List).map<Item>(
+                (dynamic map) => Item.fromMap(map as Map<String, dynamic>)))
+            .toList(),
         userMessage: map['user_message']?.toString(),
         comment: map['comment']?.toString(),
         created: DateTime.parse(map['created'].toString()).toLocal(),
@@ -99,11 +100,14 @@ class Bill {
         note: (map['note'] != null) ? map['note'].toString() : null,
         reminders: (map['reminders'] != null)
             ? List.from((json.decode(map['reminders'].toString()) as List)
-                .map<Reminder>((dynamic map) => Reminder.fromMap(map as Map<String, dynamic>)))
+                .map<Reminder>((dynamic map) =>
+                    Reminder.fromMap(map as Map<String, dynamic>)))
             : <Reminder>[],
       );
 
-  int get reminderSum => sum + reminders.map((Reminder r) => r.fee).reduce((int a, int b) => a + b);
+  int get reminderSum =>
+      sum +
+      reminders.map((Reminder r) => r.fee).reduce((int a, int b) => a + b);
 
   Map<String, dynamic> get toMap => <String, dynamic>{
         ...toMapShort,

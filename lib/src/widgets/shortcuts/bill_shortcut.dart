@@ -10,7 +10,7 @@ class BillShortcut extends StatelessWidget {
   final Bill bill;
   final bool showVendor;
 
-  const BillShortcut(this.context, {Key key, @required this.bill, this.showVendor = true})
+  const BillShortcut(this.context, {Key key, required this.bill, this.showVendor = true})
       : super(key: key);
 
   @override

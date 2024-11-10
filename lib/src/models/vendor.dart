@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:meta/meta.dart';
-
 import 'reminder.dart';
 
 enum HeaderImage {
@@ -33,63 +31,63 @@ class Vendor {
     'telephone',
   ];
 
-  int id;
+  int? id;
   String name;
-  String manager;
-  String contact;
+  String? manager;
+  String? contact;
   String address;
-  int zipCode;
+  int? zipCode;
   String city;
   String iban;
   String bic;
   String bank;
-  String taxNr;
-  String vatNr;
+  String? taxNr;
+  String? vatNr;
   String email;
-  String telephone;
+  String? telephone;
 
-  String website;
+  String? website;
   String fullAddress;
 
   String billPrefix;
-  int defaultDueDays;
-  int defaultTax;
+  int? defaultDueDays;
+  int? defaultTax;
 
-  String defaultComment;
+  String? defaultComment;
 
-  int reminderDeadline;
+  int? reminderDeadline;
   Map<ReminderIteration, int> reminderFees;
   Map<ReminderIteration, String> reminderTexts;
   Map<ReminderIteration, String> reminderTitles;
 
-  List<int> headerImageRight;
-  List<int> headerImageCenter;
-  List<int> headerImageLeft;
+  List<int>? headerImageRight;
+  List<int>? headerImageCenter;
+  List<int>? headerImageLeft;
 
-  String userMessageLabel;
+  String? userMessageLabel;
 
   bool smallBusiness;
 
-  String freeInformation;
+  String? freeInformation;
 
   Vendor({
     this.id,
-    @required this.name,
+    required this.name,
     this.manager,
     this.contact,
-    @required this.address,
-    @required this.zipCode,
-    @required this.city,
-    @required this.iban,
-    @required this.bic,
-    @required this.bank,
+    required this.address,
+    this.zipCode,
+    required this.city,
+    required this.iban,
+    required this.bic,
+    required this.bank,
     this.taxNr,
     this.vatNr,
-    @required this.email,
+    required this.email,
     this.website,
     this.telephone,
-    @required this.fullAddress,
-    @required this.billPrefix,
+    required this.fullAddress,
+    required this.billPrefix,
     this.defaultDueDays,
     this.defaultTax,
     this.defaultComment,
@@ -110,19 +108,18 @@ class Vendor {
   });
 
   factory Vendor.empty() => Vendor(
-        name: null,
-        address: null,
-        zipCode: null,
-        city: null,
-        iban: null,
-        bic: null,
-        bank: null,
-        fullAddress: null,
-        billPrefix: null,
+        name: '',
+        address: '',
+        city: '',
+        iban: '',
+        bic: '',
+        bank: '',
+        fullAddress: '',
+        billPrefix: '',
         defaultDueDays: 14,
         defaultTax: 19,
         reminderDeadline: 14,
-        email: null,
+        email: '',
       );
 
   factory Vendor.fromMap(Map<String, dynamic> map) => Vendor(
@@ -130,7 +127,7 @@ class Vendor {
         name: map['name'].toString(),
         manager: map['manager']?.toString(),
         contact: map['contact']?.toString(),
-        address: map['address']?.toString(),
+        address: map['address'].toString(),
         zipCode: int.parse(map['zip_code'].toString()),
         city: map['city'].toString(),
         iban: map['iban'].toString(),
@@ -140,34 +137,34 @@ class Vendor {
         vatNr: map['vat_nr'].toString(),
         email: map['email'].toString(),
         website: (map['website'] != null) ? map['website'].toString() : null,
-        telephone: (map['telephone'] != null) ? map['telephone'].toString() : null,
+        telephone:
+            (map['telephone'] != null) ? map['telephone'].toString() : null,
         fullAddress: map['full_address'].toString(),
         billPrefix: map['bill_prefix'].toString(),
         defaultDueDays: map['default_due_days'] as int,
         defaultTax: map['default_tax'] as int,
         defaultComment: map['default_comment']?.toString(),
-        reminderDeadline: (map['reminder_deadline'] != null) ? map['reminder_deadline'] as int : 14,
+        reminderDeadline: (map['reminder_deadline'] != null)
+            ? map['reminder_deadline'] as int
+            : 14,
         reminderFees: (map['reminder_fees'] != null)
-            ? ((json.decode(map['reminder_fees'].toString()) as Map) ?? <dynamic, dynamic>{})
+            ? ((json.decode(map['reminder_fees'].toString()) as Map))
                 .map<ReminderIteration, int>((dynamic key, dynamic value) {
                 final iter = parseIteration(int.parse(key as String));
-                if (iter == null) return null;
                 return MapEntry(iter, value as int);
               })
             : <ReminderIteration, int>{},
         reminderTexts: (map['reminder_texts'] != null)
-            ? ((json.decode(map['reminder_texts'].toString()) as Map) ?? <dynamic, dynamic>{})
+            ? ((json.decode(map['reminder_texts'].toString()) as Map))
                 .map<ReminderIteration, String>((dynamic key, dynamic value) {
                 final iter = parseIteration(int.parse(key as String));
-                if (iter == null) return null;
                 return MapEntry(iter, value as String);
               })
             : <ReminderIteration, String>{},
         reminderTitles: (map['reminder_titles'] != null)
-            ? ((json.decode(map['reminder_titles'].toString()) as Map) ?? <dynamic, dynamic>{})
+            ? ((json.decode(map['reminder_titles'].toString()) as Map))
                 .map<ReminderIteration, String>((dynamic key, dynamic value) {
                 final iter = parseIteration(int.parse(key as String));
-                if (iter == null) return null;
                 return MapEntry(iter, value as String);
               })
             : <ReminderIteration, String>{},
@@ -180,8 +177,9 @@ class Vendor {
         headerImageLeft: (map['header_image_left'] != null)
             ? base64.decode(map['header_image_left'].toString())
             : null,
-        userMessageLabel:
-            (map['user_message_label'] != null) ? map['user_message_label'].toString() : null,
+        userMessageLabel: (map['user_message_label'] != null)
+            ? map['user_message_label'].toString()
+            : null,
         smallBusiness: (map['small_business'] as int ?? 0) > 0 ? true : false,
         freeInformation: map['free_information']?.toString(),
       );
@@ -191,10 +189,14 @@ class Vendor {
 
   Map<String, dynamic> get toMap => <String, dynamic>{
         ...toMapShort,
-        'header_image_right': (headerImageRight != null) ? base64.encode(headerImageRight) : null,
-        'header_image_center':
-            (headerImageCenter != null) ? base64.encode(headerImageCenter) : null,
-        'header_image_left': (headerImageLeft != null) ? base64.encode(headerImageLeft) : null,
+        'header_image_right': (headerImageRight != null)
+            ? base64.encode(headerImageRight!)
+            : null,
+        'header_image_center': (headerImageCenter != null)
+            ? base64.encode(headerImageCenter!)
+            : null,
+        'header_image_left':
+            (headerImageLeft != null) ? base64.encode(headerImageLeft!) : null,
         'user_message_label': userMessageLabel,
       };
 
@@ -225,11 +227,14 @@ class Vendor {
         'default_comment': defaultComment,
         'reminder_deadline': reminderDeadline,
         'reminder_fees': json.encode(reminderFees.map<String, int>(
-            (ReminderIteration key, int value) => MapEntry(key.index.toString(), value))),
+            (ReminderIteration key, int value) =>
+                MapEntry(key.index.toString(), value))),
         'reminder_texts': json.encode(reminderTexts.map<String, String>(
-            (ReminderIteration key, String value) => MapEntry(key.index.toString(), value))),
+            (ReminderIteration key, String value) =>
+                MapEntry(key.index.toString(), value))),
         'reminder_titles': json.encode(reminderTitles.map<String, String>(
-            (ReminderIteration key, String value) => MapEntry(key.index.toString(), value))),
+            (ReminderIteration key, String value) =>
+                MapEntry(key.index.toString(), value))),
         'small_business': smallBusiness ? 1 : 0,
         'free_information': freeInformation,
       };
