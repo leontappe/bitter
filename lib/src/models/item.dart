@@ -1,17 +1,13 @@
-
-
 class Item {
-  int id;
-  String uid;
-
-  int vendor;
-  int itemId;
-
+  int? id;
+  String? uid;
+  int? vendor;
+  int? itemId;
   String title;
   int price;
   int tax;
   int quantity;
-  String description;
+  String? description;
 
   Item({
     this.uid,
@@ -25,8 +21,6 @@ class Item {
     this.description,
   });
 
-  factory Item.empty() => Item(title: null, price: null);
-
   factory Item.fromDbMap(Map<String, dynamic> map) => Item(
         id: map['id'] as int,
         vendor: map['vendor'] as int,
@@ -35,7 +29,8 @@ class Item {
         price: map['price'] as int,
         tax: map['tax'] as int,
         quantity: map['quantity'] as int,
-        description: (map['description'] != null) ? map['description'].toString() : null,
+        description:
+            (map['description'] != null) ? map['description'].toString() : null,
       );
 
   factory Item.fromMap(Map<String, dynamic> map) => Item(

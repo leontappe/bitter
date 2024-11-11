@@ -44,7 +44,7 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
       ),
       body: ListView(
         children: <Widget>[
-          ListTile(title: Text('Anwender', style: Theme.of(context).textTheme.headline6)),
+          ListTile(title: Text('Anwender', style: Theme.of(context).textTheme.headlineSmall)),
           Padding(
             padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
             child: Form(
@@ -62,7 +62,7 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
               ),
             ),
           ),
-          ListTile(title: Text('Datenbank', style: Theme.of(context).textTheme.headline6)),
+          ListTile(title: Text('Datenbank', style: Theme.of(context).textTheme.headlineSmall)),
           if (!Platform.isWindows)
             Padding(
               padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),

@@ -1,8 +1,8 @@
-import '../models/vendor.dart';
-import '../providers/database_provider.dart';
+import '/src/models/vendor.dart';
+import '/src/providers/database_provider.dart';
 import 'settings_repository.dart';
 
-export '../models/vendor.dart';
+export '/src/models/vendor.dart';
 
 const String tableName = 'vendors';
 
@@ -20,21 +20,21 @@ class VendorRepository<T extends DatabaseProvider> {
     return vendor;
   }
 
-  Future<List<Vendor>> select({String searchQuery, bool short = false}) async {
+  Future<List<Vendor>> select({String? searchQuery, bool short = false}) async {
     final results = List<Vendor>.from(
-        (await db.select(tableName, keys: short ? Vendor.shortKeys : null))
+        (await db.select(tableName, keys: short ? Vendor.shortKeys : []))
             .map<Vendor>((Map<String, dynamic> e) => Vendor.fromMap(e)));
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
-      return List.from(
-          results.where((Vendor v) => (v.name).toLowerCase().contains(searchQuery.toLowerCase())));
+      return List.from(results.where((Vendor v) =>
+          (v.name).toLowerCase().contains(searchQuery.toLowerCase())));
     } else {
       return results;
     }
   }
 
-  Future<Vendor> selectSingle(int id) async {
-    Map<String, dynamic> result;
+  Future<Vendor?> selectSingle(int id) async {
+    Map<String, dynamic>? result;
     try {
       result = await db.selectSingle(tableName, id);
       if (result == null) return null;
@@ -47,7 +47,7 @@ class VendorRepository<T extends DatabaseProvider> {
   Future<void> setUp() async {
     final settings = SettingsRepository();
     await settings.setUp();
-    final opened = await db.open(settings.getSqliteName());
+    final opened = await db.open(settings.getSqliteName()!);
 
     if (opened) {
       await db.createTable(
@@ -154,6 +154,6 @@ class VendorRepository<T extends DatabaseProvider> {
   }
 
   Future<void> update(Vendor vendor) {
-    return db.update(tableName, vendor.id, vendor.toMap);
+    return db.update(tableName, vendor.id!, vendor.toMap);
   }
 }

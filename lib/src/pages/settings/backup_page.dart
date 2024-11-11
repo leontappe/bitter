@@ -174,7 +174,7 @@ class _BackupPageState extends State<BackupPage> {
                     ),
                     Divider(height: 16.0),
                     Text('Datensätze zur Wiederherstellung wählen',
-                        style: Theme.of(context).textTheme.headline6),
+                        style: Theme.of(context).textTheme.headlineSmall),
                     CheckboxListTile(
                       value: recoveryChoice.all,
                       onChanged: (bool input) => setState(() => recoveryChoice.all = input),

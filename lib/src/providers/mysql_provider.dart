@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:logging/logging.dart';
-
 import 'package:mysql1/mysql1.dart';
 import 'package:uuid/uuid.dart';
 
@@ -12,19 +11,15 @@ import 'database_provider.dart';
 class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
   final Logger _log = Logger('MySqlProvider');
 
-  StreamController<DatabaseError> _errors;
+  List<PooledConnection> connections = [];
+  final StreamController<Query> _queries = StreamController<Query>();
+  final StreamController<PooledResult> _results =
+      StreamController<PooledResult>.broadcast();
+  final StreamController<DatabaseError> _errors =
+      StreamController<DatabaseError>.broadcast();
+  late StreamSubscription<Query> _listener;
 
-  List<PooledConnection> connections;
-  StreamController<Query> _queries;
-  StreamController<PooledResult> _results;
-
-  StreamSubscription<Query> _listener;
-
-  MySqlProvider() {
-    _errors = StreamController<DatabaseError>.broadcast();
-    _results = StreamController<PooledResult>.broadcast();
-    _queries = StreamController<Query>();
-  }
+  MySqlProvider();
 
   @override
   Stream<DatabaseError> get errors => _errors.stream;
@@ -43,7 +38,7 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
   @override
   Future<void> createTable(
       String table, List<String> columns, List<String> types, String primaryKey,
-      {List<bool> nullable}) async {
+      {List<bool> nullable = const []}) async {
     var cols = '';
     var i = 0;
     for (var item in columns) {
@@ -65,15 +60,19 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
     final poolQuery = Query(query);
     _queries.add(poolQuery);
 
-    return (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid));
+    await _results.stream
+        .firstWhere((PooledResult result) => result.uid == poolQuery.uid);
+
+    return;
   }
 
   @override
-  Future<int> delete(String table, int id) async {
+  Future<int?> delete(String table, int id) async {
     _log.fine('deleting from "$table": $id');
     final poolQuery = Query('DELETE FROM $table WHERE id = ?', <dynamic>[id]);
     _queries.add(poolQuery);
-    return (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
+    return (await _results.stream
+            .firstWhere((PooledResult result) => result.uid == poolQuery.uid))
         .results
         .affectedRows;
   }
@@ -83,11 +82,13 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
     _log.fine('dropping "$table"');
     final poolQuery = Query('DROP TABLE $table;');
     _queries.add(poolQuery);
-    return (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid));
+    await _results.stream
+        .firstWhere((PooledResult result) => result.uid == poolQuery.uid);
+    return;
   }
 
   @override
-  Future<int> insert(String table, Map<String, dynamic> item) async {
+  Future<int?> insert(String table, Map<String, dynamic> item) async {
     _log.fine('inserting into "$table": $item');
     var cols = '';
     for (var col in item.keys) {
@@ -100,16 +101,19 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
     }
     values = values.substring(0, values.length - 2);
 
-    final poolQuery = Query('INSERT INTO $table ($cols) VALUES ($values);', item.values.toList());
+    final poolQuery = Query(
+        'INSERT INTO $table ($cols) VALUES ($values);', item.values.toList());
     _queries.add(poolQuery);
 
-    return (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
+    return (await _results.stream
+            .firstWhere((PooledResult result) => result.uid == poolQuery.uid))
         .results
         .insertId;
   }
 
   @override
-  Future<bool> open(String path, {String host, int port, String user, String password}) {
+  Future<bool> open(String path,
+      {String? host, int? port, String? user, String? password}) {
     return Future.value(connections.isNotEmpty);
   }
 
@@ -118,8 +122,8 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
     String path, {
     required String host,
     required int port,
-    String user,
-    String password,
+    String? user,
+    String? password,
     int size = 10,
   }) async {
     _log.fine('opening DB on sql://$user:password@$host:$port');
@@ -128,7 +132,12 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
       _log.fine('spawning connection ${i + 1}');
       try {
         connections.add(PooledConnection(await MySqlConnection.connect(
-            ConnectionSettings(db: path, host: host, port: port, user: user, password: password))));
+            ConnectionSettings(
+                db: path,
+                host: host,
+                port: port,
+                user: user,
+                password: password))));
       } on SocketException catch (e) {
         _log.severe('$e ${_socketExceptionText(e)}');
         _errors.add(DatabaseError(DatabaseErrorCategory.open,
@@ -146,17 +155,19 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
     if (connections.length != size) return false;
 
     _listener = _queries.stream.listen((Query q) async {
-      final freeConn = connections.firstWhere((PooledConnection conn) => !conn.busy);
+      final freeConn =
+          connections.firstWhere((PooledConnection conn) => !conn.busy);
       _log.fine('starting query "${q.query}" on $freeConn');
       freeConn.busy = true;
       try {
-        _results.add(PooledResult(q.uid, await freeConn.connection.query(q.query, q.values)));
+        _results.add(PooledResult(
+            q.uid, await freeConn.connection.query(q.query, q.values)));
       } on SocketException catch (e) {
         _log.severe('$e ${_socketExceptionText(e)}');
         _errors.add(DatabaseError(DatabaseErrorCategory.create,
             exception: e,
             description: (e.message.contains('Failed host lookup'))
-                ? 'Host ${e.address.host} konnte nicht aufgelöst werden'
+                ? 'Host ${e.address!.host} konnte nicht aufgelöst werden'
                 : 'Verbindung durch Zeitüberschreitung fehlgeschlagen'));
       } on MySqlException catch (e) {
         _log.severe('$e ${_mySqlExceptionText(e)}');
@@ -170,30 +181,37 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> select(String table, {List<String> keys}) async {
-    _log.fine('selecting all from "$table"');
+  Future<List<Map<String, dynamic>>> select(String table,
+      {List<String> keys = const []}) async {
+    try {
+      _log.fine('selecting all from "$table"');
+      final poolQuery = Query(
+          'SELECT ${keys.isNotEmpty ? keys.join(', ') : '*'} FROM $table;');
+      _queries.add(poolQuery);
 
-    final poolQuery = Query('SELECT ${keys != null ? keys.join(', ') : '*'} FROM $table;');
-    _queries.add(poolQuery);
+      final result = (await _results.stream
+              .firstWhere((PooledResult result) => result.uid == poolQuery.uid))
+          .results;
 
-    final result =
-        (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
-            .results;
-    if (result == null) return null;
-    return List.from(result.map<Map<String, dynamic>>((ResultRow e) => e.fields));
+      return List.from(
+          result.map<Map<String, dynamic>>((ResultRow e) => e.fields));
+    } catch (e) {
+      _log.severe(e);
+      return [];
+    }
   }
 
   @override
-  Future<Map<String, dynamic>> selectSingle(String table, int id) async {
+  Future<Map<String, dynamic>?> selectSingle(String table, int id) async {
     _log.fine('selecting item with id=$id from "$table"');
 
     final poolQuery = Query('SELECT * FROM $table WHERE id = $id;');
     _queries.add(poolQuery);
 
-    final result =
-        (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
-            .results
-            .map<Map<String, dynamic>>((ResultRow e) => e.fields);
+    final result = (await _results.stream
+            .firstWhere((PooledResult result) => result.uid == poolQuery.uid))
+        .results
+        .map<Map<String, dynamic>>((ResultRow e) => e.fields);
     if (result.isNotEmpty) {
       return result.single;
     }
@@ -201,7 +219,7 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
   }
 
   @override
-  Future<int> update(String table, int id, Map<String, dynamic> item) async {
+  Future<int?> update(String table, int id, Map<String, dynamic> item) async {
     _log.fine('updating $item with id=$id in "$table"');
     final columns = item.keys;
     final values = item.values.toList();
@@ -215,7 +233,8 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
 
     _queries.add(poolQuery);
 
-    return (await _results.stream.firstWhere((PooledResult result) => result.uid == poolQuery.uid))
+    return (await _results.stream
+            .firstWhere((PooledResult result) => result.uid == poolQuery.uid))
         .results
         .affectedRows;
   }
@@ -238,7 +257,7 @@ class MySqlProvider extends DatabaseProvider with PooledDatabaseProvider {
 }
 
 class PooledConnection {
-  String uid;
+  late final String uid;
   final MySqlConnection connection;
   bool busy;
 
@@ -246,8 +265,11 @@ class PooledConnection {
     uid = Uuid().v4();
   }
 
-  Map<String, dynamic> get toMap =>
-      <String, dynamic>{'uid': uid, 'connection': connection.toString(), 'busy': busy};
+  Map<String, dynamic> get toMap => <String, dynamic>{
+        'uid': uid,
+        'connection': connection.toString(),
+        'busy': busy
+      };
 
   @override
   String toString() => 'PooledConnection [$toMap]';
@@ -261,11 +283,11 @@ class PooledResult {
 }
 
 class Query {
-  String uid;
+  late final String uid;
   final String query;
   final List<dynamic> values;
 
-  Query(this.query, [this.values]) {
+  Query(this.query, [this.values = const []]) {
     uid = Uuid().v4();
   }
 }

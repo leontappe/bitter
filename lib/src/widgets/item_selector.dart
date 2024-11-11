@@ -23,7 +23,7 @@ class _ItemSelectorState extends State<ItemSelector> {
   late ItemRepository repo;
 
   List<Item> _items = [];
-  Item _item = Item.empty();
+  Item? _item;
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +34,10 @@ class _ItemSelectorState extends State<ItemSelector> {
       onChanged: (widget.disabled)
           ? null
           : (int? value) {
+              if (value == null) return;
               setState(
                   () => _item = _items.singleWhere((Item i) => i.id == value));
-              widget.onChanged(_item);
+              if (_item != null) widget.onChanged(_item!);
             },
       items: <DropdownMenuItem<int>>[
         ..._items
@@ -67,10 +68,5 @@ class _ItemSelectorState extends State<ItemSelector> {
     }
 
     if (mounted) setState(() => _items);
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 }

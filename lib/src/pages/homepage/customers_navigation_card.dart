@@ -50,7 +50,7 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
           ],
         ),
         Divider(),
-        Text('Neu', style: Theme.of(context).textTheme.headline6),
+        Text('Neu', style: Theme.of(context).textTheme.headlineSmall),
         Text(
           'Zurzeit ${_customers.length == 1 ? 'ist' : 'sind'} ${_customers.length} Kunde${_customers.length == 1 ? '' : 'n'} vorhanden.',
           style: TextStyle(color: Colors.grey[800]),

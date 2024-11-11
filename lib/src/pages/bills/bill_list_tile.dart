@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 
-import '../../models/bill.dart';
-import '../../models/reminder.dart';
-import '../../util/format_util.dart';
+import '/src/models/bill.dart';
+import '/src/models/reminder.dart';
+import '/src/util/format_util.dart';
 import 'bill_icon.dart';
 import 'save_bill_button.dart';
 
 class BillListTile extends StatelessWidget {
   final Bill bill;
-  final Function() onTap;
+  final Function()? onTap;
 
-  BillListTile({this.bill, this.onTap}) : super(key: Key(bill.id.toString()));
+  BillListTile({required this.bill, this.onTap})
+      : super(key: Key(bill.id.toString()));
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +32,13 @@ class BillListTile extends StatelessWidget {
         children: <Widget>[
           Flexible(
             child: Text(
-              formatFigure(bill.reminders.isNotEmpty ? bill.reminderSum : bill.sum),
-              style: Theme.of(context).textTheme.headline6.copyWith(
+              formatFigure(
+                  bill.reminders.isNotEmpty ? bill.reminderSum : bill.sum),
+              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                   color: bill.reminders.isNotEmpty
-                      ? bill.reminders.where((Reminder reminder) => reminder.fee > 0).isNotEmpty
+                      ? bill.reminders
+                              .where((Reminder reminder) => reminder.fee > 0)
+                              .isNotEmpty
                           ? Colors.red
                           : null
                       : null),
@@ -42,7 +46,7 @@ class BillListTile extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          SaveBillButton(billId: bill.id),
+          SaveBillButton(billId: bill.id!),
         ],
       ),
       onTap: onTap,

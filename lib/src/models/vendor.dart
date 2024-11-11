@@ -57,8 +57,8 @@ class Vendor {
 
   int? reminderDeadline;
   Map<ReminderIteration, int> reminderFees;
-  Map<ReminderIteration, String> reminderTexts;
-  Map<ReminderIteration, String> reminderTitles;
+  Map<ReminderIteration, String>? reminderTexts;
+  Map<ReminderIteration, String>? reminderTitles;
 
   List<int>? headerImageRight;
   List<int>? headerImageCenter;

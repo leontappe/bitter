@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'item.dart';
 
 class Commissioning {
-  int id;
-  final int vendorId;
-  final int warehouseId;
+  int? id;
+  int? vendorId;
+  int? warehouseId;
 
-  DateTime timestamp;
+  DateTime? timestamp;
   List<Item> items;
 
   Commissioning({
@@ -24,7 +24,8 @@ class Commissioning {
         warehouseId: map['warehouse_id'] as int,
         timestamp: DateTime.parse(map['timestamp'] as String),
         items: List.from((json.decode(map['items'] as String) as List)
-            .map<Item>((dynamic map) => Item.fromMap(map as Map<String, dynamic>))),
+            .map<Item>(
+                (dynamic map) => Item.fromMap(map as Map<String, dynamic>))),
       );
 
   int get sum {
@@ -39,8 +40,9 @@ class Commissioning {
         'id': id,
         'vendor_id': vendorId,
         'warehouse_id': warehouseId,
-        'timestamp': timestamp.toIso8601String(),
-        'items': json.encode(items.map<Map<String, dynamic>>((Item i) => i.toMap).toList()),
+        'timestamp': timestamp?.toIso8601String(),
+        'items': json.encode(
+            items.map<Map<String, dynamic>>((Item i) => i.toMap).toList()),
       };
 
   @override

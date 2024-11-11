@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../../providers/inherited_database.dart';
-import '../../repositories/customer_repository.dart';
-import '../../repositories/draft_repository.dart';
-import '../../widgets/database_error_watcher.dart';
-import '../../widgets/info_cards/customer_card.dart';
+import '/src/providers/inherited_database.dart';
+import '/src/repositories/customer_repository.dart';
+import '/src/repositories/draft_repository.dart';
+import '/src/widgets/database_error_watcher.dart';
+import '/src/widgets/info_cards/customer_card.dart';
 
 class CustomerPage extends StatefulWidget {
-  final int id;
+  final int? id;
 
   CustomerPage({this.id});
 
@@ -18,14 +18,23 @@ class CustomerPage extends StatefulWidget {
 class _CustomerPageState extends State<CustomerPage> {
   final _formKey = GlobalKey<FormState>();
 
-  CustomerRepository repo;
-  Customer customer;
+  late DraftRepository draftRepo;
+  late CustomerRepository repo;
 
-  DraftRepository draftRepo;
+  Customer? customer;
+  Customer newCustomer = Customer(
+    name: '',
+    surname: '',
+    company: '',
+    organizationUnit: '',
+    address: '',
+    zipCode: 0,
+    city: '',
+    email: '',
+    gender: Gender.diverse,
+  );
 
   int dropdownValue = 2;
-
-  Customer newCustomer = Customer.empty();
 
   bool dirty = false;
   bool changed = false;
@@ -63,12 +72,16 @@ class _CustomerPageState extends State<CustomerPage> {
                 semanticChildCount: 4,
                 children: <Widget>[
                   if (widget.id != null)
-                    Text(' Aktuelle Informationen', style: Theme.of(context).textTheme.headline4),
-                  if (widget.id != null) CustomerCard(customer: customer),
+                    Text(' Aktuelle Informationen',
+                        style: Theme.of(context).textTheme.headlineMedium),
+                  if (widget.id != null && customer != null)
+                    CustomerCard(customer: customer!),
                   if (widget.id != null)
-                    Text(' Kunde bearbeiten', style: Theme.of(context).textTheme.headline4),
+                    Text(' Kunde bearbeiten',
+                        style: Theme.of(context).textTheme.headlineMedium),
                   Padding(
-                    padding: EdgeInsets.fromLTRB(16.0, (widget.id != null) ? 16.0 : 8.0, 16.0, 8.0),
+                    padding: EdgeInsets.fromLTRB(
+                        16.0, (widget.id != null) ? 16.0 : 8.0, 16.0, 8.0),
                     child: Form(
                       key: _formKey,
                       child: Column(
@@ -78,7 +91,8 @@ class _CustomerPageState extends State<CustomerPage> {
                           TextFormField(
                             initialValue: newCustomer.company,
                             maxLines: 1,
-                            decoration: InputDecoration(labelText: 'Organisation'),
+                            decoration:
+                                InputDecoration(labelText: 'Organisation'),
                             onChanged: (String input) {
                               newCustomer.company = input;
                               dirty = true;
@@ -99,21 +113,24 @@ class _CustomerPageState extends State<CustomerPage> {
                               initialValue: newCustomer.name,
                               maxLines: 1,
                               decoration: InputDecoration(labelText: 'Vorname'),
-                              validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                              validator: (input) =>
+                                  input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                               onChanged: (String input) {
                                 newCustomer.name = input;
-                                _formKey.currentState.validate();
+                                _formKey.currentState?.validate();
                                 dirty = true;
                                 changed = true;
                               }),
                           TextFormField(
                               initialValue: newCustomer.surname,
                               maxLines: 1,
-                              decoration: InputDecoration(labelText: 'Nachname'),
-                              validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                              decoration:
+                                  InputDecoration(labelText: 'Nachname'),
+                              validator: (input) =>
+                                  input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                               onChanged: (String input) {
                                 newCustomer.surname = input;
-                                _formKey.currentState.validate();
+                                _formKey.currentState?.validate();
                                 dirty = true;
                                 changed = true;
                               }),
@@ -121,11 +138,15 @@ class _CustomerPageState extends State<CustomerPage> {
                               hint: Text('Geschlecht'),
                               value: dropdownValue,
                               items: [
-                                DropdownMenuItem(value: 0, child: Text('männlich')),
-                                DropdownMenuItem(value: 1, child: Text('weiblich')),
-                                DropdownMenuItem(value: 2, child: Text('divers')),
+                                DropdownMenuItem(
+                                    value: 0, child: Text('männlich')),
+                                DropdownMenuItem(
+                                    value: 1, child: Text('weiblich')),
+                                DropdownMenuItem(
+                                    value: 2, child: Text('divers')),
                               ],
-                              onChanged: (int v) {
+                              onChanged: (int? v) {
+                                if (v == null) return;
                                 newCustomer.gender = v == 0
                                     ? Gender.male
                                     : v == 1
@@ -139,10 +160,11 @@ class _CustomerPageState extends State<CustomerPage> {
                               initialValue: newCustomer.address,
                               maxLines: 1,
                               decoration: InputDecoration(labelText: 'Adresse'),
-                              validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                              validator: (input) =>
+                                  input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                               onChanged: (String input) {
                                 newCustomer.address = input;
-                                _formKey.currentState.validate();
+                                _formKey.currentState?.validate();
                                 dirty = true;
                                 changed = true;
                               }),
@@ -153,14 +175,22 @@ class _CustomerPageState extends State<CustomerPage> {
                                 Expanded(
                                   flex: 1,
                                   child: TextFormField(
-                                      initialValue: newCustomer.zipCode?.toString() ?? '',
+                                      initialValue:
+                                          newCustomer.zipCode?.toString() ?? '',
                                       maxLines: 1,
-                                      decoration: InputDecoration(labelText: 'Postleitzahl'),
-                                      keyboardType: TextInputType.numberWithOptions(),
-                                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
-                                      onChanged: (String input) {
-                                        newCustomer.zipCode = int.tryParse(input);
-                                        _formKey.currentState.validate();
+                                      decoration: InputDecoration(
+                                          labelText: 'Postleitzahl'),
+                                      keyboardType:
+                                          TextInputType.numberWithOptions(),
+                                      validator: (input) =>
+                                          input?.isEmpty ?? true
+                                              ? 'Pflichtfeld'
+                                              : null,
+                                      onChanged: (String? input) {
+                                        if (input == null) return;
+                                        newCustomer.zipCode =
+                                            int.tryParse(input)!;
+                                        _formKey.currentState?.validate();
                                         dirty = true;
                                         changed = true;
                                       }),
@@ -170,11 +200,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                   child: TextFormField(
                                       initialValue: newCustomer.city,
                                       maxLines: 1,
-                                      decoration: InputDecoration(labelText: 'Stadt'),
-                                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                                      decoration:
+                                          InputDecoration(labelText: 'Stadt'),
+                                      validator: (input) =>
+                                          input?.isEmpty ?? true
+                                              ? 'Pflichtfeld'
+                                              : null,
                                       onChanged: (String input) {
                                         newCustomer.city = input;
-                                        _formKey.currentState.validate();
+                                        _formKey.currentState?.validate();
                                         dirty = true;
                                         changed = true;
                                       }),
@@ -224,10 +258,11 @@ class _CustomerPageState extends State<CustomerPage> {
                             initialValue: newCustomer.email,
                             maxLines: 1,
                             decoration: InputDecoration(labelText: 'E-Mail'),
-                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            validator: (input) =>
+                                input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
                               newCustomer.email = input;
-                              _formKey.currentState.validate();
+                              _formKey.currentState?.validate();
                               dirty = true;
                               changed = true;
                             },
@@ -255,15 +290,15 @@ class _CustomerPageState extends State<CustomerPage> {
     draftRepo = DraftRepository(InheritedDatabase.of(context));
 
     if (widget.id != null) {
-      customer = await repo.selectSingle(widget.id);
+      customer = await repo.selectSingle(widget.id!);
       if (customer == null) {
         Navigator.pop(context);
         return null;
       }
       if (mounted) {
         setState(() {
-          newCustomer = customer;
-          dropdownValue = customer.gender.index;
+          newCustomer = customer!;
+          dropdownValue = customer!.gender.index;
         });
       }
     }
@@ -284,19 +319,24 @@ class _CustomerPageState extends State<CustomerPage> {
     final result = await showDialog<int>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-              title: Text('Soll dieser Kunde wirlich gelöscht werden?'),
+              title: Text('Soll dieser Kunde wirklich gelöscht werden?'),
               actions: <Widget>[
-                MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Behalten')),
-                MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Löschen')),
+                MaterialButton(
+                    onPressed: () => Navigator.pop(context, 0),
+                    child: Text('Behalten')),
+                MaterialButton(
+                    onPressed: () => Navigator.pop(context, 1),
+                    child: Text('Löschen')),
               ],
             ));
 
     if (result == 1) {
       if (mounted) setState(() => busy = true);
-      final customerDrafts =
-          (await draftRepo.select()).where((Draft d) => d.customer == customer.id).toList();
+      final customerDrafts = (await draftRepo.select())
+          .where((Draft d) => d.customer == customer!.id)
+          .toList();
       if (customerDrafts.isEmpty) {
-        await repo.delete(widget.id);
+        await repo.delete(widget.id!);
         Navigator.pop(context, true);
       } else {
         final result = await showDialog<int>(
@@ -306,21 +346,23 @@ class _CustomerPageState extends State<CustomerPage> {
                 'Es existieren noch ${customerDrafts.length} Rechnungsentwürfe für diesen Kunden. Sollen die Entwürfe auch gelöscht werden?'),
             actions: <Widget>[
               MaterialButton(
-                  onPressed: () => Navigator.pop(context, 0), child: Text('Alles behalten')),
+                  onPressed: () => Navigator.pop(context, 0),
+                  child: Text('Alles behalten')),
               MaterialButton(
-                  onPressed: () => Navigator.pop(context, 1), child: Text('Alles löschen')),
+                  onPressed: () => Navigator.pop(context, 1),
+                  child: Text('Alles löschen')),
             ],
           ),
         );
         if (result == 1) {
           for (var draft in customerDrafts) {
-            await draftRepo.delete(draft.id);
+            await draftRepo.delete(draft.id!);
           }
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Verbleibende Rechnungsentwürfe wurden gelöscht.'),
             duration: Duration(seconds: 3),
           ));
-          await repo.delete(widget.id);
+          await repo.delete(widget.id!);
           Navigator.pop(context, true);
         }
       }
@@ -337,11 +379,14 @@ class _CustomerPageState extends State<CustomerPage> {
                     'Es gibt möglicherweise ungespeicherte Änderungen an diesem Kunden. Vor dem Verlassen abspeichern?'),
                 actions: <Widget>[
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),
+                      onPressed: () => Navigator.pop(context, -1),
+                      child: Text('Abbrechen')),
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
+                      onPressed: () => Navigator.pop(context, 0),
+                      child: Text('Verwerfen')),
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
+                      onPressed: () => Navigator.pop(context, 1),
+                      child: Text('Speichern')),
                 ],
               ));
       switch (result) {
@@ -360,10 +405,10 @@ class _CustomerPageState extends State<CustomerPage> {
 
   void onSaveCustomer() async {
     if (mounted) setState(() => busy = true);
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState?.validate() ?? false) {
       if (widget.id != null) {
         await repo.update(newCustomer);
-        customer = await repo.selectSingle(widget.id);
+        customer = await repo.selectSingle(widget.id!);
         setState(() => customer);
       } else {
         await repo.insert(newCustomer);

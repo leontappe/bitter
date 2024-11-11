@@ -6,14 +6,15 @@ import '../../widgets/database_error_watcher.dart';
 import 'customer_page.dart';
 
 class CustomersListPage extends StatefulWidget {
-  CustomersListPage({Key key}) : super(key: key);
+  CustomersListPage({super.key});
 
   @override
   _CustomersListPageState createState() => _CustomersListPageState();
 }
 
-class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindingObserver {
-  CustomerRepository repo;
+class _CustomersListPageState extends State<CustomersListPage>
+    with WidgetsBindingObserver {
+  late CustomerRepository repo;
   List<Customer> customers = [];
 
   bool searchEnabled = false;
@@ -68,11 +69,13 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
                   children: <Widget>[
                     ...List.from(
                       customers.map<ListTile>((Customer c) => ListTile(
-                            title: Text((c.company == null || c.company.isEmpty)
+                            title: Text((c.company == null ||
+                                    c.company!.isEmpty)
                                 ? '${c.name} ${c.surname}'
                                 : '${c.company} ${c.organizationUnit ?? ''}'),
-                            subtitle: Text('${c.address}, ${c.zipCode} ${c.city}'),
-                            onTap: () => onPushCustomerPage(context, c.id),
+                            subtitle:
+                                Text('${c.address}, ${c.zipCode} ${c.city}'),
+                            onTap: () => onPushCustomerPage(context, c.id!),
                           )),
                     )
                   ],
@@ -105,17 +108,20 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
   Future<void> onPushCustomerPage(BuildContext context, int id) async {
     final updated = await Navigator.push<bool>(
       context,
-      MaterialPageRoute<bool>(builder: (BuildContext context) => CustomerPage(id: id)),
+      MaterialPageRoute<bool>(
+          builder: (BuildContext context) => CustomerPage(id: id)),
     );
-    if (updated) {
+    if (updated ?? false) {
       await onGetCustomers();
     }
   }
 
   Future<void> onPushUserAddPage() async {
     final updated = await Navigator.push<bool>(
-        context, MaterialPageRoute<bool>(builder: (BuildContext context) => CustomerPage()));
-    if (updated) {
+        context,
+        MaterialPageRoute<bool>(
+            builder: (BuildContext context) => CustomerPage()));
+    if (updated ?? false) {
       await onGetCustomers();
     }
   }
@@ -141,7 +147,7 @@ class _CustomersListPageState extends State<CustomersListPage> with WidgetsBindi
   }
 
   void _sortCustomers() {
-    customers
-        .sort((Customer a, Customer b) => (a.company ?? a.name).compareTo(b.company ?? b.name));
+    customers.sort((Customer a, Customer b) =>
+        (a.company ?? a.name).compareTo(b.company ?? b.name));
   }
 }

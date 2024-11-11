@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:logging/logging.dart';
 
-import '../models/mysql_settings.dart';
-import '../util/path_util.dart';
+import '/src/models/mysql_settings.dart';
+import '/src/util/path_util.dart';
 
-export '../models/mysql_settings.dart';
+export '/src/models/mysql_settings.dart';
 
 const dbKey = 'db_engine';
 const mySqlKey = 'mysql_settings';
@@ -21,15 +21,15 @@ enum DbEngine {
 class SettingsRepository {
   final Logger _log = Logger('SettingsRepository');
 
-  String basePath;
-  String dataPath;
+  String? basePath;
+  String? dataPath;
 
-  File data;
+  File? data;
 
   SettingsRepository();
 
   Map<String, dynamic> get _getCurrentSettings =>
-      (json.decode(data.readAsStringSync())) as Map<String, dynamic>;
+      (json.decode(data!.readAsStringSync())) as Map<String, dynamic>;
 
   DbEngine getDbEngine() {
     final setting = select<int>(dbKey);
@@ -45,9 +45,9 @@ class SettingsRepository {
     }
   }
 
-  String getSqliteName() => select<String>(sqliteKey);
+  String? getSqliteName() => select<String>(sqliteKey);
 
-  String getUsername() => select<String>(userKey);
+  String? getUsername() => select<String>(userKey);
 
   bool hasDbEngine() => _hasGeneric(dbKey);
 
@@ -60,12 +60,13 @@ class SettingsRepository {
   Future<void> insert(String key, dynamic value) async {
     _log.config('inserting $key:$value');
     final settings = _getCurrentSettings;
-    settings.addEntries(<MapEntry<String, dynamic>>[MapEntry<String, dynamic>(key, value)]);
+    settings.addEntries(
+        <MapEntry<String, dynamic>>[MapEntry<String, dynamic>(key, value)]);
     _log.fine('content of new config: $settings');
     await _writeSettings(settings);
   }
 
-  T select<T>(String key) {
+  T? select<T>(String key) {
     _log.fine('selecting $key of type $T');
     if (_hasGeneric(key)) {
       //_log.fine('found $key:${_getCurrentSettings[key]}');
@@ -77,16 +78,17 @@ class SettingsRepository {
 
   Future<void> setDbEngine(DbEngine engine) => insert(dbKey, engine.index);
 
-  Future<void> setMySqlSettings(MySqlSettings settings) => insert(mySqlKey, settings.toMap);
+  Future<void> setMySqlSettings(MySqlSettings settings) =>
+      insert(mySqlKey, settings.toMap);
 
   Future<void> setSqliteName(String name) => insert(sqliteKey, name);
 
   Future<void> setUp() async {
     data = File((await getConfigPath()) + '/settings.json');
-    _log.fine('setting up configuration in ${data.path}');
-    await data.create(recursive: true);
+    _log.fine('setting up configuration in ${data!.path}');
+    await data!.create(recursive: true);
 
-    final oldData = await data.readAsString();
+    final oldData = await data!.readAsString();
     //_log.fine('content of existing config: $oldData');
     if (oldData.isEmpty) {
       await _writeSettings(<String, String>{});
@@ -97,17 +99,17 @@ class SettingsRepository {
 
   bool _hasGeneric(String key) => _getCurrentSettings.containsKey(key);
 
-  DbEngine _intToDb(int index) {
+  DbEngine _intToDb(int? index) {
     switch (index) {
       case 0:
         return DbEngine.mysql;
       case 1:
         return DbEngine.sqlite;
       default:
-        return null;
+        return DbEngine.sqlite;
     }
   } //&& ((await select(key)).toString().isNotEmpty);
 
   Future<void> _writeSettings(Map<String, dynamic> map) async =>
-      await data.writeAsBytes(utf8.encode(json.encode(map)));
+      await data!.writeAsBytes(utf8.encode(json.encode(map)));
 }

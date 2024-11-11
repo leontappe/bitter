@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../providers/inherited_database.dart';
-import '../repositories/vendor_repository.dart';
+import '/src/providers/inherited_database.dart';
+import '/src/repositories/vendor_repository.dart';
 
 class VendorSelector extends StatefulWidget {
   final int initialValue;
@@ -9,11 +9,11 @@ class VendorSelector extends StatefulWidget {
   final bool disabled;
 
   const VendorSelector({
-    Key? key,
+    super.key,
     required this.onChanged,
     required this.initialValue,
     this.disabled = false,
-  }) : super(key: key);
+  });
 
   @override
   _VendorSelectorState createState() => _VendorSelectorState();
@@ -23,7 +23,7 @@ class _VendorSelectorState extends State<VendorSelector> {
   late VendorRepository repo;
 
   List<Vendor> _vendors = [];
-  Vendor _vendor = Vendor.empty();
+  Vendor? _vendor = Vendor.empty();
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +31,14 @@ class _VendorSelectorState extends State<VendorSelector> {
       hint:
           Text((widget.disabled) ? _vendor?.name ?? '' : 'Verkäufer auswählen'),
       isExpanded: true,
-      value: _vendor.id,
+      value: _vendor?.id,
       onChanged: (widget.disabled)
           ? null
           : (int? value) {
+              if (value == null) return;
               setState(() =>
                   _vendor = _vendors.singleWhere((Vendor v) => v.id == value));
-              widget.onChanged(_vendor);
+              if (_vendor != null) widget.onChanged(_vendor!);
             },
       items: <DropdownMenuItem<int>>[
         ..._vendors

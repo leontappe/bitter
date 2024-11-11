@@ -7,7 +7,7 @@ class Customer {
   String surname;
   Gender gender;
   String address;
-  int zipCode;
+  int? zipCode;
   String city;
   String? country;
   String? telephone;
@@ -23,7 +23,7 @@ class Customer {
     required this.surname,
     required this.gender,
     required this.address,
-    required this.zipCode,
+    this.zipCode,
     required this.city,
     this.country,
     this.telephone,
@@ -31,15 +31,6 @@ class Customer {
     this.mobile,
     required this.email,
   });
-  factory Customer.empty() => Customer(
-        name: '',
-        surname: '',
-        gender: '',
-        address: '',
-        zipCode: '',
-        city: '',
-        email: '',
-      );
 
   factory Customer.fromMap(Map<String, dynamic> map) => Customer(
         id: map['id'] as int,

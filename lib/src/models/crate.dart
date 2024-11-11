@@ -1,15 +1,12 @@
 import 'dart:convert';
 
 class Crate {
-  String name;
-  final String uid;
-
+  String? name;
+  String uid;
   int size;
   int level;
-
-  int itemId;
-
-  Crate subcrate;
+  int? itemId;
+  Crate? subcrate;
 
   Crate(
     this.uid, {
@@ -29,7 +26,8 @@ class Crate {
         level: (map['level'] as int) ?? 0,
         itemId: map['item_id'] as int,
         subcrate: map['subcrate'] != null
-            ? Crate.fromMap(json.decode(map['subcrate'] as String) as Map<String, dynamic>)
+            ? Crate.fromMap(
+                json.decode(map['subcrate'] as String) as Map<String, dynamic>)
             : null,
       );
 

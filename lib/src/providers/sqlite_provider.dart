@@ -12,12 +12,11 @@ import 'database_provider.dart';
 class SqliteProvider extends DatabaseProvider {
   final Logger _log = Logger('SqliteProvider');
 
-  Database conn;
-  StreamController<DatabaseError> _errors;
+  late Database conn;
+  final StreamController<DatabaseError> _errors =
+      StreamController<DatabaseError>.broadcast();
 
-  SqliteProvider() {
-    _errors = StreamController<DatabaseError>.broadcast();
-  }
+  SqliteProvider();
 
   @override
   Stream<DatabaseError> get errors => _errors.stream;
@@ -31,7 +30,7 @@ class SqliteProvider extends DatabaseProvider {
   @override
   Future<void> createTable(
       String table, List<String> columns, List<String> types, String primaryKey,
-      {List<bool> nullable}) async {
+      {List<bool> nullable = const []}) async {
     // replace LONGTEXT with TEXT for SqLite
     for (var i = 0; i < types.length; i++) {
       if (types[i] == 'LONGTEXT') {
@@ -46,7 +45,7 @@ class SqliteProvider extends DatabaseProvider {
       if (item == primaryKey) {
         cols = '$cols PRIMARY KEY AUTOINCREMENT';
       }
-      if (nullable != null && !nullable[i]) {
+      if (nullable.isNotEmpty && !nullable[i]) {
         cols = '$cols NOT NULL';
       }
       cols = '$cols, ';
@@ -77,8 +76,10 @@ class SqliteProvider extends DatabaseProvider {
   }
 
   @override
-  Future<bool> open(String path, {String host, int port, String user, String password}) async {
-    final dbPath = '${await getConfigPath()}/${path.isEmpty ? 'bitter' : path}.db';
+  Future<bool> open(String path,
+      {String? host, int? port, String? user, String? password}) async {
+    final dbPath =
+        '${await getConfigPath()}/${path.isEmpty ? 'bitter' : path}.db';
 
     _log.fine('opening DB at $dbPath');
 
@@ -90,11 +91,12 @@ class SqliteProvider extends DatabaseProvider {
     } else {
       conn = await openDatabase(dbPath);
     }
-    return conn != null && conn.isOpen;
+    return conn.isOpen;
   }
 
   @override
-  Future<List<Map<String, dynamic>>> select(String table, {List<String> keys}) {
+  Future<List<Map<String, dynamic>>> select(String table,
+      {List<String> keys = const []}) {
     _log.fine('selecting all from "$table"');
     return conn.query(table, columns: keys);
   }
@@ -102,7 +104,8 @@ class SqliteProvider extends DatabaseProvider {
   @override
   Future<Map<String, dynamic>> selectSingle(String table, int id) async {
     _log.fine('selecting item with id=$id from "$table"');
-    return (await conn.query(table, where: 'id=?', whereArgs: <dynamic>[id])).single;
+    return (await conn.query(table, where: 'id=?', whereArgs: <dynamic>[id]))
+        .single;
   }
 
   @override

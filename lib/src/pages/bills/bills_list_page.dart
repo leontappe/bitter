@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../models/vendor.dart';
-import '../../providers/inherited_database.dart';
-import '../../repositories/bill_repository.dart';
-import '../../repositories/settings_repository.dart';
-import '../../widgets/database_error_watcher.dart';
+import '/src/models/vendor.dart';
+import '/src/providers/inherited_database.dart';
+import '/src/repositories/bill_repository.dart';
+import '/src/repositories/settings_repository.dart';
+import '/src/widgets/database_error_watcher.dart';
 import 'bill_list_tile.dart';
 import 'bill_page.dart';
 
@@ -14,15 +14,15 @@ class BillsListPage extends StatefulWidget {
 }
 
 class _BillsListPageState extends State<BillsListPage> {
-  BillRepository billRepo;
-  SettingsRepository settings;
+  late BillRepository billRepo;
+  late SettingsRepository settings;
 
   bool searchEnabled = false;
 
   List<Bill> bills = [];
   List<Vendor> vendors = [];
-  int filterVendor;
-  String searchQuery;
+  int? filterVendor;
+  String? searchQuery;
 
   bool _groupedMode = true;
 
@@ -57,17 +57,22 @@ class _BillsListPageState extends State<BillsListPage> {
               value: filterVendor,
               dropdownColor: Colors.grey[800],
               iconEnabledColor: Colors.white70,
-              style:
-                  TextStyle(color: Colors.white, decorationColor: Colors.white70, fontSize: 14.0),
-              hint: Text('Nach Verkäufer filtern', style: TextStyle(color: Colors.white)),
+              style: TextStyle(
+                  color: Colors.white,
+                  decorationColor: Colors.white70,
+                  fontSize: 14.0),
+              hint: Text('Nach Verkäufer filtern',
+                  style: TextStyle(color: Colors.white)),
               items: <DropdownMenuItem<int>>[
                 DropdownMenuItem(value: -1, child: Text('Filter zurücksetzen')),
-                ...vendors.map((Vendor v) => DropdownMenuItem(value: v.id, child: Text(v.name)))
+                ...vendors.map((Vendor v) =>
+                    DropdownMenuItem(value: v.id, child: Text(v.name)))
               ],
               onChanged: onFilter,
             ),
             IconButton(
-              icon: Icon(Icons.dehaze, color: _groupedMode ? null : Colors.orangeAccent),
+              icon: Icon(Icons.dehaze,
+                  color: _groupedMode ? null : Colors.orangeAccent),
               onPressed: () => setState(() => _groupedMode = !_groupedMode),
             ),
             IconButton(
@@ -89,48 +94,57 @@ class _BillsListPageState extends State<BillsListPage> {
                       Column(
                         children: [
                           ListTile(
-                              title:
-                                  Text('Überfällig', style: Theme.of(context).textTheme.headline5)),
+                              title: Text('Überfällig',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall)),
                           ...bills
                               .where((Bill b) =>
-                                  (((b.reminders == null || b.reminders.isEmpty) &&
+                                  (((b.reminders.isEmpty) &&
                                           DateTime.now().isAfter(b.dueDate)) ||
-                                      (b.reminders != null &&
-                                          b.reminders.isNotEmpty &&
-                                          DateTime.now().isAfter(b.reminders.last.deadline))) &&
+                                      (b.reminders.isNotEmpty &&
+                                          DateTime.now().isAfter(
+                                              b.reminders.last.deadline))) &&
                                   b.status == BillStatus.unpaid)
                               .map(
                                 (Bill b) => BillListTile(
                                   bill: b,
-                                  onTap: () => onPushBillPage(b.id),
+                                  onTap: () => onPushBillPage(b.id!),
                                 ),
                               ),
                           Divider(),
                           ListTile(
-                              title: Text('Laufend', style: Theme.of(context).textTheme.headline5)),
+                              title: Text('Laufend',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall)),
                           ...bills
                               .where((Bill b) =>
                                   b.status == BillStatus.unpaid &&
                                   (DateTime.now().isBefore(b.dueDate) ||
                                       (b.reminders.isNotEmpty &&
-                                          DateTime.now().isBefore(b.reminders.last.deadline))))
+                                          DateTime.now().isBefore(
+                                              b.reminders.last.deadline))))
                               .map(
                                 (Bill b) => BillListTile(
                                   bill: b,
-                                  onTap: () => onPushBillPage(b.id),
+                                  onTap: () => onPushBillPage(b.id!),
                                 ),
                               ),
                           Divider(),
                           ListTile(
                               title: Text('Abgeschlossen oder storniert',
-                                  style: Theme.of(context).textTheme.headline5)),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall)),
                           ...bills
                               .where((Bill b) =>
-                                  b.status == BillStatus.paid || b.status == BillStatus.cancelled)
+                                  b.status == BillStatus.paid ||
+                                  b.status == BillStatus.cancelled)
                               .map(
                                 (Bill b) => BillListTile(
                                   bill: b,
-                                  onTap: () => onPushBillPage(b.id),
+                                  onTap: () => onPushBillPage(b.id!),
                                 ),
                               ),
                         ],
@@ -139,7 +153,7 @@ class _BillsListPageState extends State<BillsListPage> {
                       ...bills.map(
                         (Bill b) => BillListTile(
                           bill: b,
-                          onTap: () => onPushBillPage(b.id),
+                          onTap: () => onPushBillPage(b.id!),
                         ),
                       ),
                   ],
@@ -169,7 +183,9 @@ class _BillsListPageState extends State<BillsListPage> {
     await onGetBills();
   }
 
-  Future<void> onFilter(int value) async {
+  Future<void> onFilter(int? value) async {
+    if (value == null) return;
+
     if (value >= 0) {
       filterVendor = value;
     } else {
@@ -181,8 +197,8 @@ class _BillsListPageState extends State<BillsListPage> {
 
   Future<void> onGetBills() async {
     if (mounted) setState(() => busy = true);
-    bills =
-        await billRepo.select(searchQuery: searchQuery, vendorFilter: filterVendor, short: true);
+    bills = await billRepo.select(
+        searchQuery: searchQuery, vendorFilter: filterVendor, short: true);
     if (filterVendor == null) {
       for (var bill in bills) {
         if (!vendors.contains(bill.vendor)) {
@@ -197,7 +213,11 @@ class _BillsListPageState extends State<BillsListPage> {
 
   Future<void> onPushBillPage(int id) async {
     if (await Navigator.push<bool>(
-        context, MaterialPageRoute(builder: (BuildContext context) => BillPage(id: id)))) {
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => BillPage(id: id),
+            )) ??
+        false) {
       await onGetBills();
     }
   }

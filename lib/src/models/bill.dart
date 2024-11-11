@@ -24,26 +24,21 @@ class Bill {
     'reminders'
   ];
 
-  int id;
+  int? id;
   final String billNr;
-
   final List<int> file;
   final DateTime created;
   final DateTime serviceDate;
-
   final DateTime dueDate;
   final int sum;
   final String editor;
   final Vendor vendor;
   final Customer customer;
   final List<Item> items;
-  final String userMessage;
-
-  final String comment;
-  BillStatus status;
-
-  String note;
-
+  final String? userMessage;
+  final String? comment;
+  BillStatus? status;
+  String? note;
   List<Reminder> reminders;
 
   Bill({
@@ -64,19 +59,6 @@ class Bill {
     this.note,
     this.reminders = const <Reminder>[],
   });
-
-  factory Bill.empty() => Bill(
-        billNr: null,
-        file: null,
-        sum: null,
-        editor: null,
-        vendor: null,
-        customer: null,
-        items: null,
-        created: null,
-        dueDate: null,
-        serviceDate: null,
-      );
 
   factory Bill.fromMap(Map<String, dynamic> map) => Bill(
         id: map['id'] as int,
@@ -115,7 +97,7 @@ class Bill {
       };
 
   Map<String, dynamic> get toMapShort => <String, dynamic>{
-        'status': status.index,
+        'status': status?.index,
         'bill_nr': billNr,
         'sum': sum.toString(),
         'editor': editor,

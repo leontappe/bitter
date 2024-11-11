@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../../models/item.dart';
-import '../../util/format_util.dart';
+import '/src/models/item.dart';
+import '/src/util/format_util.dart';
 
 class ItemsCard extends StatelessWidget {
   final List<Item> items;
   final int sum;
 
-  const ItemsCard({Key key, required this.items, required this.sum}) : super(key: key);
+  const ItemsCard({super.key, required this.items, required this.sum});
 
   List<DataRow> get _rows => <DataRow>[
         ...items.map(
@@ -17,8 +17,8 @@ class ItemsCard extends StatelessWidget {
               DataCell(Text(i.description ?? '')),
               DataCell(Text('${i.quantity}x')),
               DataCell(Text('${i.tax}%')),
-              DataCell(Text(formatFigure(i.price))),
-              DataCell(Text(formatFigure(i.sum))),
+              DataCell(Text(formatFigure(i.price) ?? '')),
+              DataCell(Text(formatFigure(i.sum) ?? '')),
             ],
           ),
         ),

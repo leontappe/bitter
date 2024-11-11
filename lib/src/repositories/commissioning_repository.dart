@@ -1,8 +1,8 @@
-import '../models/commissioning.dart';
-import '../providers/database_provider.dart';
+import '/src/models/commissioning.dart';
+import '/src/providers/database_provider.dart';
 import 'settings_repository.dart';
 
-export '../models/commissioning.dart';
+export '/src/models/commissioning.dart';
 
 const String tableName = 'commissionings';
 
@@ -20,20 +20,22 @@ class CommissioningRepository<T extends DatabaseProvider> {
     return commissioning;
   }
 
-  Future<List<Commissioning>> select({int vendorFilter, int warehousesFilter}) async {
-    var results = (await db.select(tableName))
-        .map<Commissioning>((Map<String, dynamic> e) => Commissioning.fromMap(e));
+  Future<List<Commissioning>> select(
+      {int? vendorFilter, int? warehousesFilter}) async {
+    var results = (await db.select(tableName)).map<Commissioning>(
+        (Map<String, dynamic> e) => Commissioning.fromMap(e));
     if (vendorFilter != null && warehousesFilter == null) {
       results = results.where((Commissioning c) => c.vendorId == vendorFilter);
     }
     if (warehousesFilter != null) {
-      results = results.where((Commissioning c) => c.warehouseId == warehousesFilter);
+      results =
+          results.where((Commissioning c) => c.warehouseId == warehousesFilter);
     }
     return List<Commissioning>.from(results);
   }
 
-  Future<Commissioning> selectSingle(int id) async {
-    Map<String, dynamic> result;
+  Future<Commissioning?> selectSingle(int id) async {
+    Map<String, dynamic>? result;
     try {
       result = await db.selectSingle(tableName, id);
       if (result == null) return null;
@@ -46,7 +48,7 @@ class CommissioningRepository<T extends DatabaseProvider> {
   Future<void> setUp() async {
     final settings = SettingsRepository();
     await settings.setUp();
-    final opened = await db.open(settings.getSqliteName());
+    final opened = await db.open(settings.getSqliteName()!);
 
     if (opened) {
       await db.createTable(
@@ -60,6 +62,6 @@ class CommissioningRepository<T extends DatabaseProvider> {
   }
 
   Future<void> update(Commissioning commissioning) {
-    return db.update(tableName, commissioning.id, commissioning.toMap);
+    return db.update(tableName, commissioning.id!, commissioning.toMap);
   }
 }

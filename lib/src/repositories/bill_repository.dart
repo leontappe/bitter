@@ -1,9 +1,9 @@
-import '../models/bill.dart';
-import '../models/item.dart';
-import '../providers/database_provider.dart';
+import '/src/models/bill.dart';
+import '/src/models/item.dart';
+import '/src/providers/database_provider.dart';
 import 'settings_repository.dart';
 
-export '../models/bill.dart';
+export '/src/models/bill.dart';
 
 const String tableName = 'bills';
 
@@ -17,9 +17,11 @@ class BillRepository<T extends DatabaseProvider> {
     return bill;
   }
 
-  Future<List<Bill>> select({String searchQuery, int vendorFilter, bool short = false}) async {
-    var results = (await db.select(tableName, keys: short ? Bill.shortKeys : null))
-        .map<Bill>((Map<String, dynamic> e) => Bill.fromMap(e));
+  Future<List<Bill>> select(
+      {String? searchQuery, int? vendorFilter, bool short = false}) async {
+    var results =
+        (await db.select(tableName, keys: short ? Bill.shortKeys : []))
+            .map<Bill>((Map<String, dynamic> e) => Bill.fromMap(e));
     if (searchQuery != null && searchQuery.isNotEmpty) {
       results = results.where((Bill d) => (d.billNr
               .toLowerCase()
@@ -31,19 +33,19 @@ class BillRepository<T extends DatabaseProvider> {
               .toLowerCase()
               .contains(searchQuery.toLowerCase()) ||
           d.items
-              .where((Item i) =>
-                  '${i.title} ${i.description}'.toLowerCase().contains(searchQuery.toLowerCase()))
+              .where((Item i) => '${i.title} ${i.description}'
+                  .toLowerCase()
+                  .contains(searchQuery.toLowerCase()))
               .isNotEmpty));
     }
     if (vendorFilter != null) {
-      results =
-          results.where((Bill b) => ((vendorFilter != null) ? b.vendor.id == vendorFilter : true));
+      results = results.where((Bill b) => b.vendor.id == vendorFilter);
     }
     return List<Bill>.from(results);
   }
 
-  Future<Bill> selectSingle(int id) async {
-    Map<String, dynamic> result;
+  Future<Bill?> selectSingle(int id) async {
+    Map<String, dynamic>? result;
     try {
       result = await db.selectSingle(tableName, id);
       if (result == null) return null;
@@ -56,7 +58,7 @@ class BillRepository<T extends DatabaseProvider> {
   Future<void> setUp() async {
     final settings = SettingsRepository();
     await settings.setUp();
-    final opened = await db.open(settings.getSqliteName());
+    final opened = await db.open(settings.getSqliteName()!);
 
     if (opened) {
       await db.createTable(
@@ -121,6 +123,6 @@ class BillRepository<T extends DatabaseProvider> {
   }
 
   Future<void> update(Bill bill) async {
-    await db.update(tableName, bill.id, bill.toMap);
+    await db.update(tableName, bill.id!, bill.toMap);
   }
 }

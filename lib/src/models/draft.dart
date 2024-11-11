@@ -1,11 +1,9 @@
 import 'dart:convert';
 
-
-
 import 'item.dart';
 
 class Draft {
-  int id;
+  int? id;
 
   String editor;
   int customer;
@@ -13,11 +11,11 @@ class Draft {
   List<Item> items;
   int tax;
 
-  DateTime serviceDate;
+  DateTime? serviceDate;
   int dueDays;
 
-  String userMessage;
-  String comment;
+  String? userMessage;
+  String? comment;
 
   Draft({
     this.id,
@@ -32,28 +30,22 @@ class Draft {
     this.comment,
   });
 
-  factory Draft.empty() => Draft(
-        customer: null,
-        editor: null,
-        items: <Item>[],
-        tax: null,
-        vendor: null,
-        serviceDate: null,
-        dueDays: null,
-      );
-
   factory Draft.fromMap(Map<String, dynamic> map) => Draft(
         id: map['id'] as int,
         editor: map['editor'].toString(),
         customer: map['customer'] as int,
         vendor: map['vendor'] as int,
-        items: ((json.decode(map['items'].toString()) as List)
-            .map<Item>((dynamic map) => Item.fromMap(map as Map<String, dynamic>))).toList(),
+        items: ((json.decode(map['items'].toString()) as List).map<Item>(
+                (dynamic map) => Item.fromMap(map as Map<String, dynamic>)))
+            .toList(),
         tax: map['tax'] as int,
-        serviceDate:
-            (map['service_date'] != null) ? DateTime.parse(map['service_date'].toString()) : null,
+        serviceDate: (map['service_date'] != null)
+            ? DateTime.parse(map['service_date'].toString())
+            : null,
         dueDays: int.parse(map['due_days'].toString()),
-        userMessage: (map['user_message'] != null) ? map['user_message'].toString() : null,
+        userMessage: (map['user_message'] != null)
+            ? map['user_message'].toString()
+            : null,
         comment: map['comment']?.toString(),
       );
 

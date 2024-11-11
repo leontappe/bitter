@@ -6,12 +6,13 @@ import 'package:windows_documents/windows_documents.dart';
 import '/environment_config.dart';
 
 Future<String> getConfigPath() async {
-  String path;
+  String? path;
   if (Platform.isWindows) {
     path = await getDocumentsDirectory();
   } else {
     path = (await getApplicationDocumentsDirectory()).path;
   }
+  if (path == null) throw Exception('could not determine config path');
 
   if (Platform.isWindows) {
     path = path + '/bitter/config';
@@ -28,11 +29,14 @@ Future<String> getConfigPath() async {
 Future<String> getDataPath() async {
   String path;
   if (Platform.isWindows) {
-    path = (await getDocumentsDirectory()) + '/bitter';
+    path = (await getDocumentsDirectory())! + '/bitter';
   } else if (Platform.isMacOS || Platform.isLinux) {
-    path = (await getDownloadsDirectory()).path + '/bitter';
+    path = (await getDownloadsDirectory())!.path + '/bitter';
   } else if (Platform.isAndroid) {
-    path = (await getExternalStorageDirectories(type: StorageDirectory.downloads)).first.path;
+    path =
+        (await getExternalStorageDirectories(type: StorageDirectory.downloads))!
+            .first
+            .path;
   } else {
     path = (await getApplicationDocumentsDirectory()).path + '/bitter';
   }
@@ -46,9 +50,9 @@ Future<String> getDataPath() async {
 Future<String> getLogPath() async {
   String path;
   if (Platform.isWindows) {
-    path = (await getDocumentsDirectory()) + '/bitter/log';
+    path = (await getDocumentsDirectory())! + '/bitter/log';
   } else if (Platform.isMacOS) {
-    path = (await getDownloadsDirectory()).path + '/bitter/log';
+    path = (await getDownloadsDirectory())!.path + '/bitter/log';
   } else {
     path = (await getApplicationDocumentsDirectory()).path + '/log';
   }

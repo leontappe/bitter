@@ -89,7 +89,7 @@ class _ItemPageState extends State<ItemPage> {
                             },
                           ),
                           ListTile(
-                            title: Text('Preis', style: Theme.of(context).textTheme.headline6),
+                            title: Text('Preis', style: Theme.of(context).textTheme.headlineSmall),
                             trailing: Container(
                               width: 94.0,
                               height: 64.0,
@@ -111,7 +111,7 @@ class _ItemPageState extends State<ItemPage> {
                           ),
                           ListTile(
                             title:
-                                Text('Umsatzsteuer', style: Theme.of(context).textTheme.headline6),
+                                Text('Umsatzsteuer', style: Theme.of(context).textTheme.headlineSmall),
                             trailing: Container(
                               width: 94.0,
                               height: 64.0,
@@ -131,7 +131,7 @@ class _ItemPageState extends State<ItemPage> {
                           ),
                           ListTile(
                             title:
-                                Text('Standardmenge', style: Theme.of(context).textTheme.headline6),
+                                Text('Standardmenge', style: Theme.of(context).textTheme.headlineSmall),
                             trailing: Container(
                               width: 94.0,
                               height: 64.0,

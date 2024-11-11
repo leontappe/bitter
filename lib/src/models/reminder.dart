@@ -25,7 +25,7 @@ class Reminder {
   String title;
   String text;
   int fee;
-  int remainder;
+  int? remainder;
 
   Reminder({
     required this.iteration,
@@ -33,7 +33,7 @@ class Reminder {
     required this.title,
     required this.text,
     required this.fee,
-    required this.remainder,
+    this.remainder,
     required this.created,
   });
 

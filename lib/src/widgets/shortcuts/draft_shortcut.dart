@@ -48,7 +48,7 @@ class DraftShortcut extends StatelessWidget {
         else
           Text(''),
         Text('${draft.items.length} Artikel', overflow: TextOverflow.ellipsis),
-        Text(formatFigure(draft.sum), overflow: TextOverflow.ellipsis),
+        Text(formatFigure(draft.sum) ?? '', overflow: TextOverflow.ellipsis),
       ],
     );
   }

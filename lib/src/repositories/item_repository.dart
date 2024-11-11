@@ -1,8 +1,8 @@
-import '../models/item.dart';
-import '../providers/database_provider.dart';
+import '/src/models/item.dart';
+import '/src/providers/database_provider.dart';
 import 'settings_repository.dart';
 
-export '../models/item.dart';
+export '/src/models/item.dart';
 
 const String tableName = 'items';
 
@@ -20,15 +20,15 @@ class ItemRepository<T extends DatabaseProvider> {
     if (results.isEmpty) {
       item.itemId = 1;
     } else {
-      item.itemId = results.last.itemId + 1;
+      item.itemId = results.last.itemId! + 1;
     }
     item.id = await db.insert(tableName, item.toMap);
     return item;
   }
 
-  Future<List<Item>> select({String searchQuery, int vendorFilter}) async {
-    var results =
-        (await db.select(tableName)).map<Item>((Map<String, dynamic> e) => Item.fromDbMap(e));
+  Future<List<Item>> select({String? searchQuery, int? vendorFilter}) async {
+    var results = (await db.select(tableName))
+        .map<Item>((Map<String, dynamic> e) => Item.fromDbMap(e));
     if (searchQuery != null && searchQuery.isNotEmpty) {
       results = results.where((Item i) {
         return i.title.toLowerCase().contains(searchQuery.toLowerCase());
@@ -40,8 +40,8 @@ class ItemRepository<T extends DatabaseProvider> {
     return List<Item>.from(results);
   }
 
-  Future<Item> selectSingle(int id) async {
-    Map<String, dynamic> result;
+  Future<Item?> selectSingle(int id) async {
+    Map<String, dynamic>? result;
     try {
       result = await db.selectSingle(tableName, id);
       if (result == null) return null;
@@ -54,13 +54,31 @@ class ItemRepository<T extends DatabaseProvider> {
   Future<void> setUp() async {
     final settings = SettingsRepository();
     await settings.setUp();
-    final opened = await db.open(settings.getSqliteName());
+    final opened = await db.open(settings.getSqliteName()!);
 
     if (opened) {
       await db.createTable(
         tableName,
-        ['id', 'title', 'description', 'price', 'tax', 'item_id', 'vendor', 'quantity'],
-        ['INTEGER', 'TEXT', 'TEXT', 'INTEGER', 'INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'],
+        [
+          'id',
+          'title',
+          'description',
+          'price',
+          'tax',
+          'item_id',
+          'vendor',
+          'quantity'
+        ],
+        [
+          'INTEGER',
+          'TEXT',
+          'TEXT',
+          'INTEGER',
+          'INTEGER',
+          'INTEGER',
+          'INTEGER',
+          'INTEGER'
+        ],
         'id',
         nullable: <bool>[true, false, true, false, false, false, false, false],
       );
@@ -68,6 +86,6 @@ class ItemRepository<T extends DatabaseProvider> {
   }
 
   Future<void> update(Item item) {
-    return db.update(tableName, item.id, item.toMap);
+    return db.update(tableName, item.id!, item.toMap);
   }
 }

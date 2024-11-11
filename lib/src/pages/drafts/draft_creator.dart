@@ -95,7 +95,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                   child: ListView(
                     children: <Widget>[
                       GesturelessListTile(
-                        title: Text('Kunde', style: Theme.of(context).textTheme.headline6),
+                        title: Text('Kunde', style: Theme.of(context).textTheme.headlineSmall),
                         trailing:
                             (customerIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
                         subtitle: AutoCompleteTextField<Customer>(
@@ -127,7 +127,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                         ),
                       ),
                       GesturelessListTile(
-                        title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
+                        title: Text('Verkäufer', style: Theme.of(context).textTheme.headlineSmall),
                         trailing:
                             (vendorIsset ?? true) ? null : Icon(Icons.error, color: Colors.red),
                         subtitle: VendorSelector(
@@ -145,7 +145,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                       GesturelessListTile(
                         height: 64.0,
                         title: Text('Lieferdatum/Leistungsdatum:',
-                            style: Theme.of(context).textTheme.headline6),
+                            style: Theme.of(context).textTheme.headlineSmall),
                         trailing: Container(
                           width: 196.0,
                           height: 64.0,
@@ -172,7 +172,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                       ),
                       GesturelessListTile(
                         height: 64.0,
-                        title: Text('Zahlungsziel:', style: Theme.of(context).textTheme.headline6),
+                        title: Text('Zahlungsziel:', style: Theme.of(context).textTheme.headlineSmall),
                         trailing: Container(
                           width: 80.0,
                           height: 64.0,
@@ -197,7 +197,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                           title: Text(
                               '${_vendor?.userMessageLabel}:' ??
                                   'Benutzerdefinierter Rechnungskommentar:',
-                              style: Theme.of(context).textTheme.headline6),
+                              style: Theme.of(context).textTheme.headlineSmall),
                           trailing: Container(
                             width: 256.0,
                             child: TextFormField(
@@ -211,7 +211,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                         ),
                       GesturelessListTile(
                         title: Text('Rechnungskommentar:',
-                            style: Theme.of(context).textTheme.headline6),
+                            style: Theme.of(context).textTheme.headlineSmall),
                         trailing: Container(
                           width: 256.0,
                           child: TextFormField(
@@ -225,7 +225,7 @@ class _DraftCreatorPageState extends State<DraftCreatorPage> {
                           ),
                         ),
                       ),
-                      Text('Artikel', style: Theme.of(context).textTheme.headline6),
+                      Text('Artikel', style: Theme.of(context).textTheme.headlineSmall),
                       BlocBuilder<ItemsBloc, ItemsState>(
                         bloc: itemsBloc,
                         builder: (BuildContext context, ItemsState state) {

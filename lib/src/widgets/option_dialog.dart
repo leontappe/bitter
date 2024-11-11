@@ -7,7 +7,7 @@ class OptionDialog extends StatefulWidget {
 
   final bool disableCheckbox;
   final bool checked;
-  final Function(bool) onChecked;
+  final Function(bool)? onChecked;
   final String checkboxText;
 
   const OptionDialog({
@@ -17,7 +17,7 @@ class OptionDialog extends StatefulWidget {
     this.children = const <Widget>[],
     this.disableCheckbox = false,
     this.checked = true,
-    required this.onChecked,
+    this.onChecked,
     this.checkboxText = '',
   });
 
@@ -48,7 +48,8 @@ class _OptionDialogState extends State<OptionDialog> {
               value: checked,
               onChanged: (bool? input) {
                 setState(() => checked = input ?? false);
-                widget.onChecked(checked);
+                
+                widget.onChecked?.call(checked);
               },
               title: Text(widget.checkboxText),
             ),

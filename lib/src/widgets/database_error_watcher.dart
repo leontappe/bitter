@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../models/database_error.dart';
-import '../providers/inherited_database.dart';
+import '/src/models/database_error.dart';
+import '/src/providers/inherited_database.dart';
 
 class DatabaseErrorWatcher extends StatefulWidget {
   final Widget child;
@@ -39,7 +39,7 @@ class _DatabaseErrorWatcherState extends State<DatabaseErrorWatcher> {
                 0)
         .listen((DatabaseError error) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(error.description),
+          content: Text(error.description ?? ''),
           duration: const Duration(seconds: 3)));
       lastErrors.add(error);
       lastErrors.removeWhere((DatabaseError error) => error.timestamp

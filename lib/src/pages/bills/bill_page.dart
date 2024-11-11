@@ -4,26 +4,26 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 
-import '../../models/reminder.dart';
-import '../../pdf/reminder_generator.dart';
-import '../../providers/inherited_database.dart';
-import '../../repositories/bill_repository.dart';
-import '../../repositories/draft_repository.dart';
-import '../../repositories/vendor_repository.dart';
-import '../../util/format_util.dart';
-import '../../util/path_util.dart';
-import '../../widgets/database_error_watcher.dart';
-import '../../widgets/info_cards/customer_card.dart';
-import '../../widgets/info_cards/items_card.dart';
-import '../../widgets/info_cards/vendor_card.dart';
-import '../../widgets/option_dialog.dart';
+import '/src/models/reminder.dart';
+import '/src/pdf/reminder_generator.dart';
+import '/src/providers/inherited_database.dart';
+import '/src/repositories/bill_repository.dart';
+import '/src/repositories/draft_repository.dart';
+import '/src/repositories/vendor_repository.dart';
+import '/src/util/format_util.dart';
+import '/src/util/path_util.dart';
+import '/src/widgets/database_error_watcher.dart';
+import '/src/widgets/info_cards/customer_card.dart';
+import '/src/widgets/info_cards/items_card.dart';
+import '/src/widgets/info_cards/vendor_card.dart';
+import '/src/widgets/option_dialog.dart';
 import '../drafts/draft_creator.dart';
 import 'save_bill_button.dart';
 
 class BillPage extends StatefulWidget {
   final int id;
 
-  BillPage({this.id});
+  BillPage({required this.id});
 
   @override
   _BillPageState createState() => _BillPageState();
@@ -37,16 +37,14 @@ enum ReminderOption {
 class _BillPageState extends State<BillPage> {
   final _key = GlobalKey();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  BillRepository repo;
-  VendorRepository vendorRepo;
-  DraftRepository draftRepo;
+  late BillRepository repo;
+  late VendorRepository vendorRepo;
+  late DraftRepository draftRepo;
 
-  Bill bill;
-
-  Vendor vendor;
+  late Bill bill;
+  late Vendor vendor;
 
   bool dirty = false;
-
   bool busy = false;
 
   final GlobalKey<FormState> _reminderFormKey = GlobalKey<FormState>();
@@ -62,10 +60,13 @@ class _BillPageState extends State<BillPage> {
                   icon: Icon(Icons.arrow_back_ios),
                   onPressed: () => onPopRoute(context),
                 )),
-        title: Text(bill?.billNr ?? ''),
+        title: Text(bill.billNr),
         actions: [
-          IconButton(icon: Icon(Icons.ios_share), onPressed: (!busy) ? onExportDraft : null),
-          IconButton(icon: Icon(Icons.save), onPressed: (!busy) ? onSaveBill : null),
+          IconButton(
+              icon: Icon(Icons.ios_share),
+              onPressed: (!busy) ? onExportDraft : null),
+          IconButton(
+              icon: Icon(Icons.save), onPressed: (!busy) ? onSaveBill : null),
           SaveBillButton(billId: (!busy) ? bill.id : null),
         ],
       ),
@@ -77,8 +78,10 @@ class _BillPageState extends State<BillPage> {
                   child: ListView(
                     children: <Widget>[
                       ListTile(
-                        title: Text(bill.billNr, style: Theme.of(context).textTheme.headline6),
-                        subtitle: Text('Erstellt am ${formatDateTime(bill.created)}'),
+                        title: Text(bill.billNr,
+                            style: Theme.of(context).textTheme.headlineSmall),
+                        subtitle:
+                            Text('Erstellt am ${formatDateTime(bill.created)}'),
                         trailing: Text('von ${bill.editor}'),
                       ),
                       if (bill.userMessage != null)
@@ -88,19 +91,25 @@ class _BillPageState extends State<BillPage> {
                               ': ${bill.userMessage}'),
                         ),
                       if (bill.comment != null)
-                        ListTile(title: Text('Rechnungskommentar: ${bill.comment}')),
+                        ListTile(
+                            title: Text('Rechnungskommentar: ${bill.comment}')),
                       ListTile(
                         title: DropdownButton<BillStatus>(
-                          style: Theme.of(context).textTheme.headline6,
+                          style: Theme.of(context).textTheme.headlineSmall,
                           isExpanded: false,
-                          hint: Text('${bill?.status ?? BillStatus.unpaid}'),
-                          value: bill?.status ?? BillStatus.unpaid,
+                          hint: Text('${bill.status ?? BillStatus.unpaid}'),
+                          value: bill.status ?? BillStatus.unpaid,
                           items: [
-                            DropdownMenuItem(value: BillStatus.unpaid, child: Text('Unbezahlt')),
-                            DropdownMenuItem(value: BillStatus.paid, child: Text('Bezahlt')),
-                            DropdownMenuItem(value: BillStatus.cancelled, child: Text('Storniert')),
+                            DropdownMenuItem(
+                                value: BillStatus.unpaid,
+                                child: Text('Unbezahlt')),
+                            DropdownMenuItem(
+                                value: BillStatus.paid, child: Text('Bezahlt')),
+                            DropdownMenuItem(
+                                value: BillStatus.cancelled,
+                                child: Text('Storniert')),
                           ],
-                          onChanged: (BillStatus v) {
+                          onChanged: (BillStatus? v) {
                             setState(() => bill.status = v);
                             dirty = true;
                           },
@@ -108,13 +117,13 @@ class _BillPageState extends State<BillPage> {
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (bill != null)
-                              Text('Lieferdatum/Leistungsdatum: ${formatDate(bill.serviceDate)}'),
-                            if (bill != null) Text('Zahlungsziel: ${formatDate(bill.dueDate)}'),
+                            Text(
+                                'Lieferdatum/Leistungsdatum: ${formatDate(bill.serviceDate)}'),
+                            Text('Zahlungsziel: ${formatDate(bill.dueDate)}'),
                           ],
                         ),
                       ),
-                      if (bill.reminders != null && bill.reminders.isNotEmpty)
+                      if (bill.reminders.isNotEmpty)
                         Row(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -125,32 +134,43 @@ class _BillPageState extends State<BillPage> {
                                       margin: EdgeInsets.all(8.0),
                                       child: PopupMenuButton<ReminderOption>(
                                         tooltip: 'Menü zeigen',
-                                        onSelected: (ReminderOption option) async {
+                                        onSelected:
+                                            (ReminderOption option) async {
                                           switch (option) {
                                             case ReminderOption.save:
-                                              _onGenerateReminder(r, skipSaving: true);
+                                              _onGenerateReminder(r,
+                                                  skipSaving: true);
                                               break;
                                             case ReminderOption.delete:
-                                              final dialogResult = await showDialog<bool>(
-                                                  context: context,
-                                                  builder: (BuildContext context) => AlertDialog(
-                                                        title: Text('Mahnung löschen?'),
-                                                        content: Text(
-                                                            'Solange die Rechnung nicht gespeichert wird, ist diese Änderung Wiederrufbar.'),
-                                                        actions: [
-                                                          MaterialButton(
-                                                            onPressed: () =>
-                                                                Navigator.of(context).pop(true),
-                                                            child: Text('Ja'),
-                                                          ),
-                                                          MaterialButton(
-                                                            onPressed: () =>
-                                                                Navigator.of(context).pop(false),
-                                                            child: Text('Nein'),
-                                                          ),
-                                                        ],
-                                                      ));
-                                              if (dialogResult) {
+                                              final dialogResult =
+                                                  await showDialog<bool>(
+                                                      context: context,
+                                                      builder:
+                                                          (BuildContext
+                                                                  context) =>
+                                                              AlertDialog(
+                                                                title: Text(
+                                                                    'Mahnung löschen?'),
+                                                                content: Text(
+                                                                    'Solange die Rechnung nicht gespeichert wird, ist diese Änderung Wiederrufbar.'),
+                                                                actions: [
+                                                                  MaterialButton(
+                                                                    onPressed: () =>
+                                                                        Navigator.of(context)
+                                                                            .pop(true),
+                                                                    child: Text(
+                                                                        'Ja'),
+                                                                  ),
+                                                                  MaterialButton(
+                                                                    onPressed: () =>
+                                                                        Navigator.of(context)
+                                                                            .pop(false),
+                                                                    child: Text(
+                                                                        'Nein'),
+                                                                  ),
+                                                                ],
+                                                              ));
+                                              if (dialogResult ?? false) {
                                                 _onDeleteReminder(r.iteration);
                                               }
                                               break;
@@ -171,29 +191,38 @@ class _BillPageState extends State<BillPage> {
                                         child: Padding(
                                           padding: EdgeInsets.all(16.0),
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: <Widget>[
-                                              Text('${r.iteration.index + 1}. Mahnung',
-                                                  style: Theme.of(context).textTheme.headline5),
-                                              if (r.title != null && r.title.isNotEmpty)
+                                              Text(
+                                                  '${r.iteration.index + 1}. Mahnung',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headlineSmall),
+                                              if (r.title.isNotEmpty)
                                                 Text('Titel: ${r.title}'),
-                                              Text('Erstellt: ${formatDate(r.created)}'),
-                                              Text('Frist: ${formatDate(r.deadline)}'),
-                                              Text('Mahngebühr: ${formatFigure(r.fee)}'),
+                                              Text(
+                                                  'Erstellt: ${formatDate(r.created)}'),
+                                              Text(
+                                                  'Frist: ${formatDate(r.deadline)}'),
+                                              Text(
+                                                  'Mahngebühr: ${formatFigure(r.fee)}'),
                                             ],
                                           ),
                                         ),
                                       ))))
                               .toList(),
                         ),
-                      if (((bill?.status ?? BillStatus.unpaid) == BillStatus.unpaid &&
+                      if (((bill.status ?? BillStatus.unpaid) ==
+                                  BillStatus.unpaid &&
                               DateTime.now().isAfter(bill.dueDate)) &&
                           bill.reminders.length < 3)
                         ListTile(
                             title: ElevatedButton(
                           onPressed: (bill.reminders.isEmpty ||
                                   (bill.reminders.isNotEmpty &&
-                                      DateTime.now().isAfter(bill.reminders.last.deadline)))
+                                      DateTime.now().isAfter(
+                                          bill.reminders.last.deadline)))
                               ? () => _onShowReminderDialog(iterationFromInt(
                                   (bill.reminders.isNotEmpty)
                                       ? bill.reminders.last.iteration.index + 1
@@ -206,7 +235,7 @@ class _BillPageState extends State<BillPage> {
                         padding: EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 8.0),
                         child: TextFormField(
                           decoration: InputDecoration(hintText: 'Notizen'),
-                          initialValue: bill?.note ?? '',
+                          initialValue: bill.note ?? '',
                           onChanged: (String input) {
                             setState(() => bill.note = input);
                             dirty = true;
@@ -214,15 +243,18 @@ class _BillPageState extends State<BillPage> {
                         ),
                       ),
                       ListTile(
-                        title: Text('Artikel', style: Theme.of(context).textTheme.headline6),
+                        title: Text('Artikel',
+                            style: Theme.of(context).textTheme.headlineSmall),
                         subtitle: ItemsCard(items: bill.items, sum: bill.sum),
                       ),
                       ListTile(
-                        title: Text('Kunde', style: Theme.of(context).textTheme.headline6),
+                        title: Text('Kunde',
+                            style: Theme.of(context).textTheme.headlineSmall),
                         subtitle: CustomerCard(customer: bill.customer),
                       ),
                       ListTile(
-                        title: Text('Verkäufer', style: Theme.of(context).textTheme.headline6),
+                        title: Text('Verkäufer',
+                            style: Theme.of(context).textTheme.headlineSmall),
                         subtitle: VendorCard(vendor: bill.vendor),
                       ),
                     ],
@@ -247,8 +279,8 @@ class _BillPageState extends State<BillPage> {
     await vendorRepo.setUp();
     await draftRepo.setUp();
 
-    bill = await repo.selectSingle(widget.id);
-    vendor = await vendorRepo.selectSingle(bill.vendor.id);
+    bill = (await repo.selectSingle(widget.id))!;
+    vendor = (await vendorRepo.selectSingle(bill.vendor.id!))!;
 
     if (mounted) setState(() => busy = false);
   }
@@ -256,12 +288,12 @@ class _BillPageState extends State<BillPage> {
   Future<void> onExportDraft() async {
     final draft = Draft(
       items: bill.items,
-      customer: bill.customer.id,
-      vendor: bill.vendor.id,
-      dueDays: vendor.defaultDueDays,
+      customer: bill.customer.id!,
+      vendor: bill.vendor.id!,
+      dueDays: vendor.defaultDueDays!,
       editor: bill.editor,
       serviceDate: bill.serviceDate,
-      tax: vendor.defaultTax,
+      tax: vendor.defaultTax!,
       comment: bill.comment,
       userMessage: bill.userMessage,
     );
@@ -269,7 +301,8 @@ class _BillPageState extends State<BillPage> {
     await draftRepo.insert(draft);
 
     await Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute<bool>(builder: (BuildContext context) => DraftCreatorPage(draft: draft)),
+        MaterialPageRoute<bool>(
+            builder: (BuildContext context) => DraftCreatorPage(draft: draft)),
         (Route<dynamic> route) => route.settings.name == '/home');
   }
 
@@ -282,11 +315,14 @@ class _BillPageState extends State<BillPage> {
                     'Wenn du ohne Speichern fortfährst gehen alle hier eingegebenen Daten verloren. Vor dem Verlassen abspeichern?'),
                 actions: <Widget>[
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),
+                      onPressed: () => Navigator.pop(context, -1),
+                      child: Text('Abbrechen')),
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
+                      onPressed: () => Navigator.pop(context, 0),
+                      child: Text('Verwerfen')),
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
+                      onPressed: () => Navigator.pop(context, 1),
+                      child: Text('Speichern')),
                 ],
               ));
       switch (result) {
@@ -313,7 +349,7 @@ class _BillPageState extends State<BillPage> {
   }
 
   Future<bool> onSaveBill() async {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState?.validate() ?? false) {
       if (mounted) setState(() => busy = true);
       await repo.update(bill);
       dirty = false;
@@ -340,7 +376,7 @@ class _BillPageState extends State<BillPage> {
 
     final pdfData = await ReminderGenerator().getBytesFromBill(
       bill,
-      await vendorRepo.selectSingle(bill.vendor.id) ?? bill.vendor,
+      (await vendorRepo.selectSingle(bill.vendor.id!))!,
       reminder,
       leftHeader: bill.vendor.headerImageLeft as Uint8List,
       centerHeader: bill.vendor.headerImageCenter as Uint8List,
@@ -352,8 +388,9 @@ class _BillPageState extends State<BillPage> {
     await file.create(recursive: true);
     await file.writeAsBytes(pdfData);
 
-    ScaffoldMessenger.of(_key.currentContext).showSnackBar(SnackBar(
-      content: Text('Die Mahnung wurde erfolgreich unter ${file.path} abgespeichert.'),
+    ScaffoldMessenger.of(_key.currentContext!).showSnackBar(SnackBar(
+      content: Text(
+          'Die Mahnung wurde erfolgreich unter ${file.path} abgespeichert.'),
       duration: const Duration(seconds: 5),
       action: SnackBarAction(
         label: 'Öffnen',
@@ -366,15 +403,20 @@ class _BillPageState extends State<BillPage> {
   void _onShowReminderDialog(ReminderIteration iteration) async {
     final reminder = Reminder(
       iteration: iteration,
-      title: vendor != null && vendor.reminderTitles != null && vendor.reminderTitles.isNotEmpty
-          ? vendor.reminderTitles[iteration]
-          : bill.vendor?.reminderTitles[iteration] ?? '',
-      text: vendor != null && vendor.reminderTexts != null && vendor.reminderTexts.isNotEmpty
-          ? vendor.reminderTexts[iteration]
-          : bill.vendor?.reminderTexts[iteration] ?? '',
-      fee: vendor != null ? vendor.reminderFees[iteration] : bill.vendor.reminderFees[iteration],
-      deadline: DateTime.now().add(Duration(
-          days: vendor != null ? vendor?.reminderDeadline : bill.vendor.reminderDeadline ?? 14)),
+      title: vendor.reminderTitles.isNotEmpty
+          ? vendor.reminderTitles[iteration] ?? ''
+          : bill.vendor.reminderTitles[iteration] ?? '',
+      text: vendor.reminderTexts.isNotEmpty
+          ? vendor.reminderTexts[iteration] ?? ''
+          : bill.vendor.reminderTexts[iteration] ?? '',
+      fee: vendor.reminderFees[iteration] ??
+          bill.vendor.reminderFees[iteration] ??
+          0,
+      deadline: DateTime.now().add(
+        Duration(
+            days:
+                vendor.reminderDeadline ?? bill.vendor.reminderDeadline ?? 14),
+      ),
       remainder: bill.sum,
       created: DateTime.now(),
     );
@@ -386,10 +428,11 @@ class _BillPageState extends State<BillPage> {
         titleText: '${iteration.index + 1}. Mahnung erstellen',
         actions: [
           MaterialButton(
-              onPressed: () => Navigator.of(context).pop(null), child: Text('Abbrechen')),
+              onPressed: () => Navigator.of(context).pop(null),
+              child: Text('Abbrechen')),
           MaterialButton(
               onPressed: () {
-                if (_reminderFormKey.currentState.validate()) {
+                if (_reminderFormKey.currentState?.validate() ?? false) {
                   Navigator.of(context).pop(reminder);
                 }
               },
@@ -402,28 +445,34 @@ class _BillPageState extends State<BillPage> {
               child: Column(
                 children: <Widget>[
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'Mahngebühr', suffixText: '€'),
+                    decoration: InputDecoration(
+                        labelText: 'Mahngebühr', suffixText: '€'),
                     keyboardType: TextInputType.number,
                     initialValue: formatFigure(reminder.fee).split(' ').first,
-                    validator: (String input) =>
+                    validator: (String? input) =>
                         (input == null || input.isEmpty) ? 'Pflichtfeld' : null,
-                    onChanged: (String input) => reminder.fee = parseFloat(input),
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(labelText: 'Restbetrag', suffixText: '€'),
-                    keyboardType: TextInputType.number,
-                    initialValue: (reminder.remainder / 100.0).toStringAsFixed(2),
-                    onChanged: (String input) => reminder.remainder = parseFloat(input) ?? 0,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(labelText: 'Frist', suffixText: 'Tage'),
-                    keyboardType: TextInputType.number,
-                    initialValue: (vendor != null
-                            ? vendor.reminderDeadline
-                            : bill.vendor.reminderDeadline ?? 14)
-                        .toString(),
                     onChanged: (String input) =>
-                        reminder.deadline = DateTime.now().add(Duration(days: int.parse(input))),
+                        reminder.fee = parseFloat(input),
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                        labelText: 'Restbetrag', suffixText: '€'),
+                    keyboardType: TextInputType.number,
+                    initialValue: ((reminder.remainder ?? 0.0) / 100.0)
+                        .toStringAsFixed(2),
+                    onChanged: (String input) =>
+                        reminder.remainder = parseFloat(input),
+                  ),
+                  TextFormField(
+                    decoration:
+                        InputDecoration(labelText: 'Frist', suffixText: 'Tage'),
+                    keyboardType: TextInputType.number,
+                    initialValue: (vendor.reminderDeadline ??
+                            bill.vendor.reminderDeadline ??
+                            14)
+                        .toString(),
+                    onChanged: (String input) => reminder.deadline =
+                        DateTime.now().add(Duration(days: int.parse(input))),
                   ),
                   TextFormField(
                     decoration: InputDecoration(labelText: 'Mahnungstitel'),

@@ -20,12 +20,13 @@ class WarehouseRepository<T extends DatabaseProvider> {
     return warehouse;
   }
 
-  Future<List<Warehouse>> select({String searchQuery, int vendorFilter}) async {
+  Future<List<Warehouse>> select(
+      {String? searchQuery, int? vendorFilter}) async {
     var results = (await db.select(tableName))
         .map<Warehouse>((Map<String, dynamic> e) => Warehouse.fromMap(e));
     if (searchQuery != null && searchQuery.isNotEmpty) {
       results = results.where((Warehouse w) {
-        return w.name.toLowerCase().contains(searchQuery.toLowerCase());
+        return w.name!.toLowerCase().contains(searchQuery.toLowerCase());
       });
     }
     if (vendorFilter != null) {
@@ -34,8 +35,8 @@ class WarehouseRepository<T extends DatabaseProvider> {
     return List<Warehouse>.from(results);
   }
 
-  Future<Warehouse> selectSingle(int id) async {
-    Map<String, dynamic> result;
+  Future<Warehouse?> selectSingle(int id) async {
+    Map<String, dynamic>? result;
     try {
       result = await db.selectSingle(tableName, id);
       if (result == null) return null;
@@ -48,7 +49,7 @@ class WarehouseRepository<T extends DatabaseProvider> {
   Future<void> setUp() async {
     final settings = SettingsRepository();
     await settings.setUp();
-    final opened = await db.open(settings.getSqliteName());
+    final opened = await db.open(settings.getSqliteName()!);
 
     if (opened) {
       await db.createTable(
@@ -62,6 +63,6 @@ class WarehouseRepository<T extends DatabaseProvider> {
   }
 
   Future<void> update(Warehouse warehouse) {
-    return db.update(tableName, warehouse.id, warehouse.toMap);
+    return db.update(tableName, warehouse.id!, warehouse.toMap);
   }
 }

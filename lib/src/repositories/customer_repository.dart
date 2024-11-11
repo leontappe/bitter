@@ -1,5 +1,5 @@
-import '../models/customer.dart';
-import '../providers/database_provider.dart';
+import '/src/models/customer.dart';
+import '/src/providers/database_provider.dart';
 import 'settings_repository.dart';
 
 export '../models/customer.dart';
@@ -20,23 +20,27 @@ class CustomerRepository<T extends DatabaseProvider> {
     return customer;
   }
 
-  Future<List<Customer>> select({String searchQuery}) async {
+  Future<List<Customer>> select({String? searchQuery}) async {
     final results = List<Customer>.from((await db.select(tableName))
         .map<Customer>((Map<String, dynamic> e) => Customer.fromMap(e)));
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
       return List.from(results.where((Customer c) =>
-          (c.name + ' ' + c.surname).toLowerCase().contains(searchQuery.toLowerCase()) ||
+          (c.name + ' ' + c.surname)
+              .toLowerCase()
+              .contains(searchQuery.toLowerCase()) ||
           (c.company ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
-          (c.organizationUnit ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
+          (c.organizationUnit ?? '')
+              .toLowerCase()
+              .contains(searchQuery.toLowerCase()) ||
           c.email.toLowerCase().contains(searchQuery.toLowerCase())));
     } else {
       return results;
     }
   }
 
-  Future<Customer> selectSingle(int id) async {
-    Map<String, dynamic> result;
+  Future<Customer?> selectSingle(int id) async {
+    Map<String, dynamic>? result;
     try {
       result = await db.selectSingle(tableName, id);
       if (result == null) return null;
@@ -49,7 +53,7 @@ class CustomerRepository<T extends DatabaseProvider> {
   Future<void> setUp() async {
     final settings = SettingsRepository();
     await settings.setUp();
-    final opened = await db.open(settings.getSqliteName());
+    final opened = await db.open(settings.getSqliteName()!);
 
     if (opened) {
       await db.createTable(
@@ -108,6 +112,6 @@ class CustomerRepository<T extends DatabaseProvider> {
   }
 
   Future<void> update(Customer customer) {
-    return db.update(tableName, customer.id, customer.toMap);
+    return db.update(tableName, customer.id!, customer.toMap);
   }
 }

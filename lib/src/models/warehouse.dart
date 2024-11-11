@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'crate.dart';
 
 class Warehouse {
-  int id;
-  int vendorId;
+  int? id;
+  int? vendorId;
 
-  String name;
+  String? name;
   List<Crate> inventory;
 
   Warehouse({
@@ -21,7 +21,8 @@ class Warehouse {
         name: map['name'] as String,
         vendorId: map['vendor_id'] as int,
         inventory: List.from((json.decode(map['inventory'] as String) as List)
-            .map<Crate>((dynamic map) => Crate.fromMap(map as Map<String, dynamic>))),
+            .map<Crate>(
+                (dynamic map) => Crate.fromMap(map as Map<String, dynamic>))),
       );
 
   Map<String, dynamic> get toMap => <String, dynamic>{
