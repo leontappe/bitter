@@ -32,8 +32,7 @@ class BillListTile extends StatelessWidget {
         children: <Widget>[
           Flexible(
             child: Text(
-              formatFigure(
-                  bill.reminders.isNotEmpty ? bill.reminderSum : bill.sum),
+              formatFigure(bill.reminders.isNotEmpty ? bill.reminderSum : bill.sum) ?? '',
               style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                   color: bill.reminders.isNotEmpty
                       ? bill.reminders

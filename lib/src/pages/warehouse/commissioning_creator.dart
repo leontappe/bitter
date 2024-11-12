@@ -10,27 +10,25 @@ import '../../repositories/warehouse_repository.dart';
 class CommissioningCreatorPage extends StatefulWidget {
   final Warehouse warehouse;
 
-  const CommissioningCreatorPage({Key key, this.warehouse}) : super(key: key);
+  const CommissioningCreatorPage({super.key, required this.warehouse});
 
   @override
   _CommissioningCreatorPageState createState() => _CommissioningCreatorPageState();
 }
 
 class _CommissioningCreatorPageState extends State<CommissioningCreatorPage> {
-  CommissioningRepository commissioningRepo;
-  ItemRepository itemRepo;
-  VendorRepository vendorRepo;
-  WarehouseRepository warehouseRepo;
+  late CommissioningRepository commissioningRepo;
+  late ItemRepository itemRepo;
+  late VendorRepository vendorRepo;
+  late WarehouseRepository warehouseRepo;
 
-  Warehouse warehouse;
+  late Warehouse warehouse = widget.warehouse;
+  Vendor? vendor;
+  List<Item> items = [];
 
-  bool busy;
+  bool busy = false;
 
-  Vendor vendor;
-
-  List<Item> items;
-
-  Commissioning newComm;
+  late Commissioning newComm;
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +47,15 @@ class _CommissioningCreatorPageState extends State<CommissioningCreatorPage> {
               children: [
                 Padding(
                   padding: EdgeInsets.only(left: 8.0, top: 8.0),
-                  child: Text('Infos', style: Theme.of(context).textTheme.headline5),
+                  child: Text('Infos', style: Theme.of(context).textTheme.headlineSmall),
                 ),
                 ListTile(title: Text('Verkäufer: '), trailing: Text(vendor?.name ?? '')),
-                ListTile(title: Text('Lagerplatz: '), trailing: Text(warehouse.name)),
+                ListTile(title: Text('Lagerplatz: '), trailing: Text(warehouse.name ?? '')),
               ],
             ),
           ),
-          ...warehouse.inventory.map<Widget>((Crate c) {
-            final itemResult = items?.where((Item i) => i.id == c.itemId) ?? [];
+          ...(warehouse?.inventory ?? []).map<Widget>((Crate c) {
+            final itemResult = items.where((Item i) => i.id == c.itemId);
             return ListTile(
               title: Text(c.name ??
                   (itemResult.isNotEmpty ? 'Kiste mit ${itemResult.single.title}' : 'Kiste')),
@@ -117,7 +115,7 @@ class _CommissioningCreatorPageState extends State<CommissioningCreatorPage> {
     await itemRepo.setUp();
     await warehouseRepo.setUp();
 
-    vendor = await vendorRepo.selectSingle(warehouse.vendorId);
+    vendor = await vendorRepo.selectSingle(warehouse.vendorId!);
 
     items = await itemRepo.select(vendorFilter: warehouse.vendorId);
 

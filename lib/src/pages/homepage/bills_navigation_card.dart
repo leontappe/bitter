@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../../providers/inherited_database.dart';
-import '../../repositories/bill_repository.dart';
-import '../../widgets/navigation_card.dart';
-import '../../widgets/shortcuts/bill_shortcut.dart';
+import '/src/providers/inherited_database.dart';
+import '/src/repositories/bill_repository.dart';
+import '/src/widgets/navigation_card.dart';
+import '/src/widgets/shortcuts/bill_shortcut.dart';
 
 class BillsNavigationCard extends StatefulWidget {
-  final int filter;
+  final int? filter;
 
   BillsNavigationCard({this.filter = -1}) : super(key: Key(filter.toString()));
 
@@ -15,14 +15,13 @@ class BillsNavigationCard extends StatefulWidget {
 }
 
 class _BillsNavigationCardState extends State<BillsNavigationCard> {
-  BillRepository _billRepo;
+  late BillRepository _billRepo;
   List<Bill> _bills = [];
 
   List<Bill> get _overdueBills => _bills
       .where((Bill b) =>
-          (((b.reminders == null || b.reminders.isEmpty) && DateTime.now().isAfter(b.dueDate)) ||
-              (b.reminders != null &&
-                  b.reminders.isNotEmpty &&
+          ((b.reminders.isEmpty && DateTime.now().isAfter(b.dueDate)) ||
+              (b.reminders.isNotEmpty &&
                   DateTime.now().isAfter(b.reminders.last.deadline))) &&
           b.status == BillStatus.unpaid)
       .toList();
@@ -38,7 +37,8 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
           children: [
             Flexible(
                 child: Text('Rechnungen',
-                    style: Theme.of(context).textTheme.headline5, overflow: TextOverflow.ellipsis)),
+                    style: Theme.of(context).textTheme.headlineSmall,
+                    overflow: TextOverflow.ellipsis)),
             IconButton(
                 tooltip: 'Aktualisieren',
                 icon: Icon(Icons.refresh, color: Colors.grey[800]),
@@ -57,13 +57,19 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                  height: (widget.filter != null && widget.filter > 0) ? 93.0 : 109.0, width: 0.0),
+                  height: (widget.filter != null && widget.filter! > 0)
+                      ? 93.0
+                      : 109.0,
+                  width: 0.0),
               ..._bills.take(4).map<Widget>(
                     (Bill b) => Expanded(
-                        child: BillShortcut(context, bill: b, showVendor: widget.filter == null)),
+                        child: BillShortcut(context,
+                            bill: b, showVendor: widget.filter == null)),
                   ),
               if (_bills.length > 4)
-                Center(child: Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
+                Center(
+                    child:
+                        Icon(Icons.more_horiz, color: Colors.grey, size: 48.0))
               else if (_bills.isNotEmpty)
                 Container(width: 48.0, height: 48.0),
               for (var i = 0; i < (4 - _bills.length); i++) Spacer(),
@@ -128,7 +134,7 @@ class _BillsNavigationCardState extends State<BillsNavigationCard> {
 
   Future<void> onGetBills() async {
     _bills = await _billRepo.select(short: true);
-    if (widget.filter != null && widget.filter > 0) {
+    if (widget.filter != null && widget.filter! > 0) {
       _bills.removeWhere((Bill b) => b.vendor.id != widget.filter);
     }
     _bills.sort((Bill a, Bill b) => b.created.compareTo(a.created));

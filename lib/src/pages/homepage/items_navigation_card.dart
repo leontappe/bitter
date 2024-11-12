@@ -34,7 +34,7 @@ class _ItemsNavigationCardState extends State<ItemsNavigationCard> {
           children: [
             Flexible(
                 child: Text('Artikel',
-                    style: Theme.of(context).textTheme.headline5, overflow: TextOverflow.ellipsis)),
+                    style: Theme.of(context).textTheme.headlineSmall, overflow: TextOverflow.ellipsis)),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [

@@ -33,7 +33,7 @@ class _ItemsNavigationCardState extends State<WarehouseNavigationCard> {
             Flexible(
                 child: Text(
               'Warenverwaltung',
-              style: Theme.of(context).textTheme.headline5,
+              style: Theme.of(context).textTheme.headlineSmall,
               overflow: TextOverflow.ellipsis,
             )),
             Row(

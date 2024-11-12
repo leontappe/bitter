@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../providers/database_provider.dart';
-import '../../../providers/inherited_database.dart';
-import '../../../repositories/vendor_repository.dart';
-import '../../../widgets/database_error_watcher.dart';
+import '/src/providers/database_provider.dart';
+import '/src/providers/inherited_database.dart';
+import '/src/repositories/vendor_repository.dart';
+import '/src/widgets/database_error_watcher.dart';
 import 'vendor_page.dart';
 
 class VendorsPage extends StatefulWidget {
@@ -12,7 +12,7 @@ class VendorsPage extends StatefulWidget {
 }
 
 class _VendorsPageState extends State<VendorsPage> {
-  VendorRepository repo;
+  late VendorRepository repo;
 
   List<Vendor> vendors = [];
 
@@ -40,7 +40,8 @@ class _VendorsPageState extends State<VendorsPage> {
                   semanticChildCount: vendors.length,
                   children: <Widget>[
                     ...vendors.reversed.map((Vendor v) => ListTile(
-                        title: Text(v.name), onTap: () => onPushVendorPage(context, v.id))),
+                        title: Text(v.name),
+                        onTap: () => onPushVendorPage(context, v.id!))),
                   ],
                 ),
         ),
@@ -69,8 +70,10 @@ class _VendorsPageState extends State<VendorsPage> {
 
   void onPushVendorAddPage() async {
     final updated = await Navigator.push<bool>(
-        context, MaterialPageRoute<bool>(builder: (BuildContext context) => VendorPage()));
-    if (updated) {
+        context,
+        MaterialPageRoute<bool>(
+            builder: (BuildContext context) => VendorPage()));
+    if (updated ?? true) {
       await onGetVendors();
     }
   }
@@ -78,9 +81,10 @@ class _VendorsPageState extends State<VendorsPage> {
   Future<void> onPushVendorPage(BuildContext context, int id) async {
     final updated = await Navigator.push<bool>(
       context,
-      MaterialPageRoute<bool>(builder: (BuildContext context) => VendorPage(id: id)),
+      MaterialPageRoute<bool>(
+          builder: (BuildContext context) => VendorPage(id: id)),
     );
-    if (updated) {
+    if (updated ?? true) {
       await onGetVendors();
     }
   }

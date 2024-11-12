@@ -4,26 +4,27 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
-import '../models/customer.dart';
-import '../models/draft.dart';
-import '../models/item.dart';
-import '../models/vendor.dart';
-import '../util/format_util.dart';
+import '/src/models/customer.dart';
+import '/src/models/draft.dart';
+import '/src/models/item.dart';
+import '/src/models/vendor.dart';
+import '/src/util/format_util.dart';
 import 'common_methods.dart';
 import 'common_widgets.dart';
 
-const String defaultLetter = 'hiermit berechnen wir Ihnen die folgenden Positionen:';
+const String defaultLetter =
+    'hiermit berechnen wir Ihnen die folgenden Positionen:';
 
 class PdfGenerator {
   Future<Document> createDocumentFromBill(
     Draft bill,
     Customer customer,
     Vendor vendor, {
-    String billNr,
-    Uint8List leftHeader,
-    Uint8List centerHeader,
-    Uint8List rightHeader,
-    String title,
+    String? billNr,
+    Uint8List? leftHeader,
+    Uint8List? centerHeader,
+    Uint8List? rightHeader,
+    String? title,
     String letter = defaultLetter,
     bool showDates = true,
   }) async {
@@ -58,12 +59,15 @@ class PdfGenerator {
                 Paragraph(
                   text: vendor.fullAddress,
                   style: TextStyle(
-                      decoration: TextDecoration.underline, fontSize: fontsize, font: ttfSans),
+                      decoration: TextDecoration.underline,
+                      fontSize: fontsize,
+                      font: ttfSans),
                   margin: EdgeInsets.only(bottom: 8.0),
                 ),
                 if (customer.company != null)
                   Paragraph(
-                    text: '${customer.company} ${customer.organizationUnit ?? ''}',
+                    text:
+                        '${customer.company} ${customer.organizationUnit ?? ''}',
                     style: TextStyle(fontSize: fontsize),
                     margin: EdgeInsets.all(0.0),
                   ),
@@ -106,7 +110,7 @@ class PdfGenerator {
                       style: TextStyle(fontSize: fontsize),
                       margin: EdgeInsets.all(0.0),
                     ),
-                    if (vendor.contact != null && vendor.contact.isNotEmpty)
+                    if (vendor.contact?.isNotEmpty ?? false)
                       Paragraph(
                         text: 'Ansprechpartner*in: ${vendor.contact}',
                         style: TextStyle(fontSize: fontsize),
@@ -135,12 +139,15 @@ class PdfGenerator {
           ),
           Header(
             level: 1,
-            text: '${title == null || title.isEmpty ? 'Rechnung' : title} ${billNr ?? ''}',
+            text:
+                '${title == null || title.isEmpty ? 'Rechnung' : title} ${billNr ?? ''}',
             textStyle: TextStyle(font: ttfSans),
           ),
-          Paragraph(text: 'Sehr geehrte Damen und Herren,', style: TextStyle(font: ttfSans)),
           Paragraph(
-            text: letter == null || letter.isEmpty ? defaultLetter : letter,
+              text: 'Sehr geehrte Damen und Herren,',
+              style: TextStyle(font: ttfSans)),
+          Paragraph(
+            text: letter.isEmpty ? defaultLetter : letter,
             style: TextStyle(font: ttfSans),
           ),
           Table(
@@ -165,10 +172,14 @@ class PdfGenerator {
               ]),
               ...items.map((Item i) => TableRow(children: <Widget>[
                     PaddedText(i.uid, ttfSans),
-                    PaddedText((i.description != null) ? '${i.title} - ${i.description}' : i.title,
+                    PaddedText(
+                        (i.description != null)
+                            ? '${i.title} - ${i.description}'
+                            : i.title,
                         ttfSans),
                     PaddedText(i.quantity.toString(), ttfSans),
-                    if (!vendor.smallBusiness) PaddedText('${i.tax.toStringAsFixed(0)} %', ttfSans),
+                    if (!vendor.smallBusiness)
+                      PaddedText('${i.tax.toStringAsFixed(0)} %', ttfSans),
                     PaddedText(formatFigure(i.price), ttfSans),
                     PaddedText(formatFigure(i.sum), ttfSans),
                   ])),
@@ -185,7 +196,9 @@ class PdfGenerator {
                   Paragraph(
                     text: 'Gesamtbetrag: ${formatFigure(bill.sum)}',
                     style: TextStyle(
-                        fontSize: fontsize + 1.0, fontWeight: FontWeight.bold, font: ttfSansBold),
+                        fontSize: fontsize + 1.0,
+                        fontWeight: FontWeight.bold,
+                        font: ttfSansBold),
                     margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
                   ),
                   if (!vendor.smallBusiness)
@@ -216,7 +229,8 @@ class PdfGenerator {
           Paragraph(text: bill.comment ?? '', style: TextStyle(font: ttfSans)),
           if (showDates)
             Paragraph(
-              text: 'Lieferdatum/Leistungsdatum: ${formatDate(bill.serviceDate)}',
+              text:
+                  'Lieferdatum/Leistungsdatum: ${formatDate(bill.serviceDate!)}',
               style: TextStyle(font: ttfSans),
             ),
           if (showDates)
@@ -235,11 +249,11 @@ class PdfGenerator {
     Draft bill,
     Customer customer,
     Vendor vendor, {
-    String billNr,
-    Uint8List leftHeader,
-    Uint8List centerHeader,
-    Uint8List rightHeader,
-    String title,
+    String? billNr,
+    Uint8List? leftHeader,
+    Uint8List? centerHeader,
+    Uint8List? rightHeader,
+    String? title,
     String letter = defaultLetter,
     bool showDates = true,
   }) async =>

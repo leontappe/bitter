@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../../repositories/settings_repository.dart';
+import '/src/repositories/settings_repository.dart';
 
 class AppSettingsPage extends StatefulWidget {
   @override
@@ -14,14 +14,14 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
   final GlobalKey<FormState> _databaseFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _sqliteFormKey = GlobalKey<FormState>();
 
-  SettingsRepository repo;
+  late SettingsRepository repo;
 
-  MySqlSettings mysqlSettings;
-  String username;
-  DbEngine dbEngine;
-  String sqliteName;
+  MySqlSettings? mysqlSettings;
+  String? username;
+  DbEngine? dbEngine;
+  String? sqliteName;
 
-  bool dirty;
+  bool dirty = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,9 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
       ),
       body: ListView(
         children: <Widget>[
-          ListTile(title: Text('Anwender', style: Theme.of(context).textTheme.headlineSmall)),
+          ListTile(
+              title: Text('Anwender',
+                  style: Theme.of(context).textTheme.headlineSmall)),
           Padding(
             padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
             child: Form(
@@ -53,16 +55,19 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
                 controller: TextEditingController(text: username ?? ''),
                 maxLines: 1,
                 decoration: InputDecoration(labelText: 'Anwendername'),
-                validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                validator: (String? input) =>
+                    input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                 onChanged: (String input) {
                   username = input;
-                  _usernameFormKey.currentState.validate();
+                  _usernameFormKey.currentState!.validate();
                   dirty = true;
                 },
               ),
             ),
           ),
-          ListTile(title: Text('Datenbank', style: Theme.of(context).textTheme.headlineSmall)),
+          ListTile(
+              title: Text('Datenbank',
+                  style: Theme.of(context).textTheme.headlineSmall)),
           if (!Platform.isWindows)
             Padding(
               padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
@@ -78,7 +83,7 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
                     child: Text('MySQL'),
                   ),
                 ],
-                onChanged: (DbEngine engine) {
+                onChanged: (DbEngine? engine) {
                   setState(() {
                     dbEngine = engine;
                   });
@@ -94,59 +99,69 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
                 child: Column(
                   children: <Widget>[
                     TextFormField(
-                      controller: TextEditingController(text: mysqlSettings.host ?? ''),
+                      controller: TextEditingController(
+                          text: mysqlSettings?.host ?? ''),
                       maxLines: 1,
                       decoration: InputDecoration(labelText: 'Host/IP'),
-                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      validator: (String? input) =>
+                          input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                       onChanged: (String input) {
-                        mysqlSettings.host = input;
-                        _databaseFormKey.currentState.validate();
+                        mysqlSettings?.host = input;
+                        _databaseFormKey.currentState!.validate();
                         dirty = true;
                       },
                     ),
                     TextFormField(
-                      controller: TextEditingController(text: mysqlSettings.port?.toString() ?? ''),
+                      controller: TextEditingController(
+                          text: mysqlSettings?.port.toString() ?? ''),
                       maxLines: 1,
                       decoration: InputDecoration(labelText: 'Port'),
-                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      validator: (String? input) =>
+                          input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                       keyboardType: TextInputType.numberWithOptions(),
                       onChanged: (String input) {
-                        mysqlSettings.port = int.parse(input);
-                        _databaseFormKey.currentState.validate();
+                        mysqlSettings?.port = int.parse(input);
+                        _databaseFormKey.currentState!.validate();
                         dirty = true;
                       },
                     ),
                     TextFormField(
-                      controller: TextEditingController(text: mysqlSettings.user ?? ''),
+                      controller: TextEditingController(
+                          text: mysqlSettings?.user ?? ''),
                       maxLines: 1,
                       decoration: InputDecoration(labelText: 'Nutzer'),
-                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      validator: (String? input) =>
+                          input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                       onChanged: (String input) {
-                        mysqlSettings.user = input;
-                        _databaseFormKey.currentState.validate();
+                        mysqlSettings?.user = input;
+                        _databaseFormKey.currentState!.validate();
                         dirty = true;
                       },
                     ),
                     TextFormField(
-                      controller: TextEditingController(text: mysqlSettings.password ?? ''),
+                      controller: TextEditingController(
+                          text: mysqlSettings?.password ?? ''),
                       maxLines: 1,
                       decoration: InputDecoration(labelText: 'Passwort'),
-                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      validator: (String? input) =>
+                          input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                       obscureText: true,
                       onChanged: (String input) {
-                        mysqlSettings.password = input;
-                        _databaseFormKey.currentState.validate();
+                        mysqlSettings?.password = input;
+                        _databaseFormKey.currentState!.validate();
                         dirty = true;
                       },
                     ),
                     TextFormField(
-                      controller: TextEditingController(text: mysqlSettings.database ?? ''),
+                      controller: TextEditingController(
+                          text: mysqlSettings?.database ?? ''),
                       maxLines: 1,
                       decoration: InputDecoration(labelText: 'Datenbankname'),
-                      validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                      validator: (String? input) =>
+                          input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                       onChanged: (String input) {
-                        mysqlSettings.database = input;
-                        _databaseFormKey.currentState.validate();
+                        mysqlSettings?.database = input;
+                        _databaseFormKey.currentState!.validate();
                         dirty = true;
                       },
                     ),
@@ -163,14 +178,14 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
                   controller: TextEditingController(text: sqliteName ?? ''),
                   maxLines: 1,
                   decoration: InputDecoration(labelText: 'Datenbankname'),
-                  validator: (input) => input.isEmpty
+                  validator: (String? input) => input?.isEmpty ?? true
                       ? 'Pflichtfeld'
-                      : input.contains(' ')
+                      : input!.contains(' ')
                           ? 'Keine Leerzeichen oder Sonderzeichen nutzen'
                           : null,
                   onChanged: (String input) {
                     sqliteName = input;
-                    _sqliteFormKey.currentState.validate();
+                    _sqliteFormKey.currentState!.validate();
                     dirty = true;
                   },
                 ),
@@ -194,9 +209,9 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
     username = repo.getUsername() ?? '';
     sqliteName = repo.getSqliteName();
     if (!Platform.isWindows) {
-      dbEngine = repo.getDbEngine() ?? DbEngine.sqlite;
+      dbEngine = repo.getDbEngine();
     } else {
-      await repo.setDbEngine(dbEngine);
+      await repo.setDbEngine(dbEngine!);
     }
     if (mounted) setState(() => mysqlSettings);
   }
@@ -214,8 +229,10 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
   }
 
   void onPopRoute(BuildContext context) async {
-    if (!((dbEngine == DbEngine.sqlite) ? true : _databaseFormKey.currentState.validate()) ||
-        !_usernameFormKey.currentState.validate() ||
+    if (!((dbEngine == DbEngine.sqlite)
+            ? true
+            : _databaseFormKey.currentState!.validate()) ||
+        !_usernameFormKey.currentState!.validate() ||
         dirty) {
       await showDialog<int>(
           context: context,
@@ -223,7 +240,9 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
                 title: Text(
                     'Wenn du ohne Speichern oder mit unvollständigen Informationen zurück gehst funktioniert das Programm nicht. Bitte vervollständige die Informationen und speichere dann oben rechts.'),
                 actions: <Widget>[
-                  MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Ok')),
+                  MaterialButton(
+                      onPressed: () => Navigator.pop(context, 1),
+                      child: Text('Ok')),
                 ],
               ));
       return;
@@ -233,15 +252,17 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
   }
 
   Future<bool> onSaveConfig() async {
-    if (((dbEngine == DbEngine.sqlite) ? true : _databaseFormKey.currentState.validate()) &&
-        _usernameFormKey.currentState.validate()) {
-      await repo.setUsername(username);
+    if (((dbEngine == DbEngine.sqlite)
+            ? true
+            : _databaseFormKey.currentState!.validate()) &&
+        _usernameFormKey.currentState!.validate()) {
+      await repo.setUsername(username!);
       if (dbEngine == DbEngine.sqlite) {
-        await repo.setSqliteName(sqliteName);
+        await repo.setSqliteName(sqliteName!);
       } else {
-        await repo.setMySqlSettings(mysqlSettings);
+        await repo.setMySqlSettings(mysqlSettings!);
       }
-      if (repo.getDbEngine() != null && repo.getDbEngine() != dbEngine) {
+      if (repo.getDbEngine() != dbEngine) {
         await repo.insert('bills_filter', null);
         await repo.insert('drafts_filter', null);
         await repo.insert('items_filter', null);
@@ -260,7 +281,7 @@ class _AppSettingsPageState extends State<AppSettingsPage> {
           ),
         );
       }
-      await repo.setDbEngine(dbEngine);
+      await repo.setDbEngine(dbEngine!);
       dirty = false;
       return true;
     }

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../models/vendor.dart';
-import '../../providers/inherited_database.dart';
-import '../../repositories/item_repository.dart';
-import '../../util/format_util.dart';
-import '../../widgets/database_error_watcher.dart';
-import '../../widgets/vendor_selector.dart';
+import '/src/models/vendor.dart';
+import '/src/providers/inherited_database.dart';
+import '/src/repositories/item_repository.dart';
+import '/src/util/format_util.dart';
+import '/src/widgets/database_error_watcher.dart';
+import '/src/widgets/vendor_selector.dart';
 
 class ItemPage extends StatefulWidget {
-  final Item item;
+  final Item? item;
 
   ItemPage({this.item});
 
@@ -18,9 +18,9 @@ class ItemPage extends StatefulWidget {
 
 class _ItemPageState extends State<ItemPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  ItemRepository repo;
+  late ItemRepository repo;
 
-  Item item = Item.empty();
+  Item item = Item(title: '', price: 0);
 
   bool dirty = false;
 
@@ -33,17 +33,24 @@ class _ItemPageState extends State<ItemPage> {
         leading: Builder(
             builder: (BuildContext context) => IconButton(
                   tooltip: 'Zurück',
-                  icon: Icon(widget.item != null ? Icons.arrow_back_ios : Icons.cancel),
+                  icon: Icon(widget.item != null
+                      ? Icons.arrow_back_ios
+                      : Icons.cancel),
                   onPressed: () => onPopRoute(context),
                 )),
-        title: Text(
-            (widget.item != null) ? 'Artikel ${item.itemId} - ${item.title}' : 'Artikel erstellen'),
+        title: Text((widget.item != null)
+            ? 'Artikel ${item.itemId} - ${item.title}'
+            : 'Artikel erstellen'),
         actions: [
-          IconButton(icon: Icon(Icons.save), onPressed: (busy) ? null : onSaveItem),
+          IconButton(
+              icon: Icon(Icons.save), onPressed: (busy) ? null : onSaveItem),
           if (widget.item != null)
             IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: (busy) ? null : () => onDeleteItem(widget.item.id)),
+              icon: Icon(Icons.delete),
+              onPressed: (busy)
+                  ? null
+                  : () => onDeleteItem(widget.item?.id ?? item.id!),
+            ),
         ],
       ),
       body: DatabaseErrorWatcher(
@@ -52,8 +59,8 @@ class _ItemPageState extends State<ItemPage> {
             : ListView(
                 children: <Widget>[
                   Padding(
-                    padding:
-                        EdgeInsets.fromLTRB(16.0, (widget.item != null) ? 16.0 : 8.0, 16.0, 8.0),
+                    padding: EdgeInsets.fromLTRB(
+                        16.0, (widget.item != null) ? 16.0 : 8.0, 16.0, 8.0),
                     child: Form(
                       key: _formKey,
                       child: Column(
@@ -63,87 +70,102 @@ class _ItemPageState extends State<ItemPage> {
                             onChanged: (Vendor v) {
                               setState(() {
                                 item.vendor = v.id;
-                                item.tax = v.defaultTax;
+                                item.tax = v.defaultTax!;
                               });
                             },
                             initialValue: item.vendor,
                           ),
                           TextFormField(
-                            initialValue: item.title ?? '',
+                            initialValue: item.title,
                             maxLines: 1,
                             decoration: InputDecoration(labelText: 'Titel'),
-                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            validator: (String? input) =>
+                                input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
                               item.title = input;
-                              _formKey.currentState.validate();
+                              _formKey.currentState!.validate();
                               dirty = true;
                             },
                           ),
                           TextFormField(
                             initialValue: item.description ?? '',
                             maxLines: 1,
-                            decoration: InputDecoration(labelText: 'Beschreibung'),
+                            decoration:
+                                InputDecoration(labelText: 'Beschreibung'),
                             onChanged: (String input) {
                               item.description = input;
                               dirty = true;
                             },
                           ),
                           ListTile(
-                            title: Text('Preis', style: Theme.of(context).textTheme.headlineSmall),
+                            title: Text('Preis',
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall),
                             trailing: Container(
                               width: 94.0,
                               height: 64.0,
                               child: TextFormField(
-                                initialValue: (item.price != null)
-                                    ? (item.price / 100.0).toStringAsFixed(2)
-                                    : '',
-                                validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                                initialValue:
+                                    (item.price / 100.0).toStringAsFixed(2),
+                                validator: (String? input) =>
+                                    input?.isEmpty ?? true
+                                        ? 'Pflichtfeld'
+                                        : null,
                                 keyboardType: TextInputType.numberWithOptions(),
                                 onChanged: (String input) {
-                                  setState(
-                                      () => item.price = parseFloat(input.replaceAll(',', '.')));
+                                  setState(() => item.price =
+                                      parseFloat(input.replaceAll(',', '.')));
                                   dirty = true;
-                                  _formKey.currentState.validate();
+                                  _formKey.currentState!.validate();
                                 },
                                 decoration: InputDecoration(suffixText: '€'),
                               ),
                             ),
                           ),
                           ListTile(
-                            title:
-                                Text('Umsatzsteuer', style: Theme.of(context).textTheme.headlineSmall),
+                            title: Text('Umsatzsteuer',
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall),
                             trailing: Container(
                               width: 94.0,
                               height: 64.0,
                               child: TextFormField(
                                 maxLines: 1,
-                                controller: TextEditingController(text: item.tax.toString()),
+                                controller: TextEditingController(
+                                    text: item.tax.toString()),
                                 keyboardType: TextInputType.numberWithOptions(),
                                 decoration: InputDecoration(suffixText: '%'),
-                                validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                                validator: (String? input) =>
+                                    input?.isEmpty ?? true
+                                        ? 'Pflichtfeld'
+                                        : null,
                                 onChanged: (String input) {
                                   item.tax = int.parse(input);
-                                  _formKey.currentState.validate();
+                                  _formKey.currentState!.validate();
                                   dirty = true;
                                 },
                               ),
                             ),
                           ),
                           ListTile(
-                            title:
-                                Text('Standardmenge', style: Theme.of(context).textTheme.headlineSmall),
+                            title: Text('Standardmenge',
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall),
                             trailing: Container(
                               width: 94.0,
                               height: 64.0,
                               child: TextFormField(
                                 maxLines: 1,
-                                initialValue: item.quantity?.toString() ?? '1',
+                                initialValue: item.quantity.toString(),
                                 keyboardType: TextInputType.numberWithOptions(),
                                 decoration: InputDecoration(suffixText: 'x'),
-                                validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                                validator: (String? input) =>
+                                    input?.isEmpty ?? true
+                                        ? 'Pflichtfeld'
+                                        : null,
                                 onChanged: (String input) {
                                   item.quantity = int.parse(input);
-                                  _formKey.currentState.validate();
+                                  _formKey.currentState!.validate();
                                   dirty = true;
                                 },
                               ),
@@ -169,7 +191,7 @@ class _ItemPageState extends State<ItemPage> {
     repo = ItemRepository(InheritedDatabase.of(context));
 
     if (widget.item != null) {
-      if (mounted) setState(() => item = widget.item);
+      if (mounted) setState(() => item = widget.item ?? item);
     }
   }
 
@@ -179,8 +201,12 @@ class _ItemPageState extends State<ItemPage> {
       builder: (BuildContext context) => AlertDialog(
         title: Text('Soll dieser Artikel wirklich gelöscht werden?'),
         actions: <Widget>[
-          MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Behalten')),
-          MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Löschen')),
+          MaterialButton(
+              onPressed: () => Navigator.pop(context, 0),
+              child: Text('Behalten')),
+          MaterialButton(
+              onPressed: () => Navigator.pop(context, 1),
+              child: Text('Löschen')),
         ],
       ),
     );
@@ -201,11 +227,14 @@ class _ItemPageState extends State<ItemPage> {
                     'Wenn du ohne Speichern fortfährst gehen alle hier eingegebenen Daten verloren. Vor dem Verlassen abspeichern?'),
                 actions: <Widget>[
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),
+                      onPressed: () => Navigator.pop(context, -1),
+                      child: Text('Abbrechen')),
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
+                      onPressed: () => Navigator.pop(context, 0),
+                      child: Text('Verwerfen')),
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
+                      onPressed: () => Navigator.pop(context, 1),
+                      child: Text('Speichern')),
                 ],
               ));
       switch (result) {
@@ -232,7 +261,7 @@ class _ItemPageState extends State<ItemPage> {
   }
 
   Future<bool> onSaveItem() async {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       if (mounted) setState(() => busy = true);
       if (widget.item != null) {
         await repo.update(item);

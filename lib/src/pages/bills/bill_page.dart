@@ -403,12 +403,12 @@ class _BillPageState extends State<BillPage> {
   void _onShowReminderDialog(ReminderIteration iteration) async {
     final reminder = Reminder(
       iteration: iteration,
-      title: vendor.reminderTitles.isNotEmpty
-          ? vendor.reminderTitles[iteration] ?? ''
-          : bill.vendor.reminderTitles[iteration] ?? '',
-      text: vendor.reminderTexts.isNotEmpty
-          ? vendor.reminderTexts[iteration] ?? ''
-          : bill.vendor.reminderTexts[iteration] ?? '',
+      title: vendor.reminderTitles?.isNotEmpty ?? false
+          ? vendor.reminderTitles![iteration] ?? ''
+          : bill.vendor.reminderTitles![iteration] ?? '',
+      text: vendor.reminderTexts?.isNotEmpty ?? false
+          ? vendor.reminderTexts![iteration] ?? ''
+          : bill.vendor.reminderTexts![iteration] ?? '',
       fee: vendor.reminderFees[iteration] ??
           bill.vendor.reminderFees[iteration] ??
           0,
@@ -448,7 +448,7 @@ class _BillPageState extends State<BillPage> {
                     decoration: InputDecoration(
                         labelText: 'Mahngebühr', suffixText: '€'),
                     keyboardType: TextInputType.number,
-                    initialValue: formatFigure(reminder.fee).split(' ').first,
+                    initialValue: formatFigure(reminder.fee)!.split(' ').first,
                     validator: (String? input) =>
                         (input == null || input.isEmpty) ? 'Pflichtfeld' : null,
                     onChanged: (String input) =>

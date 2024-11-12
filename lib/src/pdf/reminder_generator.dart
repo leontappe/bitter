@@ -16,9 +16,9 @@ class ReminderGenerator {
     Bill bill,
     Vendor vendor,
     Reminder reminder, {
-    Uint8List leftHeader,
-    Uint8List centerHeader,
-    Uint8List rightHeader,
+    Uint8List? leftHeader,
+    Uint8List? centerHeader,
+    Uint8List? rightHeader,
   }) async {
     await initializeDateFormatting('de_DE');
 
@@ -49,12 +49,15 @@ class ReminderGenerator {
                 Paragraph(
                   text: vendor.fullAddress,
                   style: TextStyle(
-                      decoration: TextDecoration.underline, fontSize: fontsize, font: ttfSans),
+                      decoration: TextDecoration.underline,
+                      fontSize: fontsize,
+                      font: ttfSans),
                   margin: EdgeInsets.only(bottom: 8.0),
                 ),
                 if (bill.customer.company != null)
                   Paragraph(
-                    text: '${bill.customer.company} ${bill.customer.organizationUnit ?? ''}',
+                    text:
+                        '${bill.customer.company} ${bill.customer.organizationUnit ?? ''}',
                     style: TextStyle(fontSize: fontsize),
                     margin: EdgeInsets.all(0.0),
                   ),
@@ -69,7 +72,9 @@ class ReminderGenerator {
                   margin: EdgeInsets.all(0.0),
                 ),
                 Paragraph(
-                  text: bill.customer.zipCode.toString() + ' ' + bill.customer.city,
+                  text: bill.customer.zipCode.toString() +
+                      ' ' +
+                      bill.customer.city,
                   style: TextStyle(fontSize: fontsize),
                   margin: EdgeInsets.all(0.0),
                 ),
@@ -97,7 +102,7 @@ class ReminderGenerator {
                       style: TextStyle(fontSize: fontsize),
                       margin: EdgeInsets.all(0.0),
                     ),
-                    if (vendor.contact != null && vendor.contact.isNotEmpty)
+                    if (vendor.contact?.isNotEmpty ?? false)
                       Paragraph(
                         text: 'Ansprechpartner*in: ${vendor.contact}',
                         style: TextStyle(fontSize: fontsize),
@@ -126,12 +131,14 @@ class ReminderGenerator {
           ),
           Header(
               level: 1,
-              text: (reminder.title != null && reminder.title.isNotEmpty)
+              text: reminder.title.isNotEmpty
                   ? reminder.title
                   : '${reminder.iteration == ReminderIteration.second ? 'Zweite ' : reminder.iteration == ReminderIteration.third ? 'Dritte ' : 'Erste '}Mahnung',
               textStyle: TextStyle(font: ttfSans)),
-          Paragraph(text: 'Sehr geehrte Damen und Herren,', style: TextStyle(font: ttfSans)),
-          Paragraph(text: reminder.text ?? '', style: TextStyle(font: ttfSans)),
+          Paragraph(
+              text: 'Sehr geehrte Damen und Herren,',
+              style: TextStyle(font: ttfSans)),
+          Paragraph(text: reminder.text, style: TextStyle(font: ttfSans)),
           Table(
             columnWidths: <int, TableColumnWidth>{
               0: FixedColumnWidth(150.0),
@@ -147,7 +154,9 @@ class ReminderGenerator {
                 PaddedHeaderText('Betrag'),
               ]),
               TableRow(children: <Widget>[
-                PaddedText('Rechnung ${bill.billNr} vom ${formatDate(bill.created)}', ttfSans),
+                PaddedText(
+                    'Rechnung ${bill.billNr} vom ${formatDate(bill.created)}',
+                    ttfSans),
                 PaddedText('${reminder.iteration.index + 1}', ttfSans),
                 PaddedText(formatFigure(bill.sum), ttfSans),
               ]),
@@ -155,7 +164,11 @@ class ReminderGenerator {
                 TableRow(children: <Widget>[
                   PaddedText('Bereits gezahlt', ttfSans),
                   PaddedText('', ttfSans),
-                  PaddedText('-' + formatFigure(bill.sum - reminder.remainder), ttfSans),
+                  PaddedText(
+                      '-' +
+                          (formatFigure(bill.sum - (reminder.remainder ?? 0)) ??
+                              '0'),
+                      ttfSans),
                 ]),
               if (reminder.fee != 0)
                 TableRow(children: <Widget>[
@@ -171,9 +184,12 @@ class ReminderGenerator {
             children: <Widget>[
               Spacer(),
               Paragraph(
-                text: 'Gesamtbetrag: ${formatFigure(reminder.remainder + reminder.fee)}',
+                text:
+                    'Gesamtbetrag: ${formatFigure((reminder.remainder ?? 0) + reminder.fee)}',
                 style: TextStyle(
-                    fontSize: fontsize + 1.0, fontWeight: FontWeight.bold, font: ttfSansBold),
+                    fontSize: fontsize + 1.0,
+                    fontWeight: FontWeight.bold,
+                    font: ttfSansBold),
                 margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
               ),
             ],
@@ -194,9 +210,9 @@ class ReminderGenerator {
     Bill bill,
     Vendor vendor,
     Reminder reminder, {
-    Uint8List leftHeader,
-    Uint8List centerHeader,
-    Uint8List rightHeader,
+    Uint8List? leftHeader,
+    Uint8List? centerHeader,
+    Uint8List? rightHeader,
   }) async =>
       (await createDocumentFromBill(
         bill,

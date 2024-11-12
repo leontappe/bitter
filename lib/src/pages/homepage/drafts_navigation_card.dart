@@ -37,7 +37,7 @@ class _DraftsNavigationCardState extends State<DraftsNavigationCard> {
           children: [
             Flexible(
                 child: Text('Entwürfe',
-                    style: Theme.of(context).textTheme.headline5, overflow: TextOverflow.ellipsis)),
+                    style: Theme.of(context).textTheme.headlineSmall, overflow: TextOverflow.ellipsis)),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [

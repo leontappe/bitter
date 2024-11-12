@@ -9,13 +9,13 @@ Bill exampleBill = Bill(
   billNr: 'RE1',
   created: DateTime.now(),
   customer: exampleCustomer,
-  dueDate: DateTime.now().add(Duration(days: exampleVendor.defaultDueDays)),
+  dueDate: DateTime.now().add(Duration(days: exampleVendor.defaultDueDays!)),
   editor: 'Max Mustermann',
   file: [],
   items: exampleDraft.items,
-  serviceDate: exampleDraft.serviceDate,
-  sum: exampleDraft.items
-      .fold<int>(0, (previousValue, item) => previousValue + (item.price * item.quantity)),
+  serviceDate: exampleDraft.serviceDate!,
+  sum: exampleDraft.items.fold<int>(
+      0, (previousValue, item) => previousValue + (item.price * item.quantity)),
   vendor: exampleVendor,
 );
 
@@ -34,8 +34,20 @@ Draft exampleDraft = Draft(
   id: 1,
   tax: 19,
   items: [
-    Item(uid: '1', title: 'Papier A4', description: '100 Blatt', price: 100, quantity: 2, tax: 19),
-    Item(uid: '2', title: 'Bachelorarbeit', description: '', price: 2000, quantity: 1, tax: 19),
+    Item(
+        uid: '1',
+        title: 'Papier A4',
+        description: '100 Blatt',
+        price: 100,
+        quantity: 2,
+        tax: 19),
+    Item(
+        uid: '2',
+        title: 'Bachelorarbeit',
+        description: '',
+        price: 2000,
+        quantity: 1,
+        tax: 19),
   ],
   customer: 1,
   vendor: 1,
@@ -45,8 +57,11 @@ Draft exampleDraft = Draft(
 );
 
 Reminder exampleReminder = Reminder(
+    title: 'Erste Mahnung',
+    created: DateTime.now(),
     iteration: ReminderIteration.first,
-    deadline: DateTime.now().add(Duration(days: exampleVendor.reminderDeadline)),
+    deadline:
+        DateTime.now().add(Duration(days: exampleVendor.reminderDeadline!)),
     fee: 10,
     text: '''Der Doktor, würdig wie er war, nimmt in Empfang sein Honorar.
 So stellte Wilhelm Busch einst dar, wie würdig dieser Doktor war.

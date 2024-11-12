@@ -1,21 +1,20 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../../models/reminder.dart';
-import '../../../providers/inherited_database.dart';
-import '../../../repositories/draft_repository.dart';
-import '../../../repositories/item_repository.dart';
-import '../../../repositories/vendor_repository.dart';
-import '../../../util/format_util.dart';
-import '../../../widgets/database_error_watcher.dart';
+import '/src/models/reminder.dart';
+import '/src/providers/inherited_database.dart';
+import '/src/repositories/draft_repository.dart';
+import '/src/repositories/item_repository.dart';
+import '/src/repositories/vendor_repository.dart';
+import '/src/util/format_util.dart';
+import '/src/widgets/database_error_watcher.dart';
 
 class VendorPage extends StatefulWidget {
-  final int id;
+  final int? id;
 
   VendorPage({this.id});
 
@@ -26,12 +25,11 @@ class VendorPage extends StatefulWidget {
 class _VendorPageState extends State<VendorPage> {
   final _formKey = GlobalKey<FormState>();
 
-  VendorRepository repo;
-  Vendor vendor;
+  late VendorRepository repo;
+  late DraftRepository draftRepo;
+  late ItemRepository itemRepo;
 
-  DraftRepository draftRepo;
-  ItemRepository itemRepo;
-
+  Vendor? vendor;
   Vendor newVendor = Vendor.empty();
 
   bool dirty = false;
@@ -82,17 +80,19 @@ class _VendorPageState extends State<VendorPage> {
                             initialValue: newVendor.name,
                             maxLines: 1,
                             decoration: InputDecoration(labelText: 'Name'),
-                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            validator: (String? input) =>
+                                input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
                               newVendor.name = input;
-                              _formKey.currentState.validate();
+                              _formKey.currentState!.validate();
                               dirty = true;
                             },
                           ),
                           TextFormField(
                             initialValue: newVendor.manager,
                             maxLines: 1,
-                            decoration: InputDecoration(labelText: 'Organisation'),
+                            decoration:
+                                InputDecoration(labelText: 'Organisation'),
                             onChanged: (String input) {
                               newVendor.manager = input;
                               dirty = true;
@@ -101,7 +101,8 @@ class _VendorPageState extends State<VendorPage> {
                           TextFormField(
                             initialValue: newVendor.contact,
                             maxLines: 1,
-                            decoration: InputDecoration(labelText: 'Ansprechpartner'),
+                            decoration:
+                                InputDecoration(labelText: 'Ansprechpartner'),
                             onChanged: (String input) {
                               newVendor.contact = input;
                               dirty = true;
@@ -111,10 +112,11 @@ class _VendorPageState extends State<VendorPage> {
                             initialValue: newVendor.address,
                             maxLines: 1,
                             decoration: InputDecoration(labelText: 'Adresse'),
-                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            validator: (String? input) =>
+                                input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
                               newVendor.address = input;
-                              _formKey.currentState.validate();
+                              _formKey.currentState!.validate();
                               dirty = true;
                             },
                           ),
@@ -126,14 +128,20 @@ class _VendorPageState extends State<VendorPage> {
                                 flex: 1,
                                 child: TextFormField(
                                   expands: false,
-                                  initialValue: newVendor.zipCode?.toString() ?? '',
+                                  initialValue:
+                                      newVendor.zipCode?.toString() ?? '',
                                   maxLines: 1,
-                                  decoration: InputDecoration(labelText: 'Postleitzahl'),
-                                  keyboardType: TextInputType.numberWithOptions(),
-                                  validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                                  decoration: InputDecoration(
+                                      labelText: 'Postleitzahl'),
+                                  keyboardType:
+                                      TextInputType.numberWithOptions(),
+                                  validator: (String? input) =>
+                                      input?.isEmpty ?? true
+                                          ? 'Pflichtfeld'
+                                          : null,
                                   onChanged: (String input) {
                                     newVendor.zipCode = int.parse(input);
-                                    _formKey.currentState.validate();
+                                    _formKey.currentState!.validate();
                                     dirty = true;
                                   },
                                 ),
@@ -144,11 +152,15 @@ class _VendorPageState extends State<VendorPage> {
                                   expands: false,
                                   initialValue: newVendor.city,
                                   maxLines: 1,
-                                  decoration: InputDecoration(labelText: 'Stadt'),
-                                  validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                                  decoration:
+                                      InputDecoration(labelText: 'Stadt'),
+                                  validator: (String? input) =>
+                                      input?.isEmpty ?? true
+                                          ? 'Pflichtfeld'
+                                          : null,
                                   onChanged: (String input) {
                                     newVendor.city = input;
-                                    _formKey.currentState.validate();
+                                    _formKey.currentState!.validate();
                                     dirty = true;
                                   },
                                 ),
@@ -159,10 +171,11 @@ class _VendorPageState extends State<VendorPage> {
                             initialValue: newVendor.iban,
                             maxLines: 1,
                             decoration: InputDecoration(labelText: 'IBAN'),
-                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            validator: (String? input) =>
+                                input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
                               newVendor.iban = input;
-                              _formKey.currentState.validate();
+                              _formKey.currentState!.validate();
                               dirty = true;
                             },
                           ),
@@ -170,10 +183,11 @@ class _VendorPageState extends State<VendorPage> {
                             initialValue: newVendor.bic,
                             maxLines: 1,
                             decoration: InputDecoration(labelText: 'BIC'),
-                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            validator: (String? input) =>
+                                input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
                               newVendor.bic = input;
-                              _formKey.currentState.validate();
+                              _formKey.currentState!.validate();
                               dirty = true;
                             },
                           ),
@@ -182,17 +196,19 @@ class _VendorPageState extends State<VendorPage> {
                             maxLines: 1,
                             decoration: InputDecoration(labelText: 'Bank'),
                             keyboardType: TextInputType.numberWithOptions(),
-                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            validator: (String? input) =>
+                                input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
                               newVendor.bank = input;
-                              _formKey.currentState.validate();
+                              _formKey.currentState!.validate();
                               dirty = true;
                             },
                           ),
                           CheckboxListTile(
                             title: Text('Kleingewerberegelung anwenden'),
                             value: newVendor.smallBusiness,
-                            onChanged: (bool input) {
+                            onChanged: (bool? input) {
+                              if (input == null) return;
                               setState(() => newVendor.smallBusiness = input);
                               dirty = true;
                             },
@@ -200,22 +216,26 @@ class _VendorPageState extends State<VendorPage> {
                           TextFormField(
                             initialValue: newVendor.taxNr,
                             maxLines: 1,
-                            decoration: InputDecoration(labelText: 'Steuernummer'),
-                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            decoration:
+                                InputDecoration(labelText: 'Steuernummer'),
+                            validator: (String? input) =>
+                                input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
                               newVendor.taxNr = input;
-                              _formKey.currentState.validate();
+                              _formKey.currentState!.validate();
                               dirty = true;
                             },
                           ),
                           TextFormField(
                             initialValue: newVendor.vatNr,
                             maxLines: 1,
-                            decoration: InputDecoration(labelText: 'Umsatzsteuernummer'),
-                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            decoration: InputDecoration(
+                                labelText: 'Umsatzsteuernummer'),
+                            validator: (String? input) =>
+                                input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
                               newVendor.vatNr = input;
-                              _formKey.currentState.validate();
+                              _formKey.currentState!.validate();
                               dirty = true;
                             },
                           ),
@@ -223,10 +243,11 @@ class _VendorPageState extends State<VendorPage> {
                             initialValue: newVendor.email,
                             maxLines: 1,
                             decoration: InputDecoration(labelText: 'E-Mail'),
-                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            validator: (String? input) =>
+                                input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
                               newVendor.email = input;
-                              _formKey.currentState.validate();
+                              _formKey.currentState!.validate();
                               dirty = true;
                             },
                           ),
@@ -251,55 +272,66 @@ class _VendorPageState extends State<VendorPage> {
                           TextFormField(
                             initialValue: newVendor.fullAddress,
                             maxLines: 1,
-                            decoration: InputDecoration(labelText: 'Adresszeile für Briefkopf'),
-                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            decoration: InputDecoration(
+                                labelText: 'Adresszeile für Briefkopf'),
+                            validator: (String? input) =>
+                                input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
                               newVendor.fullAddress = input;
-                              _formKey.currentState.validate();
+                              _formKey.currentState!.validate();
                               dirty = true;
                             },
                           ),
                           TextFormField(
                             maxLines: 1,
                             initialValue: newVendor.billPrefix,
-                            decoration: InputDecoration(labelText: 'Prefix für Rechnungsnummern'),
-                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                            decoration: InputDecoration(
+                                labelText: 'Prefix für Rechnungsnummern'),
+                            validator: (String? input) =>
+                                input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
                               newVendor.billPrefix = input;
-                              _formKey.currentState.validate();
+                              _formKey.currentState!.validate();
                               dirty = true;
                             },
                           ),
                           TextFormField(
                             maxLines: 1,
-                            initialValue: newVendor.defaultDueDays?.toString() ?? '14',
+                            initialValue:
+                                newVendor.defaultDueDays?.toString() ?? '14',
                             keyboardType: TextInputType.numberWithOptions(),
                             decoration: InputDecoration(
-                                labelText: 'Standard Zahlungsfrist', suffixText: 'Tage'),
-                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                                labelText: 'Standard Zahlungsfrist',
+                                suffixText: 'Tage'),
+                            validator: (String? input) =>
+                                input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
                               newVendor.defaultDueDays = int.parse(input);
-                              _formKey.currentState.validate();
+                              _formKey.currentState!.validate();
                               dirty = true;
                             },
                           ),
                           TextFormField(
                             maxLines: 1,
-                            initialValue: newVendor.defaultTax?.toString() ?? '19',
+                            initialValue:
+                                newVendor.defaultTax?.toString() ?? '19',
                             keyboardType: TextInputType.numberWithOptions(),
                             decoration: InputDecoration(
-                                labelText: 'Standard Umsatzsteuer', suffixText: '%'),
-                            validator: (input) => input.isEmpty ? 'Pflichtfeld' : null,
+                                labelText: 'Standard Umsatzsteuer',
+                                suffixText: '%'),
+                            validator: (String? input) =>
+                                input?.isEmpty ?? true ? 'Pflichtfeld' : null,
                             onChanged: (String input) {
                               newVendor.defaultTax = int.parse(input);
-                              _formKey.currentState.validate();
+                              _formKey.currentState!.validate();
                               dirty = true;
                             },
                           ),
                           TextFormField(
                             maxLines: 3,
                             initialValue: newVendor.defaultComment,
-                            decoration: InputDecoration(labelText: 'Standard Rechnungskommentar'),
+                            decoration: InputDecoration(
+                                labelText: 'Standard Rechnungskommentar'),
                             onChanged: (String input) {
                               newVendor.defaultComment = input;
                               dirty = true;
@@ -309,7 +341,8 @@ class _VendorPageState extends State<VendorPage> {
                             initialValue: newVendor.userMessageLabel,
                             maxLines: 1,
                             decoration: InputDecoration(
-                                labelText: 'Label für benutzerdefinierten Rechnungskommentar'),
+                                labelText:
+                                    'Label für benutzerdefinierten Rechnungskommentar'),
                             onChanged: (String input) {
                               newVendor.userMessageLabel = input;
                               dirty = true;
@@ -318,7 +351,8 @@ class _VendorPageState extends State<VendorPage> {
                           TextFormField(
                             initialValue: newVendor.freeInformation,
                             maxLines: 3,
-                            decoration: InputDecoration(labelText: 'Freitext für Fußzeile'),
+                            decoration: InputDecoration(
+                                labelText: 'Freitext für Fußzeile'),
                             onChanged: (String input) {
                               newVendor.freeInformation = input;
                               dirty = true;
@@ -326,160 +360,206 @@ class _VendorPageState extends State<VendorPage> {
                           ),
                           TextFormField(
                             maxLines: 1,
-                            initialValue: newVendor.reminderFees[ReminderIteration.first] != null
-                                ? formatFigure(newVendor.reminderFees[ReminderIteration.first])
+                            initialValue: newVendor.reminderFees[
+                                        ReminderIteration.first] !=
+                                    null
+                                ? formatFigure(newVendor
+                                        .reminderFees[ReminderIteration.first])!
                                     .split(' ')
                                     .first
                                 : null,
                             keyboardType: TextInputType.numberWithOptions(),
                             decoration: InputDecoration(
-                                labelText: 'Standard Mahngebühr für erste Mahnung',
+                                labelText:
+                                    'Standard Mahngebühr für erste Mahnung',
                                 suffixText: '€'),
                             onChanged: (String input) {
-                              newVendor.reminderFees[ReminderIteration.first] = parseFloat(input);
+                              newVendor.reminderFees[ReminderIteration.first] =
+                                  parseFloat(input);
                               dirty = true;
                             },
                           ),
                           TextFormField(
                             maxLines: 1,
-                            initialValue: newVendor.reminderFees[ReminderIteration.second] != null
-                                ? formatFigure(newVendor.reminderFees[ReminderIteration.second])
+                            initialValue: newVendor.reminderFees[
+                                        ReminderIteration.second] !=
+                                    null
+                                ? formatFigure(newVendor.reminderFees[
+                                        ReminderIteration.second])!
                                     .split(' ')
                                     .first
                                 : null,
                             keyboardType: TextInputType.numberWithOptions(),
                             decoration: InputDecoration(
-                                labelText: 'Standard Mahngebühr für zweite Mahnung',
+                                labelText:
+                                    'Standard Mahngebühr für zweite Mahnung',
                                 suffixText: '€'),
                             onChanged: (String input) {
-                              newVendor.reminderFees[ReminderIteration.second] = parseFloat(input);
+                              newVendor.reminderFees[ReminderIteration.second] =
+                                  parseFloat(input);
                               dirty = true;
                             },
                           ),
                           TextFormField(
                             maxLines: 1,
-                            initialValue: newVendor.reminderFees[ReminderIteration.third] != null
-                                ? formatFigure(newVendor.reminderFees[ReminderIteration.third])
+                            initialValue: newVendor.reminderFees[
+                                        ReminderIteration.third] !=
+                                    null
+                                ? formatFigure(newVendor
+                                        .reminderFees[ReminderIteration.third])!
                                     .split(' ')
                                     .first
                                 : null,
                             keyboardType: TextInputType.numberWithOptions(),
                             decoration: InputDecoration(
-                                labelText: 'Standard Mahngebühr für dritte Mahnung',
+                                labelText:
+                                    'Standard Mahngebühr für dritte Mahnung',
                                 suffixText: '€'),
                             onChanged: (String input) {
-                              newVendor.reminderFees[ReminderIteration.third] = parseFloat(input);
+                              newVendor.reminderFees[ReminderIteration.third] =
+                                  parseFloat(input);
                               dirty = true;
                             },
                           ),
                           TextFormField(
                             maxLines: 1,
-                            initialValue: newVendor.reminderDeadline?.toString() ?? '14',
+                            initialValue:
+                                newVendor.reminderDeadline?.toString() ?? '14',
                             keyboardType: TextInputType.numberWithOptions(),
                             decoration: InputDecoration(
-                                labelText: 'Standardfrist für Mahnungen', suffixText: 'Tage'),
+                                labelText: 'Standardfrist für Mahnungen',
+                                suffixText: 'Tage'),
                             onChanged: (String input) {
                               newVendor.reminderDeadline = int.parse(input);
                               dirty = true;
                             },
                           ),
                           TextFormField(
-                            initialValue: newVendor.reminderTitles[ReminderIteration.first] ?? '',
-                            decoration:
-                                InputDecoration(labelText: 'Standardtitel für erste Mahnung'),
+                            initialValue: newVendor
+                                    .reminderTitles?[ReminderIteration.first] ??
+                                '',
+                            decoration: InputDecoration(
+                                labelText: 'Standardtitel für erste Mahnung'),
                             onChanged: (String input) {
-                              newVendor.reminderTitles[ReminderIteration.first] = input;
+                              newVendor.reminderTitles?[
+                                  ReminderIteration.first] = input;
                               dirty = true;
                             },
                           ),
                           TextFormField(
-                            initialValue: newVendor.reminderTitles[ReminderIteration.second] ?? '',
-                            decoration:
-                                InputDecoration(labelText: 'Standardtitel für zweite Mahnung'),
+                            initialValue: newVendor.reminderTitles?[
+                                    ReminderIteration.second] ??
+                                '',
+                            decoration: InputDecoration(
+                                labelText: 'Standardtitel für zweite Mahnung'),
                             onChanged: (String input) {
-                              newVendor.reminderTitles[ReminderIteration.second] = input;
+                              newVendor.reminderTitles?[
+                                  ReminderIteration.second] = input;
                               dirty = true;
                             },
                           ),
                           TextFormField(
-                            initialValue: newVendor.reminderTitles[ReminderIteration.third] ?? '',
-                            decoration:
-                                InputDecoration(labelText: 'Standardtitel für dritte Mahnung'),
+                            initialValue: newVendor
+                                    .reminderTitles?[ReminderIteration.third] ??
+                                '',
+                            decoration: InputDecoration(
+                                labelText: 'Standardtitel für dritte Mahnung'),
                             onChanged: (String input) {
-                              newVendor.reminderTitles[ReminderIteration.third] = input;
-                              dirty = true;
-                            },
-                          ),
-                          TextFormField(
-                            maxLines: 3,
-                            initialValue: newVendor.reminderTexts[ReminderIteration.first] ?? '',
-                            decoration:
-                                InputDecoration(labelText: 'Standardtext für erste Mahnung'),
-                            onChanged: (String input) {
-                              newVendor.reminderTexts[ReminderIteration.first] = input;
-                              dirty = true;
-                            },
-                          ),
-                          TextFormField(
-                            maxLines: 3,
-                            initialValue: newVendor.reminderTexts[ReminderIteration.second] ?? '',
-                            decoration:
-                                InputDecoration(labelText: 'Standardtext für zweite Mahnung'),
-                            onChanged: (String input) {
-                              newVendor.reminderTexts[ReminderIteration.second] = input;
+                              newVendor.reminderTitles?[
+                                  ReminderIteration.third] = input;
                               dirty = true;
                             },
                           ),
                           TextFormField(
                             maxLines: 3,
-                            initialValue: newVendor.reminderTexts[ReminderIteration.third] ?? '',
-                            decoration:
-                                InputDecoration(labelText: 'Standardtext für dritte Mahnung'),
+                            initialValue: newVendor
+                                    .reminderTexts?[ReminderIteration.first] ??
+                                '',
+                            decoration: InputDecoration(
+                                labelText: 'Standardtext für erste Mahnung'),
                             onChanged: (String input) {
-                              newVendor.reminderTexts[ReminderIteration.third] = input;
+                              newVendor
+                                      .reminderTexts?[ReminderIteration.first] =
+                                  input;
+                              dirty = true;
+                            },
+                          ),
+                          TextFormField(
+                            maxLines: 3,
+                            initialValue: newVendor
+                                    .reminderTexts?[ReminderIteration.second] ??
+                                '',
+                            decoration: InputDecoration(
+                                labelText: 'Standardtext für zweite Mahnung'),
+                            onChanged: (String input) {
+                              newVendor.reminderTexts?[
+                                  ReminderIteration.second] = input;
+                              dirty = true;
+                            },
+                          ),
+                          TextFormField(
+                            maxLines: 3,
+                            initialValue: newVendor
+                                    .reminderTexts?[ReminderIteration.third] ??
+                                '',
+                            decoration: InputDecoration(
+                                labelText: 'Standardtext für dritte Mahnung'),
+                            onChanged: (String input) {
+                              newVendor
+                                      .reminderTexts?[ReminderIteration.third] =
+                                  input;
                               dirty = true;
                             },
                           ),
                           ListTile(title: Text('Kopfzeilenbilder')),
                           ListTile(
                             title: Text('Rechtes Kopfzeilenbild'),
-                            subtitle: (vendor.headerImageRight != null)
-                                ? Image.memory(Uint8List.fromList(vendor.headerImageRight))
+                            subtitle: (vendor!.headerImageRight != null)
+                                ? Image.memory(Uint8List.fromList(
+                                    vendor!.headerImageRight!))
                                 : Text('Nicht vorhanden'),
                             trailing: (newVendor.headerImageRight != null)
                                 ? MaterialButton(
-                                    onPressed: () => onClearImage(HeaderImage.right),
+                                    onPressed: () =>
+                                        onClearImage(HeaderImage.right),
                                     child: Text('Bild entfernen'))
                                 : MaterialButton(
-                                    onPressed: () => onOpenImage(HeaderImage.right),
+                                    onPressed: () =>
+                                        onOpenImage(HeaderImage.right),
                                     child: Text('Bild auswählen'),
                                   ),
                           ),
                           ListTile(
                             title: Text('Mittleres Kopfzeilenbild'),
-                            subtitle: (vendor.headerImageCenter != null)
-                                ? Image.memory(Uint8List.fromList(vendor.headerImageCenter))
+                            subtitle: (vendor!.headerImageCenter != null)
+                                ? Image.memory(Uint8List.fromList(
+                                    vendor!.headerImageCenter!))
                                 : Text('Nicht vorhanden'),
                             trailing: (newVendor.headerImageCenter != null)
                                 ? MaterialButton(
-                                    onPressed: () => onClearImage(HeaderImage.center),
+                                    onPressed: () =>
+                                        onClearImage(HeaderImage.center),
                                     child: Text('Bild entfernen'))
                                 : MaterialButton(
-                                    onPressed: () => onOpenImage(HeaderImage.center),
+                                    onPressed: () =>
+                                        onOpenImage(HeaderImage.center),
                                     child: Text('Bild auswählen'),
                                   ),
                           ),
                           ListTile(
                             title: Text('Linkes Kopfzeilenbild'),
-                            subtitle: (vendor.headerImageLeft != null)
-                                ? Image.memory(Uint8List.fromList(vendor.headerImageLeft))
+                            subtitle: (vendor!.headerImageLeft != null)
+                                ? Image.memory(Uint8List.fromList(
+                                    vendor!.headerImageLeft!))
                                 : Text('Nicht vorhanden'),
                             trailing: (newVendor.headerImageLeft != null)
                                 ? MaterialButton(
-                                    onPressed: () => onClearImage(HeaderImage.left),
+                                    onPressed: () =>
+                                        onClearImage(HeaderImage.left),
                                     child: Text('Bild entfernen'))
                                 : MaterialButton(
-                                    onPressed: () => onOpenImage(HeaderImage.left),
+                                    onPressed: () =>
+                                        onOpenImage(HeaderImage.left),
                                     child: Text('Bild auswählen'),
                                   ),
                           ),
@@ -506,12 +586,12 @@ class _VendorPageState extends State<VendorPage> {
     itemRepo = ItemRepository(InheritedDatabase.of(context));
 
     if (widget.id != null) {
-      vendor = await repo.selectSingle(widget.id);
+      vendor = await repo.selectSingle(widget.id!);
       if (vendor == null) {
         Navigator.pop(context);
         return null;
       }
-      newVendor = vendor;
+      newVendor = vendor!;
     } else {
       vendor = newVendor;
     }
@@ -541,17 +621,23 @@ class _VendorPageState extends State<VendorPage> {
         builder: (BuildContext context) => AlertDialog(
               title: Text('Soll dieser Verkäufer wirklich gelöscht werden?'),
               actions: <Widget>[
-                MaterialButton(onPressed: () => Navigator.pop(context, 0), child: Text('Behalten')),
-                MaterialButton(onPressed: () => Navigator.pop(context, 1), child: Text('Löschen')),
+                MaterialButton(
+                    onPressed: () => Navigator.pop(context, 0),
+                    child: Text('Behalten')),
+                MaterialButton(
+                    onPressed: () => Navigator.pop(context, 1),
+                    child: Text('Löschen')),
               ],
             ));
     if (result == 1) {
       // check for missing drafts that belong to this vendor
-      final vendorDrafts = (await draftRepo.select()).where((Draft d) => d.vendor == vendor.id);
-      final vendorItems = (await itemRepo.select()).where((Item i) => i.vendor == vendor.id);
+      final vendorDrafts = (await draftRepo.select())
+          .where((Draft d) => d.vendor == vendor!.id!);
+      final vendorItems =
+          (await itemRepo.select()).where((Item i) => i.vendor == vendor!.id!);
 
       if (vendorDrafts.isEmpty && vendorItems.isEmpty) {
-        await repo.delete(widget.id);
+        await repo.delete(widget.id ?? vendor!.id!);
         Navigator.pop(context, true);
       } else {
         final result = await showDialog<int>(
@@ -561,26 +647,29 @@ class _VendorPageState extends State<VendorPage> {
                 'Es existieren noch ${vendorDrafts.length} Rechnungsentwürfe und ${vendorItems.length} Artikel für diesen Verkäufer. Soll wirklich alles gelöscht werden?'),
             actions: <Widget>[
               MaterialButton(
-                  onPressed: () => Navigator.pop(context, 0), child: Text('Alles behalten')),
+                  onPressed: () => Navigator.pop(context, 0),
+                  child: Text('Alles behalten')),
               MaterialButton(
-                  onPressed: () => Navigator.pop(context, 1), child: Text('Alles löschen')),
+                  onPressed: () => Navigator.pop(context, 1),
+                  child: Text('Alles löschen')),
             ],
           ),
         );
         if (result == 1) {
           for (var draft in vendorDrafts) {
-            await draftRepo.delete(draft.id);
+            await draftRepo.delete(draft.id!);
           }
           for (var item in vendorItems) {
-            await itemRepo.delete(item.id);
+            await itemRepo.delete(item.id!);
           }
 
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Verbleibende Rechnungsentwürfe und Artikel wurden gelöscht.'),
+            content: Text(
+                'Verbleibende Rechnungsentwürfe und Artikel wurden gelöscht.'),
             duration: Duration(seconds: 3),
           ));
 
-          await repo.delete(widget.id);
+          await repo.delete(widget.id ?? vendor!.id!);
           Navigator.pop(context, true);
         }
       }
@@ -590,22 +679,23 @@ class _VendorPageState extends State<VendorPage> {
   }
 
   Future<void> onOpenImage(HeaderImage image) async {
-    Uint8List data;
+    Uint8List? data;
     if (kIsWeb || (!kIsWeb && (Platform.isIOS || Platform.isAndroid))) {
-      final dialogResult = await FilePicker.platform
-          .pickFiles(type: FileType.custom, allowedExtensions: ['jpeg', 'png', 'gif', 'jpg']);
+      final dialogResult = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['jpeg', 'png', 'gif', 'jpg']);
 
       if (dialogResult == null || !dialogResult.isSinglePick) {
         return;
       }
 
-      data = dialogResult.files.single.bytes;
+      data = dialogResult.files.single.bytes!;
     } else {
       final result = await openFile(acceptedTypeGroups: [
         XTypeGroup(label: 'image', extensions: ['jpeg', 'png', 'gif', 'jpg'])
       ]);
 
-      data = await result.readAsBytes();
+      data = await result?.readAsBytes();
     }
 
     if (data == null) return;
@@ -637,11 +727,14 @@ class _VendorPageState extends State<VendorPage> {
                     'Es gibt möglicherweise ungespeicherte Änderungen an diesem Verkäufer. Vor dem Verlassen abspeichern?'),
                 actions: <Widget>[
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, -1), child: Text('Abbrechen')),
+                      onPressed: () => Navigator.pop(context, -1),
+                      child: Text('Abbrechen')),
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, 0), child: Text('Verwerfen')),
+                      onPressed: () => Navigator.pop(context, 0),
+                      child: Text('Verwerfen')),
                   MaterialButton(
-                      onPressed: () => Navigator.pop(context, 1), child: Text('Speichern')),
+                      onPressed: () => Navigator.pop(context, 1),
+                      child: Text('Speichern')),
                 ],
               ));
       switch (result) {
@@ -659,12 +752,12 @@ class _VendorPageState extends State<VendorPage> {
   }
 
   Future<void> onSaveVendor() async {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       if (mounted) setState(() => busy = true);
       if (widget.id != null) {
         await repo.update(newVendor);
         dirty = false;
-        vendor = await repo.selectSingle(widget.id);
+        vendor = await repo.selectSingle(widget.id ?? vendor!.id!);
         setState(() => busy = false);
       } else {
         await repo.insert(newVendor);

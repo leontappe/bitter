@@ -229,11 +229,11 @@ class Vendor {
         'reminder_fees': json.encode(reminderFees.map<String, int>(
             (ReminderIteration key, int value) =>
                 MapEntry(key.index.toString(), value))),
-        'reminder_texts': json.encode(reminderTexts.map<String, String>(
+        'reminder_texts': json.encode((reminderTexts ?? {}).map<String, String>(
             (ReminderIteration key, String value) =>
                 MapEntry(key.index.toString(), value))),
-        'reminder_titles': json.encode(reminderTitles.map<String, String>(
-            (ReminderIteration key, String value) =>
+        'reminder_titles': json.encode((reminderTitles ?? {})
+            .map<String, String>((ReminderIteration key, String value) =>
                 MapEntry(key.index.toString(), value))),
         'small_business': smallBusiness ? 1 : 0,
         'free_information': freeInformation,

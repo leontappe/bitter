@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../../models/crate.dart';
-import '../../providers/inherited_database.dart';
-import '../../repositories/item_repository.dart';
-import '../../repositories/settings_repository.dart';
-import '../../repositories/vendor_repository.dart';
-import '../../repositories/warehouse_repository.dart';
-import '../../widgets/option_dialog.dart';
-import '../../widgets/vendor_selector.dart';
+import '/src/models/crate.dart';
+import '/src/providers/inherited_database.dart';
+import '/src/repositories/item_repository.dart';
+import '/src/repositories/settings_repository.dart';
+import '/src/repositories/vendor_repository.dart';
+import '/src/repositories/warehouse_repository.dart';
+import '/src/widgets/option_dialog.dart';
+import '/src/widgets/vendor_selector.dart';
 import 'crate_list_tile.dart';
 import 'warehouse_grid_card.dart';
 import 'warehouse_page.dart';
@@ -18,22 +18,22 @@ class WarehouseListPage extends StatefulWidget {
 }
 
 class _WarehouseListPageState extends State<WarehouseListPage> {
-  WarehouseRepository warehouseRepo;
-  ItemRepository itemRepo;
-  VendorRepository vendorRepo;
-  SettingsRepository settings;
+  late WarehouseRepository warehouseRepo;
+  late ItemRepository itemRepo;
+  late VendorRepository vendorRepo;
+  late SettingsRepository settings;
 
   List<Warehouse> warehouses = [];
 
   List<Vendor> vendors = [];
-  int filterVendor;
+  int? filterVendor;
 
   bool searchEnabled = false;
-  String searchQuery;
+  String? searchQuery;
 
-  bool busy;
+  bool busy = false;
 
-  List<Item> items;
+  List<Item> items = [];
 
   @override
   Widget build(BuildContext context) {
@@ -64,12 +64,16 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
               value: filterVendor,
               dropdownColor: Colors.grey[800],
               iconEnabledColor: Colors.white70,
-              style:
-                  TextStyle(color: Colors.white, decorationColor: Colors.white70, fontSize: 14.0),
-              hint: Text('Nach Verkäufer filtern', style: TextStyle(color: Colors.white)),
+              style: TextStyle(
+                  color: Colors.white,
+                  decorationColor: Colors.white70,
+                  fontSize: 14.0),
+              hint: Text('Nach Verkäufer filtern',
+                  style: TextStyle(color: Colors.white)),
               items: <DropdownMenuItem<int>>[
                 DropdownMenuItem(value: -1, child: Text('Filter zurücksetzen')),
-                ...vendors.map((Vendor v) => DropdownMenuItem(value: v.id, child: Text(v.name)))
+                ...vendors.map((Vendor v) =>
+                    DropdownMenuItem(value: v.id, child: Text(v.name)))
               ],
               onChanged: onFilter,
             ),
@@ -87,18 +91,22 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
         ],
       ),
       body: GridView(
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 512.0),
+        gridDelegate:
+            SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 512.0),
         children: <Widget>[
           ...warehouses.map(
             (Warehouse w) => WarehouseGridCard(
-              title: w.name,
-              onTap: () => Navigator.of(context).push<MaterialPageRoute<dynamic>>(
-                MaterialPageRoute(builder: (BuildContext context) => WarehousePage(id: w.id)),
+              title: w.name!,
+              onTap: () =>
+                  Navigator.of(context).push<MaterialPageRoute<dynamic>>(
+                MaterialPageRoute(
+                    builder: (BuildContext context) => WarehousePage(id: w.id)),
               ),
               children: [
                 ...w.inventory.take(5).map<Widget>(
                   (Crate c) {
-                    final itemResult = items.where((Item i) => i.id == c.itemId);
+                    final itemResult =
+                        items.where((Item i) => i.id == c.itemId);
                     return CrateListTile(
                       compact: true,
                       crate: c,
@@ -136,7 +144,9 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
     await onRefresh();
   }
 
-  Future<void> onFilter(int value) async {
+  Future<void> onFilter(int? value) async {
+    if (value == null) return;
+
     if (value >= 0) {
       filterVendor = value;
     } else {
@@ -147,7 +157,8 @@ class _WarehouseListPageState extends State<WarehouseListPage> {
   }
 
   Future<void> onRefresh() async {
-    warehouses = await warehouseRepo.select(vendorFilter: filterVendor, searchQuery: searchQuery);
+    warehouses = await warehouseRepo.select(
+        vendorFilter: filterVendor, searchQuery: searchQuery);
     vendors = await vendorRepo.select();
     items = await itemRepo.select(vendorFilter: filterVendor);
 

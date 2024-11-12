@@ -25,7 +25,7 @@ class WarehouseGridCard extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: Theme.of(context).textTheme.headline4,
+                style: Theme.of(context).textTheme.headlineMedium,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

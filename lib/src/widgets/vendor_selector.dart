@@ -4,7 +4,7 @@ import '/src/providers/inherited_database.dart';
 import '/src/repositories/vendor_repository.dart';
 
 class VendorSelector extends StatefulWidget {
-  final int initialValue;
+  final int? initialValue;
   final Function(Vendor) onChanged;
   final bool disabled;
 
@@ -62,8 +62,14 @@ class _VendorSelectorState extends State<VendorSelector> {
 
     _vendors = await repo.select();
 
+    if (widget.initialValue == null) {
+      _vendor = _vendors.first;
+      if (mounted) setState(() => _vendors);
+      return;
+    }
+
     try {
-      _vendor = await repo.selectSingle(widget.initialValue);
+      _vendor = await repo.selectSingle(widget.initialValue!);
     } catch (e) {
       print(e);
     }

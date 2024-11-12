@@ -27,7 +27,7 @@ class _CustomersNavigationCardState extends State<CustomersNavigationCard> {
           children: [
             Flexible(
                 child: Text('Kunden',
-                    style: Theme.of(context).textTheme.headline5, overflow: TextOverflow.ellipsis)),
+                    style: Theme.of(context).textTheme.headlineSmall, overflow: TextOverflow.ellipsis)),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [

@@ -14,16 +14,16 @@ class ItemsListPage extends StatefulWidget {
 }
 
 class _BillsListPageState extends State<ItemsListPage> {
-  ItemRepository repo;
-  VendorRepository vendorRepo;
-  SettingsRepository settings;
+  late ItemRepository repo;
+  late VendorRepository vendorRepo;
+  late SettingsRepository settings;
 
   bool searchEnabled = false;
 
   List<Item> items = [];
   List<Vendor> filterVendors = [];
-  int filterVendor;
-  String searchQuery;
+  int? filterVendor;
+  String? searchQuery;
 
   bool busy = false;
 
@@ -56,16 +56,19 @@ class _BillsListPageState extends State<ItemsListPage> {
               value: filterVendor,
               dropdownColor: Colors.grey[800],
               iconEnabledColor: Colors.white70,
-              style:
-                  TextStyle(color: Colors.white, decorationColor: Colors.white70, fontSize: 14.0),
-              hint: Text('Nach Verkäufer filtern', style: TextStyle(color: Colors.white)),
+              style: TextStyle(
+                  color: Colors.white,
+                  decorationColor: Colors.white70,
+                  fontSize: 14.0),
+              hint: Text('Nach Verkäufer filtern',
+                  style: TextStyle(color: Colors.white)),
               items: <DropdownMenuItem<int>>[
                 DropdownMenuItem(
                   value: -1,
                   child: Text('Filter zurücksetzen'),
                 ),
-                ...filterVendors
-                    .map((Vendor v) => DropdownMenuItem(value: v.id, child: Text(v.name))),
+                ...filterVendors.map((Vendor v) =>
+                    DropdownMenuItem(value: v.id, child: Text(v.name))),
               ],
               onChanged: onFilter,
             ),
@@ -91,21 +94,25 @@ class _BillsListPageState extends State<ItemsListPage> {
                   children: <Widget>[
                     ...items.map(
                       (Item i) {
-                        final itemVendors = filterVendors.where((Vendor v) => v.id == i.vendor);
+                        final itemVendors =
+                            filterVendors.where((Vendor v) => v.id == i.vendor);
                         return ListTile(
                           leading: (itemVendors.isNotEmpty)
-                              ? Text(itemVendors.first.billPrefix + '\nA' + i.itemId.toString())
+                              ? Text(itemVendors.first.billPrefix +
+                                  '\nA' +
+                                  i.itemId.toString())
                               : null,
                           title: Text(i.title),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (i.description != null) Text('Beschreibung: ${i.description}'),
+                              if (i.description != null)
+                                Text('Beschreibung: ${i.description}'),
                               Text('Steuer: ${i.tax} %'),
                             ],
                           ),
-                          trailing: Text(formatFigure(i.price),
-                              style: Theme.of(context).textTheme.subtitle1),
+                          trailing: Text(formatFigure(i.price)!,
+                              style: Theme.of(context).textTheme.bodyLarge),
                           onTap: () => onPushItemPage(item: i),
                         );
                       },
@@ -140,7 +147,8 @@ class _BillsListPageState extends State<ItemsListPage> {
     await onGetItems();
   }
 
-  Future<void> onFilter(int value) async {
+  Future<void> onFilter(int? value) async {
+    if (value == null) return;
     if (value >= 0) {
       filterVendor = value;
     } else {
@@ -152,13 +160,14 @@ class _BillsListPageState extends State<ItemsListPage> {
 
   Future<void> onGetItems() async {
     if (mounted) setState(() => busy = true);
-    items = await repo.select(searchQuery: searchQuery, vendorFilter: filterVendor);
+    items =
+        await repo.select(searchQuery: searchQuery, vendorFilter: filterVendor);
 
     if (filterVendor == null) {
       for (var item in items) {
         if (filterVendors.where((Vendor v) => v.id == item.vendor).isEmpty) {
           try {
-            filterVendors.add(await vendorRepo.selectSingle(item.vendor));
+            filterVendors.add((await vendorRepo.selectSingle(item.vendor!))!);
           } catch (e) {
             print(e);
           }
@@ -170,9 +179,12 @@ class _BillsListPageState extends State<ItemsListPage> {
     if (mounted) setState(() => busy = false);
   }
 
-  Future<void> onPushItemPage({Item item}) async {
+  Future<void> onPushItemPage({Item? item}) async {
     if (await Navigator.push<bool>(
-        context, MaterialPageRoute(builder: (BuildContext context) => ItemPage(item: item)))) {
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => ItemPage(item: item))) ??
+        true) {
       await onGetItems();
     }
   }

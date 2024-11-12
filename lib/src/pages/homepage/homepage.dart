@@ -73,7 +73,7 @@ class _HomepageState extends State<Homepage> {
               children: <Widget>[
                 Text(
                   'Einstellungen',
-                  style: Theme.of(context).textTheme.headline5,
+                  style: Theme.of(context).textTheme.headlineSmall,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Divider(),
